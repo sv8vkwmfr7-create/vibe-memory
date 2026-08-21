@@ -8,13 +8,15 @@ L1 原型：四分类规则（Bug 8 修复）
 - 不建边：话题切换
 
 跨会话建边：KNN 预筛（三档）→ LLM 四分类（L1 用规则近似）
+
+多租户（M3）：跨租户永不建边。同会话原子天然同租户。
 """
 
 from typing import Optional
 from datetime import datetime
 import uuid
 
-from vibe_memory.models.memory_atom import MemoryAtom, Edge, EdgeLabel, EdgeSource, EdgeStatus
+from vibe_memory.models.memory_atom import MemoryAtom, Edge, EdgeLabel, EdgeSource, EdgeStatus, DEFAULT_TENANT
 
 
 # 因果信号词列表
@@ -110,6 +112,10 @@ def build_cross_session_candidates(
 
     for existing in existing_atoms:
         if existing.session_id == new_atom.session_id:
+            continue
+
+        # M3: cross-tenant never builds edges
+        if existing.tenant_id != new_atom.tenant_id:
             continue
 
         sim = _tag_overlap_ratio(new_atom, existing)

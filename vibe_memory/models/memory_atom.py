@@ -6,6 +6,7 @@ Edge: 关系边（8 种边标签 + 连续衰减 + 时间戳）
 Episode: 分片聚合层（话题检测 + 社区检测）
 EdgeLabel: 边标签枚举
 GraphPartition: 图分区枚举
+TenantIsolation: 多租户隔离（M3）
 """
 
 from dataclasses import dataclass, field
@@ -55,6 +56,10 @@ class EdgeStatus(str, Enum):
     STALE = "stale"            # 已过期
 
 
+# 默认租户 ID（向后兼容）
+DEFAULT_TENANT = "default"
+
+
 @dataclass
 class MemoryAtom:
     """
@@ -65,6 +70,7 @@ class MemoryAtom:
     - Bug 8: episode_id 聚合
     - Bug 9: type 图分区
     - Bug 16: version 版本追踪
+    - M3: tenant_id 多租户隔离
     """
     id: str
     agent_id: str
@@ -72,6 +78,9 @@ class MemoryAtom:
     content: str
     summary: str
     embedding: Optional[list[float]] = None
+
+    # 多租户（M3）
+    tenant_id: str = "default"
 
     # 类型与分区
     type: GraphPartition = GraphPartition.SESSION
@@ -138,6 +147,7 @@ class MemoryAtom:
             "id": self.id,
             "agent_id": self.agent_id,
             "session_id": self.session_id,
+            "tenant_id": self.tenant_id,
             "content": self.content,
             "summary": self.summary,
             "type": self.type.value,
@@ -170,11 +180,13 @@ class Edge:
     - Bug 6: created_at 时间戳
     - Bug 9: cross_partition 跨分区标记
     - Bug 17: REVISION 边类型
+    - M3: tenant_id 多租户隔离
     """
     id: str
     from_atom_id: str
     to_atom_id: str
     label: EdgeLabel
+    tenant_id: str = "default"
     weight: float = 1.0
     decay_rate: float = 0.95
     confidence: float = 0.9
@@ -208,6 +220,7 @@ class Edge:
             "id": self.id,
             "from_atom_id": self.from_atom_id,
             "to_atom_id": self.to_atom_id,
+            "tenant_id": self.tenant_id,
             "label": self.label.value,
             "weight": self.weight,
             "decay_rate": self.decay_rate,
@@ -227,12 +240,14 @@ class Episode:
 
     Bug 8/14: 分片→Episode→图，减少检索展开节点
     社区检测使用 Louvain/Leiden
+    M3: tenant_id 多租户隔离
     """
     id: str
     agent_id: str
     session_id: str
     summary: str
     topic: str
+    tenant_id: str = "default"
     atom_ids: list[str] = field(default_factory=list)
     started_at: Optional[datetime] = None
     ended_at: Optional[datetime] = None
@@ -259,6 +274,7 @@ class Episode:
             "id": self.id,
             "agent_id": self.agent_id,
             "session_id": self.session_id,
+            "tenant_id": self.tenant_id,
             "summary": self.summary,
             "topic": self.topic,
             "atom_ids": self.atom_ids,

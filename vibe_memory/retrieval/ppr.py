@@ -247,9 +247,10 @@ def recall(
     top_k: int = 20,
     embedding_provider: Optional[EmbeddingProvider] = None,
     seed_filter: Optional[SeedFilter] = None,
+    tenant_id: Optional[str] = None,
 ) -> dict:
     """
-    统一检索入口（v2：embedding provider + seed filter）。
+    统一检索入口（v2：embedding provider + seed filter + tenant isolation）。
 
     四阶段：
     1. 向量预筛（embedding provider）→ 种子节点
@@ -265,15 +266,17 @@ def recall(
         top_k: 向量预筛 top-K
         embedding_provider: 向量化后端（None → TF-IDF）
         seed_filter: 种子后过滤器（None → 默认配置）
+        tenant_id: 租户隔离（None → 使用 storage 默认 tenant）
 
     Returns:
         {atoms, trace, mode, total_walked, seed_count, filtered_count}
     """
     provider = embedding_provider or TfidfProvider()
     seed_filter = seed_filter or SeedFilter()
+    tid = tenant_id or storage.tenant_id
 
     # 阶段 1：向量预筛
-    all_atoms = storage.get_atoms_by_agent(agent_id)
+    all_atoms = storage.get_atoms_by_agent(agent_id, tenant_id=tid)
     active_atoms = [a for a in all_atoms if a.lifecycle.value in ("active", "warm")]
 
     if not active_atoms:

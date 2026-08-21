@@ -18,7 +18,7 @@ from datetime import datetime
 from vibe_memory.models.memory_atom import (
     MemoryAtom, Edge, Episode,
     EdgeLabel, EdgeSource, EdgeStatus,
-    GraphPartition, Lifecycle,
+    GraphPartition, Lifecycle, DEFAULT_TENANT,
 )
 
 
@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS atoms (
     id TEXT PRIMARY KEY,
     agent_id TEXT NOT NULL,
     session_id TEXT NOT NULL,
+    tenant_id TEXT NOT NULL DEFAULT 'default',
     content TEXT NOT NULL,
     summary TEXT DEFAULT '',
     type TEXT DEFAULT 'session',
@@ -53,11 +54,13 @@ CREATE INDEX IF NOT EXISTS idx_atoms_agent ON atoms(agent_id);
 CREATE INDEX IF NOT EXISTS idx_atoms_session ON atoms(session_id);
 CREATE INDEX IF NOT EXISTS idx_atoms_type ON atoms(type);
 CREATE INDEX IF NOT EXISTS idx_atoms_lifecycle ON atoms(lifecycle);
+CREATE INDEX IF NOT EXISTS idx_atoms_tenant ON atoms(tenant_id);
 
 CREATE TABLE IF NOT EXISTS edges (
     id TEXT PRIMARY KEY,
     from_atom_id TEXT NOT NULL,
     to_atom_id TEXT NOT NULL,
+    tenant_id TEXT NOT NULL DEFAULT 'default',
     label TEXT NOT NULL,
     weight REAL DEFAULT 1.0,
     decay_rate REAL DEFAULT 0.95,
@@ -76,11 +79,13 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_edges_pair ON edges(from_atom_id, to_atom_
 CREATE INDEX IF NOT EXISTS idx_edges_from ON edges(from_atom_id);
 CREATE INDEX IF NOT EXISTS idx_edges_to ON edges(to_atom_id);
 CREATE INDEX IF NOT EXISTS idx_edges_status ON edges(status);
+CREATE INDEX IF NOT EXISTS idx_edges_tenant ON edges(tenant_id);
 
 CREATE TABLE IF NOT EXISTS episodes (
     id TEXT PRIMARY KEY,
     agent_id TEXT NOT NULL,
     session_id TEXT NOT NULL,
+    tenant_id TEXT NOT NULL DEFAULT 'default',
     summary TEXT DEFAULT '',
     topic TEXT DEFAULT '',
     atom_ids TEXT DEFAULT '[]',
@@ -94,31 +99,34 @@ CREATE TABLE IF NOT EXISTS episodes (
 
 CREATE INDEX IF NOT EXISTS idx_episodes_agent ON episodes(agent_id);
 CREATE INDEX IF NOT EXISTS idx_episodes_session ON episodes(session_id);
+CREATE INDEX IF NOT EXISTS idx_episodes_tenant ON episodes(tenant_id);
 """
 
 
 class VibeStorage:
-    """VibeMemory SQLite 存储"""
+    """VibeMemory SQLite 存储（多租户，M3）"""
 
-    def __init__(self, db_path: str = ":memory:"):
+    def __init__(self, db_path: str = ":memory:", tenant_id: str = DEFAULT_TENANT):
         self.conn = sqlite3.connect(db_path)
         self.conn.row_factory = sqlite3.Row
         self.conn.executescript(SCHEMA)
         self.conn.commit()
+        self.tenant_id = tenant_id
 
     # ── Atom CRUD ──
 
     def insert_atom(self, atom: MemoryAtom) -> None:
         self.conn.execute(
             """INSERT INTO atoms (
-                id, agent_id, session_id, content, summary, type, tags,
+                id, agent_id, session_id, tenant_id, content, summary, type, tags,
                 lifecycle, weight, decay_rate, access_count, last_accessed,
                 adopted_count, ignored_count, created_at, source, confidence,
                 context_before, context_after, episode_id, episode_position,
                 version, previous_version_id
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
-                atom.id, atom.agent_id, atom.session_id, atom.content, atom.summary,
+                atom.id, atom.agent_id, atom.session_id, atom.tenant_id,
+                atom.content, atom.summary,
                 atom.type.value, json.dumps(atom.tags), atom.lifecycle.value,
                 atom.weight, atom.decay_rate, atom.access_count,
                 atom.last_accessed.isoformat() if atom.last_accessed else None,
@@ -144,10 +152,11 @@ class VibeStorage:
         ).fetchall()
         return [self._row_to_atom(r) for r in rows]
 
-    def get_atoms_by_agent(self, agent_id: str) -> list[MemoryAtom]:
+    def get_atoms_by_agent(self, agent_id: str, tenant_id: Optional[str] = None) -> list[MemoryAtom]:
+        tid = tenant_id or self.tenant_id
         rows = self.conn.execute(
-            "SELECT * FROM atoms WHERE agent_id = ? ORDER BY created_at",
-            (agent_id,),
+            "SELECT * FROM atoms WHERE agent_id = ? AND tenant_id = ? ORDER BY created_at",
+            (agent_id, tid),
         ).fetchall()
         return [self._row_to_atom(r) for r in rows]
 
@@ -178,12 +187,12 @@ class VibeStorage:
     def insert_edge(self, edge: Edge) -> None:
         self.conn.execute(
             """INSERT INTO edges (
-                id, from_atom_id, to_atom_id, label, weight, decay_rate,
+                id, from_atom_id, to_atom_id, tenant_id, label, weight, decay_rate,
                 confidence, source, created_at, last_accessed, status,
                 cross_partition, version
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
-                edge.id, edge.from_atom_id, edge.to_atom_id,
+                edge.id, edge.from_atom_id, edge.to_atom_id, edge.tenant_id,
                 edge.label.value, edge.weight, edge.decay_rate,
                 edge.confidence, edge.source.value,
                 edge.created_at.isoformat(),
@@ -255,11 +264,11 @@ class VibeStorage:
     def insert_episode(self, episode: Episode) -> None:
         self.conn.execute(
             """INSERT INTO episodes (
-                id, agent_id, session_id, summary, topic, atom_ids,
+                id, agent_id, session_id, tenant_id, summary, topic, atom_ids,
                 started_at, ended_at, community_id, weight, access_count, last_accessed
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
-                episode.id, episode.agent_id, episode.session_id,
+                episode.id, episode.agent_id, episode.session_id, episode.tenant_id,
                 episode.summary, episode.topic, json.dumps(episode.atom_ids),
                 episode.started_at.isoformat() if episode.started_at else None,
                 episode.ended_at.isoformat() if episode.ended_at else None,
@@ -283,6 +292,7 @@ class VibeStorage:
             id=row["id"],
             agent_id=row["agent_id"],
             session_id=row["session_id"],
+            tenant_id=row["tenant_id"] if "tenant_id" in row.keys() else DEFAULT_TENANT,
             content=row["content"],
             summary=row["summary"],
             type=GraphPartition(row["type"]),
@@ -310,6 +320,7 @@ class VibeStorage:
             id=row["id"],
             from_atom_id=row["from_atom_id"],
             to_atom_id=row["to_atom_id"],
+            tenant_id=row["tenant_id"] if "tenant_id" in row.keys() else DEFAULT_TENANT,
             label=EdgeLabel(row["label"]),
             weight=row["weight"],
             decay_rate=row["decay_rate"],
@@ -327,6 +338,7 @@ class VibeStorage:
             id=row["id"],
             agent_id=row["agent_id"],
             session_id=row["session_id"],
+            tenant_id=row["tenant_id"] if "tenant_id" in row.keys() else DEFAULT_TENANT,
             summary=row["summary"],
             topic=row["topic"],
             atom_ids=json.loads(row["atom_ids"]),
