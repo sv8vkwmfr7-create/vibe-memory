@@ -23,6 +23,7 @@ from vibe_memory.storage.sqlite_store import VibeStorage
 from vibe_memory.retrieval.ppr import (
     PPRConfig, personalized_pagerank, recall, fallback_vector_topk,
 )
+from vibe_memory.learner.learner import VibeLearner, DecayManager, LearnerConfig
 
 
 def test_memory_atom():
@@ -376,6 +377,99 @@ def test_fallback_vector_topk():
     print("[PASS] fallback vector top-k test")
 
 
+def test_vibe_learner():
+    """Test Vibe Learner online learning"""
+    learner = VibeLearner()
+
+    # Create a test atom
+    atom = MemoryAtom(
+        id="l1", agent_id="agent-1", session_id="s1",
+        content="Fixed API timeout error, changed from 30s to 60s",
+        summary="Fix timeout",
+        tags=["error", "config"],
+        access_count=5,
+        adopted_count=3,
+        ignored_count=1,
+    )
+
+    # Predict decay rate
+    rate = learner.predict_decay_rate(atom, edge_degree=3.0)
+    assert 0.80 <= rate <= 0.99  # within bounds
+
+    # Record positive feedback
+    learner.record_feedback(atom, was_adopted=True)
+    assert learner.total_positive == 1
+    assert atom.adopted_count == 4  # incremented by learn_from_feedback
+
+    # Record negative feedback
+    learner.record_feedback(atom, was_adopted=False, was_ignored=True)
+    assert learner.total_negative == 1
+
+    # Stats
+    stats = learner.get_stats()
+    assert stats["total_positive"] == 1
+    assert stats["total_negative"] == 1
+
+    print("[PASS] Vibe Learner test")
+
+
+def test_decay_manager():
+    """Test DecayManager with and without Learner"""
+    # Without Learner (fallback to fixed rate)
+    mgr = DecayManager(learner=None)
+    atom = MemoryAtom(
+        id="d1", agent_id="agent-1", session_id="s1",
+        content="Test", summary="Test",
+        last_accessed=datetime(2026, 8, 1),
+        weight=1.0,
+    )
+    mgr.decay_atom(atom)
+    assert atom.weight < 1.0  # should have decayed
+    assert atom.decay_rate == 0.95  # fallback rate
+
+    # With Learner
+    learner = VibeLearner()
+    mgr2 = DecayManager(learner=learner)
+    atom2 = MemoryAtom(
+        id="d2", agent_id="agent-1", session_id="s1",
+        content="Test", summary="Test",
+        weight=1.0,
+    )
+    mgr2.decay_atom(atom2)
+    # Learner predicts rate, but atom has no last_accessed so no decay yet
+    assert 0.80 <= atom2.decay_rate <= 0.99
+
+    # Reinforce
+    mgr2.reinforce_atom(atom2)
+    assert atom2.access_count == 1
+    assert atom2.weight >= 1.0  # should be at max after reinforce
+
+    print("[PASS] DecayManager test")
+
+
+def test_learner_feature_extraction():
+    """Test feature extraction from atom"""
+    learner = VibeLearner()
+    atom = MemoryAtom(
+        id="f1", agent_id="agent-1", session_id="s1",
+        content="x" * 500,
+        summary="Test",
+        tags=["error", "config", "task"],
+        access_count=5,
+        adopted_count=4,
+        ignored_count=1,
+    )
+
+    features = learner.extract_features(atom)
+    assert "access_frequency" in features
+    assert "tag_count" in features
+    assert "content_length" in features
+    assert "adopted_ratio" in features
+    assert features["adopted_ratio"] == 0.8  # 4/5
+
+    print("[PASS] learner feature extraction test")
+
+
 def run_all():
     print("=" * 50)
     print("VibeMemory L1 Prototype Tests")
@@ -392,6 +486,9 @@ def run_all():
     test_ppr_walk()
     test_recall_api()
     test_fallback_vector_topk()
+    test_vibe_learner()
+    test_decay_manager()
+    test_learner_feature_extraction()
 
     print()
     print("=" * 50)
