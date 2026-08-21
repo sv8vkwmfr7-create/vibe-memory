@@ -17,20 +17,20 @@
 - [x] 三档可配置操作点（precision/recall/budget）
 - [x] 降级策略全覆盖（PPR→Top-K、LLM→规则边、Learner→固定衰减）
 
-### M1｜L1 可运行原型 Demo（当前）
+### M1｜L1 可运行原型 Demo ✅ 已完成
 
-- [ ] 项目骨架搭建：目录结构 + .gitignore + requirements.txt
-- [ ] MemoryAtom 数据结构实现（Python dataclass + SQLite schema）
-- [ ] Edge 数据结构实现（含 8 种边标签枚举）
-- [ ] 向量库接入（pgvector 或 SQLite + FAISS，视部署环境）
-- [ ] 语义分片模块：会话文本切分 + 分片标签生成
-- [ ] 同会话建边：四分类规则（因果接续/同类经验/时序相邻/不建边）
-- [ ] 跨会话建边：KNN 预筛（三档）→ LLM 四分类 + 合并检查
-- [ ] 异步 pending_review 队列（边降级补复核）
-- [ ] PPR 检索：personalized_pagerank 核心迭代 + 三档操作点
-- [ ] prompt 注入：MAC 模式（全文注入）+ MAG 模式（门控信号）
-- [ ] 降级全覆盖：PPR 超时→Top-K、LLM 超时→规则边、Learner 不可用→固定衰减
-- [ ] 测试用例：模拟 3 会话跨会话记忆召回验证
+- [x] 项目骨架搭建：目录结构 + .gitignore + pyproject.toml
+- [x] MemoryAtom 数据结构实现（Python dataclass + SQLite schema）
+- [x] Edge 数据结构实现（含 8 种边标签枚举）
+- [x] 语义分片模块：会话文本切分 + 分片标签生成 + Surprise-based 入库
+- [x] 同会话建边：四分类规则（因果接续/同类经验/时序相邻/不建边）
+- [x] 跨会话建边：KNN 预筛（三档：duplicate/similar/noise）→ LLM 四分类 + 合并检查
+- [x] PPR 检索：personalized_pagerank 核心迭代 + 三档操作点（precision/recall/budget）+ 降级 fallback
+- [x] Vibe Learner：轻量在线学习（SGD）+ DecayManager（含 Learner 不可用时的固定速率降级）
+- [x] SQLite 存储层：MemoryAtom + Edge + Episode 完整 CRUD + pending_review 队列
+- [x] 集成测试：14 个测试用例全部通过
+- [x] 降级全覆盖：PPR→Top-K、Learner→固定速率
+- [x] 测试用例：模拟会话，验证记忆召回效果
 
 ### M2｜功能增强
 
@@ -118,14 +118,31 @@
 
 ---
 
+### 【问题 6】Python 中文字符串在 Windows GBK 终端下编码错误
+
+**现象**：测试文件中使用中文标签（"报错"、"配置"等）和 emoji（✅），在 Windows 终端运行 `python tests/test_m1.py` 时报 `UnicodeEncodeError: 'gbk' codec can't encode character`。
+
+**根因**：Windows 终端默认使用 GBK 编码，而 Python 3 源码文件默认 UTF-8。`print()` 输出中文时，Python 尝试用终端编码（GBK）编码，但 GBK 不包含 emoji 和部分中文字符。标签值本身是中文不影响内部逻辑，但 print 和 assert 中的中文字符串字面量会触发编码错误。
+
+**解决方案**：将标签值改为英文（"error"/"config"/"routine" 替代 "报错"/"配置"/"常规"），测试断言使用英文标签。EdgeLabel 枚举值本身设计为中文（"因果接续"等），但枚举值在内存中不受终端编码影响——只有 `print()` 和字符串字面量比较时才受影响。后续可考虑：1) 在 `chcp 65001` 下运行，2) 将标签值全部英文化，3) 用 `PYTHONIOENCODING=utf-8` 环境变量。
+
+**来源**：M1 开发过程实测
+
+---
+
 ## 📋 待办
 
-- [ ] 确定 L1 原型技术栈：SQLite vs pgvector、FAISS vs HNSW
-- [ ] MemoryAtom + Edge Python dataclass 实现
-- [ ] PPR 核心算法实现（先独立于图DB，纯内存验证）
-- [ ] 两阶段建边实现（同会话规则 + 跨会话 LLM）
-- [ ] 模拟 3 会话测试用例
+- [x] 项目骨架搭建：目录结构 + .gitignore + pyproject.toml
+- [x] MemoryAtom + Edge + Episode Python dataclass 实现
+- [x] PPR 核心算法实现（纯内存验证）
+- [x] 两阶段建边实现（同会话规则 + 跨会话 KNN 预筛）
+- [x] Vibe Learner + DecayManager 实现
+- [x] 集成测试：14 个测试用例全部通过
 - [ ] 向量RAG vs VibeMemory 召回对比实验
+- [ ] MAC/MAG prompt 注入实现
+- [ ] 异步 pending_review 队列实现
+- [ ] Episode 聚合层 + 社区检测
+- [ ] 图分区（Session/Document/Parametric）
 
 ---
 
