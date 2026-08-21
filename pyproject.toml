@@ -1,0 +1,9 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vibe-memory"
+version = "0.1.0"
+description = "VibeMemory: 多关系图智能体记忆系统"
+requires-python = ">=3.10"
