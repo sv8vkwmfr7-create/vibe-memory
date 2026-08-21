@@ -230,6 +230,11 @@ class VibeStorage:
         ).fetchall()
         return [self._row_to_edge(r) for r in rows]
 
+    def get_all_edges_raw(self) -> list[Edge]:
+        """获取所有边（含 stale/pending），用于 GC 稀疏化"""
+        rows = self.conn.execute("SELECT * FROM edges").fetchall()
+        return [self._row_to_edge(r) for r in rows]
+
     def update_edge(self, edge: Edge) -> None:
         self.conn.execute(
             """UPDATE edges SET

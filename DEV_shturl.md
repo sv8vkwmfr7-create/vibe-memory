@@ -48,10 +48,11 @@
 - [x] recall() 升级：4 阶段管道（embedding → filter → PPR → rank）
 - [x] 真实 embedding 验证实验：TF-IDF vs 标签匹配，噪声 40% vs 20%，确认语义 embedding 是关键瓶颈
 - [x] sentence-transformers 安装完成 + 语义实验 E/F（0% 噪声全链路完美）
-- [ ] 多租户隔离（Agent 命名空间 + 跨租户永不建边）
-- [ ] 冷启动（种子记忆 + 快速建边）
-- [ ] 可观测性（建边延迟/LLM调用占比/检索命中率/图规模）
-- [ ] GC 压缩优先（稀疏化→固定池→冷存储→淘汰）
+- [x] 多租户隔离（tenant_id 字段 + 跨租户永不建边 + 租户级检索 + 9 测试）
+- [x] SDK API 8 端点（store/batch/recall/link/migrate/forget/update/history/stats + 11 测试）
+- [x] 冷启动（种子记忆 + 快速建边 + 16 测试）
+- [x] 可观测性（MetricsCollector：延迟/吞吐/边来源/检索命中率/降级事件/图规模快照 + 17 测试）
+- [x] GC 压缩（GarbageCollector：稀疏化→固定池→冷存储→淘汰 + 19 测试）
 - [ ] 增量索引（实时规则边 + 批处理 LLM 边 + 回压控制）
 - [ ] API 完整 CRUD（store/recall/link/migrate/forget/update/history/stats）
 

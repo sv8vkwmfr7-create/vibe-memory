@@ -1,7 +1,7 @@
 """
 VibeMemory SDK — 统一入口
 
-嵌入式 Python SDK，8 个核心方法：
+嵌入式 Python SDK，9 个核心方法：
 
 store(content, session_id)       → 写入分片
 recall(query, mode)               → 检索记忆
@@ -11,6 +11,7 @@ forget(atom_id)                   → 删除分片
 update(atom_id, **fields)         → 更新元数据
 history(session_id, limit)        → 会话历史
 stats()                           → 统计信息
+collect_garbage()                 → GC 压缩
 
 用法：
     from vibe_memory import VibeMemory
@@ -43,6 +44,9 @@ from vibe_memory.retrieval.ppr import recall as _recall
 from vibe_memory.retrieval.seed_filter import SeedFilter
 from vibe_memory.embedding.provider import EmbeddingProvider, create_provider
 from vibe_memory.learner.learner import DecayManager
+from vibe_memory.coldstart import ColdStartManager, ColdPhase
+from vibe_memory.metrics import MetricsCollector
+from vibe_memory.gc import GarbageCollector, GCResult
 
 
 class VibeMemory:
@@ -86,6 +90,24 @@ class VibeMemory:
 
         # 衰减管理器
         self.decay_manager = DecayManager()
+
+        # 冷启动管理器
+        self.cold_start = ColdStartManager(
+            storage=self.storage,
+            agent_id=agent_id,
+            tenant_id=tenant_id,
+            embedding_provider=self.embedding,
+        )
+
+        # 可观测性
+        self.metrics = MetricsCollector()
+
+        # GC 垃圾回收
+        self.gc = GarbageCollector(
+            storage=self.storage,
+            agent_id=agent_id,
+            tenant_id=tenant_id,
+        )
 
         # 统计
         self._store_count: int = 0
@@ -149,8 +171,10 @@ class VibeMemory:
         # 持久化
         self.storage.insert_atom(atom)
         self._store_count += 1
+        self.cold_start.invalidate_cache()
+        self.metrics.record_store()
 
-        # 自动建边
+        # 冷启动阶段使用激进阈值建边
         if auto_build_edges:
             self._auto_build_edges(atom)
 
@@ -185,6 +209,7 @@ class VibeMemory:
                 self.storage.insert_atom(atom)
                 stored.append(atom)
                 self._store_count += 1
+                self.metrics.record_store()
 
         # 同会话建边
         if len(stored) >= 2:
@@ -192,6 +217,7 @@ class VibeMemory:
                 edge.tenant_id = self.tenant_id
                 self.storage.insert_edge(edge)
                 self._edge_count += 1
+                self.metrics.record_edge_built(source="rule", label=edge.label.value)
 
         # Episode 聚合
         self._auto_episode_aggregation(sid)
@@ -228,6 +254,10 @@ class VibeMemory:
             tenant_id=self.tenant_id,
         )
         self._recall_count += 1
+        self.metrics.record_recall(result_count=len(result.get("atoms", [])))
+
+        # 冷启动增强：结果不足时用种子记忆补充
+        result = self.cold_start.augment_recall(query, result)
 
         # 强化命中的分片和边
         for atom in result.get("atoms", []):
@@ -293,6 +323,7 @@ class VibeMemory:
 
         self.storage.insert_edge(edge)
         self._edge_count += 1
+        self.metrics.record_edge_built(source=edge.source.value, label=edge.label.value)
         return edge
 
     # ── 4. migrate ──
@@ -347,6 +378,7 @@ class VibeMemory:
             return False
 
         self.storage.delete_atom(atom_id)
+        self.cold_start.invalidate_cache()
         return True
 
     # ── 6. update ──
@@ -462,12 +494,53 @@ class VibeMemory:
         if self.decay_manager.learner:
             stats["learner_stats"] = self.decay_manager.learner.get_stats()
 
+        # 冷启动统计
+        stats["cold_start"] = self.cold_start.stats()
+
+        # 图规模快照（必须在 metrics.stats() 之前）
+        self.metrics.snapshot_graph_size(
+            atoms=len(all_atoms),
+            edges=len(all_edges),
+            active_atoms=active,
+            warm_atoms=warm,
+            cold_atoms=cold,
+        )
+
+        # 可观测性统计
+        stats["metrics"] = self.metrics.stats()
+
+        # GC 统计
+        stats["gc"] = self.gc.stats()
+
         return stats
+
+    # ── 9. collect_garbage ──
+
+    def collect_garbage(self, dry_run: bool = False) -> dict:
+        """
+        执行 GC 压缩管线。
+
+        Args:
+            dry_run: True 则只计算不实际删除
+
+        Returns:
+            GCResult dict
+        """
+        result = self.gc.collect(dry_run=dry_run)
+
+        # 记录到可观测性
+        if result.total_cleaned > 0:
+            self.metrics.snapshot_graph_size(
+                atoms=len(self.storage.get_atoms_by_agent(self.agent_id, tenant_id=self.tenant_id)),
+                edges=len(self.storage.get_all_edges()),
+            )
+
+        return result.to_dict()
 
     # ── 内部辅助 ──
 
     def _auto_build_edges(self, new_atom: MemoryAtom) -> None:
-        """自动为新分片建边"""
+        """自动为新分片建边（冷启动感知）"""
         existing = self.storage.get_atoms_by_agent(self.agent_id, tenant_id=self.tenant_id)
         # 排除自身
         existing = [a for a in existing if a.id != new_atom.id]
@@ -482,11 +555,17 @@ class VibeMemory:
                 edge.tenant_id = self.tenant_id
                 self.storage.insert_edge(edge)
                 self._edge_count += 1
+                self.metrics.record_edge_built(source="rule", label=edge.label.value)
 
-        # 跨会话建边
-        candidates = build_cross_session_candidates(new_atom, existing)
+        # 跨会话建边（冷启动感知阈值）
+        edge_sim = self.cold_start.get_edge_similarity_threshold()
+        merge_sim = self.cold_start.get_merge_similarity_threshold()
+        candidates = build_cross_session_candidates(
+            new_atom, existing,
+            high_similarity=merge_sim,
+            medium_similarity=edge_sim,
+        )
         for dup in candidates["duplicate"]:
-            # 合并
             merged = merge_atoms(dup, new_atom)
             merged.tenant_id = self.tenant_id
             self.storage.insert_atom(merged)
@@ -511,6 +590,7 @@ class VibeMemory:
                 )
                 self.storage.insert_edge(edge)
                 self._edge_count += 1
+                self.metrics.record_edge_built(source="rule", label=edge.label.value)
 
     def _auto_episode_aggregation(self, session_id: str) -> None:
         """自动 Episode 聚合"""
