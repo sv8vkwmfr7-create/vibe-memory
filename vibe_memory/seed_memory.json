@@ -1,0 +1,37 @@
+{
+    "version": "1.0",
+    "domain": "general",
+    "description": "Default seed memory for new VibeMemory agents. Provides basic reasoning patterns and common knowledge.",
+    "atoms": [
+        {
+            "content": "When encountering an error, first check the error message for clues about the root cause. Look for stack traces, error codes, and timestamps.",
+            "summary": "Error troubleshooting approach: check error messages, stack traces, codes, timestamps",
+            "tags": ["error", "troubleshooting", "debugging"],
+            "type": "session"
+        },
+        {
+            "content": "Configuration changes should be tracked and documented. Record the old value, new value, reason for change, and date of change.",
+            "summary": "Configuration change tracking: record old/new value, reason, date",
+            "tags": ["config", "best-practice", "documentation"],
+            "type": "session"
+        },
+        {
+            "content": "Before making a significant code change, understand the existing architecture and test coverage. Read related files, check documentation, and review existing tests.",
+            "summary": "Pre-change checklist: understand architecture, read docs, review tests",
+            "tags": ["code", "best-practice", "planning"],
+            "type": "session"
+        },
+        {
+            "content": "When multiple approaches are possible, prefer the simplest one that meets requirements. Avoid premature optimization and over-engineering.",
+            "summary": "Prefer simplicity: avoid premature optimization and over-engineering",
+            "tags": ["design", "best-practice", "simplicity"],
+            "type": "session"
+        },
+        {
+            "content": "Tests should be written before or alongside the code. Each test should verify a specific behavior. Edge cases and error paths should also be tested.",
+            "summary": "Testing principle: write tests alongside code, cover edge cases and error paths",
+            "tags": ["testing", "best-practice", "quality"],
+            "type": "session"
+        }
+    ]
+}
