@@ -198,6 +198,32 @@ f988873 feat(retrieval): PPR graph walk with 3 config modes
 
 ---
 
+## 实验 7：Phase 0 场景 3 — 配置变更追踪
+
+**日期**：2026-08-21
+
+**目标**：验证 VibeMemory 是否能跨会话追踪配置变更，以及修正链路的正确性。
+
+**方法**：用 VibeMemory SDK 模拟 3 个会话：
+- Session 1：3 条 CLAUDE.md 约定变更入库
+- Session 2：3 次查询验证召回
+- Session 3：修改降级原则（新增第 4 条），创建修正边
+
+**结果**：
+
+| 指标 | 值 |
+|------|-----|
+| 查询命中率 | 4/4 (100%) |
+| 噪声比例 | 0/13 (0%) |
+| 修正链路 | 新版本 + 旧版本同时出现 |
+| 用户需重复 | 不需要 |
+
+**结论**：⭐⭐⭐⭐⭐ 全维度满分。VibeMemory 的边标签过滤 + PPR 图检索在配置变更追踪场景同样表现完美，修正链路清晰可追溯。
+
+**代码**：`experiments/phase0_scenario3.py`
+
+---
+
 ## 待补充
 
 - [x] 向量RAG vs VibeMemory PPR 召回对比
