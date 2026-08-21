@@ -172,10 +172,8 @@ def personalized_pagerank(
         if max_delta < epsilon:
             break
 
-    # 去除种子节点（已在前置步骤中处理）
-    for sid in seed_ids:
-        if sid in scores:
-            del scores[sid]
+    # Keep seed nodes in scores (they are valid results)
+    # But mark them as seeds so recall() can prioritize non-seed results
 
     return scores
 
@@ -311,13 +309,48 @@ def recall(
 
 
 def _tag_match_score(query_lower: str, atom: MemoryAtom) -> float:
-    """标签匹配近似向量相似度（L1 无 embedding 时的 fallback）"""
+    """Tag + content match score (L1 fallback without embeddings).
+
+    Match query keywords against:
+    1. Atom tags
+    2. Atom content words
+    3. Atom summary words
+    """
     score = 0.0
+
+    # Tag matching: tag keywords in query
+    tag_keywords = {
+        "error": ["error", "timeout", "fail", "bug", "exception"],
+        "config": ["config", "timeout", "param", "setting", "change"],
+        "task": ["task", "done", "start", "continue"],
+        "query": ["query", "search", "lookup", "find", "weather"],
+        "decision": ["decision", "plan", "solution", "decide"],
+        "routine": ["fix", "passed", "ok", "done"],
+    }
+
     for tag in atom.tags:
-        if tag.lower() in query_lower:
-            score += 1.0
-    # 归一化
-    return score / max(len(atom.tags), 1)
+        keywords = tag_keywords.get(tag, [tag])
+        for kw in keywords:
+            if kw in query_lower:
+                score += 1.0
+                break
+
+    # Content matching: query words in atom content
+    query_words = set(query_lower.split())
+    content_lower = atom.content.lower()
+    for word in query_words:
+        if len(word) > 2 and word in content_lower:
+            score += 0.5
+
+    # Summary matching
+    summary_lower = atom.summary.lower()
+    for word in query_words:
+        if len(word) > 2 and word in summary_lower:
+            score += 0.3
+
+    # Normalize
+    max_score = len(atom.tags) + len(query_words) * 0.8
+    return min(score / max(max_score, 1), 1.0)
 
 
 def fallback_vector_topk(
