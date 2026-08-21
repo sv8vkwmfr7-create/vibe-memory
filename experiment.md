@@ -120,10 +120,39 @@ f988873 feat(retrieval): PPR graph walk with 3 config modes
 
 ---
 
-## 待补充（L1 原型实现后）
+## 实验 5：RAG vs VibeMemory 召回对比
 
-- [ ] 向量RAG（纯 Top-K 向量检索）vs VibeMemory（PPR 图检索）召回对比
-- [ ] Precision@K / Recall@K 量化
-- [ ] 不同三档操作点（precision/recall/budget）的召回差异
+**日期**：2026-08-22
+**场景**：3 会话模拟（API timeout 修复 → DB pool + 天气 → API 又超时），对比纯向量 Top-K vs VibeMemory PPR 图检索。
+
+**参数**：
+- 分片：7 个（3 会话）
+- 边：7 条（同会话 + 跨会话）
+- 查询："API timeout"
+- 操作点：precision（PPR α=0.3, 因果+修正边）
+
+**结果**：
+
+| 指标 | RAG (Top-K) | Vibe (precision) | Vibe (recall) |
+|------|-------------|-----------------|---------------|
+| Session 1 相关分片 | 3 | 3 | 3 |
+| Session 2 噪声 | 1 | **0** | **0** |
+| 总遍历节点 | 5 | 4 | 4 |
+| 噪声比例 | 20% | **0%** | **0%** |
+| 跨会话召回 | ✅ | ✅ | ✅ |
+
+**观察**：RAG 召回了 Session 2 的 DB pool 配置分片（"pool" 和 "config" 关键词匹配），这是噪声——与 API timeout 无关。VibeMemory PPR 图检索通过边标签过滤（precision 模式只走因果接续边），成功抑制了这条噪声。**噪声比例从 20% → 0%。**
+
+**结论**：VibeMemory 的边标签过滤 + PPR 图游走在精确模式下有效抑制了向量检索的虚假召回。噪声分片"DB pool"与 API timeout 在向量空间中因共享"config"标签而相似，但图结构中两者之间没有因果边——边标签过滤天然阻断了这条路径。
+
+---
+
+## 待补充
+
+- [x] 向量RAG vs VibeMemory PPR 召回对比
+- [ ] Precision@K / Recall@K 量化（需要人工标注数据集）
+- [ ] 不同三档操作点的召回差异
+- [ ] 图规模对检索延迟的影响（100/500/1000/5000 分片）
+- [ ] 边标签过滤开关的消融实验
 - [ ] 图规模对检索延迟的影响（100/500/1000/5000 分片）
 - [ ] 边标签过滤开关对噪声抑制的消融实验
