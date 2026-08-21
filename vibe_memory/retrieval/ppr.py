@@ -8,14 +8,23 @@ PPR (Personalized PageRank) 检索算法
 - precision: 高重启，窄探索，适合排错/安全关键
 - recall: 低重启，宽探索，适合创意发散
 - budget: 极高重启，几乎不探索，适合高频简单任务
+
+检索管道（v2）：
+1. 向量预筛（embedding provider）→ 种子节点
+2. 种子后过滤（图连通性）→ 高质量种子
+3. PPR 图游走（边标签过滤）
+4. 排序 + 构建注入上下文
 """
 
 from typing import Optional
 from datetime import datetime
 from collections import defaultdict
+import numpy as np
 
 from vibe_memory.models.memory_atom import MemoryAtom, Edge, EdgeLabel, EdgeStatus, GraphPartition
 from vibe_memory.storage.sqlite_store import VibeStorage
+from vibe_memory.embedding import index_flat, EmbeddingProvider, TfidfProvider
+from vibe_memory.retrieval.seed_filter import SeedFilter
 
 
 class PPRConfig:
@@ -236,17 +245,17 @@ def recall(
     storage: VibeStorage,
     mode: str = "precision",
     top_k: int = 20,
+    embedding_provider: Optional[EmbeddingProvider] = None,
+    seed_filter: Optional[SeedFilter] = None,
 ) -> dict:
     """
-    统一检索入口。
+    统一检索入口（v2：embedding provider + seed filter）。
 
-    三阶段：
-    1. 向量预筛 → 种子节点
-    2. PPR 图游走
-    3. 排序 + 构建注入上下文
-
-    L1 原型：向量预筛用标签匹配近似（无 embedding 时）。
-    后续接入 FAISS 后替换为真实 cos_sim。
+    四阶段：
+    1. 向量预筛（embedding provider）→ 种子节点
+    2. 种子后过滤（图连通性）→ 高质量种子
+    3. PPR 图游走（边标签过滤）
+    4. 排序 + 构建注入上下文
 
     Args:
         query: 查询文本
@@ -254,29 +263,49 @@ def recall(
         storage: 存储层
         mode: 操作点 ("precision" | "recall" | "budget")
         top_k: 向量预筛 top-K
+        embedding_provider: 向量化后端（None → TF-IDF）
+        seed_filter: 种子后过滤器（None → 默认配置）
 
     Returns:
-        {atoms, trace, mode, total_walked}
+        {atoms, trace, mode, total_walked, seed_count, filtered_count}
     """
-    # 阶段 1：向量预筛（L1 用标签匹配近似）
+    provider = embedding_provider or TfidfProvider()
+    seed_filter = seed_filter or SeedFilter()
+
+    # 阶段 1：向量预筛
     all_atoms = storage.get_atoms_by_agent(agent_id)
     active_atoms = [a for a in all_atoms if a.lifecycle.value in ("active", "warm")]
 
-    # 用标签匹配近似向量检索
-    query_lower = query.lower()
-    scored: list[tuple[MemoryAtom, float]] = []
-    for atom in active_atoms:
-        score = _tag_match_score(query_lower, atom)
-        if score > 0:
-            scored.append((atom, score))
+    if not active_atoms:
+        return {
+            "atoms": [], "trace": [], "mode": mode,
+            "total_walked": 0, "seed_count": 0, "filtered_count": 0,
+        }
 
-    scored.sort(key=lambda x: x[1], reverse=True)
-    seed_atoms = [a for a, _ in scored[:top_k]]
+    # 构建文档向量（首次拟合 + 增量编码）
+    documents = [a.content for a in active_atoms]
+    if isinstance(provider, TfidfProvider) and not provider._fitted:
+        provider.fit(documents)
+    doc_vectors = provider.encode(documents)
+    query_vec = provider.encode_query(query)
+
+    # 向量 Top-K
+    indices, _ = index_flat(doc_vectors, query_vec, top_k=top_k)
+    seed_atoms = [active_atoms[i] for i in indices if i < len(active_atoms)]
 
     if not seed_atoms:
-        return {"atoms": [], "trace": [], "mode": mode, "total_walked": 0}
+        return {
+            "atoms": [], "trace": [], "mode": mode,
+            "total_walked": 0, "seed_count": 0, "filtered_count": 0,
+        }
 
-    # 阶段 2：PPR 图游走
+    seed_count = len(seed_atoms)
+
+    # 阶段 2：种子后过滤
+    filtered_seeds = seed_filter.filter(seed_atoms, storage)
+    filtered_count = len(filtered_seeds)
+
+    # 阶段 3：PPR 图游走
     if mode == "precision":
         config = PPRConfig.precision()
     elif mode == "recall":
@@ -286,9 +315,9 @@ def recall(
     else:
         config = PPRConfig()
 
-    ppr_scores = personalized_pagerank(seed_atoms, storage, config)
+    ppr_scores = personalized_pagerank(filtered_seeds, storage, config)
 
-    # 阶段 3：排序 + 截断
+    # 阶段 4：排序 + 截断
     ranked = sorted(ppr_scores.items(), key=lambda x: x[1], reverse=True)
     ranked_ids = [aid for aid, _ in ranked[:config.top_n]]
     ranked_atoms = []
@@ -298,13 +327,15 @@ def recall(
             ranked_atoms.append(atom)
 
     # 构建 trace
-    trace = build_trace(seed_atoms, ranked_atoms, storage)
+    trace = build_trace(filtered_seeds, ranked_atoms, storage)
 
     return {
         "atoms": ranked_atoms,
         "trace": trace,
         "mode": mode,
         "total_walked": len(ppr_scores),
+        "seed_count": seed_count,
+        "filtered_count": filtered_count,
     }
 
 
@@ -358,20 +389,26 @@ def fallback_vector_topk(
     agent_id: str,
     storage: VibeStorage,
     top_k: int = 5,
+    embedding_provider: Optional[EmbeddingProvider] = None,
 ) -> list[MemoryAtom]:
     """
     降级策略：PPR 不可用时回退纯向量 Top-K（Bug 5 降级）。
 
     每模块有兜底，不可用时不崩溃只退化。
     """
+    provider = embedding_provider or TfidfProvider()
+
     all_atoms = storage.get_atoms_by_agent(agent_id)
     active_atoms = [a for a in all_atoms if a.lifecycle.value in ("active", "warm")]
 
-    query_lower = query.lower()
-    scored: list[tuple[MemoryAtom, float]] = []
-    for atom in active_atoms:
-        score = _tag_match_score(query_lower, atom)
-        scored.append((atom, score))
+    if not active_atoms:
+        return []
 
-    scored.sort(key=lambda x: x[1], reverse=True)
-    return [a for a, _ in scored[:top_k]]
+    documents = [a.content for a in active_atoms]
+    if isinstance(provider, TfidfProvider) and not provider._fitted:
+        provider.fit(documents)
+    doc_vectors = provider.encode(documents)
+    query_vec = provider.encode_query(query)
+
+    indices, _ = index_flat(doc_vectors, query_vec, top_k=top_k)
+    return [active_atoms[i] for i in indices if i < len(active_atoms)]

@@ -36,13 +36,18 @@
 
 - [x] Episode 聚合层（话题检测，标签重叠率判断话题边界）
 - [x] 模拟 3 会话跨会话召回测试（Session 3 成功召回 Session 1 的 timeout fix）
-- [ ] Louvain/Leiden 社区检测
-- [ ] 图分区实现（Session/Document/Parametric 三张独立图）
-- [ ] 向量RAG vs VibeMemory PPR 召回对比实验
+- [x] 向量RAG vs VibeMemory PPR 召回对比实验（噪声比例 20% → 0%）
+- [x] Louvain 社区检测（模块度最优化，局部优化 + 小社区合并）
+- [x] 图分区实现（GraphPartitionManager：Session/Document/Parametric 三张独立图 + 跨分区边 LOOKUP/INFLUENCE/REFERENCE/VERSION + GC evict_atoms）
 - [ ] 简单 benchmark
 
 ### M3｜生产就绪
 
+- [x] Embedding 模块：TF-IDF（纯 numpy）+ SentenceTransformerProvider（auto 降级）+ 统一接口
+- [x] 种子后过滤：图连通性检测 + 社区一致性（SeedFilter）
+- [x] recall() 升级：4 阶段管道（embedding → filter → PPR → rank）
+- [x] 真实 embedding 验证实验：TF-IDF vs 标签匹配，噪声 40% vs 20%，确认语义 embedding 是关键瓶颈
+- [x] sentence-transformers 安装完成 + 语义实验 E/F（0% 噪声全链路完美）
 - [ ] 多租户隔离（Agent 命名空间 + 跨租户永不建边）
 - [ ] 冷启动（种子记忆 + 快速建边）
 - [ ] 可观测性（建边延迟/LLM调用占比/检索命中率/图规模）
