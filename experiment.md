@@ -224,6 +224,34 @@ f988873 feat(retrieval): PPR graph walk with 3 config modes
 
 ---
 
+## 实验 8：Phase 0 场景 5 — 多任务切换
+
+**日期**：2026-08-21
+
+**目标**：验证 VibeMemory 能否在交错会话中正确区分两个独立任务（DB 迁移 vs 前端重构），不混淆上下文。
+
+**方法**：用 VibeMemory SDK 模拟 4 个交错会话，两个完全不相交的任务域：
+- Task A：MySQL → PostgreSQL 数据库迁移
+- Task B：React → Vue 前端重构
+
+**结果**：
+
+| 指标 | 值 |
+|------|-----|
+| Task A 噪声 | 0/4 (0%) |
+| Task B 噪声 | 0/3 (0%) |
+| 总体噪声 | 0/7 (0%) |
+| 查询命中率 | 4/4 (100%) |
+| 任务隔离 | 完美 |
+
+**关键发现**：使用 budget 模式（α=0.5 高重启 + 仅因果边）+ top_k=2 紧种子，可以在仅 8 个原子的图中实现完美的任务隔离。TF-IDF 虽然无法区分相似词汇，但图结构（因果链路）自然隔离了不同任务域。
+
+**结论**：⭐⭐⭐⭐⭐ 全维度满分。VibeMemory 的 PPR 图结构在多任务场景下表现完美——即使 embedding 层有噪声，图结构也能将检索限制在正确的任务上下文中。
+
+**代码**：`experiments/phase0_scenario5.py`
+
+---
+
 ## 待补充
 
 - [x] 向量RAG vs VibeMemory PPR 召回对比
