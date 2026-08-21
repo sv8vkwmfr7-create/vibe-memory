@@ -4,6 +4,47 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "vibe-memory"
-version = "0.1.0"
-description = "VibeMemory: 多关系图智能体记忆系统"
+version = "0.3.0"
+description = "VibeMemory: Multi-relationship graph memory system for AI agents"
+readme = "README.md"
 requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "Vibe Memory Contributors"}
+]
+keywords = ["memory", "graph", "agent", "llm", "rag", "ppr", "vector-search"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+dependencies = [
+    "numpy>=1.24",
+]
+
+[project.optional-dependencies]
+semantic = ["sentence-transformers>=2.2"]
+dev = ["pytest>=7.0", "pytest-cov>=4.0"]
+
+[project.urls]
+Homepage = "https://github.com/YOUR_USERNAME/vibe-memory"
+Repository = "https://github.com/YOUR_USERNAME/vibe-memory.git"
+Issues = "https://github.com/YOUR_USERNAME/vibe-memory/issues"
+
+[tool.setuptools.packages.find]
+include = ["vibe_memory*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --tb=short"
