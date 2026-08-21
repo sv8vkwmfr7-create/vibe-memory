@@ -1,0 +1,344 @@
+"""
+PPR (Personalized PageRank) 检索算法
+
+替代 BFS 层级展开。HippoRAG 启发：加权随机游走，收敛替代 max_depth 硬截断。
+一次 PPR 游走 > 多轮迭代检索，便宜 10-30x。
+
+三档可配置操作点（Bug 11 WISE 启发）：
+- precision: 高重启，窄探索，适合排错/安全关键
+- recall: 低重启，宽探索，适合创意发散
+- budget: 极高重启，几乎不探索，适合高频简单任务
+"""
+
+from typing import Optional
+from datetime import datetime
+from collections import defaultdict
+
+from vibe_memory.models.memory_atom import MemoryAtom, Edge, EdgeLabel, EdgeStatus, GraphPartition
+from vibe_memory.storage.sqlite_store import VibeStorage
+
+
+class PPRConfig:
+    """PPR 三档可配置操作点"""
+
+    def __init__(
+        self,
+        restart_probability: float = 0.15,
+        convergence_threshold: float = 0.001,
+        max_iterations: int = 100,
+        allowed_edge_labels: Optional[list[EdgeLabel]] = None,
+        top_n: int = 10,
+        reverse_weight_penalty: float = 0.5,
+        min_edge_weight: float = 0.05,
+    ):
+        self.restart_probability = restart_probability
+        self.convergence_threshold = convergence_threshold
+        self.max_iterations = max_iterations
+        self.allowed_edge_labels = allowed_edge_labels or list(EdgeLabel)
+        self.top_n = top_n
+        self.reverse_weight_penalty = reverse_weight_penalty
+        self.min_edge_weight = min_edge_weight
+
+    @classmethod
+    def precision(cls) -> "PPRConfig":
+        """精确优先：高重启，只走因果+修正边"""
+        return cls(
+            restart_probability=0.3,
+            convergence_threshold=0.001,
+            allowed_edge_labels=[EdgeLabel.CAUSAL, EdgeLabel.REVISION],
+            top_n=5,
+        )
+
+    @classmethod
+    def recall(cls) -> "PPRConfig":
+        """召回优先：低重启，走所有边类型"""
+        return cls(
+            restart_probability=0.1,
+            convergence_threshold=0.0005,
+            allowed_edge_labels=[
+                EdgeLabel.CAUSAL, EdgeLabel.SIMILAR,
+                EdgeLabel.REVISION, EdgeLabel.ADJACENT,
+            ],
+            top_n=15,
+        )
+
+    @classmethod
+    def budget(cls) -> "PPRConfig":
+        """成本优先：极高重启，只走因果边"""
+        return cls(
+            restart_probability=0.5,
+            convergence_threshold=0.01,
+            allowed_edge_labels=[EdgeLabel.CAUSAL],
+            top_n=3,
+        )
+
+
+def personalized_pagerank(
+    seed_atoms: list[MemoryAtom],
+    storage: VibeStorage,
+    config: Optional[PPRConfig] = None,
+) -> dict[str, float]:
+    """
+    Personalized PageRank 图游走。
+
+    算法：
+    1. 从种子节点均匀分配初始分数
+    2. 每轮迭代：
+       - 以 alpha 概率重启到种子节点
+       - 以 (1-alpha) 概率沿边游走到邻居
+       - 游走概率 = 边权重 × 置信度 × 标签匹配度
+       - 双向遍历：逆方向降权 0.5
+    3. 收敛条件：所有节点分数变化 < epsilon
+
+    Args:
+        seed_atoms: 种子分片（向量检索 top-K 结果）
+        storage: 存储层（用于获取边）
+        config: PPR 配置
+
+    Returns:
+        {atom_id: ppr_score} 按分数降序
+    """
+    cfg = config or PPRConfig()
+
+    # 初始化分数：种子节点均匀分配
+    scores: dict[str, float] = {}
+    seed_ids = set()
+    for atom in seed_atoms:
+        scores[atom.id] = 1.0 / len(seed_atoms)
+        seed_ids.add(atom.id)
+
+    # 预加载所有边（避免逐条查询）
+    all_edges = storage.get_all_edges()
+    outgoing: dict[str, list[Edge]] = defaultdict(list)
+    incoming: dict[str, list[Edge]] = defaultdict(list)
+    for edge in all_edges:
+        if edge.status != EdgeStatus.ACTIVE:
+            continue
+        if edge.label not in cfg.allowed_edge_labels:
+            continue
+        outgoing[edge.from_atom_id].append(edge)
+        incoming[edge.to_atom_id].append(edge)
+
+    alpha = cfg.restart_probability
+    epsilon = cfg.convergence_threshold
+
+    for _ in range(cfg.max_iterations):
+        new_scores: dict[str, float] = defaultdict(float)
+        max_delta = 0.0
+
+        for atom_id, score in scores.items():
+            if score <= 0:
+                continue
+
+            # 重启：alpha 概率回到种子
+            restart_share = score * alpha / len(seed_ids)
+            for sid in seed_ids:
+                new_scores[sid] += restart_share
+
+            # 正向游走：沿 outgoing edges
+            for edge in outgoing.get(atom_id, []):
+                walk_prob = score * (1 - alpha) * edge.weight * edge.confidence
+                if walk_prob < cfg.min_edge_weight:
+                    continue
+                new_scores[edge.to_atom_id] += walk_prob
+
+            # 反向游走：沿 incoming edges（Bug 2 双向遍历，逆方向降权）
+            for edge in incoming.get(atom_id, []):
+                walk_prob = (
+                    score * (1 - alpha) * edge.weight * edge.confidence
+                    * cfg.reverse_weight_penalty
+                )
+                if walk_prob < cfg.min_edge_weight:
+                    continue
+                new_scores[edge.from_atom_id] += walk_prob
+
+        # 归一化
+        total = sum(new_scores.values())
+        if total > 0:
+            for nid in new_scores:
+                new_scores[nid] /= total
+
+        # 收敛检测
+        all_ids = set(scores.keys()) | set(new_scores.keys())
+        for nid in all_ids:
+            old = scores.get(nid, 0.0)
+            new_val = new_scores.get(nid, 0.0)
+            delta = abs(new_val - old)
+            if delta > max_delta:
+                max_delta = delta
+
+        scores = new_scores
+
+        if max_delta < epsilon:
+            break
+
+    # 去除种子节点（已在前置步骤中处理）
+    for sid in seed_ids:
+        if sid in scores:
+            del scores[sid]
+
+    return scores
+
+
+def build_trace(
+    seed_atoms: list[MemoryAtom],
+    ranked_atoms: list[MemoryAtom],
+    storage: VibeStorage,
+) -> list[dict]:
+    """
+    构建检索路径（Bug 18 检索路径可解释性）。
+
+    对每个召回分片，找到从种子到它的最短路径。
+
+    Returns:
+        [{from, to, edge_label, depth, confidence}, ...]
+    """
+    traces: list[dict] = []
+    seed_ids = {a.id for a in seed_atoms}
+
+    # 简单路径：对每个召回分片，检查是否有直连边到任何种子
+    all_edges = storage.get_all_edges()
+    edge_map: dict[tuple[str, str], Edge] = {}
+    for e in all_edges:
+        edge_map[(e.from_atom_id, e.to_atom_id)] = e
+
+    for atom in ranked_atoms:
+        for seed_id in seed_ids:
+            # 正向：种子 -> 召回分片
+            key = (seed_id, atom.id)
+            if key in edge_map:
+                edge = edge_map[key]
+                traces.append({
+                    "from": seed_id,
+                    "to": atom.id,
+                    "edge_label": edge.label.value,
+                    "depth": 1,
+                    "confidence": edge.confidence,
+                })
+                break
+            # 反向：召回分片 -> 种子
+            key = (atom.id, seed_id)
+            if key in edge_map:
+                edge = edge_map[key]
+                traces.append({
+                    "from": seed_id,
+                    "to": atom.id,
+                    "edge_label": edge.label.value,
+                    "depth": 1,
+                    "confidence": edge.confidence,
+                })
+                break
+
+    return traces
+
+
+def recall(
+    query: str,
+    agent_id: str,
+    storage: VibeStorage,
+    mode: str = "precision",
+    top_k: int = 20,
+) -> dict:
+    """
+    统一检索入口。
+
+    三阶段：
+    1. 向量预筛 → 种子节点
+    2. PPR 图游走
+    3. 排序 + 构建注入上下文
+
+    L1 原型：向量预筛用标签匹配近似（无 embedding 时）。
+    后续接入 FAISS 后替换为真实 cos_sim。
+
+    Args:
+        query: 查询文本
+        agent_id: Agent 标识
+        storage: 存储层
+        mode: 操作点 ("precision" | "recall" | "budget")
+        top_k: 向量预筛 top-K
+
+    Returns:
+        {atoms, trace, mode, total_walked}
+    """
+    # 阶段 1：向量预筛（L1 用标签匹配近似）
+    all_atoms = storage.get_atoms_by_agent(agent_id)
+    active_atoms = [a for a in all_atoms if a.lifecycle.value in ("active", "warm")]
+
+    # 用标签匹配近似向量检索
+    query_lower = query.lower()
+    scored: list[tuple[MemoryAtom, float]] = []
+    for atom in active_atoms:
+        score = _tag_match_score(query_lower, atom)
+        if score > 0:
+            scored.append((atom, score))
+
+    scored.sort(key=lambda x: x[1], reverse=True)
+    seed_atoms = [a for a, _ in scored[:top_k]]
+
+    if not seed_atoms:
+        return {"atoms": [], "trace": [], "mode": mode, "total_walked": 0}
+
+    # 阶段 2：PPR 图游走
+    if mode == "precision":
+        config = PPRConfig.precision()
+    elif mode == "recall":
+        config = PPRConfig.recall()
+    elif mode == "budget":
+        config = PPRConfig.budget()
+    else:
+        config = PPRConfig()
+
+    ppr_scores = personalized_pagerank(seed_atoms, storage, config)
+
+    # 阶段 3：排序 + 截断
+    ranked = sorted(ppr_scores.items(), key=lambda x: x[1], reverse=True)
+    ranked_ids = [aid for aid, _ in ranked[:config.top_n]]
+    ranked_atoms = []
+    for aid in ranked_ids:
+        atom = storage.get_atom(aid)
+        if atom:
+            ranked_atoms.append(atom)
+
+    # 构建 trace
+    trace = build_trace(seed_atoms, ranked_atoms, storage)
+
+    return {
+        "atoms": ranked_atoms,
+        "trace": trace,
+        "mode": mode,
+        "total_walked": len(ppr_scores),
+    }
+
+
+def _tag_match_score(query_lower: str, atom: MemoryAtom) -> float:
+    """标签匹配近似向量相似度（L1 无 embedding 时的 fallback）"""
+    score = 0.0
+    for tag in atom.tags:
+        if tag.lower() in query_lower:
+            score += 1.0
+    # 归一化
+    return score / max(len(atom.tags), 1)
+
+
+def fallback_vector_topk(
+    query: str,
+    agent_id: str,
+    storage: VibeStorage,
+    top_k: int = 5,
+) -> list[MemoryAtom]:
+    """
+    降级策略：PPR 不可用时回退纯向量 Top-K（Bug 5 降级）。
+
+    每模块有兜底，不可用时不崩溃只退化。
+    """
+    all_atoms = storage.get_atoms_by_agent(agent_id)
+    active_atoms = [a for a in all_atoms if a.lifecycle.value in ("active", "warm")]
+
+    query_lower = query.lower()
+    scored: list[tuple[MemoryAtom, float]] = []
+    for atom in active_atoms:
+        score = _tag_match_score(query_lower, atom)
+        scored.append((atom, score))
+
+    scored.sort(key=lambda x: x[1], reverse=True)
+    return [a for a, _ in scored[:top_k]]

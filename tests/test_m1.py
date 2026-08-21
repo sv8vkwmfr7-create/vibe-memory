@@ -20,6 +20,9 @@ from vibe_memory.edges.edge_builder import (
     merge_atoms,
 )
 from vibe_memory.storage.sqlite_store import VibeStorage
+from vibe_memory.retrieval.ppr import (
+    PPRConfig, personalized_pagerank, recall, fallback_vector_topk,
+)
 
 
 def test_memory_atom():
@@ -242,6 +245,137 @@ def test_storage():
     print("[PASS] SQLite storage test")
 
 
+def test_ppr_config():
+    """Test PPR config modes"""
+    precision = PPRConfig.precision()
+    assert precision.restart_probability == 0.3
+    assert precision.top_n == 5
+    assert EdgeLabel.CAUSAL in precision.allowed_edge_labels
+    assert EdgeLabel.REVISION in precision.allowed_edge_labels
+    assert EdgeLabel.SIMILAR not in precision.allowed_edge_labels
+
+    recall_cfg = PPRConfig.recall()
+    assert recall_cfg.restart_probability == 0.1
+    assert recall_cfg.top_n == 15
+    assert EdgeLabel.SIMILAR in recall_cfg.allowed_edge_labels
+
+    budget_cfg = PPRConfig.budget()
+    assert budget_cfg.restart_probability == 0.5
+    assert budget_cfg.top_n == 3
+
+    print("[PASS] PPR config test")
+
+
+def test_ppr_walk():
+    """Test PPR graph walk with a simple chain"""
+    store = VibeStorage(":memory:")
+
+    # Create 3 atoms in a chain: a1 -> a2 -> a3
+    a1 = MemoryAtom(
+        id="a1", agent_id="agent-1", session_id="s1",
+        content="Error: API timeout", summary="API timeout",
+        tags=["error", "config"],
+    )
+    a2 = MemoryAtom(
+        id="a2", agent_id="agent-1", session_id="s1",
+        content="Changed timeout to 60s", summary="Change timeout",
+        tags=["config"],
+    )
+    a3 = MemoryAtom(
+        id="a3", agent_id="agent-1", session_id="s1",
+        content="Test passed", summary="Test passed",
+        tags=["routine"],
+    )
+    store.insert_atom(a1)
+    store.insert_atom(a2)
+    store.insert_atom(a3)
+
+    # Create causal edges: a1->a2 (causal), a2->a3 (adjacent, weak)
+    e1 = Edge(
+        id="e1", from_atom_id="a1", to_atom_id="a2",
+        label=EdgeLabel.CAUSAL, confidence=0.9, weight=1.0,
+    )
+    e2 = Edge(
+        id="e2", from_atom_id="a2", to_atom_id="a3",
+        label=EdgeLabel.ADJACENT, confidence=0.3, weight=0.5,
+    )
+    store.insert_edge(e1)
+    store.insert_edge(e2)
+
+    # PPR from a1 as seed
+    seeds = [a1]
+    scores = personalized_pagerank(seeds, store, PPRConfig.precision())
+
+    # a2 should be reachable via causal edge
+    assert "a2" in scores
+    # a3 should NOT be reachable in precision mode (adjacent edge filtered)
+    assert "a3" not in scores or scores["a3"] < 0.01
+
+    # Recall mode should reach a3
+    scores_recall = personalized_pagerank(seeds, store, PPRConfig.recall())
+    assert "a2" in scores_recall
+    assert "a3" in scores_recall
+
+    print("[PASS] PPR walk test")
+
+
+def test_recall_api():
+    """Test unified recall API"""
+    store = VibeStorage(":memory:")
+
+    a1 = MemoryAtom(
+        id="r1", agent_id="agent-1", session_id="s1",
+        content="Fixed API timeout error", summary="Fix timeout",
+        tags=["error", "config"],
+    )
+    a2 = MemoryAtom(
+        id="r2", agent_id="agent-1", session_id="s1",
+        content="Changed timeout from 30s to 60s", summary="Change timeout",
+        tags=["config"],
+    )
+    store.insert_atom(a1)
+    store.insert_atom(a2)
+
+    e1 = Edge(
+        id="re1", from_atom_id="r1", to_atom_id="r2",
+        label=EdgeLabel.CAUSAL, confidence=0.9,
+    )
+    store.insert_edge(e1)
+
+    # Recall with precision mode
+    result = recall("timeout error", "agent-1", store, mode="precision")
+    assert "atoms" in result
+    assert "trace" in result
+    assert result["mode"] == "precision"
+    assert result["total_walked"] >= 0
+
+    print("[PASS] recall API test")
+
+
+def test_fallback_vector_topk():
+    """Test fallback vector top-k (degradation strategy)"""
+    store = VibeStorage(":memory:")
+
+    a1 = MemoryAtom(
+        id="f1", agent_id="agent-1", session_id="s1",
+        content="API timeout error", summary="Timeout",
+        tags=["error", "config"],
+    )
+    a2 = MemoryAtom(
+        id="f2", agent_id="agent-1", session_id="s1",
+        content="Weather forecast", summary="Weather",
+        tags=["query"],
+    )
+    store.insert_atom(a1)
+    store.insert_atom(a2)
+
+    results = fallback_vector_topk("timeout", "agent-1", store, top_k=2)
+    assert len(results) >= 1
+    assert results[0].id == "f1"  # "timeout" matches error+config
+
+    print("[PASS] fallback vector top-k test")
+
+
 def run_all():
     print("=" * 50)
     print("VibeMemory L1 Prototype Tests")
@@ -254,6 +388,10 @@ def run_all():
     test_cross_session_candidates()
     test_merge_atoms()
     test_storage()
+    test_ppr_config()
+    test_ppr_walk()
+    test_recall_api()
+    test_fallback_vector_topk()
 
     print()
     print("=" * 50)
