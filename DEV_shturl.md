@@ -53,8 +53,8 @@
 - [x] 冷启动（种子记忆 + 快速建边 + 16 测试）
 - [x] 可观测性（MetricsCollector：延迟/吞吐/边来源/检索命中率/降级事件/图规模快照 + 17 测试）
 - [x] GC 压缩（GarbageCollector：稀疏化→固定池→冷存储→淘汰 + 19 测试）
-- [ ] 增量索引（实时规则边 + 批处理 LLM 边 + 回压控制）
-- [ ] API 完整 CRUD（store/recall/link/migrate/forget/update/history/stats）
+- [x] 增量索引（IncrementalIndexer：实时规则边 + 批处理 LLM 边 + 回压控制 + 19 测试）
+- [x] API 完整 CRUD（store/recall/link/migrate/forget/update/history/stats + collect_garbage + flush_index）
 
 ---
 

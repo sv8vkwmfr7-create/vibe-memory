@@ -47,6 +47,7 @@ from vibe_memory.learner.learner import DecayManager
 from vibe_memory.coldstart import ColdStartManager, ColdPhase
 from vibe_memory.metrics import MetricsCollector
 from vibe_memory.gc import GarbageCollector, GCResult
+from vibe_memory.indexer import IncrementalIndexer
 
 
 class VibeMemory:
@@ -104,6 +105,13 @@ class VibeMemory:
 
         # GC 垃圾回收
         self.gc = GarbageCollector(
+            storage=self.storage,
+            agent_id=agent_id,
+            tenant_id=tenant_id,
+        )
+
+        # 增量索引
+        self.indexer = IncrementalIndexer(
             storage=self.storage,
             agent_id=agent_id,
             tenant_id=tenant_id,
@@ -177,6 +185,9 @@ class VibeMemory:
         # 冷启动阶段使用激进阈值建边
         if auto_build_edges:
             self._auto_build_edges(atom)
+
+        # 增量索引：自动入队 + 触发 flush
+        self.indexer.on_store()
 
         # 自动 Episode
         if auto_episode:
@@ -512,6 +523,9 @@ class VibeMemory:
         # GC 统计
         stats["gc"] = self.gc.stats()
 
+        # 增量索引统计
+        stats["indexer"] = self.indexer.stats()
+
         return stats
 
     # ── 9. collect_garbage ──
@@ -537,6 +551,20 @@ class VibeMemory:
 
         return result.to_dict()
 
+    # ── 10. flush_index ──
+
+    def flush_index(self, max_batch: Optional[int] = None) -> int:
+        """
+        批量处理增量索引队列中的跨会话边候选。
+
+        Args:
+            max_batch: 最大处理数量（None 则用默认 batch_size）
+
+        Returns:
+            创建的边数量
+        """
+        return self.indexer.flush(max_batch=max_batch)
+
     # ── 内部辅助 ──
 
     def _auto_build_edges(self, new_atom: MemoryAtom) -> None:
@@ -557,7 +585,7 @@ class VibeMemory:
                 self._edge_count += 1
                 self.metrics.record_edge_built(source="rule", label=edge.label.value)
 
-        # 跨会话建边（冷启动感知阈值）
+        # 跨会话建边（冷启动感知阈值）→ 增量索引：入队
         edge_sim = self.cold_start.get_edge_similarity_threshold()
         merge_sim = self.cold_start.get_merge_similarity_threshold()
         candidates = build_cross_session_candidates(
@@ -574,23 +602,11 @@ class VibeMemory:
             self._store_count += 1
             return
 
+        # 跨会话相似候选 → 入队（增量索引）
         for sim in candidates["similar"]:
-            label, conf = classify_cross_session_edge(new_atom, sim)
-            if conf >= 0.3:
-                edge = Edge(
-                    id=str(uuid.uuid4()),
-                    from_atom_id=new_atom.id,
-                    to_atom_id=sim.id,
-                    tenant_id=self.tenant_id,
-                    label=label,
-                    confidence=conf,
-                    source=EdgeSource.RULE,
-                    created_at=datetime.now(),
-                    status=EdgeStatus.ACTIVE,
-                )
-                self.storage.insert_edge(edge)
-                self._edge_count += 1
-                self.metrics.record_edge_built(source="rule", label=edge.label.value)
+            from vibe_memory.edges.edge_builder import _tag_overlap_ratio
+            sim_score = _tag_overlap_ratio(new_atom, sim)
+            self.indexer.enqueue(new_atom, sim, sim_score)
 
     def _auto_episode_aggregation(self, session_id: str) -> None:
         """自动 Episode 聚合"""
