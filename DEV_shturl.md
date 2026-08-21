@@ -34,14 +34,12 @@
 
 ### M2｜功能增强
 
-- [ ] Episode 聚合层（话题检测 + 社区检测 Louvain/Leiden）
-- [ ] Vibe Learner 在线学习（采纳反馈→调整衰减速率）
-- [ ] Surprise-based 分片入库（选择性入库，减少分片总数）
+- [x] Episode 聚合层（话题检测，标签重叠率判断话题边界）
+- [x] 模拟 3 会话跨会话召回测试（Session 3 成功召回 Session 1 的 timeout fix）
+- [ ] Louvain/Leiden 社区检测
 - [ ] 图分区实现（Session/Document/Parametric 三张独立图）
-- [ ] 连续衰减 + Hebbian 强化（替代离散状态机）
-- [ ] 记忆融合（分片合并 + 边继承）
-- [ ] 单元测试覆盖
-- [ ] 简单 benchmark：向量RAG vs VibeMemory 召回对比
+- [ ] 向量RAG vs VibeMemory PPR 召回对比实验
+- [ ] 简单 benchmark
 
 ### M3｜生产就绪
 
