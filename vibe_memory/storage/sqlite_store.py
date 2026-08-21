@@ -163,16 +163,18 @@ class VibeStorage:
     def update_atom(self, atom: MemoryAtom) -> None:
         self.conn.execute(
             """UPDATE atoms SET
-                weight=?, decay_rate=?, lifecycle=?, access_count=?,
-                last_accessed=?, adopted_count=?, ignored_count=?,
-                episode_id=?, episode_position=?, version=?
+                content=?, summary=?, type=?, tags=?, weight=?, decay_rate=?,
+                lifecycle=?, access_count=?, last_accessed=?, adopted_count=?,
+                ignored_count=?, confidence=?, episode_id=?, episode_position=?,
+                version=?
             WHERE id=?""",
             (
-                atom.weight, atom.decay_rate, atom.lifecycle.value,
-                atom.access_count,
+                atom.content, atom.summary, atom.type.value,
+                json.dumps(atom.tags), atom.weight, atom.decay_rate,
+                atom.lifecycle.value, atom.access_count,
                 atom.last_accessed.isoformat() if atom.last_accessed else None,
                 atom.adopted_count, atom.ignored_count,
-                atom.episode_id, atom.episode_position,
+                atom.confidence, atom.episode_id, atom.episode_position,
                 atom.version, atom.id,
             ),
         )
@@ -186,7 +188,7 @@ class VibeStorage:
 
     def insert_edge(self, edge: Edge) -> None:
         self.conn.execute(
-            """INSERT INTO edges (
+            """INSERT OR REPLACE INTO edges (
                 id, from_atom_id, to_atom_id, tenant_id, label, weight, decay_rate,
                 confidence, source, created_at, last_accessed, status,
                 cross_partition, version
