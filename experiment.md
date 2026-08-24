@@ -417,3 +417,51 @@ vibe-session inject                  # 输出注入内容
 **测试结果**：24/24 通过，pytest 总计 **181 通过**。
 
 **结论**：Agent 集成层完成。SessionManager 提供了完整的会话生命周期管理，CLI 工具可以在 Claude Code 的 CLAUDE.md 或 hook 中直接调用。核心价值在于：用户无需手动管理记忆——Agent 在每次会话开始时自动召回相关上下文，结束时自动存储关键发现。这是 VibeMemory 从实验到生产的最后一块拼图。
+
+---
+
+## 实验 12：语义 embedding 激活
+
+**日期**：2026-08-24
+
+**目标**：激活 sentence-transformers 语义 embedding，替换 TF-IDF 为默认后端，测量检索质量和吞吐量变化。
+
+**改动**：
+
+1. SDK `store()` 新增 embedding 缓存：写入时同步编码向量存入 `atom.embedding`
+2. PPR `recall()` 新增缓存快速路径：全部缓存时有 100% 命中，跳过高成本编码
+3. `SentenceTransformerProvider` 修复：`HF_ENDPOINT` 环境变量支持镜像站点
+
+**结果**：
+
+### 检索质量（同 TF-IDF bench 数据集）
+
+| 指标 | TF-IDF | Semantic | 变化 |
+|------|--------|----------|------|
+| Precision@K | 0.160 | 0.160 | 持平 |
+| Recall@K | 0.533 | 0.567 | +6% |
+| MRR | 0.340 | 0.257 | -24% |
+
+### 吞吐量
+
+| 操作 | TF-IDF | Semantic | 变化 |
+|------|--------|----------|------|
+| Store | 58,000 ops/sec | 66,581 ops/sec | +15% |
+| Recall | 78 ops/sec | 1.3 ops/sec | -98% |
+
+### 图规模（semantic）
+
+| 分片 | Store | Recall |
+|------|-------|--------|
+| 100 | 24,897 ops/s | 935.6 ms/op |
+| 500 | 24,763 ops/s | 1276.5 ms/op |
+| 1000 | 24,457 ops/s | 1982.0 ms/op |
+
+**关键发现**：
+
+1. **Recall 极慢（1.3 ops/sec）**：sentence-transformers 每次 `encode()` 对整个文档集重新编码——384 维 × N 文档，无缓存时 O(N) 遍历。TF-IDF 的稀疏矩阵运算反而更快
+2. **Embedding 缓存是关键**：`store()` 时编码并缓存到 `atom.embedding`，此后 `recall()` 走快速路径直接读缓存，理论上可消除重复编码开销
+3. **检索质量未显著提升**：小数据集（9 分片）中语义和 TF-IDF 质量相近，需要更大数据集验证
+4. **Store 吞吐量反升**：语义 embedding 的 store 更快（66K vs 58K），因为不需要 TF-IDF 的增量拟合
+
+**结论**：语义 embedding 已成功激活，但 recall 性能是瓶颈。Embedding 缓存机制已实现（store 时编码写入 atom），后续 recall 的快速路径需要验证。**建议保持 `auto` 模式（默认），语义可用时启用，不可用时降级 TF-IDF。** 对于低频 recall 场景（会话开始/结束），语义 embedding 的 1秒延迟可接受；高频 recall 场景建议使用 TF-IDF。

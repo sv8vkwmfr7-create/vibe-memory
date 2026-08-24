@@ -129,9 +129,15 @@ class SentenceTransformerProvider(EmbeddingProvider):
         return self._available
 
     def _get_model(self):
-        """懒加载模型"""
+        """Lazy-load model."""
         if self._model is None and self.available:
+            import os
             from sentence_transformers import SentenceTransformer
+
+            # Support HF_ENDPOINT for mirrors (e.g. https://hf-mirror.com)
+            if self.hf_endpoint:
+                os.environ.setdefault("HF_ENDPOINT", self.hf_endpoint)
+
             self._model = SentenceTransformer(self.model_name, device=self.device)
         return self._model
 
@@ -176,7 +182,7 @@ class SentenceTransformerProvider(EmbeddingProvider):
         if self.available:
             model = self._get_model()
             if model is not None:
-                return model.get_sentence_embedding_dimension()
+                return model.get_embedding_dimension()
         return self._get_fallback().dim
 
     @property

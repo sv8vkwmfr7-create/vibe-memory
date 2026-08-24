@@ -285,11 +285,23 @@ def recall(
             "total_walked": 0, "seed_count": 0, "filtered_count": 0,
         }
 
-    # 构建文档向量（首次拟合 + 增量编码）
+    # 构建文档向量（优先使用缓存）
     documents = [a.content for a in active_atoms]
-    if isinstance(provider, TfidfProvider) and not provider._fitted:
-        provider.fit(documents)
-    doc_vectors = provider.encode(documents)
+
+    # Try cached embeddings first
+    cached_atoms = [a for a in active_atoms if a.embedding is not None]
+    if len(cached_atoms) == len(active_atoms):
+        # All cached — fast path
+        doc_vectors = np.array([a.embedding for a in active_atoms])
+    elif cached_atoms:
+        # Partial cache — re-encode all for consistency
+        doc_vectors = provider.encode(documents)
+    else:
+        # No cache — encode + fit if TF-IDF
+        if isinstance(provider, TfidfProvider) and not provider._fitted:
+            provider.fit(documents)
+        doc_vectors = provider.encode(documents)
+
     query_vec = provider.encode_query(query)
 
     # 向量 Top-K

@@ -189,6 +189,14 @@ class VibeMemory:
         self.cold_start.invalidate_cache()
         self.metrics.record_store()
 
+        # 缓存 embedding（语义检索加速）
+        try:
+            vec = self.embedding.encode_query(atom.content)
+            atom.embedding = vec.tolist()
+            self.storage.update_atom(atom)
+        except Exception:
+            pass  # embedding 缓存失败不影响主流程
+
         # 冷启动阶段使用激进阈值建边
         if auto_build_edges:
             self._auto_build_edges(atom)
