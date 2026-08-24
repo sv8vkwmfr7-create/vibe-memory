@@ -37,9 +37,9 @@ semantic = ["sentence-transformers>=2.2"]
 dev = ["pytest>=7.0", "pytest-cov>=4.0"]
 
 [project.urls]
-Homepage = "https://github.com/YOUR_USERNAME/vibe-memory"
-Repository = "https://github.com/YOUR_USERNAME/vibe-memory.git"
-Issues = "https://github.com/YOUR_USERNAME/vibe-memory/issues"
+Homepage = "https://github.com/sv8vkwmfr7-create/vibe-memory"
+Repository = "https://github.com/sv8vkwmfr7-create/vibe-memory.git"
+Issues = "https://github.com/sv8vkwmfr7-create/vibe-memory/issues"
 
 [project.scripts]
 vibe-session = "vibe_memory.cli.main:main"

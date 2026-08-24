@@ -65,7 +65,7 @@ Vibe Memory 的答案：
 pip install vibe-memory
 
 # 或开发模式
-git clone https://github.com/YOUR_USERNAME/vibe-memory.git
+git clone https://github.com/sv8vkwmfr7-create/vibe-memory.git
 cd vibe-memory
 pip install -e .
 
