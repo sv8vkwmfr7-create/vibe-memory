@@ -39,7 +39,7 @@
 - [x] 向量RAG vs VibeMemory PPR 召回对比实验（噪声比例 20% → 0%）
 - [x] Louvain 社区检测（模块度最优化，局部优化 + 小社区合并）
 - [x] 图分区实现（GraphPartitionManager：Session/Document/Parametric 三张独立图 + 跨分区边 LOOKUP/INFLUENCE/REFERENCE/VERSION + GC evict_atoms）
-- [ ] 简单 benchmark
+- [x] 简单 benchmark
 
 ### M3｜生产就绪
 
