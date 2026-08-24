@@ -41,7 +41,8 @@ Homepage = "https://github.com/YOUR_USERNAME/vibe-memory"
 Repository = "https://github.com/YOUR_USERNAME/vibe-memory.git"
 Issues = "https://github.com/YOUR_USERNAME/vibe-memory/issues"
 
-[tool.setuptools.packages.find]
+[project.scripts]
+vibe-session = "vibe_memory.cli.main:main"
 include = ["vibe_memory*"]
 
 [tool.pytest.ini_options]

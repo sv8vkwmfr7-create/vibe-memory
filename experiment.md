@@ -368,3 +368,52 @@ mem.flush_index()  # LLM classifies as causal
 ```
 
 **结论**：LLM 建边模块初步完成。核心价值在于将跨会话边的标签分类从"标签重叠率"提升为"语义理解"——LLM 能区分"都涉及 timeout"是因果接续还是巧合撞词，而规则无法做到。下一步需要真实 API 测试验证分类质量。新增代码：~400 行核心 + ~500 行测试。
+
+---
+
+## 实验 11：Agent 集成 — SessionManager + CLI
+
+**日期**：2026-08-24
+
+**目标**：将 VibeMemory 与 Claude Code 实际会话集成，实现自动化的跨会话记忆。
+
+**架构**：
+
+```
+vibe_memory/cli/
+├── session_manager.py    ← 会话生命周期管理
+├── main.py               ← CLI 工具（vibe-session）
+└── __init__.py
+```
+
+**SessionManager 核心能力**：
+
+| 方法 | 功能 |
+|------|------|
+| `start_session(context)` | 召回相关记忆 → 写入注入文件 → 创建新会话 |
+| `end_session(summary, highlights)` | 存储摘要 + 亮点 → 标记会话结束 |
+| `recall(query)` | 即时检索记忆 |
+| `stats()` | 会话 + 记忆统计 |
+
+**CLI 命令**：
+
+```bash
+vibe-session start                   # 开启新会话
+vibe-session start --context "..."   # 带上下文开启
+vibe-session end --summary "..."     # 结束会话
+vibe-session end --summary "..." --highlight "..." --highlight "..."
+vibe-session recall "API timeout"    # 即时检索
+vibe-session stats                   # 查看统计
+vibe-session inject                  # 输出注入内容
+```
+
+**集成方式**：
+
+1. `.vibe/inject.md` — 每次 `start` 写入，CLAUDE.md 中 `cat` 即可注入
+2. `.vibe/session.json` — 会话状态持久化
+3. `.vibe/memory.db` — SQLite 记忆库
+4. 环境变量 `VIBE_DIR` / `VIBE_AGENT_ID` 可覆盖
+
+**测试结果**：24/24 通过，pytest 总计 **181 通过**。
+
+**结论**：Agent 集成层完成。SessionManager 提供了完整的会话生命周期管理，CLI 工具可以在 Claude Code 的 CLAUDE.md 或 hook 中直接调用。核心价值在于：用户无需手动管理记忆——Agent 在每次会话开始时自动召回相关上下文，结束时自动存储关键发现。这是 VibeMemory 从实验到生产的最后一块拼图。

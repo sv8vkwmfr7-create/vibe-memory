@@ -56,6 +56,7 @@
 - [x] 增量索引（IncrementalIndexer：实时规则边 + 批处理 LLM 边 + 回压控制 + 19 测试）
 - [x] API 完整 CRUD（store/recall/link/migrate/forget/update/history/stats + collect_garbage + flush_index）
 - [x] LLM 建边：跨会话边用真实 LLM 分类（provider 抽象层 + edge classifier + 降级规则 + 38 测试）
+- [x] Agent 集成：SessionManager + CLI 工具（session 生命周期 + 注入 + 24 测试）
 
 ---
 
