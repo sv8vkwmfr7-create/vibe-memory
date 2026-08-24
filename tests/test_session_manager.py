@@ -334,8 +334,8 @@ def test_injection_format(session_manager, temp_vibe_dir):
     content = open(os.path.join(temp_vibe_dir, "inject.md"), encoding="utf-8").read()
 
     assert "VibeMemory" in content
-    assert "Context from Previous Sessions" in content
-    assert "Session" in content
+    assert "Memory Signals" in content  # MAG default injection mode
+    assert "Session" not in content  # MAG groups by priority, not session
     print("[PASS] injection_format")
 
 

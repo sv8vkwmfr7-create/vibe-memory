@@ -49,6 +49,7 @@ from vibe_memory.metrics import MetricsCollector
 from vibe_memory.gc import GarbageCollector, GCResult
 from vibe_memory.indexer import IncrementalIndexer
 from vibe_memory.llm.edge_classifier import LLMEdgeClassifier, create_llm_classify_callback
+from vibe_memory.injection import build_injection, MACInjector, MAGInjector
 
 
 class VibeMemory:
@@ -300,6 +301,32 @@ class VibeMemory:
                 self.storage.update_edge(edge)
 
         return result
+
+    # ── 2b. inject ──
+
+    def inject(
+        self,
+        query: str,
+        injection_mode: str = "mac",
+        recall_mode: str = "precision",
+        top_k: int = 20,
+        max_tokens: int = 4000,
+    ) -> str:
+        """
+        Recall + inject: one-step memory retrieval and prompt building.
+
+        Args:
+            query: Search query
+            injection_mode: "mac" (full context) or "mag" (gated signals)
+            recall_mode: "precision" | "recall" | "budget"
+            top_k: Vector pre-screening Top-K
+            max_tokens: Token budget for injection
+
+        Returns:
+            Injection prompt string
+        """
+        result = self.recall(query, mode=recall_mode, top_k=top_k)
+        return build_injection(result, mode=injection_mode, max_tokens=max_tokens)
 
     # ── 3. link ──
 

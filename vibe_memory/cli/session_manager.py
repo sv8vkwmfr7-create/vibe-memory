@@ -29,6 +29,7 @@ from typing import Optional
 from datetime import datetime
 
 from vibe_memory.sdk import VibeMemory
+from vibe_memory.injection import build_injection
 
 
 class SessionManager:
@@ -41,6 +42,7 @@ class SessionManager:
         db_path: SQLite database path (default: "{vibe_dir}/memory.db")
         embedding_backend: Vectorization backend
         max_context_chars: Max characters for injected context
+        injection_mode: "mac" (full context) or "mag" (gated signals)
     """
 
     def __init__(
@@ -50,11 +52,13 @@ class SessionManager:
         db_path: Optional[str] = None,
         embedding_backend: str = "tfidf",
         max_context_chars: int = 8000,
+        injection_mode: str = "mag",
     ):
         self.agent_id = agent_id
         self.vibe_dir = Path(vibe_dir)
         self.vibe_dir.mkdir(parents=True, exist_ok=True)
         self.max_context_chars = max_context_chars
+        self.injection_mode = injection_mode
 
         db = db_path or str(self.vibe_dir / "memory.db")
 
@@ -246,55 +250,9 @@ class SessionManager:
         recall_result: dict,
         previous: dict,
     ) -> str:
-        """Build injection context from recall results."""
-        atoms = recall_result.get("atoms", [])
-        if not atoms:
-            return "<!-- VibeMemory: no relevant memories found -->\n"
-
-        lines = [
-            "<!-- VibeMemory: auto-injected context from previous sessions -->",
-            "## Context from Previous Sessions",
-            "",
-            "The following memories were recalled from previous sessions. "
-            "Use this context to understand the user's history and preferences "
-            "without requiring them to repeat information.",
-            "",
-        ]
-
-        # Group by session for readability
-        by_session: dict[str, list] = {}
-        for atom in atoms:
-            sid = atom.session_id[:8] if atom.session_id else "unknown"
-            by_session.setdefault(sid, []).append(atom)
-
-        total_chars = sum(len(l) for l in lines)
-
-        for sid, session_atoms in by_session.items():
-            header = f"### Session {sid}\n\n"
-            if total_chars + len(header) > self.max_context_chars:
-                break
-
-            lines.append(header)
-            total_chars += len(header)
-
-            for atom in session_atoms:
-                entry = f"- **{atom.summary[:100]}**"
-                if atom.tags:
-                    entry += f" `{' '.join('#' + t for t in atom.tags[:3])}`"
-                entry += "\n"
-
-                if total_chars + len(entry) > self.max_context_chars:
-                    lines.append(f"  _(truncated, {len(atoms)} total memories)_\n")
-                    return "\n".join(lines)
-
-                lines.append(entry)
-                total_chars += len(entry)
-
-        lines.append("")
-        lines.append("---")
-        lines.append("*End of VibeMemory context injection*")
-
-        return "\n".join(lines)
+        """Build injection context using MAC/MAG injectors."""
+        max_tokens = self.max_context_chars // 4
+        return build_injection(recall_result, mode=self.injection_mode, max_tokens=max_tokens)
 
 
 # --- Convenience Functions ---

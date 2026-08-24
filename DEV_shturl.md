@@ -146,11 +146,20 @@
 - [x] 两阶段建边实现（同会话规则 + 跨会话 KNN 预筛）
 - [x] Vibe Learner + DecayManager 实现
 - [x] 集成测试：14 个测试用例全部通过
-- [ ] 向量RAG vs VibeMemory 召回对比实验
+- [x] 向量RAG vs VibeMemory 召回对比实验
+- [x] Episode 聚合层 + 社区检测
+- [x] 图分区（Session/Document/Parametric）
+- [x] 真实 embedding 验证（TF-IDF + 语义）
+- [x] 多租户隔离
+- [x] SDK API 8 端点
+- [x] 冷启动 + 可观测性 + GC + 增量索引
+- [x] LLM 建边（真实 API 验证：DeepSeek 80% 准确率）
+- [x] Agent 集成（SessionManager + CLI）
+- [x] 语义 embedding 激活（auto 模式）
+- [x] 真实使用（vault 集成）
+- [x] GitHub 发布（27 commits）
 - [ ] MAC/MAG prompt 注入实现
-- [ ] 异步 pending_review 队列实现
-- [ ] Episode 聚合层 + 社区检测
-- [ ] 图分区（Session/Document/Parametric）
+- [ ] 异步 pending_review 队列
 
 ---
 
