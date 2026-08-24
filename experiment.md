@@ -322,3 +322,49 @@ f988873 feat(retrieval): PPR graph walk with 3 config modes
 | Edge struct | 48 bytes |
 
 **结论**：Store 吞吐量极高（~60K ops/sec），Recall 受 TF-IDF 索引构建影响较慢（~78 ops/sec）。图规模 100→10K 时 Recall 延迟从 2.3ms 增长到 425ms，线性关系良好。PPR 收敛稳定（precision 模式始终 5 节点），链式图结构下收敛速度与图规模无关。语义 embedding 替换 TF-IDF 后检索质量应有显著提升。
+
+---
+
+## 实验 10：LLM 建边模块
+
+**日期**：2026-08-24
+
+**目标**：用真实 LLM 替代规则近似的 `classify_cross_session_edge()`，实现跨会话边的语义级分类。
+
+**架构**：
+
+```
+vibe_memory/llm/
+├── provider.py          ← LLMProvider 抽象（OpenAI-compatible，零依赖）
+├── edge_classifier.py   ← 分类器（prompt + 解析 + 降级 + 重试）
+└── __init__.py          ← 统一导出
+```
+
+**核心设计**：
+
+1. **LLMProvider 抽象**：`chat(messages) → {content, model, usage}`，纯 `urllib` 零外部依赖
+2. **OpenAIProvider**：支持任何 OpenAI-compatible API（OpenAI / Ollama / vLLM / Groq），429 自动重试
+3. **LLMEdgeClassifier**：结构化 prompt（含 context_before/after），5 分类（causal/similar/revision/adjacent/none），合并判断
+4. **降级全覆盖**：LLM 不可用 → 回退规则分类（confidence=0.3），零崩溃
+5. **JSON 解析健壮**：纯 JSON / ```json 代码块 / 直接提取，三重策略
+6. **SDK 集成**：`VibeMemory(llm_classifier=...)` → `flush_index()` 自动使用 LLM 建边
+
+**测试结果**：38/38 通过，pytest 总计 157 通过。
+
+**用法**：
+
+```python
+from vibe_memory import VibeMemory
+from vibe_memory.llm import OpenAIProvider, LLMEdgeClassifier
+
+provider = OpenAIProvider(api_key="sk-xxx", model="gpt-4o-mini")
+classifier = LLMEdgeClassifier(provider)
+mem = VibeMemory(agent_id="agent", llm_classifier=classifier)
+
+# Store atoms, flush_index() uses LLM for cross-session edges
+a1 = mem.store("API timeout error", session_id="s1")
+a2 = mem.store("Fixed timeout to 60s", session_id="s2")
+mem.flush_index()  # LLM classifies as causal
+```
+
+**结论**：LLM 建边模块初步完成。核心价值在于将跨会话边的标签分类从"标签重叠率"提升为"语义理解"——LLM 能区分"都涉及 timeout"是因果接续还是巧合撞词，而规则无法做到。下一步需要真实 API 测试验证分类质量。新增代码：~400 行核心 + ~500 行测试。

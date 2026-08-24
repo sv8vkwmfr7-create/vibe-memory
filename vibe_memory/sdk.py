@@ -48,6 +48,7 @@ from vibe_memory.coldstart import ColdStartManager, ColdPhase
 from vibe_memory.metrics import MetricsCollector
 from vibe_memory.gc import GarbageCollector, GCResult
 from vibe_memory.indexer import IncrementalIndexer
+from vibe_memory.llm.edge_classifier import LLMEdgeClassifier, create_llm_classify_callback
 
 
 class VibeMemory:
@@ -76,6 +77,7 @@ class VibeMemory:
         tenant_id: str = DEFAULT_TENANT,
         embedding_backend: str = "auto",
         embedding_model: str = "all-MiniLM-L6-v2",
+        llm_classifier: Optional[LLMEdgeClassifier] = None,
     ):
         self.agent_id = agent_id
         self.tenant_id = tenant_id
@@ -110,11 +112,16 @@ class VibeMemory:
             tenant_id=tenant_id,
         )
 
+        # LLM 分类器
+        self.llm_classifier = llm_classifier
+        llm_callback = create_llm_classify_callback(llm_classifier) if llm_classifier else None
+
         # 增量索引
         self.indexer = IncrementalIndexer(
             storage=self.storage,
             agent_id=agent_id,
             tenant_id=tenant_id,
+            llm_classify=llm_callback,
         )
 
         # 统计
@@ -525,6 +532,10 @@ class VibeMemory:
 
         # 增量索引统计
         stats["indexer"] = self.indexer.stats()
+
+        # LLM 分类器统计
+        if self.llm_classifier:
+            stats["llm_classifier"] = self.llm_classifier.stats()
 
         return stats
 
