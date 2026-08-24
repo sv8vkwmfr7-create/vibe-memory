@@ -3,7 +3,7 @@
 > 多关系图智能体记忆系统 — 让 AI Agent 拥有跨会话的长期记忆
 
 [![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://python.org)
-[![Tests](https://img.shields.io/badge/tests-119%20passed-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-181%20passed-brightgreen.svg)](tests/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.3.0-orange.svg)](vibe_memory/__init__.py)
 
@@ -62,12 +62,18 @@ Vibe Memory 的答案：
 ### 安装
 
 ```bash
+pip install vibe-memory
+
+# 或开发模式
 git clone https://github.com/YOUR_USERNAME/vibe-memory.git
 cd vibe-memory
 pip install -e .
+
+# 可选：语义 embedding
+pip install vibe-memory[semantic]
 ```
 
-### 5 分钟上手
+### Python SDK
 
 ```python
 from vibe_memory import VibeMemory
@@ -82,28 +88,62 @@ mem.store("Fixed API timeout error, changed from 30s to 60s",
 # 检索记忆（精确模式）
 result = mem.recall("API timeout", mode="precision")
 for atom in result["atoms"]:
-    print(f"[{atom.id}] {atom.content}")
+    print(f"[{atom.summary}]")
 
 # 查看统计
 stats = mem.stats()
-print(f"Total atoms: {stats['total_atoms']}, edges: {stats['total_edges']}")
+print(f"Atoms: {stats['total_atoms']}, Edges: {stats['total_edges']}")
 ```
 
-### 10 个 API 端点
+### CLI 工具（Claude Code 集成）
+
+```bash
+# 开始会话（自动召回历史记忆）
+vibe-session start --context "排查 API timeout"
+
+# 会话中工作...
+
+# 结束会话（自动存储摘要和亮点）
+vibe-session end --summary "修好了 timeout，改成 60s" \
+    --highlight "根因是数据库连接池耗尽"
+
+# 查看统计
+vibe-session stats
+```
+
+环境变量：`VIBE_DIR`、`VIBE_AGENT_ID`。
+
+### LLM 建边（可选）
+
+```python
+from vibe_memory.llm import OpenAIProvider, LLMEdgeClassifier
+
+provider = OpenAIProvider(api_key="sk-xxx", model="gpt-4o-mini")
+classifier = LLMEdgeClassifier(provider)
+
+mem = VibeMemory(agent_id="agent", llm_classifier=classifier)
+mem.store("API timeout", session_id="s1")
+mem.store("Fixed timeout to 60s", session_id="s2")
+mem.flush_index()  # LLM 自动分类为"因果接续"
+```
+
+---
+
+## API 端点
 
 | 方法 | 说明 |
 |------|------|
-| `store(content, session_id)` | 写入分片（自动建边 + Episode 聚合） |
-| `store_batch(messages)` | 批量写入（自动切分+入库） |
-| `recall(query, mode)` | 检索记忆（precision/recall/budget） |
+| `store(content, session_id)` | 写入分片（自动建边 + embedding 缓存 + Episode 聚合） |
+| `store_batch(messages)` | 批量写入（自动切分+入库+同会话建边） |
+| `recall(query, mode)` | 检索记忆（4 阶段管道：embedding→filter→PPR→rank） |
 | `link(from_id, to_id, label)` | 手动建边 |
 | `migrate(atom_id, to_partition)` | 分区迁移 |
 | `forget(atom_id)` | 删除记忆 |
 | `update(atom_id, **fields)` | 更新元数据 |
 | `history(session_id, limit)` | 会话历史 |
-| `stats()` | 统计信息 |
-| `collect_garbage()` | GC 压缩 |
-| `flush_index()` | 批量处理增量索引 |
+| `stats()` | 统计信息（含 可观测性 + GC + 冷启动 + 索引 + LLM 指标） |
+| `collect_garbage()` | GC 压缩（四级管线：稀疏化→固定池→冷存储→淘汰） |
+| `flush_index()` | 批量处理增量索引（实时规则边 + 批处理 LLM 边） |
 
 ---
 
@@ -160,6 +200,8 @@ MemoryAtom(
 | Bug 修复延续 | 用户 0 次重复背景，21 项修复一次完成 | ⭐⭐⭐⭐⭐ |
 | 项目开发持续 | Day 1 设计 + Day 2 代码，一次会话完成 | ⭐⭐⭐⭐⭐ |
 | 用户偏好记忆 | 4 条偏好 3 次会话全部命中，0 次违背 | ⭐⭐⭐⭐⭐ |
+| 配置变更追踪 | 3 条约定 4 次查询全部命中，噪声 0% | ⭐⭐⭐⭐⭐ |
+| 多任务切换 | 2 个独立任务交替，完美隔离，噪声 0% | ⭐⭐⭐⭐⭐ |
 
 ### RAG vs VibeMemory 召回对比
 
@@ -169,6 +211,10 @@ MemoryAtom(
 | 噪声分片 | 1 | **0** |
 | 噪声比例 | 20% | **0%** |
 
+### 真实使用验证
+
+SessionManager 在知识库 vault 实测：2 次会话，跨会话召回 5/5 (100%)，注入 747 字符。
+
 ---
 
 ## 模块索引
@@ -176,50 +222,63 @@ MemoryAtom(
 ```
 VibeMemory/
 ├── vibe_memory/
-│   ├── sdk.py                 ← 统一入口（10 个端点）
-│   ├── coldstart.py           ← 冷启动三阶段 + 种子记忆
-│   ├── metrics.py             ← 可观测性（延迟/吞吐/命中率/降级）
-│   ├── gc.py                  ← GC 压缩（四级管线）
-│   ├── indexer.py             ← 增量索引（双速 + 回压）
+│   ├── sdk.py                    ← 统一入口（11 个端点）
+│   ├── coldstart.py              ← 冷启动三阶段 + 种子记忆
+│   ├── metrics.py                ← 可观测性（延迟/吞吐/命中率/降级）
+│   ├── gc.py                     ← GC 压缩（四级管线）
+│   ├── indexer.py                ← 增量索引（双速 + 回压）
 │   ├── models/
-│   │   └── memory_atom.py     ← 核心数据结构
+│   │   └── memory_atom.py        ← 核心数据结构
 │   ├── chunking/
-│   │   ├── chunker.py         ← 语义分片
-│   │   └── episode.py         ← Episode 聚合
+│   │   ├── chunker.py            ← 语义分片
+│   │   └── episode.py            ← Episode 聚合
 │   ├── edges/
-│   │   └── edge_builder.py    ← 分层建边
+│   │   └── edge_builder.py       ← 分层建边
 │   ├── retrieval/
-│   │   ├── ppr.py             ← PPR 检索
-│   │   └── seed_filter.py     ← 种子后过滤
+│   │   ├── ppr.py                ← PPR 检索 + 4 阶段管道
+│   │   └── seed_filter.py        ← 种子后过滤
 │   ├── learner/
-│   │   └── learner.py         ← Vibe Learner 在线学习
+│   │   └── learner.py            ← Vibe Learner 在线学习
 │   ├── embedding/
-│   │   ├── tfidf.py           ← TF-IDF 向量化
-│   │   └── provider.py        ← 统一接口
+│   │   ├── tfidf.py              ← TF-IDF 向量化
+│   │   └── provider.py           ← 统一接口（auto/TF-IDF/semantic）
+│   ├── llm/
+│   │   ├── provider.py           ← LLM Provider 抽象（零依赖）
+│   │   └── edge_classifier.py    ← LLM 边分类器（prompt+解析+降级）
+│   ├── cli/
+│   │   ├── session_manager.py    ← SessionManager（会话生命周期）
+│   │   └── main.py               ← CLI 工具（vibe-session 6 命令）
 │   ├── graph/
-│   │   ├── partition.py       ← 图分区管理
-│   │   └── community.py       ← Louvain 社区检测
+│   │   ├── partition.py          ← 图分区管理
+│   │   └── community.py          ← Louvain 社区检测
 │   └── storage/
-│       └── sqlite_store.py    ← SQLite 存储层
+│       └── sqlite_store.py       ← SQLite 存储层（多租户）
 ├── tests/
-│   ├── test_m1.py             ← 14 核心功能测试
-│   ├── test_m2.py             ← 14 图分区 + 社区检测测试
-│   ├── test_m3_tenant.py      ← 9 多租户测试
-│   ├── test_m3_sdk.py         ← 11 SDK API 测试
-│   ├── test_m3_coldstart.py   ← 16 冷启动测试
-│   ├── test_m3_metrics.py     ← 17 可观测性测试
-│   ├── test_m3_gc.py          ← 19 GC 压缩测试
-│   ├── test_m3_indexer.py     ← 19 增量索引测试
-│   ├── test_simulation.py     ← 3 会话跨会话模拟
-│   └── test_comparison.py     ← RAG vs Vibe 对比
+│   ├── test_m1.py                ← 14 核心功能测试
+│   ├── test_m2.py                ← 14 图分区 + 社区检测测试
+│   ├── test_m3_tenant.py         ← 9 多租户测试
+│   ├── test_m3_sdk.py            ← 11 SDK API 测试
+│   ├── test_m3_coldstart.py      ← 16 冷启动测试
+│   ├── test_m3_metrics.py        ← 17 可观测性测试
+│   ├── test_m3_gc.py             ← 19 GC 压缩测试
+│   ├── test_m3_indexer.py        ← 19 增量索引测试
+│   ├── test_llm.py               ← 38 LLM 建边测试
+│   ├── test_session_manager.py   ← 24 Session 管理测试
+│   ├── test_simulation.py        ← 3 会话跨会话模拟
+│   └── test_comparison.py        ← RAG vs Vibe 对比
 ├── experiments/
-│   └── embedding_validation.py ← 6 组 embedding 对比实验
+│   ├── embedding_validation.py   ← 6 组 embedding 对比实验
+│   ├── phase0_scenario3.py       ← 配置变更追踪验证
+│   ├── phase0_scenario5.py       ← 多任务切换验证
+│   └── benchmark.py              ← 全链路性能基准（6 维度）
+├── DEV_shturl.md                  ← 开发日志（6 问题 + 8 决策）
+├── experiment.md                  ← 实验记录（13 实验）
 ├── README.md
 ├── pyproject.toml
 └── LICENSE
 ```
 
-**119 测试通过，15 次 commit。**
+**181 测试通过，25 次 commit。**
 
 ---
 
