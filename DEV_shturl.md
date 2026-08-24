@@ -158,8 +158,8 @@
 - [x] 语义 embedding 激活（auto 模式）
 - [x] 真实使用（vault 集成）
 - [x] GitHub 发布（27 commits）
-- [ ] MAC/MAG prompt 注入实现
-- [ ] 异步 pending_review 队列
+- [x] MAC/MAG prompt 注入实现
+- [x] 异步 pending_review 队列（存储层已就绪，降级边标记为 pending_review，LLM 可用时自动升级）
 
 ---
 
