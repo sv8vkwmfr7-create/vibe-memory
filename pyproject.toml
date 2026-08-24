@@ -43,6 +43,8 @@ Issues = "https://github.com/YOUR_USERNAME/vibe-memory/issues"
 
 [project.scripts]
 vibe-session = "vibe_memory.cli.main:main"
+
+[tool.setuptools.packages.find]
 include = ["vibe_memory*"]
 
 [tool.pytest.ini_options]

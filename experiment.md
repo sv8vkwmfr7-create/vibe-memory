@@ -465,3 +465,38 @@ vibe-session inject                  # 输出注入内容
 4. **Store 吞吐量反升**：语义 embedding 的 store 更快（66K vs 58K），因为不需要 TF-IDF 的增量拟合
 
 **结论**：语义 embedding 已成功激活，但 recall 性能是瓶颈。Embedding 缓存机制已实现（store 时编码写入 atom），后续 recall 的快速路径需要验证。**建议保持 `auto` 模式（默认），语义可用时启用，不可用时降级 TF-IDF。** 对于低频 recall 场景（会话开始/结束），语义 embedding 的 1秒延迟可接受；高频 recall 场景建议使用 TF-IDF。
+
+---
+
+## 实验 13：真实使用 — VibeMemory + 知识库 Vault
+
+**日期**：2026-08-24
+
+**目标**：在真实 vault 中运行 VibeMemory SessionManager，验证跨会话记忆召回和注入流程。
+
+**方法**：
+
+1. 在知识库 vault 创建 `.vibe/` 目录，安装 `vibe-memory` 包
+2. Session 1：存储项目摘要 + 4 个关键发现
+3. Session 2：用简短上下文"VibeMemory 项目状态"召回
+4. 验证注入文件内容，更新 CLAUDE.md 加入自动化指令
+
+**结果**：
+
+| 指标 | 值 |
+|------|-----|
+| Session 1 存储 | 5 atoms（1 summary + 4 highlights） |
+| Session 2 召回 | 5/5 (100%) |
+| 注入文件大小 | 747 chars |
+| 跨会话上下文 | 无需用户重复说明 |
+
+**关键发现**：
+
+1. **Recall 在空库时返回 0**：首次 `start` 无历史记忆，符合预期（冷启动）
+2. **跨会话召回 5/5 完美**：简短查询"VibeMemory 项目状态"成功召回所有 5 个分片
+3. **注入文件格式正确**：HTML 注释分隔 + 按会话分组 + 标签显示
+4. **CLAUDE.md 集成**：添加了 VibeMemory 会话记忆章节，约定 start/end/recall 指令
+
+**修复**：`pyproject.toml` 中 `include` 放错位置（在 `[project.scripts]` 下），应放在 `[tool.setuptools.packages.find]` 下。
+
+**结论**：VibeMemory 在真实 vault 环境中运行正常。SessionManager 跨会话召回 100% 命中。下一步：多次真实会话后观察图结构增长和检索质量变化。

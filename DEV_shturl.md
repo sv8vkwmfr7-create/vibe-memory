@@ -58,6 +58,7 @@
 - [x] LLM 建边：跨会话边用真实 LLM 分类（provider 抽象层 + edge classifier + 降级规则 + 38 测试）
 - [x] Agent 集成：SessionManager + CLI 工具（session 生命周期 + 注入 + 24 测试）
 - [x] 语义 embedding 激活：sentence-transformers auto 模式 + store 缓存 + HF_ENDPOINT 镜像
+- [x] 真实使用：VibeMemory + 知识库 vault 集成（SessionManager 2 会话验证，跨会话召回 5/5，CLAUDE.md 自动化）
 
 ---
 
