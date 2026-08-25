@@ -547,3 +547,39 @@ vibe-session inject                  # 输出注入内容
 **修复**：`pyproject.toml` 中 `include` 放错位置（在 `[project.scripts]` 下），应放在 `[tool.setuptools.packages.find]` 下。
 
 **结论**：VibeMemory 在真实 vault 环境中运行正常。SessionManager 跨会话召回 100% 命中。下一步：多次真实会话后观察图结构增长和检索质量变化。
+
+---
+
+## 实验 14：MAC/MAG 双模式注入
+
+**日期**：2026-08-24
+
+**目标**：实现双模式 prompt 注入——MAC（全文上下文）和 MAG（门控信号），按边标签优先级分组。
+
+**方法**：
+
+- **MAC**：全文注入 atom 内容 + 关系图谱（trace），按会话分组，token 预算截断
+- **MAG**：仅注入摘要 + 标签，按优先级分组（Critical/Related/Background），低 token 成本
+- 优先级基于边标签：causal/revision → HIGH，similar/influence → MEDIUM，adjacent → LOW
+- SessionManager 默认使用 MAG 模式
+
+**结果**：
+
+| 模式 | 注入 5 atoms | 内容 | 适合场景 |
+|------|-------------|------|---------|
+| MAC | ~2000 chars | 全文 + 关系图 | 排错/编码 |
+| MAG | ~700 chars | 摘要 + 信号计数 | 策略/创意 |
+
+**MAG 注入示例**：
+
+```
+### Background
+- VibeMemory 真实使用验证... `#session-summary`
+- PPR 图检索优于纯向量 RAG，噪声 20%→0% `#session-highlight`
+
+5 signals total — 0 critical, 0 related, 5 background
+```
+
+**测试**：33/33 通过，214 全量通过。
+
+**结论**：MAC/MAG 注入完成。MAG 模式在保持信号完整性的同时将注入体积减少 65%。优先级分组让 Agent 快速识别关键上下文，不被低优先级信息淹没。
