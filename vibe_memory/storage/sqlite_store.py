@@ -107,7 +107,7 @@ class VibeStorage:
     """VibeMemory SQLite 存储（多租户，M3）"""
 
     def __init__(self, db_path: str = ":memory:", tenant_id: str = DEFAULT_TENANT):
-        self.conn = sqlite3.connect(db_path)
+        self.conn = sqlite3.connect(db_path, check_same_thread=False)
         self.conn.row_factory = sqlite3.Row
         self.conn.executescript(SCHEMA)
         self.conn.commit()
