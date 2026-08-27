@@ -258,8 +258,8 @@ class Reflector:
             except json.JSONDecodeError:
                 pass
 
-        # Try first { ... }
-        match = re.search(r'\{[^{}]*"insights"[^{}]*\}', content, re.DOTALL)
+        # Try first { ... } block (greedy, handles nested braces)
+        match = re.search(r'\{.*\}', content, re.DOTALL)
         if match:
             try:
                 return json.loads(match.group(0))
