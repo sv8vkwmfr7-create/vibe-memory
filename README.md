@@ -3,7 +3,7 @@
 > 多关系图智能体记忆系统 — 让 AI Agent 拥有跨会话的长期记忆
 
 [![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://python.org)
-[![Tests](https://img.shields.io/badge/tests-265%20passed-brightgreen.svg)](tests/)
+[![Tests](https://github.com/sv8vkwmfr7-create/vibe-memory/actions/workflows/test.yml/badge.svg)](https://github.com/sv8vkwmfr7-create/vibe-memory/actions)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.3.0-orange.svg)](vibe_memory/__init__.py)
 
