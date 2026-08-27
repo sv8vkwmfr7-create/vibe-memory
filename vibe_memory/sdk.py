@@ -51,6 +51,7 @@ from vibe_memory.indexer import IncrementalIndexer
 from vibe_memory.llm.edge_classifier import LLMEdgeClassifier, create_llm_classify_callback
 from vibe_memory.injection import build_injection, MACInjector, MAGInjector
 from vibe_memory.defense import MemoryDefense, scan_before_store
+from vibe_memory.reflect import Reflector
 
 
 class VibeMemory:
@@ -81,6 +82,7 @@ class VibeMemory:
         embedding_model: str = "all-MiniLM-L6-v2",
         llm_classifier: Optional[LLMEdgeClassifier] = None,
         defense: Optional[MemoryDefense] = None,
+        reflector: Optional[Reflector] = None,
     ):
         self.agent_id = agent_id
         self.tenant_id = tenant_id
@@ -92,6 +94,10 @@ class VibeMemory:
         self.embedding = create_provider(backend=embedding_backend, model_name=embedding_model)
 
         # 隐私扫描
+        self.defense = defense or MemoryDefense(mode="redact")
+
+        # 反思
+        self.reflector = reflector
         self.defense = defense or MemoryDefense(mode="redact")
 
         # 种子过滤
@@ -338,6 +344,30 @@ class VibeMemory:
         """
         result = self.recall(query, mode=recall_mode, top_k=top_k)
         return build_injection(result, mode=injection_mode, max_tokens=max_tokens)
+
+    # ── 2c. reflect ──
+
+    def reflect(
+        self,
+        prompt: Optional[str] = None,
+        since_hours: Optional[int] = None,
+    ) -> list:
+        """
+        Cross-memory reasoning. Requires a reflector configured.
+
+        Args:
+            prompt: What to reflect on (e.g. "What patterns in recent bugs?")
+            since_hours: Only analyze recent memories
+
+        Returns:
+            List of insight MemoryAtoms stored
+        """
+        if not self.reflector:
+            raise RuntimeError(
+                "Reflector not configured. Pass a Reflector to VibeMemory(reflector=...). "
+                "See: from vibe_memory.reflect import Reflector, create_reflector"
+            )
+        return self.reflector.reflect(prompt=prompt, since_hours=since_hours)
 
     # ── 3. link ──
 
