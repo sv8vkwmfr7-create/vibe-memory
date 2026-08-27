@@ -50,6 +50,7 @@ from vibe_memory.gc import GarbageCollector, GCResult
 from vibe_memory.indexer import IncrementalIndexer
 from vibe_memory.llm.edge_classifier import LLMEdgeClassifier, create_llm_classify_callback
 from vibe_memory.injection import build_injection, MACInjector, MAGInjector
+from vibe_memory.defense import MemoryDefense, scan_before_store
 
 
 class VibeMemory:
@@ -79,6 +80,7 @@ class VibeMemory:
         embedding_backend: str = "auto",
         embedding_model: str = "all-MiniLM-L6-v2",
         llm_classifier: Optional[LLMEdgeClassifier] = None,
+        defense: Optional[MemoryDefense] = None,
     ):
         self.agent_id = agent_id
         self.tenant_id = tenant_id
@@ -88,6 +90,9 @@ class VibeMemory:
 
         # Embedding
         self.embedding = create_provider(backend=embedding_backend, model_name=embedding_model)
+
+        # 隐私扫描
+        self.defense = defense or MemoryDefense(mode="redact")
 
         # 种子过滤
         self.seed_filter = SeedFilter()
@@ -166,6 +171,12 @@ class VibeMemory:
         from vibe_memory.chunking.chunker import _generate_tags
 
         sid = session_id or str(uuid.uuid4())
+
+        # 隐私扫描：默认脱敏模式
+        content, violations, blocked = scan_before_store(content, self.defense)
+        if blocked:
+            raise ValueError(f"Memory blocked by defense: {len(violations)} PII violations detected")
+
         atom = MemoryAtom(
             id=str(uuid.uuid4()),
             agent_id=self.agent_id,

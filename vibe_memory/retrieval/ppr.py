@@ -248,34 +248,41 @@ def recall(
     embedding_provider: Optional[EmbeddingProvider] = None,
     seed_filter: Optional[SeedFilter] = None,
     tenant_id: Optional[str] = None,
+    strategies: Optional[list[str]] = None,
 ) -> dict:
     """
-    统一检索入口（v2：embedding provider + seed filter + tenant isolation）。
+    统一检索入口（v3：多策略检索 + RRF 融合 + 可选重排）。
 
-    四阶段：
-    1. 向量预筛（embedding provider）→ 种子节点
-    2. 种子后过滤（图连通性）→ 高质量种子
-    3. PPR 图游走（边标签过滤）
-    4. 排序 + 构建注入上下文
+    策略：
+    - 语义检索（embedding cosine → top-K seeds）
+    - 关键词检索（BM25 → top-K keywords）
+    - 图检索（PPR graph walk）
+    - 时序过滤（time_range → boost recent）
+
+    融合：
+    - RRF（Reciprocal Rank Fusion）合并多路结果
+    - 可选相似度重排
 
     Args:
         query: 查询文本
         agent_id: Agent 标识
         storage: 存储层
         mode: 操作点 ("precision" | "recall" | "budget")
-        top_k: 向量预筛 top-K
+        top_k: 每路检索 top-K
         embedding_provider: 向量化后端（None → TF-IDF）
         seed_filter: 种子后过滤器（None → 默认配置）
         tenant_id: 租户隔离（None → 使用 storage 默认 tenant）
+        strategies: 启用的检索策略，默认 ["semantic", "bm25", "graph", "temporal"]
 
     Returns:
-        {atoms, trace, mode, total_walked, seed_count, filtered_count}
+        {atoms, trace, mode, total_walked, seed_count, filtered_count, strategies_used}
     """
     provider = embedding_provider or TfidfProvider()
     seed_filter = seed_filter or SeedFilter()
     tid = tenant_id or storage.tenant_id
+    enabled_strategies = strategies or ["semantic", "bm25", "graph", "temporal"]
 
-    # 阶段 1：向量预筛
+    # 阶段 0：获取活跃原子
     all_atoms = storage.get_atoms_by_agent(agent_id, tenant_id=tid)
     active_atoms = [a for a in all_atoms if a.lifecycle.value in ("active", "warm")]
 
@@ -283,74 +290,112 @@ def recall(
         return {
             "atoms": [], "trace": [], "mode": mode,
             "total_walked": 0, "seed_count": 0, "filtered_count": 0,
+            "strategies_used": enabled_strategies,
         }
 
-    # 构建文档向量（优先使用缓存）
     documents = [a.content for a in active_atoms]
+    atom_map = {a.id: a for a in active_atoms}
 
-    # Try cached embeddings first
-    cached_atoms = [a for a in active_atoms if a.embedding is not None]
-    if len(cached_atoms) == len(active_atoms):
-        # All cached — fast path
-        doc_vectors = np.array([a.embedding for a in active_atoms])
-    elif cached_atoms:
-        # Partial cache — re-encode all for consistency
-        doc_vectors = provider.encode(documents)
-    else:
-        # No cache — encode + fit if TF-IDF
-        if isinstance(provider, TfidfProvider) and not provider._fitted:
-            provider.fit(documents)
-        doc_vectors = provider.encode(documents)
+    # 阶段 1：多策略并行检索
+    all_ranked_lists = []
 
-    query_vec = provider.encode_query(query)
+    from vibe_memory.retrieval.strategies import (
+        BM25Strategy, SemanticStrategy, GraphStrategy, TemporalStrategy,
+    )
+    from vibe_memory.retrieval.fusion import rrf_fusion, rerank_by_similarity
 
-    # 向量 Top-K
-    indices, _ = index_flat(doc_vectors, query_vec, top_k=top_k)
-    seed_atoms = [active_atoms[i] for i in indices if i < len(active_atoms)]
+    # 1a. 语义检索
+    semantic_seeds = []
+    if "semantic" in enabled_strategies:
+        try:
+            cached_atoms = [a for a in active_atoms if a.embedding is not None]
+            if len(cached_atoms) == len(active_atoms):
+                doc_vectors = np.array([a.embedding for a in active_atoms])
+            else:
+                if isinstance(provider, TfidfProvider) and not provider._fitted:
+                    provider.fit(documents)
+                doc_vectors = provider.encode(documents)
+            query_vec = provider.encode_query(query)
+            indices, _ = index_flat(doc_vectors, query_vec, top_k=top_k)
+            semantic_seeds = [active_atoms[i] for i in indices if i < len(active_atoms)]
+            all_ranked_lists.append([(a.id, 1.0 - i/len(semantic_seeds)) for i, a in enumerate(semantic_seeds)])
+        except Exception:
+            pass
 
-    if not seed_atoms:
+    # 1b. BM25 关键词检索
+    if "bm25" in enabled_strategies:
+        try:
+            bm25 = BM25Strategy()
+            bm25.fit(documents)
+            bm25_results = bm25.search(query, top_k=top_k)
+            # Normalize BM25 scores to [0, 1]
+            max_bm25 = max(s for _, s in bm25_results) if bm25_results else 1.0
+            all_ranked_lists.append([
+                (active_atoms[i].id, s / max_bm25) for i, s in bm25_results
+            ])
+        except Exception:
+            pass
+
+    # 1c. 图检索（PPR）
+    if "graph" in enabled_strategies:
+        try:
+            if semantic_seeds:
+                filtered_seeds = seed_filter.filter(semantic_seeds, storage)
+            else:
+                filtered_seeds = active_atoms[:top_k]
+
+            graph = GraphStrategy(storage, mode)
+            graph_results = graph.search(filtered_seeds, top_k=top_k)
+            all_ranked_lists.append(graph_results)
+        except Exception:
+            pass
+
+    # 1d. 时序过滤
+    if "temporal" in enabled_strategies:
+        try:
+            temporal = TemporalStrategy()
+            temp_results = temporal.search(active_atoms, top_k=top_k)
+            all_ranked_lists.append([
+                (active_atoms[i].id, s) for i, s in temp_results
+            ])
+        except Exception:
+            pass
+
+    # 阶段 2：RRF 融合
+    if not all_ranked_lists:
         return {
             "atoms": [], "trace": [], "mode": mode,
             "total_walked": 0, "seed_count": 0, "filtered_count": 0,
+            "strategies_used": enabled_strategies,
         }
 
-    seed_count = len(seed_atoms)
+    fused = rrf_fusion(all_ranked_lists, top_k=top_k * 2)
 
-    # 阶段 2：种子后过滤
-    filtered_seeds = seed_filter.filter(seed_atoms, storage)
-    filtered_count = len(filtered_seeds)
+    # 阶段 3：相似度重排
+    if "semantic" in enabled_strategies and query_vec is not None:
+        idx_map = {a.id: i for i, a in enumerate(active_atoms)}
+        fused = rerank_by_similarity(query_vec, fused, doc_vectors, idx_map, top_k=top_k)
 
-    # 阶段 3：PPR 图游走
-    if mode == "precision":
-        config = PPRConfig.precision()
-    elif mode == "recall":
-        config = PPRConfig.recall()
-    elif mode == "budget":
-        config = PPRConfig.budget()
-    else:
-        config = PPRConfig()
-
-    ppr_scores = personalized_pagerank(filtered_seeds, storage, config)
-
-    # 阶段 4：排序 + 截断
-    ranked = sorted(ppr_scores.items(), key=lambda x: x[1], reverse=True)
-    ranked_ids = [aid for aid, _ in ranked[:config.top_n]]
+    # 阶段 4：构建结果
     ranked_atoms = []
-    for aid in ranked_ids:
-        atom = storage.get_atom(aid)
-        if atom:
+    for aid, score in fused:
+        atom = atom_map.get(aid)
+        if atom and atom not in ranked_atoms:
             ranked_atoms.append(atom)
+        if len(ranked_atoms) >= top_k:
+            break
 
-    # 构建 trace
-    trace = build_trace(filtered_seeds, ranked_atoms, storage)
+    seed_count = len(semantic_seeds)
+    trace = build_trace(semantic_seeds if semantic_seeds else active_atoms[:top_k], ranked_atoms, storage)
 
     return {
         "atoms": ranked_atoms,
         "trace": trace,
         "mode": mode,
-        "total_walked": len(ppr_scores),
+        "total_walked": len(sum(all_ranked_lists, [])),
         "seed_count": seed_count,
-        "filtered_count": filtered_count,
+        "filtered_count": len(semantic_seeds) if semantic_seeds else 0,
+        "strategies_used": enabled_strategies,
     }
 
 
