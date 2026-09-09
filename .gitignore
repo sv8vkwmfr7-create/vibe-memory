@@ -21,6 +21,7 @@ Thumbs.db
 # SQLite
 *.db
 *.sqlite
+.vibe/
 
 # Environment
 .env

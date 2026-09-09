@@ -79,6 +79,10 @@ class TfidfProvider(EmbeddingProvider):
         vec = self.vectorizer.transform([query])
         return vec[0] if vec.shape[0] > 0 else np.zeros(self.dim)
 
+    def search(self, query: str, top_k: int = 20) -> tuple[list[int], list[float]]:
+        """Search the fitted corpus through the vectorizer's sparse index."""
+        return self.vectorizer.search(query, top_k=top_k)
+
     @property
     def dim(self) -> int:
         return len(self.vectorizer.vocabulary) if self._fitted else 0

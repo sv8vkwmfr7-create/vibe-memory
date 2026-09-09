@@ -254,6 +254,25 @@ def test_cache_invalidation():
     print("[PASS] cache invalidation test")
 
 
+def test_atom_count_uses_count_query(monkeypatch):
+    """Test: cold-start phase counting does not hydrate every atom."""
+    storage = VibeStorage(":memory:")
+    for index in range(3):
+        storage.insert_atom(_make_atom(f"a{index}", "agent-1", f"s{index}"))
+    other_tenant = _make_atom("other", "agent-1", "other-session")
+    other_tenant.tenant_id = "tenant-b"
+    storage.insert_atom(other_tenant)
+
+    def fail_if_hydrated(*args, **kwargs):
+        raise AssertionError("atom_count should use SQL COUNT(*)")
+
+    monkeypatch.setattr(storage, "get_atoms_by_agent", fail_if_hydrated)
+    cm = ColdStartManager(storage=storage, agent_id="agent-1")
+
+    assert cm.atom_count == 3
+    print("[PASS] atom count query test")
+
+
 def test_sdk_cold_start_integration():
     """Test: SDK integrates cold start manager"""
     mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")

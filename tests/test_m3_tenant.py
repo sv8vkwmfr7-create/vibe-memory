@@ -79,6 +79,35 @@ def test_storage_tenant_scope():
     print("[PASS] storage tenant scope test")
 
 
+def test_recall_candidates_are_scoped_active_and_bounded():
+    """Recall candidates rank term matches without crossing tenant/lifecycle bounds."""
+    store = VibeStorage(":memory:", tenant_id="tenant-a")
+    exact = _make_atom(
+        "exact", "tenant-a", "agent-1", "s1", "API timeout investigation"
+    )
+    partial = _make_atom(
+        "partial", "tenant-a", "agent-1", "s2", "API migration checklist"
+    )
+    irrelevant = _make_atom(
+        "irrelevant", "tenant-a", "agent-1", "s3", "Database backup completed"
+    )
+    archived = _make_atom(
+        "archived", "tenant-a", "agent-1", "s4", "API timeout archived"
+    )
+    archived.lifecycle = Lifecycle.ARCHIVED
+    other_tenant = _make_atom(
+        "other-tenant", "tenant-b", "agent-1", "s5", "API timeout foreign"
+    )
+    for atom in (exact, partial, irrelevant, archived, other_tenant):
+        store.insert_atom(atom)
+
+    candidates = store.get_recall_candidates(
+        "agent-1", "API timeout", limit=2, tenant_id="tenant-a"
+    )
+
+    assert [atom.id for atom in candidates] == ["exact", "partial"]
+
+
 def test_cross_tenant_edge_prevention():
     """Test that cross-tenant edges are never built"""
     new_atom = _make_atom("new", "tenant-a", "agent-1", "s2",

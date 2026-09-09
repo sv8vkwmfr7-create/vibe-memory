@@ -94,9 +94,10 @@ def personalized_pagerank(
     1. 从种子节点均匀分配初始分数
     2. 每轮迭代：
        - 以 alpha 概率重启到种子节点
-       - 以 (1-alpha) 概率沿边游走到邻居
-       - 游走概率 = 边权重 × 置信度 × 标签匹配度
+       - 以 (1-alpha) 概率沿归一化的加权边游走到邻居
+       - 边强度 = 边权重 × 置信度 × 方向惩罚
        - 双向遍历：逆方向降权 0.5
+       - 无可用出边时，将游走质量按个性化分布送回种子
     3. 收敛条件：所有节点分数变化 < epsilon
 
     Args:
@@ -130,36 +131,47 @@ def personalized_pagerank(
 
     alpha = cfg.restart_probability
     epsilon = cfg.convergence_threshold
+    personalization = {sid: 1.0 / len(seed_ids) for sid in seed_ids}
 
     for _ in range(cfg.max_iterations):
         new_scores: dict[str, float] = defaultdict(float)
         max_delta = 0.0
 
+        # Standard PPR restart distribution.
+        for sid, probability in personalization.items():
+            new_scores[sid] += alpha * probability
+
         for atom_id, score in scores.items():
             if score <= 0:
                 continue
 
-            # 重启：alpha 概率回到种子
-            restart_share = score * alpha / len(seed_ids)
-            for sid in seed_ids:
-                new_scores[sid] += restart_share
+            transitions: list[tuple[str, float]] = []
 
             # 正向游走：沿 outgoing edges
             for edge in outgoing.get(atom_id, []):
-                walk_prob = score * (1 - alpha) * edge.weight * edge.confidence
-                if walk_prob < cfg.min_edge_weight:
+                edge_strength = edge.weight * edge.confidence
+                if edge_strength <= 0 or edge_strength < cfg.min_edge_weight:
                     continue
-                new_scores[edge.to_atom_id] += walk_prob
+                transitions.append((edge.to_atom_id, edge_strength))
 
             # 反向游走：沿 incoming edges（Bug 2 双向遍历，逆方向降权）
             for edge in incoming.get(atom_id, []):
-                walk_prob = (
-                    score * (1 - alpha) * edge.weight * edge.confidence
-                    * cfg.reverse_weight_penalty
+                edge_strength = (
+                    edge.weight * edge.confidence * cfg.reverse_weight_penalty
                 )
-                if walk_prob < cfg.min_edge_weight:
+                if edge_strength <= 0 or edge_strength < cfg.min_edge_weight:
                     continue
-                new_scores[edge.from_atom_id] += walk_prob
+                transitions.append((edge.from_atom_id, edge_strength))
+
+            walk_mass = score * (1 - alpha)
+            total_strength = sum(strength for _, strength in transitions)
+            if total_strength > 0:
+                for neighbor_id, strength in transitions:
+                    new_scores[neighbor_id] += walk_mass * strength / total_strength
+            else:
+                # Dangling nodes restart instead of leaking probability mass.
+                for sid, probability in personalization.items():
+                    new_scores[sid] += walk_mass * probability
 
         # 归一化
         total = sum(new_scores.values())
@@ -249,6 +261,8 @@ def recall(
     seed_filter: Optional[SeedFilter] = None,
     tenant_id: Optional[str] = None,
     strategies: Optional[list[str]] = None,
+    semantic_cache: Optional[dict] = None,
+    bm25_cache: Optional[dict] = None,
 ) -> dict:
     """
     统一检索入口（v3：多策略检索 + RRF 融合 + 可选重排）。
@@ -273,6 +287,8 @@ def recall(
         seed_filter: 种子后过滤器（None → 默认配置）
         tenant_id: 租户隔离（None → 使用 storage 默认 tenant）
         strategies: 启用的检索策略，默认 ["semantic", "bm25", "graph", "temporal"]
+        semantic_cache: 可选的 SDK 级语义索引缓存；按 atom ID/version 自动失效
+        bm25_cache: 可选的 SDK 级 BM25 索引缓存；按 atom ID/version 自动失效
 
     Returns:
         {atoms, trace, mode, total_walked, seed_count, filtered_count, strategies_used}
@@ -282,8 +298,16 @@ def recall(
     tid = tenant_id or storage.tenant_id
     enabled_strategies = strategies or ["semantic", "bm25", "graph", "temporal"]
 
-    # 阶段 0：获取活跃原子
-    all_atoms = storage.get_atoms_by_agent(agent_id, tenant_id=tid)
+    # 阶段 0：budget 模式先在存储层收窄候选，其他模式保持完整语义。
+    if mode == "budget":
+        all_atoms = storage.get_recall_candidates(
+            agent_id,
+            query,
+            limit=max(100, top_k * 20),
+            tenant_id=tid,
+        )
+    else:
+        all_atoms = storage.get_atoms_by_agent(agent_id, tenant_id=tid)
     active_atoms = [a for a in all_atoms if a.lifecycle.value in ("active", "warm")]
 
     if not active_atoms:
@@ -295,9 +319,12 @@ def recall(
 
     documents = [a.content for a in active_atoms]
     atom_map = {a.id: a for a in active_atoms}
+    cache_key = tuple((a.id, a.version) for a in active_atoms)
 
     # 阶段 1：多策略并行检索
     all_ranked_lists = []
+    query_vec = None
+    doc_vectors = None
 
     from vibe_memory.retrieval.strategies import (
         BM25Strategy, SemanticStrategy, GraphStrategy, TemporalStrategy,
@@ -308,15 +335,49 @@ def recall(
     semantic_seeds = []
     if "semantic" in enabled_strategies:
         try:
-            cached_atoms = [a for a in active_atoms if a.embedding is not None]
-            if len(cached_atoms) == len(active_atoms):
-                doc_vectors = np.array([a.embedding for a in active_atoms])
-            else:
-                if isinstance(provider, TfidfProvider) and not provider._fitted:
+            if isinstance(provider, TfidfProvider):
+                cache_hit = (
+                    semantic_cache is not None
+                    and semantic_cache.get("key") == cache_key
+                    and semantic_cache.get("tfidf_fitted") is True
+                )
+                if not cache_hit:
                     provider.fit(documents)
-                doc_vectors = provider.encode(documents)
-            query_vec = provider.encode_query(query)
-            indices, _ = index_flat(doc_vectors, query_vec, top_k=top_k)
+                    if semantic_cache is not None:
+                        semantic_cache.clear()
+                        semantic_cache.update({"key": cache_key, "tfidf_fitted": True})
+                indices, _ = provider.search(query, top_k=top_k)
+                query_vec = provider.encode_query(query)
+            else:
+                cached_vectors = None
+                if semantic_cache is not None and semantic_cache.get("key") == cache_key:
+                    candidate = semantic_cache.get("vectors")
+                    if isinstance(candidate, np.ndarray) and candidate.shape[0] == len(active_atoms):
+                        cached_vectors = candidate
+
+                if cached_vectors is not None:
+                    doc_vectors = cached_vectors
+                else:
+                    cached_atoms = [a for a in active_atoms if a.embedding is not None]
+                    if len(cached_atoms) == len(active_atoms):
+                        doc_vectors = np.array([a.embedding for a in active_atoms])
+                    else:
+                        doc_vectors = provider.encode(documents)
+
+                    # Keep cache retention bounded; the current retrieval call still
+                    # allocates its working matrix when the cache is skipped.
+                    if (
+                        semantic_cache is not None
+                        and isinstance(doc_vectors, np.ndarray)
+                        and doc_vectors.ndim == 2
+                        and doc_vectors.nbytes <= 128 * 1024 * 1024
+                    ):
+                        semantic_cache.clear()
+                        semantic_cache.update({"key": cache_key, "vectors": doc_vectors})
+                    elif semantic_cache is not None:
+                        semantic_cache.clear()
+                query_vec = provider.encode_query(query)
+                indices, _ = index_flat(doc_vectors, query_vec, top_k=top_k)
             semantic_seeds = [active_atoms[i] for i in indices if i < len(active_atoms)]
             all_ranked_lists.append([(a.id, 1.0 - i/len(semantic_seeds)) for i, a in enumerate(semantic_seeds)])
         except Exception:
@@ -325,8 +386,18 @@ def recall(
     # 1b. BM25 关键词检索
     if "bm25" in enabled_strategies:
         try:
-            bm25 = BM25Strategy()
-            bm25.fit(documents)
+            bm25 = None
+            if bm25_cache is not None and bm25_cache.get("key") == cache_key:
+                candidate = bm25_cache.get("index")
+                if isinstance(candidate, BM25Strategy):
+                    bm25 = candidate
+            if bm25 is None:
+                bm25 = BM25Strategy()
+                bm25.fit(documents)
+                if bm25_cache is not None:
+                    bm25_cache.clear()
+                    if sum(len(document) for document in documents) <= 32 * 1024 * 1024:
+                        bm25_cache.update({"key": cache_key, "index": bm25})
             bm25_results = bm25.search(query, top_k=top_k)
             # Normalize BM25 scores to [0, 1]
             max_bm25 = max(s for _, s in bm25_results) if bm25_results else 1.0
@@ -373,7 +444,12 @@ def recall(
 
     # 阶段 3：相似度重排
     if "semantic" in enabled_strategies and query_vec is not None:
-        idx_map = {a.id: i for i, a in enumerate(active_atoms)}
+        if isinstance(provider, TfidfProvider):
+            candidate_atoms = [atom_map[atom_id] for atom_id, _ in fused if atom_id in atom_map]
+            doc_vectors = provider.encode([atom.content for atom in candidate_atoms])
+            idx_map = {atom.id: i for i, atom in enumerate(candidate_atoms)}
+        else:
+            idx_map = {a.id: i for i, a in enumerate(active_atoms)}
         fused = rerank_by_similarity(query_vec, fused, doc_vectors, idx_map, top_k=top_k)
 
     # 阶段 4：构建结果

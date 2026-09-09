@@ -1,0 +1,62 @@
+{
+  "dataset_version": "retrieval-ablation-v1",
+  "dataset": {
+    "atoms": 1000,
+    "topics": 20,
+    "queries": 100,
+    "queries_per_topic": 5,
+    "relevant_atoms_per_query": 5,
+    "top_k": 5,
+    "edges": {
+      "total": 100,
+      "causal": 80,
+      "similar": 20
+    },
+    "index": "TF-IDF document matrix precomputed once; query encoding timed"
+  },
+  "methods": {
+    "vector": {
+      "precision_at_k": 0.6,
+      "recall_at_k": 0.6,
+      "mrr": 1.0,
+      "noise_rate": 0.4,
+      "latency_ms": {
+        "p50": 0.049,
+        "p95": 0.13,
+        "p99": 0.289
+      },
+      "queries": 100
+    },
+    "graph_all_edges": {
+      "precision_at_k": 0.726,
+      "recall_at_k": 0.726,
+      "mrr": 1.0,
+      "noise_rate": 0.274,
+      "latency_ms": {
+        "p50": 0.793,
+        "p95": 1.056,
+        "p99": 1.36
+      },
+      "queries": 100
+    },
+    "graph_precision": {
+      "precision_at_k": 1.0,
+      "recall_at_k": 1.0,
+      "mrr": 1.0,
+      "noise_rate": 0.0,
+      "latency_ms": {
+        "p50": 0.669,
+        "p95": 0.901,
+        "p99": 1.072
+      },
+      "queries": 100
+    }
+  },
+  "seed_filter": {
+    "avg_filtered_seeds": 3.0
+  },
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Windows-11-10.0.26200-SP0"
+  }
+}

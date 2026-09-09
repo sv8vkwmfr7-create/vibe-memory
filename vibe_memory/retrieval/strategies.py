@@ -21,9 +21,10 @@ Usage:
 """
 
 import math
+import heapq
 import numpy as np
 from typing import Optional, Callable
-from collections import defaultdict
+from collections import Counter, defaultdict
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -44,20 +45,23 @@ class BM25Strategy:
     def __init__(self, k1: float = 1.5, b: float = 0.75):
         self.k1 = k1
         self.b = b
-        self._documents: list[str] = []
-        self._tokens: list[list[str]] = []
         self._doc_len: list[int] = []
         self._avgdl: float = 0.0
         self._idf: dict[str, float] = {}
+        self._postings: dict[str, list[tuple[int, int]]] = {}
         self._fitted = False
 
     def fit(self, documents: list[str]):
         """Build BM25 index from documents."""
-        self._documents = documents
-        self._tokens = [self._tokenize(d) for d in documents]
-        self._doc_len = [len(t) for t in self._tokens]
+        tokens = [self._tokenize(document) for document in documents]
+        self._doc_len = [len(doc_tokens) for doc_tokens in tokens]
         self._avgdl = sum(self._doc_len) / max(len(documents), 1)
-        self._idf = self._compute_idf(self._tokens, len(documents))
+        self._idf = self._compute_idf(tokens, len(documents))
+        postings: dict[str, list[tuple[int, int]]] = defaultdict(list)
+        for doc_index, doc_tokens in enumerate(tokens):
+            for token, frequency in Counter(doc_tokens).items():
+                postings[token].append((doc_index, frequency))
+        self._postings = dict(postings)
         self._fitted = True
 
     def search(self, query: str, top_k: int = 20) -> list[tuple[int, float]]:
@@ -70,16 +74,24 @@ class BM25Strategy:
         if not self._fitted:
             return []
 
-        query_tokens = self._tokenize(query)
-        scores = []
+        scores: dict[int, float] = defaultdict(float)
+        for token, query_frequency in Counter(self._tokenize(query)).items():
+            idf = self._idf.get(token)
+            if idf is None:
+                continue
+            for doc_index, frequency in self._postings.get(token, []):
+                numerator = frequency * (self.k1 + 1)
+                denominator = frequency + self.k1 * (
+                    1 - self.b
+                    + self.b * self._doc_len[doc_index] / max(self._avgdl, 1)
+                )
+                scores[doc_index] += query_frequency * idf * numerator / denominator
 
-        for i, doc_tokens in enumerate(self._tokens):
-            score = self._score(query_tokens, doc_tokens, i)
-            if score > 0:
-                scores.append((i, score))
-
-        scores.sort(key=lambda x: x[1], reverse=True)
-        return scores[:top_k]
+        return heapq.nsmallest(
+            top_k,
+            scores.items(),
+            key=lambda item: (-item[1], item[0]),
+        )
 
     def _tokenize(self, text: str) -> list[str]:
         """Simple tokenization: lowercase, split on non-alphanumeric."""
@@ -97,28 +109,6 @@ class BM25Strategy:
         for token, count in df.items():
             idf[token] = math.log(1 + (N - count + 0.5) / (count + 0.5))
         return idf
-
-    def _score(self, query_tokens: list[str], doc_tokens: list[str], doc_idx: int) -> float:
-        """Score one document against query."""
-        score = 0.0
-        doc_len = self._doc_len[doc_idx]
-        term_freq = defaultdict(int)
-        for t in doc_tokens:
-            term_freq[t] += 1
-
-        for token in query_tokens:
-            if token not in self._idf:
-                continue
-            f = term_freq.get(token, 0)
-            if f == 0:
-                continue
-            idf = self._idf[token]
-            numerator = f * (self.k1 + 1)
-            denominator = f + self.k1 * (1 - self.b + self.b * doc_len / max(self._avgdl, 1))
-            score += idf * numerator / denominator
-
-        return score
-
 
 # ═══════════════════════════════════════════════════════════════════
 # Semantic Strategy

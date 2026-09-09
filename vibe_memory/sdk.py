@@ -140,6 +140,8 @@ class VibeMemory:
         self._store_count: int = 0
         self._recall_count: int = 0
         self._edge_count: int = 0
+        self._semantic_cache: dict = {}
+        self._bm25_cache: dict = {}
 
     # ── 1. store ──
 
@@ -296,6 +298,8 @@ class VibeMemory:
             embedding_provider=self.embedding,
             seed_filter=self.seed_filter,
             tenant_id=self.tenant_id,
+            semantic_cache=self._semantic_cache,
+            bm25_cache=self._bm25_cache,
         )
         self._recall_count += 1
         self.metrics.record_recall(result_count=len(result.get("atoms", [])))

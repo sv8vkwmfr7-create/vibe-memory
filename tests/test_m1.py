@@ -6,6 +6,7 @@ L1 prototype integration test suite.
 
 import uuid
 from datetime import datetime
+import pytest
 
 from vibe_memory.models.memory_atom import (
     MemoryAtom, Edge, Episode,
@@ -23,6 +24,7 @@ from vibe_memory.storage.sqlite_store import VibeStorage
 from vibe_memory.retrieval.ppr import (
     PPRConfig, personalized_pagerank, recall, fallback_vector_topk,
 )
+from vibe_memory.retrieval.strategies import BM25Strategy
 from vibe_memory.learner.learner import VibeLearner, DecayManager, LearnerConfig
 
 
@@ -320,6 +322,71 @@ def test_ppr_walk():
     print("[PASS] PPR walk test")
 
 
+def test_ppr_strong_edge_survives_more_seed_candidates():
+    """A strong causal edge remains traversable when unrelated seeds are added."""
+    store = VibeStorage(":memory:")
+    source = MemoryAtom(
+        id="source", agent_id="agent-1", session_id="s1",
+        content="API timeout root cause", summary="Timeout root cause",
+    )
+    target = MemoryAtom(
+        id="target", agent_id="agent-1", session_id="s1",
+        content="Increase timeout to 60s", summary="Timeout fix",
+    )
+    distractions = [
+        MemoryAtom(
+            id=f"noise-{i}", agent_id="agent-1", session_id="s2",
+            content=f"Unrelated memory {i}", summary=f"Unrelated {i}",
+        )
+        for i in range(19)
+    ]
+    for atom in [source, target, *distractions]:
+        store.insert_atom(atom)
+    store.insert_edge(Edge(
+        id="causal-edge", from_atom_id=source.id, to_atom_id=target.id,
+        label=EdgeLabel.CAUSAL, confidence=1.0, weight=1.0,
+    ))
+
+    scores = personalized_pagerank(
+        [source, *distractions], store, PPRConfig.precision(),
+    )
+
+    assert scores.get(target.id, 0.0) > 0.0
+
+
+def test_ppr_matches_two_node_worked_example():
+    """PPR matches the closed-form result for a directed two-node graph."""
+    store = VibeStorage(":memory:")
+    source = MemoryAtom(
+        id="source", agent_id="agent-1", session_id="s1",
+        content="Root cause", summary="Root cause",
+    )
+    target = MemoryAtom(
+        id="target", agent_id="agent-1", session_id="s1",
+        content="Resolved fix", summary="Resolved fix",
+    )
+    store.insert_atom(source)
+    store.insert_atom(target)
+    store.insert_edge(Edge(
+        id="directed-edge", from_atom_id=source.id, to_atom_id=target.id,
+        label=EdgeLabel.CAUSAL, confidence=1.0, weight=1.0,
+    ))
+    alpha = 0.2
+    config = PPRConfig(
+        restart_probability=alpha,
+        convergence_threshold=1e-12,
+        max_iterations=1000,
+        allowed_edge_labels=[EdgeLabel.CAUSAL],
+        reverse_weight_penalty=0.0,
+        min_edge_weight=0.0,
+    )
+
+    scores = personalized_pagerank([source], store, config)
+
+    assert scores[source.id] == pytest.approx(1 / (2 - alpha), abs=1e-9)
+    assert scores[target.id] == pytest.approx((1 - alpha) / (2 - alpha), abs=1e-9)
+
+
 def test_recall_api():
     """Test unified recall API"""
     store = VibeStorage(":memory:")
@@ -470,6 +537,24 @@ def test_learner_feature_extraction():
     print("[PASS] learner feature extraction test")
 
 
+def test_bm25_worked_example_preserves_scores_and_order():
+    """BM25 keeps the reference formula, including repeated query terms."""
+    strategy = BM25Strategy()
+    strategy.fit([
+        "api timeout timeout database",
+        "database migration plan",
+        "css layout safari",
+        "api retry timeout",
+        "unrelated note",
+    ])
+
+    results = strategy.search("api timeout timeout", top_k=5)
+
+    assert [index for index, _ in results] == [0, 3]
+    assert results[0][1] == pytest.approx(3.020551323829725)
+    assert results[1][1] == pytest.approx(2.6264062120617)
+
+
 def run_all():
     print("=" * 50)
     print("VibeMemory L1 Prototype Tests")
@@ -489,6 +574,7 @@ def run_all():
     test_vibe_learner()
     test_decay_manager()
     test_learner_feature_extraction()
+    test_bm25_worked_example_preserves_scores_and_order()
 
     print()
     print("=" * 50)

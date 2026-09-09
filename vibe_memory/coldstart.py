@@ -83,10 +83,9 @@ class ColdStartManager:
     def atom_count(self) -> int:
         """当前分片数（缓存友好的查询）"""
         if self._cached_atom_count is None:
-            atoms = self.storage.get_atoms_by_agent(
+            self._cached_atom_count = self.storage.count_atoms_by_agent(
                 self.agent_id, tenant_id=self.tenant_id
             )
-            self._cached_atom_count = len(atoms)
         return self._cached_atom_count
 
     def invalidate_cache(self) -> None:

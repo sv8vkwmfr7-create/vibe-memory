@@ -33,6 +33,11 @@ from datetime import datetime
 
 def run_server(db_path: str, agent_id: str, vibe_dir: str):
     """Run MCP server over stdio."""
+    if hasattr(sys.stdin, "reconfigure"):
+        sys.stdin.reconfigure(encoding="utf-8")
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+
     from vibe_memory.sdk import VibeMemory
 
     mem = VibeMemory(

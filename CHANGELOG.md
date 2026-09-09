@@ -1,5 +1,27 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+- Force MCP stdio to UTF-8 so JSON-RPC responses containing Chinese edge labels work on Windows.
+- Evaluate the PPR edge threshold against edge strength instead of seed-count-dependent probability mass.
+- Normalize weighted PPR transitions and return dangling-node mass to the personalization seeds.
+- Cache the semantic document matrix across SDK recalls and invalidate it when atom IDs/versions change.
+- Count cold-start atoms with a tenant-scoped SQL `COUNT(*)` instead of hydrating every atom during recall.
+- Use a sparse TF-IDF inverted index and only densify fused candidates during reranking.
+- Reuse the BM25 index across recalls, with atom ID/version invalidation and bounded retention.
+- Search BM25 through term postings instead of scoring every document, preserving reference scores and ordering.
+- Bound `budget` recall hydration to a tenant/lifecycle-scoped storage candidate set while leaving precision and recall modes unchanged.
+
+### Documentation
+- Add `STATUS.md` as the canonical test baseline and capability/evidence boundary.
+
+### Added
+- Add `experiments/retrieval_benchmark.py`: deterministic 1,000-atom/100-query retrieval ablation with vector, all-label PPR, and precision-label/seed-filter groups.
+- Add `experiments/scale_visibility_benchmark.py`: deterministic 1k/10k/100k SDK write, recall, and post-commit visibility baseline.
+- Split the scale benchmark into cold and warm recall latency using 20 deterministic queries.
+- Add storage and SDK regression tests for bounded budget-recall candidates.
+
 ## [0.3.0] — 2026-08-27
 
 ### Added

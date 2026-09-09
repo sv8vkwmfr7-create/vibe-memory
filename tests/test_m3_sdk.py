@@ -105,6 +105,123 @@ def test_recall():
     print("[PASS] recall test")
 
 
+def test_budget_recall_uses_bounded_storage_candidates(monkeypatch):
+    """Budget recall avoids the full-agent hydration path."""
+    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    for index in range(200):
+        mem.store(
+            f"Routine operational context {index}",
+            auto_build_edges=False,
+            auto_episode=False,
+        )
+    target = mem.store(
+        "Rare needleterm incident resolution",
+        auto_build_edges=False,
+        auto_episode=False,
+    )
+
+    candidate_sizes = []
+    original_candidates = mem.storage.get_recall_candidates
+
+    def tracked_candidates(*args, **kwargs):
+        candidates = original_candidates(*args, **kwargs)
+        candidate_sizes.append(len(candidates))
+        return candidates
+
+    def reject_full_hydration(*args, **kwargs):
+        raise AssertionError("budget recall must not hydrate every agent atom")
+
+    monkeypatch.setattr(mem.storage, "get_recall_candidates", tracked_candidates)
+    monkeypatch.setattr(mem.storage, "get_atoms_by_agent", reject_full_hydration)
+
+    result = mem.recall("needleterm", mode="budget", top_k=5)
+
+    assert any(atom.id == target.id for atom in result["atoms"])
+    assert candidate_sizes == [100]
+
+
+def test_recall_semantic_cache_invalidates_on_update():
+    """Test: SDK semantic document cache refreshes when atom version changes."""
+    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    atom = mem.store("API timeout needs investigation", auto_build_edges=False, auto_episode=False)
+
+    first = mem.recall("API timeout", mode="budget", top_k=5)
+    assert any(item.id == atom.id for item in first["atoms"])
+    first_key = mem._semantic_cache["key"]
+
+    updated = mem.update(atom.id, content="Database configuration needs review")
+    assert updated is not None
+    second = mem.recall("database configuration", mode="budget", top_k=5)
+
+    assert any(item.id == atom.id for item in second["atoms"])
+    assert mem._semantic_cache["key"] != first_key
+    print("[PASS] semantic cache invalidation test")
+
+
+def test_recall_tfidf_only_densifies_fused_candidates():
+    """Test: TF-IDF recall avoids a dense matrix for the full corpus."""
+    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    for index in range(200):
+        mem.store(
+            f"Routine operational context {index}",
+            auto_build_edges=False,
+            auto_episode=False,
+        )
+    target = mem.store(
+        "Rare needleterm incident resolution",
+        auto_build_edges=False,
+        auto_episode=False,
+    )
+
+    encoded_batch_sizes = []
+    original_encode = mem.embedding.encode
+
+    def tracked_encode(texts):
+        encoded_batch_sizes.append(len(texts))
+        return original_encode(texts)
+
+    mem.embedding.encode = tracked_encode
+    result = mem.recall("needleterm", mode="budget", top_k=5)
+
+    assert any(atom.id == target.id for atom in result["atoms"])
+    assert encoded_batch_sizes
+    assert max(encoded_batch_sizes) <= 10
+
+
+def test_recall_reuses_bm25_index_until_content_changes(monkeypatch):
+    """Test: repeated recalls reuse BM25, while content updates rebuild it."""
+    from vibe_memory.retrieval.strategies import BM25Strategy
+
+    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    target = mem.store(
+        "API timeout incident resolution",
+        auto_build_edges=False,
+        auto_episode=False,
+    )
+    mem.store("Database migration checklist", auto_build_edges=False, auto_episode=False)
+
+    fit_calls = 0
+    original_fit = BM25Strategy.fit
+
+    def tracked_fit(strategy, documents):
+        nonlocal fit_calls
+        fit_calls += 1
+        return original_fit(strategy, documents)
+
+    monkeypatch.setattr(BM25Strategy, "fit", tracked_fit)
+
+    first = mem.recall("API timeout", mode="budget", top_k=5)
+    second = mem.recall("API timeout", mode="budget", top_k=5)
+    assert any(atom.id == target.id for atom in first["atoms"])
+    assert any(atom.id == target.id for atom in second["atoms"])
+    assert fit_calls == 1
+
+    mem.update(target.id, content="Rare zephyrmarker incident resolution")
+    updated = mem.recall("zephyrmarker", mode="budget", top_k=5)
+    assert any(atom.id == target.id for atom in updated["atoms"])
+    assert fit_calls == 2
+
+
 def test_link():
     """Test link() manual edge creation"""
     mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")

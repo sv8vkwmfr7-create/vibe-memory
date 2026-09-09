@@ -1,0 +1,117 @@
+{
+  "dataset_version": "sdk-scale-visibility-v2",
+  "storage": ":memory:",
+  "auto_build_edges": false,
+  "auto_episode": false,
+  "recall_mode": "budget",
+  "recall_top_k": 5,
+  "visibility_checks_requested": 100,
+  "scales": {
+    "1000": {
+      "atoms": 1000,
+      "store_ops_per_sec": 19902.91,
+      "write_latency_ms": {
+        "p50": 0.043,
+        "p95": 0.056,
+        "p99": 0.116
+      },
+      "write_to_get_atom_ms": {
+        "p50": 0.011,
+        "p95": 0.019,
+        "p99": 0.025
+      },
+      "visibility": {
+        "checks": 280,
+        "visible": 280,
+        "rate": 1.0
+      },
+      "recall_latency_ms": {
+        "p50": 3.148,
+        "p95": 4.094,
+        "p99": 6.477
+      },
+      "recall_cold_ms": 7.072,
+      "recall_warm_latency_ms": {
+        "p50": 3.137,
+        "p95": 3.52,
+        "p99": 3.854
+      },
+      "recall_queries": 20,
+      "avg_recall_results": 5.0,
+      "indexer_queue_size": 0,
+      "last_atom_readable": true
+    },
+    "10000": {
+      "atoms": 10000,
+      "store_ops_per_sec": 20556.02,
+      "write_latency_ms": {
+        "p50": 0.045,
+        "p95": 0.058,
+        "p99": 0.101
+      },
+      "write_to_get_atom_ms": {
+        "p50": 0.012,
+        "p95": 0.061,
+        "p99": 0.067
+      },
+      "visibility": {
+        "checks": 298,
+        "visible": 298,
+        "rate": 1.0
+      },
+      "recall_latency_ms": {
+        "p50": 18.893,
+        "p95": 22.176,
+        "p99": 22.337
+      },
+      "recall_cold_ms": 21.374,
+      "recall_warm_latency_ms": {
+        "p50": 18.878,
+        "p95": 22.187,
+        "p99": 22.34
+      },
+      "recall_queries": 20,
+      "avg_recall_results": 5.0,
+      "indexer_queue_size": 0,
+      "last_atom_readable": true
+    },
+    "100000": {
+      "atoms": 100000,
+      "store_ops_per_sec": 19053.54,
+      "write_latency_ms": {
+        "p50": 0.047,
+        "p95": 0.089,
+        "p99": 0.132
+      },
+      "write_to_get_atom_ms": {
+        "p50": 0.012,
+        "p95": 0.07,
+        "p99": 0.075
+      },
+      "visibility": {
+        "checks": 299,
+        "visible": 299,
+        "rate": 1.0
+      },
+      "recall_latency_ms": {
+        "p50": 182.702,
+        "p95": 213.454,
+        "p99": 221.227
+      },
+      "recall_cold_ms": 188.559,
+      "recall_warm_latency_ms": {
+        "p50": 182.664,
+        "p95": 213.965,
+        "p99": 221.329
+      },
+      "recall_queries": 20,
+      "avg_recall_results": 5.0,
+      "indexer_queue_size": 0,
+      "last_atom_readable": true
+    }
+  },
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Windows-11-10.0.26200-SP0"
+  }
+}

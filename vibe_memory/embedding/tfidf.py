@@ -9,6 +9,7 @@ TF-IDF 虽不是语义 embedding（如 sentence-transformers），
 """
 
 import math
+import heapq
 from collections import Counter
 from typing import Optional
 import numpy as np
@@ -42,6 +43,8 @@ class TfidfVectorizer:
         self.idf: dict[str, float] = {}
         # 文档数
         self.n_docs: int = 0
+        # 稀疏倒排表: {term_index: [(doc_index, normalized_weight), ...]}
+        self._postings: dict[int, list[tuple[int, float]]] = {}
 
     def fit(self, documents: list[str]) -> "TfidfVectorizer":
         """
@@ -78,7 +81,65 @@ class TfidfVectorizer:
             freq = doc_freq[term]
             self.idf[term] = math.log((self.n_docs + 1) / (freq + 1)) + 1.0
 
+        self._build_postings(documents)
+
         return self
+
+    def search(self, query: str, top_k: int = 10) -> tuple[list[int], list[float]]:
+        """Search the fitted corpus without building a dense document matrix."""
+        if self.n_docs == 0 or top_k <= 0:
+            return [], []
+
+        terms = self._tokenize(query)
+        counts = Counter(terms)
+        query_weights = {
+            self.vocabulary[term]: count / max(len(terms), 1) * self.idf[term]
+            for term, count in counts.items()
+            if term in self.vocabulary
+        }
+        norm = math.sqrt(sum(weight * weight for weight in query_weights.values()))
+        scores: dict[int, float] = {}
+        if norm > 0:
+            for term_index, weight in query_weights.items():
+                query_weight = weight / norm
+                for doc_index, doc_weight in self._postings.get(term_index, []):
+                    scores[doc_index] = scores.get(doc_index, 0.0) + query_weight * doc_weight
+
+        limit = min(top_k, self.n_docs)
+        ranked = heapq.nlargest(
+            limit,
+            scores.items(),
+            key=lambda item: (item[1], item[0]),
+        )
+        selected = {doc_index for doc_index, _ in ranked}
+        if len(ranked) < limit:
+            for doc_index in range(self.n_docs - 1, -1, -1):
+                if doc_index not in selected:
+                    ranked.append((doc_index, 0.0))
+                    if len(ranked) == limit:
+                        break
+
+        return [doc_index for doc_index, _ in ranked], [score for _, score in ranked]
+
+    def _build_postings(self, documents: list[str]) -> None:
+        self._postings = {}
+        for doc_index, document in enumerate(documents):
+            terms = self._tokenize(document)
+            if not terms:
+                continue
+            counts = Counter(terms)
+            weights = {
+                self.vocabulary[term]: count / len(terms) * self.idf[term]
+                for term, count in counts.items()
+                if term in self.vocabulary
+            }
+            norm = math.sqrt(sum(weight * weight for weight in weights.values()))
+            if norm == 0:
+                continue
+            for term_index, weight in weights.items():
+                self._postings.setdefault(term_index, []).append(
+                    (doc_index, weight / norm)
+                )
 
     def transform(self, documents: list[str]) -> np.ndarray:
         """

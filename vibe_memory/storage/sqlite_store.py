@@ -12,6 +12,7 @@ L1 原型：SQLite 存储 MemoryAtom + Edge。
 
 import sqlite3
 import json
+import re
 from typing import Optional
 from datetime import datetime
 
@@ -159,6 +160,52 @@ class VibeStorage:
             (agent_id, tid),
         ).fetchall()
         return [self._row_to_atom(r) for r in rows]
+
+    def get_recall_candidates(
+        self,
+        agent_id: str,
+        query: str,
+        limit: int,
+        tenant_id: Optional[str] = None,
+    ) -> list[MemoryAtom]:
+        """Return a bounded active/warm set ranked by query-term matches."""
+        if limit <= 0:
+            return []
+
+        tid = tenant_id or self.tenant_id
+        terms = list(dict.fromkeys(
+            term.lower() for term in re.findall(r"\w+", query) if len(term) > 1
+        ))
+        if terms:
+            score_parts = [
+                "CASE WHEN LOWER(content) LIKE ? OR LOWER(summary) LIKE ? THEN 1 ELSE 0 END"
+                for _ in terms
+            ]
+            score_sql = " + ".join(score_parts)
+            match_params = [value for term in terms for value in (f"%{term}%", f"%{term}%")]
+        else:
+            score_sql = "0"
+            match_params = []
+
+        rows = self.conn.execute(
+            f"""SELECT *, ({score_sql}) AS match_count
+                FROM atoms
+                WHERE tenant_id = ? AND agent_id = ?
+                  AND lifecycle IN ('active', 'warm')
+                ORDER BY match_count DESC, created_at DESC, id
+                LIMIT ?""",
+            (*match_params, tid, agent_id, limit),
+        ).fetchall()
+        return [self._row_to_atom(row) for row in rows]
+
+    def count_atoms_by_agent(self, agent_id: str, tenant_id: Optional[str] = None) -> int:
+        """Count tenant-scoped atoms without hydrating MemoryAtom objects."""
+        tid = tenant_id or self.tenant_id
+        row = self.conn.execute(
+            "SELECT COUNT(*) FROM atoms WHERE tenant_id = ? AND agent_id = ?",
+            (tid, agent_id),
+        ).fetchone()
+        return int(row[0])
 
     def update_atom(self, atom: MemoryAtom) -> None:
         self.conn.execute(
