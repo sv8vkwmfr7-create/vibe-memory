@@ -108,6 +108,27 @@ def test_recall_candidates_are_scoped_active_and_bounded():
     assert [atom.id for atom in candidates] == ["exact", "partial"]
 
 
+def test_recall_candidates_match_whole_terms():
+    """Candidate ranking treats query terms as tokens, not substrings."""
+    store = VibeStorage(":memory:", tenant_id="tenant-a")
+    exact = _make_atom(
+        "exact", "tenant-a", "agent-1", "s1", "API timeout investigation"
+    )
+    substring = _make_atom(
+        "substring", "tenant-a", "agent-1", "s2", "Capillary timeout investigation"
+    )
+    exact.created_at = datetime(2026, 1, 1)
+    substring.created_at = datetime(2026, 1, 2)
+    store.insert_atom(exact)
+    store.insert_atom(substring)
+
+    candidates = store.get_recall_candidates(
+        "agent-1", "API", limit=1, tenant_id="tenant-a"
+    )
+
+    assert [atom.id for atom in candidates] == ["exact"]
+
+
 def test_cross_tenant_edge_prevention():
     """Test that cross-tenant edges are never built"""
     new_atom = _make_atom("new", "tenant-a", "agent-1", "s2",

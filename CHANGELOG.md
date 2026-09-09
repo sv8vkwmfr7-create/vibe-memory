@@ -12,6 +12,7 @@
 - Reuse the BM25 index across recalls, with atom ID/version invalidation and bounded retention.
 - Search BM25 through term postings instead of scoring every document, preserving reference scores and ordering.
 - Bound `budget` recall hydration to a tenant/lifecycle-scoped storage candidate set while leaving precision and recall modes unchanged.
+- Use trigger-synchronized SQLite FTS5 for whole-term budget candidates, with a `LIKE` compatibility fallback.
 
 ### Documentation
 - Add `STATUS.md` as the canonical test baseline and capability/evidence boundary.
@@ -21,6 +22,7 @@
 - Add `experiments/scale_visibility_benchmark.py`: deterministic 1k/10k/100k SDK write, recall, and post-commit visibility baseline.
 - Split the scale benchmark into cold and warm recall latency using 20 deterministic queries.
 - Add storage and SDK regression tests for bounded budget-recall candidates.
+- Add the complete budget recall pipeline to the fixed retrieval quality ablation.
 
 ## [0.3.0] — 2026-08-27
 

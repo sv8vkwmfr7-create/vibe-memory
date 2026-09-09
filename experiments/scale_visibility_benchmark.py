@@ -42,7 +42,7 @@ BASE_RECALL_QUERIES = (
     "operational context",
 )
 DEFAULT_RECALL_SAMPLES = 20
-DATASET_VERSION = "sdk-scale-visibility-v2"
+DATASET_VERSION = "sdk-scale-visibility-v3"
 
 
 def _percentile(values: list[float], percentile: float) -> float:
@@ -137,6 +137,8 @@ def _run_scale(scale: int, recall_queries: tuple[str, ...], visibility_checks: i
         "avg_recall_results": round(sum(recall_counts) / len(recall_counts), 2)
         if recall_counts
         else 0.0,
+        "candidate_backend": "fts5" if memory.storage._fts_enabled else "like",
+        "candidate_limit": 100,
         "indexer_queue_size": memory.indexer.stats()["queue_size"],
         "last_atom_readable": memory.storage.get_atom(last_atom_id) is not None,
     }

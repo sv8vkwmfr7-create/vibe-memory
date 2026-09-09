@@ -1,5 +1,5 @@
 {
-  "dataset_version": "retrieval-ablation-v1",
+  "dataset_version": "retrieval-ablation-v2",
   "dataset": {
     "atoms": 1000,
     "topics": 20,
@@ -7,12 +7,13 @@
     "queries_per_topic": 5,
     "relevant_atoms_per_query": 5,
     "top_k": 5,
+    "budget_candidate_limit": 100,
     "edges": {
       "total": 100,
       "causal": 80,
       "similar": 20
     },
-    "index": "TF-IDF document matrix precomputed once; query encoding timed"
+    "index": "TF-IDF matrix precomputed for ablations; budget pipeline includes FTS5 candidate lookup"
   },
   "methods": {
     "vector": {
@@ -21,9 +22,9 @@
       "mrr": 1.0,
       "noise_rate": 0.4,
       "latency_ms": {
-        "p50": 0.049,
-        "p95": 0.13,
-        "p99": 0.289
+        "p50": 0.061,
+        "p95": 0.089,
+        "p99": 0.095
       },
       "queries": 100
     },
@@ -33,9 +34,9 @@
       "mrr": 1.0,
       "noise_rate": 0.274,
       "latency_ms": {
-        "p50": 0.793,
-        "p95": 1.056,
-        "p99": 1.36
+        "p50": 0.8,
+        "p95": 0.985,
+        "p99": 1.106
       },
       "queries": 100
     },
@@ -45,9 +46,21 @@
       "mrr": 1.0,
       "noise_rate": 0.0,
       "latency_ms": {
-        "p50": 0.669,
-        "p95": 0.901,
-        "p99": 1.072
+        "p50": 0.675,
+        "p95": 0.799,
+        "p99": 0.894
+      },
+      "queries": 100
+    },
+    "budget_pipeline": {
+      "precision_at_k": 0.72,
+      "recall_at_k": 0.648,
+      "mrr": 1.0,
+      "noise_rate": 0.28,
+      "latency_ms": {
+        "p50": 4.817,
+        "p95": 5.387,
+        "p99": 5.946
       },
       "queries": 100
     }

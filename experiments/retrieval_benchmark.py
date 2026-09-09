@@ -7,7 +7,9 @@ timestamps, or an external service.  It compares three retrieval paths:
 * ``vector``: pre-indexed TF-IDF Top-K;
 * ``graph_all_edges``: PPR with every edge label and no seed post-filter;
 * ``graph_precision``: PPR with the precision edge-label allow-list and the
-  existing graph-connectivity seed filter.
+  existing graph-connectivity seed filter;
+* ``budget_pipeline``: the public multi-strategy recall pipeline with bounded
+  storage candidates.
 
 The synthetic corpus contains 20 topics x 50 atoms (1,000 atoms) and five
 fixed query variants per topic (100 queries).  Each topic has a five-atom
@@ -44,12 +46,12 @@ from vibe_memory.models.memory_atom import (
     EdgeStatus,
     MemoryAtom,
 )
-from vibe_memory.retrieval.ppr import PPRConfig, personalized_pagerank
+from vibe_memory.retrieval.ppr import PPRConfig, personalized_pagerank, recall
 from vibe_memory.retrieval.seed_filter import SeedFilter
 from vibe_memory.storage.sqlite_store import VibeStorage
 
 
-DATASET_VERSION = "retrieval-ablation-v1"
+DATASET_VERSION = "retrieval-ablation-v2"
 AGENT_ID = "retrieval-benchmark"
 TOP_K = 5
 ATOMS_PER_TOPIC = 50
@@ -263,9 +265,13 @@ def _run_benchmark(top_k: int = TOP_K) -> dict[str, object]:
         "vector": [],
         "graph_all_edges": [],
         "graph_precision": [],
+        "budget_pipeline": [],
     }
     latencies: dict[str, list[float]] = {name: [] for name in rows}
     filtered_seed_counts: list[int] = []
+    budget_provider = TfidfProvider()
+    budget_semantic_cache: dict = {}
+    budget_bm25_cache: dict = {}
 
     for item in queries:
         query = item["query"]
@@ -305,6 +311,24 @@ def _run_benchmark(top_k: int = TOP_K) -> dict[str, object]:
         rows["graph_precision"].append(_metrics(precision_ranked, relevant_ids, top_k))
         latencies["graph_precision"].append(precision_elapsed)
 
+        started = time.perf_counter()
+        budget_result = recall(
+            query,
+            AGENT_ID,
+            storage,
+            mode="budget",
+            top_k=top_k,
+            embedding_provider=budget_provider,
+            tenant_id="default",
+            semantic_cache=budget_semantic_cache,
+            bm25_cache=budget_bm25_cache,
+        )
+        budget_elapsed = (time.perf_counter() - started) * 1000
+        rows["budget_pipeline"].append(
+            _metrics(budget_result["atoms"], relevant_ids, top_k)
+        )
+        latencies["budget_pipeline"].append(budget_elapsed)
+
     methods = {
         name: _aggregate(rows[name], latencies[name]) for name in rows
     }
@@ -332,8 +356,9 @@ def _run_benchmark(top_k: int = TOP_K) -> dict[str, object]:
             "queries_per_topic": QUERIES_PER_TOPIC,
             "relevant_atoms_per_query": ANSWER_ATOMS,
             "top_k": top_k,
+            "budget_candidate_limit": max(100, top_k * 20),
             "edges": edge_counts,
-            "index": "TF-IDF document matrix precomputed once; query encoding timed",
+            "index": "TF-IDF matrix precomputed for ablations; budget pipeline includes FTS5 candidate lookup",
         },
         "methods": methods,
         "seed_filter": {
@@ -361,6 +386,7 @@ def _print_report(report: dict[str, object]) -> None:
         "vector": "TF-IDF vector",
         "graph_all_edges": "PPR all labels",
         "graph_precision": "PPR + labels/filter",
+        "budget_pipeline": "Budget pipeline",
     }
     for name, label in labels.items():
         result = report["methods"][name]

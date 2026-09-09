@@ -104,6 +104,34 @@ CREATE INDEX IF NOT EXISTS idx_episodes_tenant ON episodes(tenant_id);
 """
 
 
+FTS_SCHEMA = """
+CREATE VIRTUAL TABLE IF NOT EXISTS atoms_fts USING fts5(
+    content,
+    summary,
+    content='atoms',
+    content_rowid='rowid',
+    tokenize='unicode61'
+);
+
+CREATE TRIGGER IF NOT EXISTS atoms_fts_insert AFTER INSERT ON atoms BEGIN
+    INSERT INTO atoms_fts(rowid, content, summary)
+    VALUES (new.rowid, new.content, new.summary);
+END;
+
+CREATE TRIGGER IF NOT EXISTS atoms_fts_delete AFTER DELETE ON atoms BEGIN
+    INSERT INTO atoms_fts(atoms_fts, rowid, content, summary)
+    VALUES ('delete', old.rowid, old.content, old.summary);
+END;
+
+CREATE TRIGGER IF NOT EXISTS atoms_fts_update AFTER UPDATE OF content, summary ON atoms BEGIN
+    INSERT INTO atoms_fts(atoms_fts, rowid, content, summary)
+    VALUES ('delete', old.rowid, old.content, old.summary);
+    INSERT INTO atoms_fts(rowid, content, summary)
+    VALUES (new.rowid, new.content, new.summary);
+END;
+"""
+
+
 class VibeStorage:
     """VibeMemory SQLite 存储（多租户，M3）"""
 
@@ -112,7 +140,21 @@ class VibeStorage:
         self.conn.row_factory = sqlite3.Row
         self.conn.executescript(SCHEMA)
         self.conn.commit()
+        self._fts_enabled = self._initialize_fts()
         self.tenant_id = tenant_id
+
+    def _initialize_fts(self) -> bool:
+        existed = self.conn.execute(
+            "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'atoms_fts'"
+        ).fetchone()
+        try:
+            self.conn.executescript(FTS_SCHEMA)
+            if not existed:
+                self.conn.execute("INSERT INTO atoms_fts(atoms_fts) VALUES ('rebuild')")
+            self.conn.commit()
+            return True
+        except sqlite3.OperationalError:
+            return False
 
     # ── Atom CRUD ──
 
@@ -168,14 +210,70 @@ class VibeStorage:
         limit: int,
         tenant_id: Optional[str] = None,
     ) -> list[MemoryAtom]:
-        """Return a bounded active/warm set ranked by query-term matches."""
+        """Return bounded active/warm candidates, prioritizing all-term matches."""
         if limit <= 0:
             return []
 
         tid = tenant_id or self.tenant_id
         terms = list(dict.fromkeys(
             term.lower() for term in re.findall(r"\w+", query) if len(term) > 1
-        ))
+        ))[:32]
+        if self._fts_enabled and terms:
+            quoted_terms = [f'"{term}"' for term in terms]
+            match_queries = [" AND ".join(quoted_terms)]
+            any_term_query = " OR ".join(quoted_terms)
+            if any_term_query != match_queries[0]:
+                match_queries.append(any_term_query)
+
+            rows = []
+            for match_query in match_queries:
+                selected_ids = [row["id"] for row in rows]
+                exclude_sql = ""
+                exclude_params = []
+                if selected_ids:
+                    placeholders = ", ".join("?" for _ in selected_ids)
+                    exclude_sql = f"AND atoms.id NOT IN ({placeholders})"
+                    exclude_params = selected_ids
+                rows.extend(self.conn.execute(
+                    f"""SELECT atoms.*
+                        FROM atoms_fts
+                        JOIN atoms ON atoms.rowid = atoms_fts.rowid
+                        WHERE atoms_fts MATCH ?
+                          AND atoms.tenant_id = ? AND atoms.agent_id = ?
+                          AND atoms.lifecycle IN ('active', 'warm')
+                          {exclude_sql}
+                        ORDER BY atoms_fts.rowid DESC
+                        LIMIT ?""",
+                    (
+                        match_query,
+                        tid,
+                        agent_id,
+                        *exclude_params,
+                        limit - len(rows),
+                    ),
+                ).fetchall())
+                if len(rows) == limit:
+                    break
+
+            if len(rows) < limit:
+                selected_ids = [row["id"] for row in rows]
+                exclude_sql = ""
+                exclude_params = []
+                if selected_ids:
+                    placeholders = ", ".join("?" for _ in selected_ids)
+                    exclude_sql = f"AND id NOT IN ({placeholders})"
+                    exclude_params = selected_ids
+                rows.extend(self.conn.execute(
+                    f"""SELECT * FROM atoms
+                        WHERE tenant_id = ? AND agent_id = ?
+                          AND lifecycle IN ('active', 'warm')
+                          {exclude_sql}
+                        ORDER BY created_at DESC, id
+                        LIMIT ?""",
+                    (tid, agent_id, *exclude_params, limit - len(rows)),
+                ).fetchall())
+            return [self._row_to_atom(row) for row in rows]
+
         if terms:
             score_parts = [
                 "CASE WHEN LOWER(content) LIKE ? OR LOWER(summary) LIKE ? THEN 1 ELSE 0 END"

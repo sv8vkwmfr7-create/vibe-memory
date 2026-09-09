@@ -1,5 +1,5 @@
 {
-  "dataset_version": "sdk-scale-visibility-v2",
+  "dataset_version": "sdk-scale-visibility-v3",
   "storage": ":memory:",
   "auto_build_edges": false,
   "auto_episode": false,
@@ -9,16 +9,16 @@
   "scales": {
     "1000": {
       "atoms": 1000,
-      "store_ops_per_sec": 19902.91,
+      "store_ops_per_sec": 10531.32,
       "write_latency_ms": {
-        "p50": 0.043,
-        "p95": 0.056,
-        "p99": 0.116
+        "p50": 0.077,
+        "p95": 0.15,
+        "p99": 0.213
       },
       "write_to_get_atom_ms": {
-        "p50": 0.011,
-        "p95": 0.019,
-        "p99": 0.025
+        "p50": 0.014,
+        "p95": 0.026,
+        "p99": 0.037
       },
       "visibility": {
         "checks": 280,
@@ -26,33 +26,35 @@
         "rate": 1.0
       },
       "recall_latency_ms": {
-        "p50": 3.148,
-        "p95": 4.094,
-        "p99": 6.477
+        "p50": 1.491,
+        "p95": 2.186,
+        "p99": 5.088
       },
-      "recall_cold_ms": 7.072,
+      "recall_cold_ms": 5.814,
       "recall_warm_latency_ms": {
-        "p50": 3.137,
-        "p95": 3.52,
-        "p99": 3.854
+        "p50": 1.48,
+        "p95": 1.926,
+        "p99": 1.981
       },
       "recall_queries": 20,
       "avg_recall_results": 5.0,
+      "candidate_backend": "fts5",
+      "candidate_limit": 100,
       "indexer_queue_size": 0,
       "last_atom_readable": true
     },
     "10000": {
       "atoms": 10000,
-      "store_ops_per_sec": 20556.02,
+      "store_ops_per_sec": 11000.42,
       "write_latency_ms": {
-        "p50": 0.045,
-        "p95": 0.058,
-        "p99": 0.101
+        "p50": 0.078,
+        "p95": 0.144,
+        "p99": 0.228
       },
       "write_to_get_atom_ms": {
-        "p50": 0.012,
-        "p95": 0.061,
-        "p99": 0.067
+        "p50": 0.014,
+        "p95": 0.029,
+        "p99": 0.034
       },
       "visibility": {
         "checks": 298,
@@ -60,33 +62,35 @@
         "rate": 1.0
       },
       "recall_latency_ms": {
-        "p50": 18.893,
-        "p95": 22.176,
-        "p99": 22.337
+        "p50": 1.6,
+        "p95": 2.284,
+        "p99": 4.148
       },
-      "recall_cold_ms": 21.374,
+      "recall_cold_ms": 4.614,
       "recall_warm_latency_ms": {
-        "p50": 18.878,
-        "p95": 22.187,
-        "p99": 22.34
+        "p50": 1.587,
+        "p95": 1.804,
+        "p99": 2.09
       },
       "recall_queries": 20,
       "avg_recall_results": 5.0,
+      "candidate_backend": "fts5",
+      "candidate_limit": 100,
       "indexer_queue_size": 0,
       "last_atom_readable": true
     },
     "100000": {
       "atoms": 100000,
-      "store_ops_per_sec": 19053.54,
+      "store_ops_per_sec": 9369.96,
       "write_latency_ms": {
-        "p50": 0.047,
-        "p95": 0.089,
-        "p99": 0.132
+        "p50": 0.079,
+        "p95": 0.218,
+        "p99": 0.381
       },
       "write_to_get_atom_ms": {
-        "p50": 0.012,
-        "p95": 0.07,
-        "p99": 0.075
+        "p50": 0.014,
+        "p95": 0.037,
+        "p99": 0.046
       },
       "visibility": {
         "checks": 299,
@@ -94,18 +98,20 @@
         "rate": 1.0
       },
       "recall_latency_ms": {
-        "p50": 182.702,
-        "p95": 213.454,
-        "p99": 221.227
+        "p50": 1.639,
+        "p95": 2.907,
+        "p99": 10.218
       },
-      "recall_cold_ms": 188.559,
+      "recall_cold_ms": 12.046,
       "recall_warm_latency_ms": {
-        "p50": 182.664,
-        "p95": 213.965,
-        "p99": 221.329
+        "p50": 1.569,
+        "p95": 2.182,
+        "p99": 2.377
       },
       "recall_queries": 20,
       "avg_recall_results": 5.0,
+      "candidate_backend": "fts5",
+      "candidate_limit": 100,
       "indexer_queue_size": 0,
       "last_atom_readable": true
     }
