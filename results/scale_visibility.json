@@ -9,16 +9,16 @@
   "scales": {
     "1000": {
       "atoms": 1000,
-      "store_ops_per_sec": 10531.32,
+      "store_ops_per_sec": 10734.29,
       "write_latency_ms": {
-        "p50": 0.077,
-        "p95": 0.15,
-        "p99": 0.213
+        "p50": 0.08,
+        "p95": 0.132,
+        "p99": 0.171
       },
       "write_to_get_atom_ms": {
-        "p50": 0.014,
-        "p95": 0.026,
-        "p99": 0.037
+        "p50": 0.015,
+        "p95": 0.022,
+        "p99": 0.032
       },
       "visibility": {
         "checks": 280,
@@ -26,15 +26,15 @@
         "rate": 1.0
       },
       "recall_latency_ms": {
-        "p50": 1.491,
-        "p95": 2.186,
-        "p99": 5.088
+        "p50": 1.485,
+        "p95": 1.814,
+        "p99": 4.73
       },
-      "recall_cold_ms": 5.814,
+      "recall_cold_ms": 5.459,
       "recall_warm_latency_ms": {
-        "p50": 1.48,
-        "p95": 1.926,
-        "p99": 1.981
+        "p50": 1.484,
+        "p95": 1.614,
+        "p99": 1.621
       },
       "recall_queries": 20,
       "avg_recall_results": 5.0,
@@ -45,16 +45,16 @@
     },
     "10000": {
       "atoms": 10000,
-      "store_ops_per_sec": 11000.42,
+      "store_ops_per_sec": 11079.93,
       "write_latency_ms": {
-        "p50": 0.078,
-        "p95": 0.144,
-        "p99": 0.228
+        "p50": 0.08,
+        "p95": 0.134,
+        "p99": 0.195
       },
       "write_to_get_atom_ms": {
         "p50": 0.014,
-        "p95": 0.029,
-        "p99": 0.034
+        "p95": 0.027,
+        "p99": 0.031
       },
       "visibility": {
         "checks": 298,
@@ -62,15 +62,15 @@
         "rate": 1.0
       },
       "recall_latency_ms": {
-        "p50": 1.6,
-        "p95": 2.284,
-        "p99": 4.148
+        "p50": 1.541,
+        "p95": 1.897,
+        "p99": 3.877
       },
-      "recall_cold_ms": 4.614,
+      "recall_cold_ms": 4.371,
       "recall_warm_latency_ms": {
-        "p50": 1.587,
-        "p95": 1.804,
-        "p99": 2.09
+        "p50": 1.538,
+        "p95": 1.724,
+        "p99": 1.758
       },
       "recall_queries": 20,
       "avg_recall_results": 5.0,
@@ -81,16 +81,16 @@
     },
     "100000": {
       "atoms": 100000,
-      "store_ops_per_sec": 9369.96,
+      "store_ops_per_sec": 10025.46,
       "write_latency_ms": {
         "p50": 0.079,
-        "p95": 0.218,
-        "p99": 0.381
+        "p95": 0.181,
+        "p99": 0.29
       },
       "write_to_get_atom_ms": {
         "p50": 0.014,
-        "p95": 0.037,
-        "p99": 0.046
+        "p95": 0.03,
+        "p99": 0.041
       },
       "visibility": {
         "checks": 299,
@@ -98,15 +98,15 @@
         "rate": 1.0
       },
       "recall_latency_ms": {
-        "p50": 1.639,
-        "p95": 2.907,
-        "p99": 10.218
+        "p50": 1.566,
+        "p95": 2.198,
+        "p99": 9.73
       },
-      "recall_cold_ms": 12.046,
+      "recall_cold_ms": 11.613,
       "recall_warm_latency_ms": {
-        "p50": 1.569,
-        "p95": 2.182,
-        "p99": 2.377
+        "p50": 1.56,
+        "p95": 1.688,
+        "p99": 1.7
       },
       "recall_queries": 20,
       "avg_recall_results": 5.0,

@@ -13,6 +13,8 @@
 - Search BM25 through term postings instead of scoring every document, preserving reference scores and ordering.
 - Bound `budget` recall hydration to a tenant/lifecycle-scoped storage candidate set while leaving precision and recall modes unchanged.
 - Use trigger-synchronized SQLite FTS5 for whole-term budget candidates, with a `LIKE` compatibility fallback.
+- Replace low-priority budget candidates with indexed one-hop causal neighbors while preserving the hard candidate limit.
+- Weight the filtered graph signal in budget RRF and skip the duplicate TF-IDF rerank that suppressed graph-only answers.
 
 ### Documentation
 - Add `STATUS.md` as the canonical test baseline and capability/evidence boundary.
@@ -23,6 +25,7 @@
 - Split the scale benchmark into cold and warm recall latency using 20 deterministic queries.
 - Add storage and SDK regression tests for bounded budget-recall candidates.
 - Add the complete budget recall pipeline to the fixed retrieval quality ablation.
+- Add an SDK regression proving a causal graph-only answer can enter Top-5 without exceeding the candidate budget.
 
 ## [0.3.0] — 2026-08-27
 

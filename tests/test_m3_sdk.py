@@ -140,6 +140,47 @@ def test_budget_recall_uses_bounded_storage_candidates(monkeypatch):
     assert candidate_sizes == [100]
 
 
+def test_budget_recall_hydrates_causal_neighbor_within_candidate_limit(monkeypatch):
+    """Budget recall keeps a graph-only answer inside its bounded candidate pool."""
+    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    answer = mem.store(
+        "Rollback the deployment and restore the previous configuration",
+        auto_build_edges=False,
+        auto_episode=False,
+    )
+    for index in range(120):
+        mem.store(
+            f"Recent unrelated operational context {index}",
+            auto_build_edges=False,
+            auto_episode=False,
+        )
+    seeds = [
+        mem.store(
+            f"Rare needleterm incident signal {index}",
+            auto_build_edges=False,
+            auto_episode=False,
+        )
+        for index in range(3)
+    ]
+    for seed in seeds:
+        mem.link(seed.id, answer.id, label=EdgeLabel.CAUSAL)
+
+    candidate_sizes = []
+    original_candidates = mem.storage.get_recall_candidates
+
+    def tracked_candidates(*args, **kwargs):
+        candidates = original_candidates(*args, **kwargs)
+        candidate_sizes.append(len(candidates))
+        return candidates
+
+    monkeypatch.setattr(mem.storage, "get_recall_candidates", tracked_candidates)
+
+    result = mem.recall("needleterm", mode="budget", top_k=5)
+
+    assert any(atom.id == answer.id for atom in result["atoms"])
+    assert candidate_sizes == [100]
+
+
 def test_recall_semantic_cache_invalidates_on_update():
     """Test: SDK semantic document cache refreshes when atom version changes."""
     mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
@@ -158,8 +199,8 @@ def test_recall_semantic_cache_invalidates_on_update():
     print("[PASS] semantic cache invalidation test")
 
 
-def test_recall_tfidf_only_densifies_fused_candidates():
-    """Test: TF-IDF recall avoids a dense matrix for the full corpus."""
+def test_budget_recall_skips_duplicate_tfidf_rerank():
+    """Budget recall relies on fused ranks without a second semantic pass."""
     mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
     for index in range(200):
         mem.store(
@@ -184,8 +225,7 @@ def test_recall_tfidf_only_densifies_fused_candidates():
     result = mem.recall("needleterm", mode="budget", top_k=5)
 
     assert any(atom.id == target.id for atom in result["atoms"])
-    assert encoded_batch_sizes
-    assert max(encoded_batch_sizes) <= 10
+    assert encoded_batch_sizes == []
 
 
 def test_recall_reuses_bm25_index_until_content_changes(monkeypatch):

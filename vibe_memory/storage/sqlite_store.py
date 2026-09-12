@@ -209,12 +209,14 @@ class VibeStorage:
         query: str,
         limit: int,
         tenant_id: Optional[str] = None,
+        graph_seed_limit: int = 0,
     ) -> list[MemoryAtom]:
-        """Return bounded active/warm candidates, prioritizing all-term matches."""
+        """Return bounded active/warm text and causal-neighbor candidates."""
         if limit <= 0:
             return []
 
         tid = tenant_id or self.tenant_id
+        neighbor_limit = min(limit // 5, graph_seed_limit * 4) if graph_seed_limit > 0 else 0
         terms = list(dict.fromkeys(
             term.lower() for term in re.findall(r"\w+", query) if len(term) > 1
         ))[:32]
@@ -272,28 +274,83 @@ class VibeStorage:
                         LIMIT ?""",
                     (tid, agent_id, *exclude_params, limit - len(rows)),
                 ).fetchall())
-            return [self._row_to_atom(row) for row in rows]
-
-        if terms:
-            score_parts = [
-                "CASE WHEN LOWER(content) LIKE ? OR LOWER(summary) LIKE ? THEN 1 ELSE 0 END"
-                for _ in terms
-            ]
-            score_sql = " + ".join(score_parts)
-            match_params = [value for term in terms for value in (f"%{term}%", f"%{term}%")]
         else:
-            score_sql = "0"
-            match_params = []
+            if terms:
+                score_parts = [
+                    "CASE WHEN LOWER(content) LIKE ? OR LOWER(summary) LIKE ? THEN 1 ELSE 0 END"
+                    for _ in terms
+                ]
+                score_sql = " + ".join(score_parts)
+                match_params = [value for term in terms for value in (f"%{term}%", f"%{term}%")]
+            else:
+                score_sql = "0"
+                match_params = []
 
-        rows = self.conn.execute(
-            f"""SELECT *, ({score_sql}) AS match_count
-                FROM atoms
-                WHERE tenant_id = ? AND agent_id = ?
-                  AND lifecycle IN ('active', 'warm')
-                ORDER BY match_count DESC, created_at DESC, id
-                LIMIT ?""",
-            (*match_params, tid, agent_id, limit),
-        ).fetchall()
+            rows = self.conn.execute(
+                f"""SELECT *, ({score_sql}) AS match_count
+                    FROM atoms
+                    WHERE tenant_id = ? AND agent_id = ?
+                      AND lifecycle IN ('active', 'warm')
+                    ORDER BY match_count DESC, created_at DESC, id
+                    LIMIT ?""",
+                (*match_params, tid, agent_id, limit),
+            ).fetchall()
+
+        if neighbor_limit and rows:
+            seed_ids = [row["id"] for row in rows[:graph_seed_limit]]
+            selected_ids = [row["id"] for row in rows]
+            seed_placeholders = ", ".join("?" for _ in seed_ids)
+            selected_placeholders = ", ".join("?" for _ in selected_ids)
+            neighbor_rows = self.conn.execute(
+                f"""SELECT atom_id, MAX(graph_score) AS graph_score
+                    FROM (
+                        SELECT to_atom_id AS atom_id, weight * confidence
+                            AS graph_score
+                        FROM edges
+                        WHERE from_atom_id IN ({seed_placeholders})
+                          AND tenant_id = ? AND status = 'active' AND label = ?
+                          AND weight * confidence >= 0.05
+                        UNION ALL
+                        SELECT from_atom_id AS atom_id, weight * confidence
+                            AS graph_score
+                        FROM edges
+                        WHERE to_atom_id IN ({seed_placeholders})
+                          AND tenant_id = ? AND status = 'active' AND label = ?
+                          AND weight * confidence >= 0.05
+                    )
+                    WHERE atom_id NOT IN ({selected_placeholders})
+                    GROUP BY atom_id
+                    ORDER BY graph_score DESC, atom_id
+                    LIMIT ?""",
+                (
+                    *seed_ids,
+                    tid,
+                    EdgeLabel.CAUSAL.value,
+                    *seed_ids,
+                    tid,
+                    EdgeLabel.CAUSAL.value,
+                    *selected_ids,
+                    neighbor_limit,
+                ),
+            ).fetchall()
+            if neighbor_rows:
+                neighbor_ids = [row["atom_id"] for row in neighbor_rows]
+                neighbor_placeholders = ", ".join("?" for _ in neighbor_ids)
+                fetched_rows = self.conn.execute(
+                    f"""SELECT * FROM atoms
+                        WHERE id IN ({neighbor_placeholders})
+                          AND tenant_id = ? AND agent_id = ?
+                          AND lifecycle IN ('active', 'warm')""",
+                    (*neighbor_ids, tid, agent_id),
+                ).fetchall()
+                fetched_by_id = {row["id"]: row for row in fetched_rows}
+                graph_rows = [
+                    fetched_by_id[atom_id]
+                    for atom_id in neighbor_ids
+                    if atom_id in fetched_by_id
+                ]
+                rows = rows[:limit - len(graph_rows)] + graph_rows
+
         return [self._row_to_atom(row) for row in rows]
 
     def count_atoms_by_agent(self, agent_id: str, tenant_id: Optional[str] = None) -> int:

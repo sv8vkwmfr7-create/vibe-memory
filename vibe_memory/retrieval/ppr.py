@@ -305,6 +305,7 @@ def recall(
             query,
             limit=max(100, top_k * 20),
             tenant_id=tid,
+            graph_seed_limit=top_k,
         )
     else:
         all_atoms = storage.get_atoms_by_agent(agent_id, tenant_id=tid)
@@ -323,6 +324,7 @@ def recall(
 
     # 阶段 1：多策略并行检索
     all_ranked_lists = []
+    fusion_weights = []
     query_vec = None
     doc_vectors = None
 
@@ -380,6 +382,7 @@ def recall(
                 indices, _ = index_flat(doc_vectors, query_vec, top_k=top_k)
             semantic_seeds = [active_atoms[i] for i in indices if i < len(active_atoms)]
             all_ranked_lists.append([(a.id, 1.0 - i/len(semantic_seeds)) for i, a in enumerate(semantic_seeds)])
+            fusion_weights.append(1.0)
         except Exception:
             pass
 
@@ -404,6 +407,7 @@ def recall(
             all_ranked_lists.append([
                 (active_atoms[i].id, s / max_bm25) for i, s in bm25_results
             ])
+            fusion_weights.append(1.0)
         except Exception:
             pass
 
@@ -418,6 +422,7 @@ def recall(
             graph = GraphStrategy(storage, mode)
             graph_results = graph.search(filtered_seeds, top_k=top_k)
             all_ranked_lists.append(graph_results)
+            fusion_weights.append(2.0 if mode == "budget" else 1.0)
         except Exception:
             pass
 
@@ -429,6 +434,7 @@ def recall(
             all_ranked_lists.append([
                 (active_atoms[i].id, s) for i, s in temp_results
             ])
+            fusion_weights.append(0.5 if mode == "budget" else 1.0)
         except Exception:
             pass
 
@@ -440,10 +446,11 @@ def recall(
             "strategies_used": enabled_strategies,
         }
 
-    fused = rrf_fusion(all_ranked_lists, top_k=top_k * 2)
+    fused = rrf_fusion(all_ranked_lists, top_k=top_k * 2, weights=fusion_weights)
 
     # 阶段 3：相似度重排
-    if "semantic" in enabled_strategies and query_vec is not None:
+    should_rerank = mode != "budget" or not isinstance(provider, TfidfProvider)
+    if should_rerank and "semantic" in enabled_strategies and query_vec is not None:
         if isinstance(provider, TfidfProvider):
             candidate_atoms = [atom_map[atom_id] for atom_id, _ in fused if atom_id in atom_map]
             doc_vectors = provider.encode([atom.content for atom in candidate_atoms])
