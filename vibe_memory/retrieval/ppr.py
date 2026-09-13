@@ -110,6 +110,19 @@ def personalized_pagerank(
     """
     cfg = config or PPRConfig()
 
+    if not seed_atoms:
+        return {}
+    scope = {(atom.agent_id, atom.tenant_id) for atom in seed_atoms}
+    if len(scope) != 1:
+        raise ValueError("PPR seeds must belong to one agent and tenant")
+    agent_id, tenant_id = next(iter(scope))
+    seed_atoms = [
+        atom for atom in seed_atoms
+        if atom.lifecycle.value in ("active", "warm")
+    ]
+    if not seed_atoms:
+        return {}
+
     # 初始化分数：种子节点均匀分配
     scores: dict[str, float] = {}
     seed_ids = set()
@@ -118,7 +131,7 @@ def personalized_pagerank(
         seed_ids.add(atom.id)
 
     # 预加载所有边（避免逐条查询）
-    all_edges = storage.get_all_edges()
+    all_edges = storage.get_retrieval_edges(agent_id, tenant_id)
     outgoing: dict[str, list[Edge]] = defaultdict(list)
     incoming: dict[str, list[Edge]] = defaultdict(list)
     for edge in all_edges:
@@ -216,7 +229,9 @@ def build_trace(
     seed_ids = {a.id for a in seed_atoms}
 
     # 简单路径：对每个召回分片，检查是否有直连边到任何种子
-    all_edges = storage.get_all_edges()
+    if not seed_atoms:
+        return traces
+    all_edges = storage.get_retrieval_edges(seed_atoms[0].agent_id, seed_atoms[0].tenant_id)
     edge_map: dict[tuple[str, str], Edge] = {}
     for e in all_edges:
         edge_map[(e.from_atom_id, e.to_atom_id)] = e

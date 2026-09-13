@@ -480,6 +480,22 @@ class VibeStorage:
         ).fetchall()
         return [self._row_to_edge(r) for r in rows]
 
+    def get_retrieval_edges(self, agent_id: str, tenant_id: Optional[str] = None) -> list[Edge]:
+        """Read active edges with both endpoints in the live retrieval scope."""
+        tid = tenant_id or self.tenant_id
+        rows = self.conn.execute(
+            """SELECT e.* FROM edges e
+               JOIN atoms src ON src.id = e.from_atom_id
+               JOIN atoms dst ON dst.id = e.to_atom_id
+               WHERE e.status = 'active' AND e.tenant_id = ?
+                 AND src.tenant_id = ? AND dst.tenant_id = ?
+                 AND src.agent_id = ? AND dst.agent_id = ?
+                 AND src.lifecycle IN ('active', 'warm')
+                 AND dst.lifecycle IN ('active', 'warm')""",
+            (tid, tid, tid, agent_id, agent_id),
+        ).fetchall()
+        return [self._row_to_edge(row) for row in rows]
+
     def get_all_edges(self) -> list[Edge]:
         rows = self.conn.execute(
             "SELECT * FROM edges WHERE status = 'active'"

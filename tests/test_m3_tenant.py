@@ -466,6 +466,56 @@ def test_high_fanout_candidates_keep_strong_causal_neighbor():
     assert len(candidates) == 10 and "fan-499" in {a.id for a in candidates}
 
 
+def test_ppr_cannot_walk_through_foreign_or_archived_nodes():
+    """Out-of-scope nodes cannot act as bridges back into valid memory."""
+    from vibe_memory.retrieval.ppr import personalized_pagerank
+    store = VibeStorage(":memory:", tenant_id="tenant-a")
+    seed = _make_atom("scope-seed", "tenant-a", "agent-1", "s1")
+    valid = _make_atom("scope-valid", "tenant-a", "agent-1", "s1")
+    foreign = _make_atom("scope-foreign", "tenant-b", "agent-1", "s1")
+    agent = _make_atom("scope-agent", "tenant-a", "agent-2", "s1")
+    archived = _make_atom("scope-archived", "tenant-a", "agent-1", "s1")
+    archived.lifecycle = Lifecycle.ARCHIVED
+    for atom in (seed, valid, foreign, agent, archived):
+        store.insert_atom(atom)
+    for atom in (foreign, agent, archived):
+        for source, target in ((seed.id, atom.id), (atom.id, valid.id)):
+            store.insert_edge(Edge(
+                id=f"{source}-{target}", from_atom_id=source,
+                to_atom_id=target, label=EdgeLabel.CAUSAL, tenant_id="tenant-a",
+            ))
+    assert personalized_pagerank([seed], store) == {seed.id: 1.0}
+
+
+def test_ppr_respects_explicit_seed_tenant_and_warm_memory():
+    from vibe_memory.retrieval.ppr import personalized_pagerank
+    store = VibeStorage(":memory:", tenant_id="other-default")
+    seed = _make_atom("warm-seed", "tenant-a", "agent-1", "s1")
+    answer = _make_atom("warm-answer", "tenant-a", "agent-1", "s1")
+    answer.lifecycle = Lifecycle.WARM
+    store.insert_atom(seed)
+    store.insert_atom(answer)
+    store.insert_edge(Edge(
+        id="warm-edge", from_atom_id=seed.id, to_atom_id=answer.id,
+        tenant_id="tenant-a", label=EdgeLabel.CAUSAL,
+    ))
+    scores = personalized_pagerank([seed], store)
+    assert set(scores) == {seed.id, answer.id} and scores[answer.id] > 0
+
+
+def test_ppr_rejects_mixed_scopes_and_ignores_archived_seeds():
+    import pytest
+    from vibe_memory.retrieval.ppr import personalized_pagerank
+    store = VibeStorage(":memory:")
+    seed = _make_atom("mixed-seed", DEFAULT_TENANT, "agent-1", "s1")
+    foreign = _make_atom("mixed-foreign", "tenant-b", "agent-1", "s1")
+    with pytest.raises(ValueError, match="one agent and tenant"):
+        personalized_pagerank([seed, foreign], store)
+    seed.lifecycle = Lifecycle.ARCHIVED
+    assert personalized_pagerank([seed], store) == {}
+    assert personalized_pagerank([], store) == {}
+
+
 def run_all():
     print("=" * 50)
     print("VibeMemory M3 Multi-Tenant Tests")
