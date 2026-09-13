@@ -291,7 +291,8 @@ class VibeMemory:
             top_k: 向量预筛 Top-K
 
         Returns:
-            {atoms: [MemoryAtom], trace: [...], mode: str, total_walked: int}
+            {atoms: [MemoryAtom], trace: [...], mode: str, total_walked: int,
+             reinforcement_skipped: bool}（是否跳过部分/全部非关键强化）
         """
         result = _recall(
             query=query,
@@ -313,7 +314,9 @@ class VibeMemory:
 
         # 非关键强化不等待写锁，也不提交/回滚调用方已有事务。
         conn = self.storage.conn
+        result["reinforcement_skipped"] = False
         if conn.in_transaction:
+            result["reinforcement_skipped"] = True
             return result
         busy_timeout = conn.execute("PRAGMA busy_timeout").fetchone()[0]
         conn.execute("PRAGMA busy_timeout=0")
@@ -338,6 +341,7 @@ class VibeMemory:
                 sqlite3.SQLITE_BUSY, sqlite3.SQLITE_LOCKED
             ):
                 raise
+            result["reinforcement_skipped"] = True
         finally:
             conn.execute(f"PRAGMA busy_timeout={busy_timeout}")
 

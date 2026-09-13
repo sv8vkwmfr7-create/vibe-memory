@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Mixed-load soak
+- Add fresh-file 100k/300s two-SDK-reader/CRUD-writer validation and public `reinforcement_skipped` recall metadata, verified by existing contention regressions. 1505/1505 anchor hits and integrity checks pass; retain explicit evidence of 98.6% skipped reinforcement and ~1.10GB sampled WAL peak, which truncates after load stops. No new retrieval/consistency fix or default checkpoint change is included.
+
 ### SDK contention fix
 - Make post-recall atom/edge reinforcement best-effort on BUSY/LOCKED with zero busy wait and restored connection timeout; preserve other errors and caller transactions. Do not mutate returned atoms on failed updates. Three regressions pass (299 full tests); disk-pressure v2 now verifies successful fast SDK recall under a competing writer.
 
