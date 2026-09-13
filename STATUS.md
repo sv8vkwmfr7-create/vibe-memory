@@ -1,17 +1,19 @@
 # Project Status
 
-> Last verified: 2026-09-12
+> Last verified: 2026-09-13
 
 Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK, SQLite storage, TF-IDF retrieval, CLI/session manager, and MCP stdio interface are covered by the current local test suite. Public benchmark and production-scale claims remain unverified.
 
 ## Verified Baseline
 
+The 2026-09-13 v3 retrieval run removes query-word leakage from graph-only answers. Budget fusion now respects connectivity-rejected semantic seeds across lexical lists. On the same v3 corpus, default one-hop/20% Recall@5 improved from 0.792 to 0.808 (p95 5.771 ms); explicit two-hop/20% reached 0.984 (p95 5.816 ms). One hop remains the default. Candidate hydration is bounded, but graph edge traversal is not a strict execution-time budget. These are synthetic regression results, not held-out production evidence. Full tests passed with a fresh `--basetemp` directory, avoiding inaccessible old Windows pytest temp files.
+
 | Item | Result |
 |------|--------|
 | Platform | Windows, Python 3.12.14 |
 | Test command | `python -m pytest -q` |
-| Test result | **276 passed, 0 failed** |
-| Coverage | **74%** aggregate |
+| Test result | **278 passed, 0 failed** |
+| Coverage | **74%** aggregate (previous run; not remeasured this round) |
 | Package version | 0.3.0 |
 
 The reproducible local retrieval ablation (`experiments/retrieval_benchmark.py`) uses 1,000 synthetic atoms and 100 fixed queries. One Windows + Python 3.12.14 run measured: TF-IDF noise 40.00%, PPR with all labels 27.40%, and PPR with precision labels plus seed filtering 0%; p95 latency was 0.130 ms, 1.056 ms, and 0.901 ms respectively. These are synthetic regression numbers, not public-benchmark or production claims.

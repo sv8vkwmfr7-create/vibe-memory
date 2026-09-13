@@ -2,14 +2,16 @@
 
 This benchmark deliberately keeps the dataset and the graph construction in
 the script so that a run does not depend on a model download, wall-clock
-timestamps, or an external service.  It compares three retrieval paths:
+timestamps, or an external service.  It compares four retrieval paths and a candidate sweep:
 
 * ``vector``: pre-indexed TF-IDF Top-K;
 * ``graph_all_edges``: PPR with every edge label and no seed post-filter;
 * ``graph_precision``: PPR with the precision edge-label allow-list and the
   existing graph-connectivity seed filter;
 * ``budget_pipeline``: the public multi-strategy recall pipeline with bounded
-  storage candidates.
+  storage candidates;
+* ``budget_candidate_ablation``: one/two causal hops crossed with 10%/20%/30%
+  graph-neighbor candidate quotas.
 
 The synthetic corpus contains 20 topics x 50 atoms (1,000 atoms) and five
 fixed query variants per topic (100 queries).  Each topic has a five-atom
@@ -51,12 +53,20 @@ from vibe_memory.retrieval.seed_filter import SeedFilter
 from vibe_memory.storage.sqlite_store import VibeStorage
 
 
-DATASET_VERSION = "retrieval-ablation-v2"
+DATASET_VERSION = "retrieval-ablation-v3"
 AGENT_ID = "retrieval-benchmark"
 TOP_K = 5
 ATOMS_PER_TOPIC = 50
 ANSWER_ATOMS = 5
 QUERIES_PER_TOPIC = 5
+BUDGET_CANDIDATE_ABLATIONS: tuple[tuple[int, float], ...] = (
+    (1, 0.1),
+    (1, 0.2),
+    (1, 0.3),
+    (2, 0.1),
+    (2, 0.2),
+    (2, 0.3),
+)
 
 # The phrases intentionally cover API, data, infra, and UI tasks.  They are
 # constants rather than random samples, making a result diff meaningful.
@@ -115,10 +125,11 @@ def build_dataset() -> tuple[VibeStorage, list[MemoryAtom], dict[str, set[str]],
                 )
             elif atom_index < 5:
                 # These are relevant answers but intentionally do not repeat
-                # the query phrase.  A graph walk must recover them.
+                # the query phrase or query suffixes.  A graph walk must
+                # recover them.
                 content = (
-                    f"Resolution step {atom_index}: root cause, configuration "
-                    "change, verification and rollback notes for the incident."
+                    f"Outcome record {atom_index}: applied change set, "
+                    "confirmed service stability and captured follow-up details."
                 )
             elif atom_index == ATOMS_PER_TOPIC - 1:
                 previous_phrase = TOPICS[(topic_index - 1) % len(TOPICS)][1]
@@ -265,13 +276,20 @@ def _run_benchmark(top_k: int = TOP_K) -> dict[str, object]:
         "vector": [],
         "graph_all_edges": [],
         "graph_precision": [],
-        "budget_pipeline": [],
     }
     latencies: dict[str, list[float]] = {name: [] for name in rows}
     filtered_seed_counts: list[int] = []
-    budget_provider = TfidfProvider()
-    budget_semantic_cache: dict = {}
-    budget_bm25_cache: dict = {}
+    budget_keys = [f"h{hops}_q{int(ratio * 100)}" for hops, ratio in BUDGET_CANDIDATE_ABLATIONS]
+    budget_rows: dict[str, list[dict[str, float]]] = {key: [] for key in budget_keys}
+    budget_latencies: dict[str, list[float]] = {key: [] for key in budget_keys}
+    budget_state = {
+        key: {
+            "provider": TfidfProvider(),
+            "semantic_cache": {},
+            "bm25_cache": {},
+        }
+        for key in budget_keys
+    }
 
     for item in queries:
         query = item["query"]
@@ -311,35 +329,44 @@ def _run_benchmark(top_k: int = TOP_K) -> dict[str, object]:
         rows["graph_precision"].append(_metrics(precision_ranked, relevant_ids, top_k))
         latencies["graph_precision"].append(precision_elapsed)
 
-        started = time.perf_counter()
-        budget_result = recall(
-            query,
-            AGENT_ID,
-            storage,
-            mode="budget",
-            top_k=top_k,
-            embedding_provider=budget_provider,
-            tenant_id="default",
-            semantic_cache=budget_semantic_cache,
-            bm25_cache=budget_bm25_cache,
-        )
-        budget_elapsed = (time.perf_counter() - started) * 1000
-        rows["budget_pipeline"].append(
-            _metrics(budget_result["atoms"], relevant_ids, top_k)
-        )
-        latencies["budget_pipeline"].append(budget_elapsed)
+        for (hops, ratio), key in zip(BUDGET_CANDIDATE_ABLATIONS, budget_keys):
+            state = budget_state[key]
+            started = time.perf_counter()
+            budget_result = recall(
+                query,
+                AGENT_ID,
+                storage,
+                mode="budget",
+                top_k=top_k,
+                embedding_provider=state["provider"],
+                tenant_id="default",
+                semantic_cache=state["semantic_cache"],
+                bm25_cache=state["bm25_cache"],
+                budget_graph_hops=hops,
+                budget_graph_ratio=ratio,
+            )
+            budget_elapsed = (time.perf_counter() - started) * 1000
+            budget_rows[key].append(
+                _metrics(budget_result["atoms"], relevant_ids, top_k)
+            )
+            budget_latencies[key].append(budget_elapsed)
 
     methods = {
         name: _aggregate(rows[name], latencies[name]) for name in rows
     }
-    for name in methods:
-        methods[name]["precision_at_k"] = round(methods[name]["precision_at_k"], 4)
-        methods[name]["recall_at_k"] = round(methods[name]["recall_at_k"], 4)
-        methods[name]["mrr"] = round(methods[name]["mrr"], 4)
-        methods[name]["noise_rate"] = round(methods[name]["noise_rate"], 4)
-        methods[name]["latency_ms"] = {
+    budget_ablation = {
+        key: _aggregate(budget_rows[key], budget_latencies[key])
+        for key in budget_keys
+    }
+    methods["budget_pipeline"] = budget_ablation["h1_q20"]
+    for result in [*methods.values(), *budget_ablation.values()]:
+        result["precision_at_k"] = round(result["precision_at_k"], 4)
+        result["recall_at_k"] = round(result["recall_at_k"], 4)
+        result["mrr"] = round(result["mrr"], 4)
+        result["noise_rate"] = round(result["noise_rate"], 4)
+        result["latency_ms"] = {
             key: round(value, 3)
-            for key, value in methods[name]["latency_ms"].items()
+            for key, value in result["latency_ms"].items()
         }
 
     edge_counts = {
@@ -361,6 +388,7 @@ def _run_benchmark(top_k: int = TOP_K) -> dict[str, object]:
             "index": "TF-IDF matrix precomputed for ablations; budget pipeline includes FTS5 candidate lookup",
         },
         "methods": methods,
+        "budget_candidate_ablation": budget_ablation,
         "seed_filter": {
             "avg_filtered_seeds": round(sum(filtered_seed_counts) / len(filtered_seed_counts), 3),
         },
@@ -395,6 +423,15 @@ def _print_report(report: dict[str, object]) -> None:
             f"{label:<20} {result['precision_at_k']:>8.4f} {result['recall_at_k']:>8.4f} "
             f"{result['mrr']:>8.4f} {result['noise_rate']:>8.4f} "
             f"{latency['p50']:>10.3f} {latency['p95']:>10.3f} {latency['p99']:>10.3f}"
+        )
+
+    print("\nBudget candidate ablation")
+    for key, result in report["budget_candidate_ablation"].items():
+        latency = result["latency_ms"]
+        print(
+            f"  {key}: P@K={result['precision_at_k']:.4f}, "
+            f"R@K={result['recall_at_k']:.4f}, noise={result['noise_rate']:.4f}, "
+            f"p95={latency['p95']:.3f} ms"
         )
 
 

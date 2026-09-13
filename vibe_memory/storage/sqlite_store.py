@@ -210,13 +210,20 @@ class VibeStorage:
         limit: int,
         tenant_id: Optional[str] = None,
         graph_seed_limit: int = 0,
+        graph_neighbor_limit: Optional[int] = None,
+        graph_hops: int = 1,
     ) -> list[MemoryAtom]:
         """Return bounded active/warm text and causal-neighbor candidates."""
         if limit <= 0:
             return []
 
         tid = tenant_id or self.tenant_id
-        neighbor_limit = min(limit // 5, graph_seed_limit * 4) if graph_seed_limit > 0 else 0
+        default_neighbor_limit = min(limit // 5, graph_seed_limit * 4)
+        neighbor_limit = (
+            default_neighbor_limit
+            if graph_neighbor_limit is None
+            else min(limit, max(0, graph_neighbor_limit))
+        ) if graph_seed_limit > 0 else 0
         terms = list(dict.fromkeys(
             term.lower() for term in re.findall(r"\w+", query) if len(term) > 1
         ))[:32]
@@ -296,45 +303,82 @@ class VibeStorage:
                 (*match_params, tid, agent_id, limit),
             ).fetchall()
 
-        if neighbor_limit and rows:
+        if neighbor_limit and graph_hops > 0 and rows:
             seed_ids = [row["id"] for row in rows[:graph_seed_limit]]
             selected_ids = [row["id"] for row in rows]
-            seed_placeholders = ", ".join("?" for _ in seed_ids)
-            selected_placeholders = ", ".join("?" for _ in selected_ids)
-            neighbor_rows = self.conn.execute(
-                f"""SELECT atom_id, MAX(graph_score) AS graph_score
-                    FROM (
-                        SELECT to_atom_id AS atom_id, weight * confidence
-                            AS graph_score
+            selected_id_set = set(selected_ids)
+            frontier_scores = {atom_id: 1.0 for atom_id in seed_ids}
+            visited_ids = set(seed_ids)
+            neighbor_scores: dict[str, tuple[float, int]] = {}
+
+            for hop in range(1, graph_hops + 1):
+                frontier_ids = list(frontier_scores)
+                if not frontier_ids:
+                    break
+                placeholders = ", ".join("?" for _ in frontier_ids)
+                edge_rows = self.conn.execute(
+                    f"""SELECT edges.from_atom_id AS source_id,
+                                edges.to_atom_id AS atom_id,
+                                edges.weight * edges.confidence AS edge_score
                         FROM edges
-                        WHERE from_atom_id IN ({seed_placeholders})
-                          AND tenant_id = ? AND status = 'active' AND label = ?
-                          AND weight * confidence >= 0.05
+                        JOIN atoms ON atoms.id = edges.to_atom_id
+                        WHERE edges.from_atom_id IN ({placeholders})
+                          AND edges.tenant_id = ? AND edges.status = 'active'
+                          AND edges.label = ?
+                          AND edges.weight * edges.confidence >= 0.05
+                          AND atoms.tenant_id = ? AND atoms.agent_id = ?
+                          AND atoms.lifecycle IN ('active', 'warm')
                         UNION ALL
-                        SELECT from_atom_id AS atom_id, weight * confidence
-                            AS graph_score
+                        SELECT edges.to_atom_id AS source_id,
+                               edges.from_atom_id AS atom_id,
+                               edges.weight * edges.confidence AS edge_score
                         FROM edges
-                        WHERE to_atom_id IN ({seed_placeholders})
-                          AND tenant_id = ? AND status = 'active' AND label = ?
-                          AND weight * confidence >= 0.05
-                    )
-                    WHERE atom_id NOT IN ({selected_placeholders})
-                    GROUP BY atom_id
-                    ORDER BY graph_score DESC, atom_id
-                    LIMIT ?""",
-                (
-                    *seed_ids,
-                    tid,
-                    EdgeLabel.CAUSAL.value,
-                    *seed_ids,
-                    tid,
-                    EdgeLabel.CAUSAL.value,
-                    *selected_ids,
-                    neighbor_limit,
-                ),
-            ).fetchall()
-            if neighbor_rows:
-                neighbor_ids = [row["atom_id"] for row in neighbor_rows]
+                        JOIN atoms ON atoms.id = edges.from_atom_id
+                        WHERE edges.to_atom_id IN ({placeholders})
+                          AND edges.tenant_id = ? AND edges.status = 'active'
+                          AND edges.label = ?
+                          AND edges.weight * edges.confidence >= 0.05
+                          AND atoms.tenant_id = ? AND atoms.agent_id = ?
+                          AND atoms.lifecycle IN ('active', 'warm')""",
+                    (
+                        *frontier_ids,
+                        tid,
+                        EdgeLabel.CAUSAL.value,
+                        tid,
+                        agent_id,
+                        *frontier_ids,
+                        tid,
+                        EdgeLabel.CAUSAL.value,
+                        tid,
+                        agent_id,
+                    ),
+                ).fetchall()
+
+                next_scores: dict[str, float] = {}
+                for edge_row in edge_rows:
+                    atom_id = edge_row["atom_id"]
+                    if atom_id in visited_ids:
+                        continue
+                    score = frontier_scores[edge_row["source_id"]] * edge_row["edge_score"]
+                    next_scores[atom_id] = max(next_scores.get(atom_id, 0.0), score)
+                visited_ids.update(next_scores)
+                frontier_scores = next_scores
+
+                for atom_id, score in next_scores.items():
+                    if atom_id in selected_id_set:
+                        continue
+                    previous = neighbor_scores.get(atom_id)
+                    if previous is None or score > previous[0]:
+                        neighbor_scores[atom_id] = (score, hop)
+
+            if neighbor_scores:
+                neighbor_ids = [
+                    atom_id
+                    for atom_id, _ in sorted(
+                        neighbor_scores.items(),
+                        key=lambda item: (-item[1][0], item[1][1], item[0]),
+                    )[:neighbor_limit]
+                ]
                 neighbor_placeholders = ", ".join("?" for _ in neighbor_ids)
                 fetched_rows = self.conn.execute(
                     f"""SELECT * FROM atoms

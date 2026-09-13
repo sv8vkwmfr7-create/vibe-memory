@@ -129,6 +129,59 @@ def test_recall_candidates_match_whole_terms():
     assert [atom.id for atom in candidates] == ["exact"]
 
 
+def test_recall_candidates_expand_two_causal_hops_within_budget():
+    """Two-hop expansion stays bounded and does not cross tenant or agent scope."""
+    store = VibeStorage(":memory:", tenant_id="tenant-a")
+    hop_one = _make_atom("hop-one", "tenant-a", "agent-1", "s1", "First resolution step")
+    hop_two = _make_atom("hop-two", "tenant-a", "agent-1", "s1", "Final rollback procedure")
+    foreign = _make_atom("foreign", "tenant-b", "agent-1", "s1", "Foreign tenant answer")
+    for atom in (hop_one, hop_two, foreign):
+        store.insert_atom(atom)
+    for index in range(12):
+        store.insert_atom(
+            _make_atom(
+                f"noise-{index}",
+                "tenant-a",
+                "agent-1",
+                "noise",
+                f"Recent unrelated operational context {index}",
+            )
+        )
+    seed = _make_atom("seed", "tenant-a", "agent-1", "s2", "Rare needleterm incident")
+    store.insert_atom(seed)
+    for edge_id, from_id, to_id in (
+        ("seed-hop-one", seed.id, hop_one.id),
+        ("hop-one-hop-two", hop_one.id, hop_two.id),
+        ("hop-one-foreign", hop_one.id, foreign.id),
+    ):
+        store.insert_edge(
+            Edge(
+                id=edge_id,
+                from_atom_id=from_id,
+                to_atom_id=to_id,
+                tenant_id="tenant-a",
+                label=EdgeLabel.CAUSAL,
+                confidence=1.0,
+                weight=1.0,
+            )
+        )
+
+    candidates = store.get_recall_candidates(
+        "agent-1",
+        "needleterm",
+        limit=10,
+        tenant_id="tenant-a",
+        graph_seed_limit=1,
+        graph_neighbor_limit=3,
+        graph_hops=2,
+    )
+
+    candidate_ids = {atom.id for atom in candidates}
+    assert len(candidates) == 10
+    assert {"hop-one", "hop-two"} <= candidate_ids
+    assert "foreign" not in candidate_ids
+
+
 def test_cross_tenant_edge_prevention():
     """Test that cross-tenant edges are never built"""
     new_atom = _make_atom("new", "tenant-a", "agent-1", "s2",
@@ -330,6 +383,39 @@ def test_tenant_sqlite_persistence():
     assert retrieved.content == "persistent test"
 
     print("[PASS] tenant SQLite persistence test")
+
+
+def test_budget_recall_keeps_causal_outcomes_over_isolated_cross_reference():
+    """A lexical cross-reference must not undo seed filtering during fusion."""
+    store = VibeStorage(":memory:")
+    contents = ["Checkout stalled incident investigation"] * 3 + [
+        "Applied connection setting", "Confirmed service recovery",
+    ]
+    for i, content in enumerate(contents):
+        store.insert_atom(MemoryAtom(
+            id=f"answer-{i}", agent_id="agent-1", session_id="s1",
+            content=content, summary=content,
+        ))
+    for i in range(4):
+        store.insert_edge(Edge(
+            id=f"chain-{i}", from_atom_id=f"answer-{i}",
+            to_atom_id=f"answer-{i+1}", label=EdgeLabel.CAUSAL,
+        ))
+    for i in range(120):
+        store.insert_atom(MemoryAtom(
+            id=f"background-{i}", agent_id="agent-1", session_id="s2",
+            content="Routine unrelated housekeeping", summary="Background",
+        ))
+    store.insert_atom(MemoryAtom(
+        id="cross-reference", agent_id="agent-1", session_id="s2",
+        content="Checkout stalled cross-reference only, unrelated comparison",
+        summary="Cross-reference",
+    ))
+    result = recall("Checkout stalled incident", "agent-1", store,
+                    mode="budget", top_k=5, budget_graph_hops=2)
+    assert {a.id for a in result["atoms"]} == {
+        "answer-0", "answer-1", "answer-2", "answer-3", "answer-4",
+    }
 
 
 def run_all():

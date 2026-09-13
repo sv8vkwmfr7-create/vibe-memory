@@ -1,5 +1,7 @@
 # Vibe Memory
 
+2026-09-13 优化：278 项本地测试通过。严格 v3 合成评测中，默认 budget Recall@5 为 0.808；显式二跳为 0.984，默认仍保持一跳。当前证据与成本边界见 [STATUS.md](STATUS.md)。
+
 > 多关系图智能体记忆系统 — 让 AI Agent 拥有跨会话的长期记忆
 
 [![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://python.org)

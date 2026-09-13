@@ -263,6 +263,8 @@ def recall(
     strategies: Optional[list[str]] = None,
     semantic_cache: Optional[dict] = None,
     bm25_cache: Optional[dict] = None,
+    budget_graph_hops: int = 1,
+    budget_graph_ratio: float = 0.2,
 ) -> dict:
     """
     统一检索入口（v3：多策略检索 + RRF 融合 + 可选重排）。
@@ -289,6 +291,8 @@ def recall(
         strategies: 启用的检索策略，默认 ["semantic", "bm25", "graph", "temporal"]
         semantic_cache: 可选的 SDK 级语义索引缓存；按 atom ID/version 自动失效
         bm25_cache: 可选的 SDK 级 BM25 索引缓存；按 atom ID/version 自动失效
+        budget_graph_hops: budget 候选池的因果邻居扩展跳数
+        budget_graph_ratio: budget 候选池中图邻居的最大占比
 
     Returns:
         {atoms, trace, mode, total_walked, seed_count, filtered_count, strategies_used}
@@ -300,12 +304,18 @@ def recall(
 
     # 阶段 0：budget 模式先在存储层收窄候选，其他模式保持完整语义。
     if mode == "budget":
+        candidate_limit = max(100, top_k * 20)
+        graph_neighbor_limit = int(
+            candidate_limit * max(0.0, min(1.0, budget_graph_ratio))
+        )
         all_atoms = storage.get_recall_candidates(
             agent_id,
             query,
-            limit=max(100, top_k * 20),
+            limit=candidate_limit,
             tenant_id=tid,
             graph_seed_limit=top_k,
+            graph_neighbor_limit=graph_neighbor_limit,
+            graph_hops=budget_graph_hops,
         )
     else:
         all_atoms = storage.get_atoms_by_agent(agent_id, tenant_id=tid)
@@ -421,6 +431,17 @@ def recall(
 
             graph = GraphStrategy(storage, mode)
             graph_results = graph.search(filtered_seeds, top_k=top_k)
+            if mode == "budget" and semantic_seeds:
+                # Do not let correlated lexical votes reintroduce seeds that
+                # the connectivity filter explicitly rejected. Non-seed
+                # keyword matches remain eligible, including graph-free data.
+                rejected_ids = {a.id for a in semantic_seeds} - {
+                    a.id for a in filtered_seeds
+                }
+                all_ranked_lists = [
+                    [(aid, score) for aid, score in ranked if aid not in rejected_ids]
+                    for ranked in all_ranked_lists
+                ]
             all_ranked_lists.append(graph_results)
             fusion_weights.append(2.0 if mode == "budget" else 1.0)
         except Exception:

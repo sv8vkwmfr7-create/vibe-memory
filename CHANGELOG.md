@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Fixed
+- Prevent budget lexical fusion from reintroducing connectivity-rejected semantic seeds; add a public recall regression.
 - Force MCP stdio to UTF-8 so JSON-RPC responses containing Chinese edge labels work on Windows.
 - Evaluate the PPR edge threshold against edge strength instead of seed-count-dependent probability mass.
 - Normalize weighted PPR transitions and return dangling-node mass to the personalization seeds.
