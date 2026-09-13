@@ -1,5 +1,7 @@
 # Vibe Memory
 
+WAL 恢复验证：`python experiments/wal_recovery_validation.py` 仅创建临时库，检查事务快照、检查点阻塞/释放及测试子进程被杀后的恢复；296 项测试通过。不是长期负载、断电或磁盘故障验证，详见 [STATUS.md](STATUS.md)。
+
 SQLite 日志模式可显式配置：`VibeMemory(agent_id="my-agent", db_path="memory.db", journal_mode="wal")`。默认 `None` 不改变数据库现有模式；新文件库保持 SQLite 默认行为，已有 WAL 库重开仍保留 WAL。支持小写 `"wal"`、`"delete"`；内存库无法启用 WAL 时明确报错。未修改 synchronous/超时默认值。
 
 WAL 用于本机文件库，不代表单个 SDK 实例可被多线程安全共享。备份应使用 SQLite 备份接口，不能在运行中只复制主数据库而遗漏 WAL；不要手动删除 `-wal` / `-shm` 文件。

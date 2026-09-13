@@ -1,0 +1,22 @@
+{
+  "dataset_version": "wal-recovery-v1",
+  "sqlite_version": "3.53.1",
+  "transactions": {
+    "uncommitted_hidden": true,
+    "competing_writer_blocked": true,
+    "snapshot_retained": true,
+    "committed_visible_after_snapshot": true,
+    "checkpoint_pinned": [1, 7, 0],
+    "checkpoint_released": [0, 0, 0]
+  },
+  "crash": {
+    "child_killed": true,
+    "wal_bytes_before_reopen": 337872,
+    "committed_preserved": true,
+    "uncommitted_discarded": true,
+    "committed_recalled": true,
+    "integrity_check": "ok",
+    "fts_external_content_integrity": "ok"
+  },
+  "notes": "Fresh local temp DBs retained; held transactions not duration benchmarks; process termination after acknowledged commit, not power loss or torn I/O; busy_timeout=0 and wal_autocheckpoint=0 only in test-owned connections"
+}

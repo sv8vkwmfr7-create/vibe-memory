@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### WAL recovery validation
+- Add reproducible held-transaction/checkpoint and killed-child recovery validation with SQLite/FTS consistency checks. Two integration regressions bring the suite to 296 passing tests; core configuration is unchanged.
+
 ### SQLite configuration
 - Add opt-in `journal_mode` to SDK/storage, preserving existing modes by default and rejecting invalid or unavailable settings. Verify persisted WAL memory/reopens and explicit DELETE with seven regression cases (294 tests passing). Disk validation uses the public constructor option.
 
