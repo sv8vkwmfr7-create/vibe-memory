@@ -96,7 +96,9 @@ class BM25Strategy:
     def _tokenize(self, text: str) -> list[str]:
         """Simple tokenization: lowercase, split on non-alphanumeric."""
         import re
-        return [t.lower() for t in re.findall(r'\w+', text) if len(t) > 1]
+        from vibe_memory.retrieval.text_tokens import cjk_bigrams
+        non_cjk = re.sub(r'[\u3400-\u4dbf\u4e00-\u9fff]+', ' ', text)
+        return [t.lower() for t in re.findall(r'\w+', non_cjk) if len(t) > 1] + cjk_bigrams(text)
 
     def _compute_idf(self, tokens: list[list[str]], N: int) -> dict[str, float]:
         """Compute IDF for each term."""

@@ -6,6 +6,8 @@ Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK
 
 ## Verified Baseline
 
+Chinese lexical retrieval now uses dependency-free CJK character bigrams in TF-IDF/BM25. CJK budget queries use the tenant/agent-scoped LIKE candidate fallback because unicode61 does not segment Chinese into matching bigrams; candidate hydration stays bounded but SQL scan cost increases. Budget TF-IDF zero-score padding no longer counts as semantic graph seeds. A 131-atom regression retrieves an old Chinese answer beyond the 100-candidate cutoff. On a local 5-incident/10-question document-reconstructed debugging set, Recall@5 changed: BM25 0.25→0.85, TF-IDF 0.60→0.90, two-hop budget 0.45→0.85. These assistant-authored labels/edges are not independent held-out evidence and the private corpus is not published. English synthetic v3 quality remains 0.808/0.984 (one/two hops). Large Chinese corpus latency and synonym understanding remain unverified.
+
 External session retrieval evaluation is available via `experiments/session_evaluation.py`; see `experiments/SESSION_EVALUATION.md`. It uses query cutoffs and human relevance labels, compares empty retrieval/BM25/TF-IDF/two-hop budget, and prints IDs/metrics rather than corpus text. Only an explicitly synthetic interface smoke has run; no real corpus or Agent answer-quality evidence is available yet. Corpus snapshots and anonymized IDs must be reviewed before use. This preparatory addition does not change the core retrieval path.
 
 PPR and recall traces now load only active edges whose two endpoints are active/warm memories in the seed agent/tenant scope. Foreign-agent, foreign-tenant and archived bridge nodes cannot influence PPR scores. Mixed-scope seeds raise ValueError; warm memories and a seed tenant different from the storage default remain supported. This avoids materializing other scopes' edges, but does not cap the current scope's graph size or SQL scanning time. The v3 quality sweep is unchanged (0.808 one hop, 0.984 two hops); this run's p95 was 8.760 / 8.719 ms, so no speedup is claimed.
@@ -18,7 +20,7 @@ The 2026-09-13 v3 retrieval run removes query-word leakage from graph-only answe
 |------|--------|
 | Platform | Windows, Python 3.12.14 |
 | Test command | `python -m pytest -q` |
-| Test result | **283 passed, 0 failed** |
+| Test result | **285 passed, 0 failed** |
 | Coverage | **74%** aggregate (previous run; not remeasured this round) |
 | Package version | 0.3.0 |
 

@@ -516,6 +516,37 @@ def test_ppr_rejects_mixed_scopes_and_ignores_archived_seeds():
     assert personalized_pagerank([], store) == {}
 
 
+def test_chinese_recall_finds_old_answer_beyond_candidate_cutoff():
+    """Chinese paraphrases retrieve old relevant memories, not recent filler."""
+    store = VibeStorage(":memory:")
+    answer = _make_atom("zh-answer", DEFAULT_TENANT, "agent-1", "s1",
+                        "连接池耗尽导致接口超时，释放连接后服务恢复正常")
+    answer.created_at = datetime(2026, 1, 1)
+    store.insert_atom(answer)
+    for i in range(130):
+        store.insert_atom(_make_atom(f"zh-noise-{i}", DEFAULT_TENANT, "agent-1", "s2",
+                                    "桌面窗口颜色设置完成"))
+    for mode, strategies in (("precision", ["semantic"]),
+                             ("precision", ["bm25"]), ("budget", None)):
+        result = recall("接口超时如何修复连接池", "agent-1", store,
+                        mode=mode, top_k=1, strategies=strategies)
+        assert [a.id for a in result["atoms"]] == [answer.id]
+
+
+def test_budget_zero_match_padding_cannot_displace_chinese_seed():
+    store = VibeStorage(":memory:")
+    for atom_id, content in (
+        ("pad-seed", "连接池接口超时"), ("pad-answer", "释放资源后恢复正常"),
+        ("pad-noise-1", "桌面主题颜色"), ("pad-noise-2", "背景图片设置"),
+    ):
+        store.insert_atom(_make_atom(atom_id, DEFAULT_TENANT, "agent-1", "s1", content))
+    for source, target in (("pad-seed", "pad-answer"), ("pad-noise-1", "pad-noise-2")):
+        store.insert_edge(Edge(id=f"{source}-edge", from_atom_id=source,
+                              to_atom_id=target, label=EdgeLabel.CAUSAL))
+    result = recall("连接池接口超时", "agent-1", store, mode="budget", top_k=2)
+    assert {a.id for a in result["atoms"]} == {"pad-seed", "pad-answer"}
+
+
 def run_all():
     print("=" * 50)
     print("VibeMemory M3 Multi-Tenant Tests")

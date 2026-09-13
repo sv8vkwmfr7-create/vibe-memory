@@ -231,7 +231,14 @@ class VibeStorage:
         terms = list(dict.fromkeys(
             term.lower() for term in re.findall(r"\w+", query) if len(term) > 1
         ))[:32]
-        if self._fts_enabled and terms:
+        from vibe_memory.retrieval.text_tokens import cjk_bigrams
+        chinese_terms = cjk_bigrams(query)
+        if chinese_terms:
+            terms = list(dict.fromkeys(chinese_terms + terms))[:32]
+        # unicode61 does not segment Chinese phrases into matching bigrams.
+        # Mixed/CJK queries use the scoped LIKE fallback rather than lose old
+        # matches behind the FTS newest-row backfill.
+        if self._fts_enabled and terms and not chinese_terms:
             quoted_terms = [f'"{term}"' for term in terms]
             match_queries = [" AND ".join(quoted_terms)]
             any_term_query = " OR ".join(quoted_terms)

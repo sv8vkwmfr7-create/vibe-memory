@@ -185,7 +185,7 @@ class TfidfVectorizer:
         """
         简单分词：小写 + 按非字母数字分割 + 最小长度 2。
 
-        L1 原型：英文分词。中文支持需 jieba。
+        中文使用无依赖双字片段，英文行为保持不变。
         """
         import re
         text_lower = text.lower()
@@ -201,7 +201,8 @@ class TfidfVectorizer:
                 bigrams.append(f"{tokens[i]}_{tokens[i+1]}")
             tokens.extend(bigrams)
 
-        return tokens
+        from vibe_memory.retrieval.text_tokens import cjk_bigrams
+        return tokens + cjk_bigrams(text)
 
 
 def cosine_similarity(a: np.ndarray, b: np.ndarray) -> float:

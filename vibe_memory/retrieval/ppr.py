@@ -373,7 +373,10 @@ def recall(
                     if semantic_cache is not None:
                         semantic_cache.clear()
                         semantic_cache.update({"key": cache_key, "tfidf_fitted": True})
-                indices, _ = provider.search(query, top_k=top_k)
+                indices, similarities = provider.search(query, top_k=top_k)
+                if mode == "budget":
+                    # Zero-score padding is not evidence for graph seeds.
+                    indices = [i for i, score in zip(indices, similarities) if score > 0]
                 query_vec = provider.encode_query(query)
             else:
                 cached_vectors = None

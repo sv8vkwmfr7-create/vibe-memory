@@ -6,6 +6,7 @@
 - Add an external labeled-session evaluation entry point with historical cutoffs, local-only corpus reading, and four retrieval baselines. Real-session results remain pending user-provided anonymized data.
 
 ### Fixed
+- Add dependency-free Chinese character bigrams to TF-IDF and BM25, use scoped LIKE matching for Chinese budget candidates, and stop zero-score TF-IDF padding from becoming budget graph seeds. Add old-answer and padding regressions; large-corpus Chinese scan performance remains unverified.
 - Scope PPR and recall trace edge loading to one tenant/agent with active/warm endpoints; prevent invalid nodes from acting as graph bridges. Preserve warm recall and explicit tenant behavior.
 - Cap budget candidate expansion at two hops, 2 * candidate_limit materialized edge rows per hop, and candidate_limit frontier nodes; prioritize stronger edges deterministically. This does not bound SQL scans or full PPR time.
 - Prevent budget lexical fusion from reintroducing connectivity-rejected semantic seeds; add a public recall regression.
