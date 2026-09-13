@@ -6,6 +6,23 @@ Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK
 
 ## Verified Baseline
 
+## Runtime checkpoint comparison (experimental)
+
+The soak CLI accepts `--checkpoint-strategy passive|truncate|coordinated`; passive remains the default. See `results/disk_checkpoint_comparison.json`. Each sequential run used a fresh 100k dense WAL database, two independent SDK readers, one CRUD writer holding the write lock 50ms per cycle, and 60 seconds of load.
+
+| Strategy | Sampled WAL peak bytes | Runtime TRUNCATE success | Calls / anchor hits | Reader p99 ms | Write cycles |
+|---|---:|---:|---:|---|---:|
+| PASSIVE | 265340392 | not attempted | 305/305 | 420.791 / 423.221 | 1125 |
+| TRUNCATE, 500ms lock wait | 263696512 | 0/5 | 307/307 | 419.057 / 431.841 | 1119 |
+| Cooperative drain + TRUNCATE | 47408872 | 5/5 | 307/307 | 437.132 / 441.897 | 1101 |
+
+Coordinated mode closes admission for all three experiment workers, waits at most one second for active calls/cycles to finish, then attempts TRUNCATE with a 500ms diagnostic-connection busy timeout. A drain timeout falls back to PASSIVE and always reopens admission. Admission waiting is included in reader and writer latency. Runtime drain/checkpoint episodes lasted 170.569–323.201ms; successful checkpoints observed WAL size zero before resuming workers. The sampled peak was ~82.1% below this baseline, with ~2.1% fewer write cycles and slightly higher reader tails. Skipped reinforcement remained 292/307, so this is not reliable learning delivery.
+
+All three runs passed CRUD, SQLite and both external-content FTS integrity checks, and post-join truncation. The checkpoint event at/after 60 seconds is not counted as a runtime success. Full regression: 303 passed. Single runs are not statistically stable timing comparisons: baseline briefly overlapped the 11.72s pytest run, and instrumentation expanded between runs. Ten-second sampling is not a hard WAL maximum, the busy timeout is not a total execution deadline, and no production/hour-scale/multi-process guarantee is established.
+
+This is an explicit **experiment option only**, not a new SDK maintenance thread, global pause, queue, retry policy or changed connection default. Production integration requires all database users to participate in coordination and an agreed pause/space budget; an uncoordinated connection or long snapshot can still prevent truncation. Never delete WAL/SHM files to reclaim space. See [SQLite WAL checkpoint starvation](https://www.sqlite.org/wal.html) and [checkpoint modes](https://www.sqlite.org/pragma.html#pragma_wal_checkpoint).
+
+
 Atom reinforcement now uses `storage.reinforce_atoms`: one scoped metadata-only UPDATE and commit for the batch, with current weight increment/clamp and access_count increment in SQL. It does not mention content/summary, so the existing UPDATE OF text FTS triggers do not run. Current rows are read within the same write transaction and replace returned SDK atoms only after successful commit. This preserves concurrent text edits and avoids lost access increments; other tenants/agents and non-active/non-warm rows are excluded. Atom batches are atomic; graph-edge reinforcement remains separately committed and the existing zero-wait BUSY/LOCKED skip policy is unchanged.
 
 Isolated comparison (`experiments/reinforcement_write_benchmark.py`, `results/reinforcement_write.json`) recreates the former full-row path versus the new batch on 1000-atom fresh WAL files, 100 batches of five atoms, with test-only auto-checkpoint disabled. WAL writes were 36,593,872 versus 412,032 bytes (~98.9% lower); batch p95 3.616 versus 0.698 ms. All five access counts reached 100 and both FTS integrity checks passed. This is a reinforcement-only write-amplification benefit, not a claim about mixed CRUD WAL peaks, hard WAL bounds, or delivery of skipped reinforcement.

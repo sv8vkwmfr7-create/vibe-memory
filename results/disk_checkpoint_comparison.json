@@ -1,0 +1,421 @@
+{
+  "experiment": "disk-checkpoint-comparison-v1",
+  "conditions": "100k dense atoms, 60s per fresh WAL database, two independent SDK readers, one CRUD writer with 50ms deliberate write lock; sequential benchmark runs",
+  "caveats": [
+    "Single runs, not statistically stable results or a hard space cap.",
+    "Baseline briefly overlapped the 11.72s pytest run; do not attribute small timing differences solely to checkpoint policy.",
+    "Instrumentation was extended between runs; baseline precedes cooperative gate addition; baseline/passive behavior unchanged.",
+    "Events at or after requested_seconds are end-of-load and are excluded from runtime checkpoint success counts.",
+    "Cooperative coordination exists only inside the experiment, not SDK defaults or multi-process coordination.",
+    "Lock wait limit is not a hard total checkpoint duration limit."
+  ],
+  "reports": [
+    {
+      "dataset_version": "disk-soak-v2",
+      "sqlite_version": "3.53.1",
+      "initial_atoms": 100000,
+      "requested_seconds": 60,
+      "elapsed_seconds": 60.404,
+      "readers": [
+        {
+          "worker": 0,
+          "calls": 154,
+          "anchor_hits": 154,
+          "reinforcement_skipped_calls": 151,
+          "sdk_ms": {
+            "p50": 389.93,
+            "p95": 407.876,
+            "p99": 420.791
+          }
+        },
+        {
+          "worker": 1,
+          "calls": 151,
+          "anchor_hits": 151,
+          "reinforcement_skipped_calls": 150,
+          "sdk_ms": {
+            "p50": 398.301,
+            "p95": 411.073,
+            "p99": 423.221
+          }
+        }
+      ],
+      "writer": {
+        "cycles": 1125,
+        "inserts": 1125,
+        "updates": 1125,
+        "deletes": 997,
+        "deliberate_hold_ms": 50,
+        "cycle_ms": {
+          "p50": 53.173,
+          "p95": 54.209,
+          "p99": 56.278
+        }
+      },
+      "wal_sampled_peak_bytes": 265340392,
+      "checkpoint_strategy": "passive",
+      "checkpoint_wait_limit_ms": 0,
+      "checkpoint_events": [
+        {
+          "elapsed_seconds": 10.012,
+          "result": [
+            0,
+            8363,
+            7946
+          ],
+          "duration_ms": 0.056,
+          "wal_bytes_after": 34455592
+        },
+        {
+          "elapsed_seconds": 20.025,
+          "result": [
+            0,
+            19370,
+            18941
+          ],
+          "duration_ms": 0.042,
+          "wal_bytes_after": 79804432
+        },
+        {
+          "elapsed_seconds": 30.032,
+          "result": [
+            0,
+            30723,
+            30357
+          ],
+          "duration_ms": 0.029,
+          "wal_bytes_after": 126578792
+        },
+        {
+          "elapsed_seconds": 40.035,
+          "result": [
+            0,
+            42257,
+            41823
+          ],
+          "duration_ms": 1.127,
+          "wal_bytes_after": 174098872
+        },
+        {
+          "elapsed_seconds": 50.042,
+          "result": [
+            0,
+            53212,
+            52940
+          ],
+          "duration_ms": 0.029,
+          "wal_bytes_after": 219233472
+        },
+        {
+          "elapsed_seconds": 60.015,
+          "result": [
+            0,
+            64403,
+            64371
+          ],
+          "duration_ms": 0.038,
+          "wal_bytes_after": 265340392
+        }
+      ],
+      "checkpoint_samples": 6,
+      "passive_checkpoint_samples": 6,
+      "last_passive_checkpoint": [
+        0,
+        64403,
+        64371
+      ],
+      "last_checkpoint": [
+        0,
+        64403,
+        64371
+      ],
+      "final_truncate": [
+        0,
+        0,
+        0
+      ],
+      "wal_bytes_after_truncate": 0,
+      "post_join_crud_consistent": true,
+      "integrity_check": "ok",
+      "fts_external_content_integrity": "ok",
+      "notes": "Fresh WAL file; two independent SDK readers and one CRUD writer; all records contain the whole repeated query; no graph, no held reader snapshot; writer adds 50ms lock per cycle; default auto-checkpoint plus selected checkpoint every 10s; seeding excluded, barrier startup included, no retries; skipped flag may include partial reinforcement; 10s WAL sampling is not a hard maximum; local temp DB retained"
+    },
+    {
+      "dataset_version": "disk-soak-v2",
+      "sqlite_version": "3.53.1",
+      "initial_atoms": 100000,
+      "requested_seconds": 60,
+      "elapsed_seconds": 60.299,
+      "readers": [
+        {
+          "worker": 0,
+          "calls": 154,
+          "anchor_hits": 154,
+          "reinforcement_skipped_calls": 152,
+          "sdk_ms": {
+            "p50": 389.392,
+            "p95": 403.538,
+            "p99": 419.057
+          }
+        },
+        {
+          "worker": 1,
+          "calls": 153,
+          "anchor_hits": 153,
+          "reinforcement_skipped_calls": 149,
+          "sdk_ms": {
+            "p50": 391.69,
+            "p95": 411.257,
+            "p99": 431.841
+          }
+        }
+      ],
+      "writer": {
+        "cycles": 1119,
+        "inserts": 1119,
+        "updates": 1119,
+        "deletes": 991,
+        "deliberate_hold_ms": 50,
+        "cycle_ms": {
+          "p50": 53.282,
+          "p95": 54.433,
+          "p99": 59.493
+        }
+      },
+      "wal_sampled_peak_bytes": 263696512,
+      "checkpoint_strategy": "truncate",
+      "checkpoint_wait_limit_ms": 500,
+      "checkpoint_events": [
+        {
+          "elapsed_seconds": 10.016,
+          "result": [
+            1,
+            8970,
+            8823
+          ],
+          "mode": "TRUNCATE",
+          "quiesced": null,
+          "duration_ms": 622.968,
+          "wal_bytes_after": 36956432
+        },
+        {
+          "elapsed_seconds": 20.647,
+          "result": [
+            1,
+            20736,
+            20420
+          ],
+          "mode": "TRUNCATE",
+          "quiesced": null,
+          "duration_ms": 620.341,
+          "wal_bytes_after": 85432352
+        },
+        {
+          "elapsed_seconds": 31.28,
+          "result": [
+            1,
+            32701,
+            32425
+          ],
+          "mode": "TRUNCATE",
+          "quiesced": null,
+          "duration_ms": 620.695,
+          "wal_bytes_after": 134728152
+        },
+        {
+          "elapsed_seconds": 41.909,
+          "result": [
+            1,
+            44803,
+            44663
+          ],
+          "mode": "TRUNCATE",
+          "quiesced": null,
+          "duration_ms": 639.604,
+          "wal_bytes_after": 184740832
+        },
+        {
+          "elapsed_seconds": 52.559,
+          "result": [
+            1,
+            56426,
+            56365
+          ],
+          "mode": "TRUNCATE",
+          "quiesced": null,
+          "duration_ms": 626.786,
+          "wal_bytes_after": 232475152
+        },
+        {
+          "elapsed_seconds": 60.008,
+          "result": [
+            0,
+            0,
+            0
+          ],
+          "mode": "TRUNCATE",
+          "quiesced": null,
+          "duration_ms": 290.664,
+          "wal_bytes_after": 0
+        }
+      ],
+      "checkpoint_samples": 6,
+      "passive_checkpoint_samples": 0,
+      "last_passive_checkpoint": null,
+      "last_checkpoint": [
+        0,
+        0,
+        0
+      ],
+      "final_truncate": [
+        0,
+        0,
+        0
+      ],
+      "wal_bytes_after_truncate": 0,
+      "post_join_crud_consistent": true,
+      "integrity_check": "ok",
+      "fts_external_content_integrity": "ok",
+      "notes": "Fresh WAL file; two independent SDK readers and one CRUD writer; all records contain the whole repeated query; no graph, no held reader snapshot; writer adds 50ms lock per cycle; default auto-checkpoint plus selected checkpoint every 10s; seeding excluded, barrier startup included, no retries; cooperative gate waiting included in worker latency; coordinated mode waits up to 1s for active calls/cycles before TRUNCATE, else PASSIVE; skipped flag may include partial reinforcement; 10s WAL sampling is not a hard maximum; local temp DB retained"
+    },
+    {
+      "dataset_version": "disk-soak-v2",
+      "sqlite_version": "3.53.1",
+      "initial_atoms": 100000,
+      "requested_seconds": 60,
+      "elapsed_seconds": 60.2,
+      "readers": [
+        {
+          "worker": 0,
+          "calls": 154,
+          "anchor_hits": 154,
+          "reinforcement_skipped_calls": 144,
+          "sdk_ms": {
+            "p50": 388.265,
+            "p95": 422.958,
+            "p99": 437.132
+          }
+        },
+        {
+          "worker": 1,
+          "calls": 153,
+          "anchor_hits": 153,
+          "reinforcement_skipped_calls": 148,
+          "sdk_ms": {
+            "p50": 389.648,
+            "p95": 422.199,
+            "p99": 441.897
+          }
+        }
+      ],
+      "writer": {
+        "cycles": 1101,
+        "inserts": 1101,
+        "updates": 1101,
+        "deletes": 973,
+        "deliberate_hold_ms": 50,
+        "cycle_ms": {
+          "p50": 53.296,
+          "p95": 54.405,
+          "p99": 90.967
+        }
+      },
+      "wal_sampled_peak_bytes": 47408872,
+      "checkpoint_strategy": "coordinated",
+      "checkpoint_wait_limit_ms": 500,
+      "coordinator_drain_limit_ms": 1000,
+      "checkpoint_events": [
+        {
+          "elapsed_seconds": 10.014,
+          "result": [
+            0,
+            0,
+            0
+          ],
+          "mode": "TRUNCATE",
+          "quiesced": true,
+          "duration_ms": 323.201,
+          "wal_bytes_after": 0
+        },
+        {
+          "elapsed_seconds": 20.343,
+          "result": [
+            0,
+            0,
+            0
+          ],
+          "mode": "TRUNCATE",
+          "quiesced": true,
+          "duration_ms": 198.854,
+          "wal_bytes_after": 0
+        },
+        {
+          "elapsed_seconds": 30.543,
+          "result": [
+            0,
+            0,
+            0
+          ],
+          "mode": "TRUNCATE",
+          "quiesced": true,
+          "duration_ms": 170.569,
+          "wal_bytes_after": 0
+        },
+        {
+          "elapsed_seconds": 40.725,
+          "result": [
+            0,
+            0,
+            0
+          ],
+          "mode": "TRUNCATE",
+          "quiesced": true,
+          "duration_ms": 196.845,
+          "wal_bytes_after": 0
+        },
+        {
+          "elapsed_seconds": 50.928,
+          "result": [
+            0,
+            0,
+            0
+          ],
+          "mode": "TRUNCATE",
+          "quiesced": true,
+          "duration_ms": 215.298,
+          "wal_bytes_after": 0
+        },
+        {
+          "elapsed_seconds": 60.001,
+          "result": [
+            0,
+            0,
+            0
+          ],
+          "mode": "TRUNCATE",
+          "quiesced": true,
+          "duration_ms": 198.507,
+          "wal_bytes_after": 0
+        }
+      ],
+      "checkpoint_samples": 6,
+      "passive_checkpoint_samples": 0,
+      "last_passive_checkpoint": null,
+      "last_checkpoint": [
+        0,
+        0,
+        0
+      ],
+      "final_truncate": [
+        0,
+        0,
+        0
+      ],
+      "wal_bytes_after_truncate": 0,
+      "post_join_crud_consistent": true,
+      "integrity_check": "ok",
+      "fts_external_content_integrity": "ok",
+      "notes": "Fresh WAL file; two independent SDK readers and one CRUD writer; all records contain the whole repeated query; no graph, no held reader snapshot; writer adds 50ms lock per cycle; default auto-checkpoint plus selected checkpoint every 10s; seeding excluded, barrier startup included, no retries; cooperative gate waiting included in worker latency; coordinated mode waits up to 1s for active calls/cycles before TRUNCATE, else PASSIVE; busy_timeout limits lock waiting, not total checkpoint execution time; skipped flag may include partial reinforcement; 10s WAL sampling is not a hard maximum; local temp DB retained"
+    }
+  ]
+}

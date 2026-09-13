@@ -1,5 +1,7 @@
 # Vibe Memory
 
+运行中检查点对照新增实验选项 `--checkpoint-strategy passive|truncate|coordinated`（默认仍passive）。100k/60秒单次负载中，直接TRUNCATE负载内0/5成功；协同暂停读写后5/5成功，WAL采样峰值约265→47MB，但暂停约171–323ms、写周期约少2%，强化仍大量跳过。仅压测选项，尚未集成SDK或证明硬空间上限；完整条件/结果见 [STATUS.md](STATUS.md) 与 [JSON](results/disk_checkpoint_comparison.json)。
+
 强化写放大优化：分片命中强化改为作用域隔离的原子元数据批次，不重写正文/摘要FTS索引，不覆盖并发正文修改或丢失访问增量。专项100轮五分片对照WAL约36.6→0.41MB；不等于整体CRUD负载的WAL峰值已解决。忙锁仍快速跳过，不新增补写队列。
 
 混合负载复跑：`python experiments/disk_soak_benchmark.py --scale 100000 --seconds 300`。仅新建临时WAL库，两个独立SDK读线程与一个CRUD写线程，记录命中、延迟、强化跳过与检查点。`recall()` 返回的 `reinforcement_skipped` 为true表示跳过了部分或全部非关键强化，不表示召回失败，也不保证已成功强化的条目回滚。
