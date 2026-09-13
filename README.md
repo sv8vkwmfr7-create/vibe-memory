@@ -1,6 +1,6 @@
 # Vibe Memory
 
-已知并发边界：完整 SDK `recall()` 命中后会写入强化信息，因此 WAL 下仍可能被竞争写锁阻塞并报 `SQLITE_BUSY`。复现：`python experiments/disk_pressure_benchmark.py`；1k/10k 全匹配磁盘命中及6秒持锁/WAL增长证据见 [STATUS.md](STATUS.md)。本轮只增加验证，未修复该边界。
+SDK 强化忙锁降级已修复：仅命中后的非关键强化临时采用零忙锁等待，遇 BUSY/LOCKED 跳过剩余强化并返回召回；其他数据库错误仍抛出。6秒竞争写锁基准约0.6ms返回命中（修复前约5.5秒后报错），299项测试通过。复跑：`python experiments/disk_pressure_benchmark.py`；不是统一延迟SLA或共享SDK线程安全保证。
 
 WAL 恢复验证：`python experiments/wal_recovery_validation.py` 仅创建临时库，检查事务快照、检查点阻塞/释放及测试子进程被杀后的恢复；296 项测试通过。不是长期负载、断电或磁盘故障验证，详见 [STATUS.md](STATUS.md)。
 

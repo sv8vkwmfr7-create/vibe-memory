@@ -81,15 +81,17 @@ def write_lock(path, hold_seconds):
             lower_hit = any(atom.id == "anchor" for atom in result["atoms"])
             start = time.perf_counter()
             error_name = None
+            sdk_hit = False
             try:
-                memory.recall(QUERY, mode="budget", top_k=5)
+                sdk_result = memory.recall(QUERY, mode="budget", top_k=5)
+                sdk_hit = any(atom.id == "anchor" for atom in sdk_result["atoms"])
             except sqlite3.OperationalError as error:
                 if error.sqlite_errorcode != sqlite3.SQLITE_BUSY:
                     raise
                 error_name = "SQLITE_BUSY"
                 memory.storage.conn.rollback()
             return {"lower_hit": lower_hit, "lower_ms": round(lower_ms, 3),
-                    "sdk_error": error_name,
+                    "sdk_error": error_name, "sdk_hit": sdk_hit,
                     "sdk_elapsed_ms": round((time.perf_counter() - start) * 1000, 3)}
         finally:
             memory.storage.conn.close()
@@ -160,7 +162,7 @@ def reader_growth(path, hold_seconds, writes=200):
 
 def run(scales, samples=10, hold_seconds=6):
     directory = Path(tempfile.mkdtemp(prefix="vibe-disk-pressure-"))
-    return {"dataset_version": "disk-pressure-v1", "sqlite_version": sqlite3.sqlite_version,
+    return {"dataset_version": "disk-pressure-v2", "sqlite_version": sqlite3.sqlite_version,
             "journal_mode": "wal", "dense": [dense_disk(str(directory / f"dense-{n}.db"), n, samples)
                                                 for n in scales],
             "write_lock": write_lock(str(directory / "write-lock.db"), hold_seconds),
@@ -183,7 +185,8 @@ if __name__ == "__main__":
     passed = all(row["lower_hits"] == args.samples and row["sdk_hits"] == args.samples
                  for row in report["dense"])
     lock, growth = report["write_lock"], report["reader_growth"]
-    passed = passed and lock["lower_hit"] and lock["sdk_error"] == "SQLITE_BUSY" and lock["sdk_after_release_hit"]
+    passed = passed and lock["lower_hit"] and lock["sdk_error"] is None and lock["sdk_hit"] and lock["sdk_after_release_hit"]
+    passed = passed and lock["sdk_elapsed_ms"] < 1000
     passed = passed and growth["checkpoint_pinned"][0] == 1 and growth["checkpoint_released"] == [0, 0, 0]
     passed = passed and growth["wal_bytes_pinned"] > growth["wal_bytes_before"] and growth["wal_bytes_released"] == 0
     passed = passed and growth["snapshot_hides_new_atom"] and growth["after_release_visible"] and growth["integrity_check"] == "ok"

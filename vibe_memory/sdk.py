@@ -22,6 +22,8 @@ collect_garbage()                 → GC 压缩
 """
 
 import uuid
+import sqlite3
+from copy import deepcopy
 from typing import Optional
 from datetime import datetime
 from enum import Enum
@@ -309,19 +311,35 @@ class VibeMemory:
         # 冷启动增强：结果不足时用种子记忆补充
         result = self.cold_start.augment_recall(query, result)
 
-        # 强化命中的分片和边
-        for atom in result.get("atoms", []):
-            self.decay_manager.reinforce_atom(atom)
-            self.storage.update_atom(atom)
+        # 非关键强化不等待写锁，也不提交/回滚调用方已有事务。
+        conn = self.storage.conn
+        if conn.in_transaction:
+            return result
+        busy_timeout = conn.execute("PRAGMA busy_timeout").fetchone()[0]
+        conn.execute("PRAGMA busy_timeout=0")
+        try:
+            for index, atom in enumerate(result.get("atoms", [])):
+                reinforced = deepcopy(atom)
+                self.decay_manager.reinforce_atom(reinforced)
+                self.storage.update_atom(reinforced)
+                result["atoms"][index] = reinforced
 
-        for trace_item in result.get("trace", []):
-            # 强化遍历过的边
-            edges = self.storage.get_edges_between(
-                trace_item.get("from", ""), trace_item.get("to", "")
-            )
-            for edge in edges:
-                self.decay_manager.reinforce_edge(edge)
-                self.storage.update_edge(edge)
+            for trace_item in result.get("trace", []):
+                edges = self.storage.get_edges_between(
+                    trace_item.get("from", ""), trace_item.get("to", "")
+                )
+                for edge in edges:
+                    reinforced = deepcopy(edge)
+                    self.decay_manager.reinforce_edge(reinforced)
+                    self.storage.update_edge(reinforced)
+        except sqlite3.OperationalError as error:
+            conn.rollback()
+            if getattr(error, "sqlite_errorcode", 0) & 0xFF not in (
+                sqlite3.SQLITE_BUSY, sqlite3.SQLITE_LOCKED
+            ):
+                raise
+        finally:
+            conn.execute(f"PRAGMA busy_timeout={busy_timeout}")
 
         return result
 

@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### SDK contention fix
+- Make post-recall atom/edge reinforcement best-effort on BUSY/LOCKED with zero busy wait and restored connection timeout; preserve other errors and caller transactions. Do not mutate returned atoms on failed updates. Three regressions pass (299 full tests); disk-pressure v2 now verifies successful fast SDK recall under a competing writer.
+
 ### Disk pressure evidence
 - Add dense WAL-file recall and six-second lock/snapshot pressure reproduction. Record a known boundary: SDK recall can fail on reinforcement writes while lower-level recall succeeds. No contention fix or core default change is included.
 
