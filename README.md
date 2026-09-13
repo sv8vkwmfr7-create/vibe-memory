@@ -1,5 +1,7 @@
 # Vibe Memory
 
+强化写放大优化：分片命中强化改为作用域隔离的原子元数据批次，不重写正文/摘要FTS索引，不覆盖并发正文修改或丢失访问增量。专项100轮五分片对照WAL约36.6→0.41MB；不等于整体CRUD负载的WAL峰值已解决。忙锁仍快速跳过，不新增补写队列。
+
 混合负载复跑：`python experiments/disk_soak_benchmark.py --scale 100000 --seconds 300`。仅新建临时WAL库，两个独立SDK读线程与一个CRUD写线程，记录命中、延迟、强化跳过与检查点。`recall()` 返回的 `reinforcement_skipped` 为true表示跳过了部分或全部非关键强化，不表示召回失败，也不保证已成功强化的条目回滚。
 
 SDK 强化忙锁降级已修复：仅命中后的非关键强化临时采用零忙锁等待，遇 BUSY/LOCKED 跳过剩余强化并返回召回；其他数据库错误仍抛出。6秒竞争写锁基准约0.6ms返回命中（修复前约5.5秒后报错），299项测试通过。复跑：`python experiments/disk_pressure_benchmark.py`；不是统一延迟SLA或共享SDK线程安全保证。

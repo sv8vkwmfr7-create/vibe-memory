@@ -1,0 +1,12 @@
+{
+  "dataset_version": "reinforcement-write-v1",
+  "modes": [
+    {"mode": "legacy_full_row", "batches": 100, "atoms_per_batch": 5,
+     "wal_bytes": 36593872, "batch_ms": {"p50": 3.045, "p95": 3.616, "p99": 4.494},
+     "access_counts_correct": true, "fts_integrity": "ok"},
+    {"mode": "atomic_metadata_batch", "batches": 100, "atoms_per_batch": 5,
+     "wal_bytes": 412032, "batch_ms": {"p50": 0.534, "p95": 0.698, "p99": 0.948},
+     "access_counts_correct": true, "fts_integrity": "ok"}
+  ],
+  "notes": "1000 seed atoms; no competing locks; 100 five-atom reinforcement batches; legacy reference recreates old full-row update path; test-only auto-checkpoint disabled; WAL measured before FTS checks; temp DBs retained; not mixed-workload WAL bound"
+}

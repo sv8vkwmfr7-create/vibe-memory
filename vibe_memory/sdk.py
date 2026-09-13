@@ -321,11 +321,10 @@ class VibeMemory:
         busy_timeout = conn.execute("PRAGMA busy_timeout").fetchone()[0]
         conn.execute("PRAGMA busy_timeout=0")
         try:
-            for index, atom in enumerate(result.get("atoms", [])):
-                reinforced = deepcopy(atom)
-                self.decay_manager.reinforce_atom(reinforced)
-                self.storage.update_atom(reinforced)
-                result["atoms"][index] = reinforced
+            reinforced = {atom.id: atom for atom in self.storage.reinforce_atoms(
+                [atom.id for atom in result.get("atoms", [])], self.agent_id, self.tenant_id
+            )}
+            result["atoms"] = [reinforced.get(atom.id, atom) for atom in result.get("atoms", [])]
 
             for trace_item in result.get("trace", []):
                 edges = self.storage.get_edges_between(

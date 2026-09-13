@@ -358,8 +358,6 @@ class VibeStorage:
 
         if neighbor_limit and graph_hops > 0 and rows:
             seed_ids = [row["id"] for row in rows[:min(graph_seed_limit, limit)]]
-            selected_ids = [row["id"] for row in rows]
-            selected_id_set = set(selected_ids)
             frontier_scores = {atom_id: 1.0 for atom_id in seed_ids}
             visited_ids = set(seed_ids)
             neighbor_scores: dict[str, tuple[float, int]] = {}
@@ -424,8 +422,6 @@ class VibeStorage:
                 frontier_scores = next_scores
 
                 for atom_id, score in next_scores.items():
-                    if atom_id in selected_id_set:
-                        continue
                     previous = neighbor_scores.get(atom_id)
                     if previous is None or score > previous[0]:
                         neighbor_scores[atom_id] = (score, hop)
@@ -452,7 +448,9 @@ class VibeStorage:
                     for atom_id in neighbor_ids
                     if atom_id in fetched_by_id
                 ]
-                rows = rows[:limit - len(graph_rows)] + graph_rows
+                graph_ids = {row["id"] for row in graph_rows}
+                lexical_rows = [row for row in rows if row["id"] not in graph_ids]
+                rows = lexical_rows[:limit - len(graph_rows)] + graph_rows
 
         return [self._row_to_atom(row) for row in rows]
 
@@ -464,6 +462,26 @@ class VibeStorage:
             (tid, agent_id),
         ).fetchone()
         return int(row[0])
+
+    def reinforce_atoms(self, atom_ids: list[str], agent_id: str,
+                        tenant_id: Optional[str] = None) -> list[MemoryAtom]:
+        """One atomic metadata-only batch; no stale text or counter overwrites."""
+        if not atom_ids:
+            return []
+        placeholders = ','.join('?' for _ in atom_ids)
+        scope = (agent_id, self.tenant_id if tenant_id is None else tenant_id, *atom_ids)
+        self.conn.execute(
+            f"""UPDATE atoms SET weight=MIN(1.0, weight + 0.1),
+                access_count=access_count + 1, last_accessed=?
+            WHERE agent_id=? AND tenant_id=? AND id IN ({placeholders})
+                AND lifecycle IN ('active', 'warm')""",
+            (datetime.now().isoformat(), *scope),
+        )
+        updated = self.conn.execute(
+            f"""SELECT * FROM atoms WHERE agent_id=? AND tenant_id=? AND id IN ({placeholders})
+                AND lifecycle IN ('active', 'warm')""", scope).fetchall()
+        self.conn.commit()
+        return [self._row_to_atom(row) for row in updated]
 
     def update_atom(self, atom: MemoryAtom) -> None:
         self.conn.execute(

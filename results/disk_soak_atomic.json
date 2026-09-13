@@ -1,0 +1,60 @@
+{
+  "dataset_version": "disk-soak-v1",
+  "sqlite_version": "3.53.1",
+  "initial_atoms": 100000,
+  "requested_seconds": 300,
+  "elapsed_seconds": 300.351,
+  "readers": [
+    {
+      "worker": 0,
+      "calls": 684,
+      "anchor_hits": 684,
+      "reinforcement_skipped_calls": 677,
+      "sdk_ms": {
+        "p50": 406.699,
+        "p95": 584.303,
+        "p99": 759.52
+      }
+    },
+    {
+      "worker": 1,
+      "calls": 675,
+      "anchor_hits": 675,
+      "reinforcement_skipped_calls": 664,
+      "sdk_ms": {
+        "p50": 412.759,
+        "p95": 600.536,
+        "p99": 766.741
+      }
+    }
+  ],
+  "writer": {
+    "cycles": 5532,
+    "inserts": 5532,
+    "updates": 5532,
+    "deletes": 5404,
+    "deliberate_hold_ms": 50,
+    "cycle_ms": {
+      "p50": 53.616,
+      "p95": 55.863,
+      "p99": 58.946
+    }
+  },
+  "wal_sampled_peak_bytes": 1268655152,
+  "passive_checkpoint_samples": 30,
+  "last_passive_checkpoint": [
+    0,
+    25880,
+    25435
+  ],
+  "final_truncate": [
+    0,
+    0,
+    0
+  ],
+  "wal_bytes_after_truncate": 0,
+  "post_join_crud_consistent": true,
+  "integrity_check": "ok",
+  "fts_external_content_integrity": "ok",
+  "notes": "Fresh WAL file; two independent SDK readers and one CRUD writer; all records contain the whole repeated query; no graph, no held reader snapshot; writer adds 50ms lock per cycle; default auto-checkpoint plus PASSIVE every 10s; seeding excluded, barrier startup included, no retries; skipped flag may include partial reinforcement; 10s WAL sampling is not a hard maximum; local temp DB retained"
+}

@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Atomic metadata reinforcement
+- Replace per-atom full-row reinforcement with one scoped SQL metadata batch, avoiding redundant FTS text updates, stale text overwrites and lost access increments. Preserve fast BUSY/LOCKED skipping and error propagation; edge updates remain separately committed. Isolated five-atom batches reduce measured WAL writes ~98.9% with correct counters/FTS integrity.
+- Same-condition mixed-load repeat retains 1359/1359 anchor hits and consistency, but skipped reinforcement (~98.7%), overall WAL peak (~1.27GB) and latency tails did not improve; do not generalize isolated results.
+- Fix causal neighbors already in the lexical tail being dropped during graph replacement, with a fixed-time regression. Final suite: 303 passed; English v3 quality unchanged.
+
 ### Mixed-load soak
 - Add fresh-file 100k/300s two-SDK-reader/CRUD-writer validation and public `reinforcement_skipped` recall metadata, verified by existing contention regressions. 1505/1505 anchor hits and integrity checks pass; retain explicit evidence of 98.6% skipped reinforcement and ~1.10GB sampled WAL peak, which truncates after load stops. No new retrieval/consistency fix or default checkpoint change is included.
 

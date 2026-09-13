@@ -182,6 +182,29 @@ def test_recall_candidates_expand_two_causal_hops_within_budget():
     assert "foreign" not in candidate_ids
 
 
+def test_causal_neighbor_in_lexical_tail_survives_two_hop_replacement():
+    store = VibeStorage(":memory:", tenant_id="tenant-a")
+    for atom_id, content, date in [
+        ("hop-one", "First resolution", datetime(2026, 1, 1)),
+        ("hop-two", "Final rollback", datetime(2025, 12, 1)),
+        *[(f"noise-{i}", "Unrelated context", datetime(2026, 1, 2)) for i in range(8)],
+        ("seed", "Rare needleterm incident", datetime(2026, 1, 3)),
+    ]:
+        atom = _make_atom(atom_id, "tenant-a", "agent-1", "s", content)
+        atom.created_at = date
+        store.insert_atom(atom)
+    for from_id, to_id in [("seed", "hop-one"), ("hop-one", "hop-two")]:
+        store.insert_edge(Edge(id=f"{from_id}-{to_id}", from_atom_id=from_id,
+                              to_atom_id=to_id, tenant_id="tenant-a", label=EdgeLabel.CAUSAL,
+                              confidence=1.0, weight=1.0))
+    assert store.get_recall_candidates("agent-1", "needleterm", 10)[-1].id == "hop-one"
+    candidates = store.get_recall_candidates("agent-1", "needleterm", 10,
+                                             graph_seed_limit=1, graph_neighbor_limit=3, graph_hops=2)
+    assert len({atom.id for atom in candidates}) == len(candidates) == 10
+    assert {"seed", "hop-one", "hop-two"} <= {atom.id for atom in candidates}
+    store.conn.close()
+
+
 def test_cross_tenant_edge_prevention():
     """Test that cross-tenant edges are never built"""
     new_atom = _make_atom("new", "tenant-a", "agent-1", "s2",
