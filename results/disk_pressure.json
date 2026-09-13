@@ -1,0 +1,23 @@
+{
+  "dataset_version": "disk-pressure-v1",
+  "sqlite_version": "3.53.1",
+  "journal_mode": "wal",
+  "dense": [
+    {"atoms": 1000, "samples": 10, "lower_hits": 10, "sdk_hits": 10,
+     "lower_first_ms": 11.513, "sdk_first_ms": 12.582,
+     "lower_warm_ms": {"p50": 3.787, "p95": 4.794, "p99": 5.114},
+     "sdk_warm_ms": {"p50": 7.116, "p95": 7.781, "p99": 7.9}},
+    {"atoms": 10000, "samples": 10, "lower_hits": 10, "sdk_hits": 10,
+     "lower_first_ms": 32.332, "sdk_first_ms": 53.388,
+     "lower_warm_ms": {"p50": 29.075, "p95": 30.021, "p99": 30.312},
+     "sdk_warm_ms": {"p50": 32.497, "p95": 34.06, "p99": 34.086}}
+  ],
+  "write_lock": {"lower_hit": true, "lower_ms": 0.846, "sdk_error": "SQLITE_BUSY",
+                 "sdk_elapsed_ms": 5486.046, "hold_seconds": 6.001, "sdk_after_release_hit": true},
+  "reader_growth": {"writes": 200, "hold_seconds": 6.001, "wal_bytes_before": 0,
+                    "wal_bytes_pinned": 12479512, "checkpoint_pinned": [1, 3029, 0],
+                    "checkpoint_released": [0, 0, 0], "wal_bytes_released": 0,
+                    "snapshot_hides_new_atom": true, "after_release_visible": true,
+                    "integrity_check": "ok"},
+  "notes": "Synthetic repeated whole-query matches, no graph; first calls are not OS-cold; lower recall precedes SDK recall and warms DB; SDK reinforces hits with writes; held-reader test disables auto-checkpoint only on its writer; temp DBs retained; seconds-long holds, not endurance or power-loss proof"
+}

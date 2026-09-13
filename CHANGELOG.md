@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Disk pressure evidence
+- Add dense WAL-file recall and six-second lock/snapshot pressure reproduction. Record a known boundary: SDK recall can fail on reinforcement writes while lower-level recall succeeds. No contention fix or core default change is included.
+
 ### WAL recovery validation
 - Add reproducible held-transaction/checkpoint and killed-child recovery validation with SQLite/FTS consistency checks. Two integration regressions bring the suite to 296 passing tests; core configuration is unchanged.
 
