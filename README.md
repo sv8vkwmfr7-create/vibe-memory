@@ -1,6 +1,20 @@
 # Vibe Memory
 
-运行中检查点对照新增实验选项 `--checkpoint-strategy passive|truncate|coordinated`（默认仍passive）。100k/60秒单次负载中，直接TRUNCATE负载内0/5成功；协同暂停读写后5/5成功，WAL采样峰值约265→47MB，但暂停约171–323ms、写周期约少2%，强化仍大量跳过。仅压测选项，尚未集成SDK或证明硬空间上限；完整条件/结果见 [STATUS.md](STATUS.md) 与 [JSON](results/disk_checkpoint_comparison.json)。
+可选WAL维护已接入SDK，默认 `wal_maintenance=None`，不启动后台线程。同一文件库的实例显式共享控制器，应用主动触发：
+
+```python
+from vibe_memory import VibeMemory, WALMaintenance
+
+maintenance = WALMaintenance("memory.db")
+memory = VibeMemory("my-agent", "memory.db", journal_mode="wal",
+                    wal_maintenance=maintenance)
+memory.store("Fixed API timeout", session_id="chat-1")
+report = maintenance.checkpoint(drain_timeout=1.0)  # 应用自行决定触发时机
+```
+
+已有SDK调用会先执行完，新调用在维护期间等待。超时/忙锁会恢复准入，不中断事务或删除日志。`drain_timeout` 只限制等待已有操作结束，不保证总暂停时间；同一SDK实例仍不支持并发共享。直接使用 `memory.storage`、手动事务或其他组件时须以 `with maintenance.operation():` 覆盖整个操作/事务，同库所有参与者须共享同一控制器；多进程和外部未协调连接不受它控制。状态与限制见 [STATUS.md](STATUS.md)。
+
+上一轮实验检查点对照 `--checkpoint-strategy passive|truncate|coordinated`（默认仍passive）：100k/60秒单次负载中，直接TRUNCATE负载内0/5成功；实验内协同暂停后5/5成功，WAL采样峰值约265→47MB，但暂停约171–323ms、写周期约少2%，强化仍大量跳过。这些是实验控制器的历史指标，不能代替新SDK控制器的测量或证明硬空间上限；完整条件/结果见 [STATUS.md](STATUS.md) 与 [JSON](results/disk_checkpoint_comparison.json)。
 
 强化写放大优化：分片命中强化改为作用域隔离的原子元数据批次，不重写正文/摘要FTS索引，不覆盖并发正文修改或丢失访问增量。专项100轮五分片对照WAL约36.6→0.41MB；不等于整体CRUD负载的WAL峰值已解决。忙锁仍快速跳过，不新增补写队列。
 

@@ -1,12 +1,31 @@
 # Project Status
 
-> Last verified: 2026-09-13
+> Last verified: 2026-09-14
 
 Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK, SQLite storage, TF-IDF retrieval, CLI/session manager, and MCP stdio interface are covered by the current local test suite. Public benchmark and production-scale claims remain unverified.
 
 ## Verified Baseline
 
-## Runtime checkpoint comparison (experimental)
+### Explicit SDK WAL maintenance
+
+`WALMaintenance(db_path)` is now exported alongside `VibeMemory`. Pass the same controller to each same-file SDK instance via `wal_maintenance=controller`; the default is `None`, and no scheduler, maintenance thread or default journal/timeout change is introduced. The application explicitly calls `controller.checkpoint(drain_timeout=1.0)`. SDK initialization and all public operations participate in a reentrant, process-local admission gate. Nested SDK operations already admitted on the same thread continue during draining; independent SDK instances retain independent SQLite connections. This does **not** make one SDK/connection safe to share concurrently.
+
+Maintenance closes admission, drains active operations, then attempts TRUNCATE using a separate existing-file SQLite connection (`mode=rw`, timeout=0). SDK connection settings are untouched. A drain timeout skips the checkpoint rather than extending the pause with a fallback checkpoint. Concurrent maintenance returns immediately; all success/error/timeout paths restore admission. External BUSY/LOCKED codes, including errors while reading journal mode, are reported as busy; other SQLite failures propagate. Memory/URI paths are rejected, mismatched SDK paths are rejected before opening a new database, and non-WAL maintenance fails explicitly without switching modes. Missing databases are not created by maintenance.
+
+| Report status | Meaning |
+|---|---|
+| `truncated` | SQLite TRUNCATE succeeded at the checkpoint; not a permanent space bound |
+| `drain_timeout` | Admitted operations did not finish in time; checkpoint skipped |
+| `maintenance_busy` | Another maintenance call is already draining/checkpointing |
+| `busy` | SQLite encountered an external lock or could not complete truncation |
+
+Reports include the native checkpoint tuple (or `None` if unavailable), observed `wal_bytes_after`, and `elapsed_ms`. `drain_timeout` is a waiting limit, **not** a hard total pause/SQLite I/O deadline. No queue or reinforcement retry is added. All accesses bypassing SDK methods—including raw storage, caller-managed transactions, directly invoked indexer/GC/cold-start modules, or external reflectors—must be wrapped in `with controller.operation():` for their entire database operation/transaction. Do not call checkpoint inside that scope: it raises rather than waiting on itself. Calls from other processes, other controllers or uncoordinated connections cannot be drained; external snapshots can still prevent truncation. Controller setup must happen before creating concurrent SDK instances, and the database file/path must not be replaced during use.
+
+Nine real-file integration tests cover successful maintenance with recall preserved, blocked SDK writes draining, delayed recall and nested injection, drain timeout/admission recovery, initialization gating/default non-participation, retained external read snapshots, explicit validation/error recovery, no missing-file creation, and exclusive-lock reporting. Full regression: **312 passed**; English v3 default/explicit-two-hop Recall@5 remain **0.808/0.984**. No private or existing user database was modified. Replay the SDK integration load with `python experiments/disk_soak_benchmark.py --scale 100000 --seconds 60 --checkpoint-strategy sdk-coordinated`; SDK readers join automatically, while the raw CRUD writer explicitly scopes each whole cycle. Historical experimental comparisons below are not measurements of this new controller.
+
+SDK-controller mixed-load result (`results/disk_soak_sdk_maintenance.json`): 100k dense atoms, 60.378 seconds, two automatically coordinated SDK readers plus one explicitly scoped raw CRUD writer. **299/299** anchor hits, 1100 write cycles/972 deletions, post-join CRUD/SQLite/FTS checks passed. All five checkpoints started before the 60-second deadline returned TRUNCATE success and observed WAL size zero; sampled peak **47,668,432 bytes**. Runtime drain/checkpoint stages were **151.280–396.609ms**, reader p95 **444.659/434.051ms**, p99 **504.611/580.609ms**. Skipped reinforcement remained **286/299 (~95.7%)**. The sixth checkpoint began at the load deadline and is not counted as a runtime success. This single short run establishes controller integration, not improved overall tails, reliable reinforcement, a hard pause/space bound or long-term stability. Only fresh synthetic temporary DBs were used; no formal benchmark or test suite ran concurrently during the mixed-load phase.
+
+## Runtime checkpoint comparison (historical experiment)
 
 The soak CLI accepts `--checkpoint-strategy passive|truncate|coordinated`; passive remains the default. See `results/disk_checkpoint_comparison.json`. Each sequential run used a fresh 100k dense WAL database, two independent SDK readers, one CRUD writer holding the write lock 50ms per cycle, and 60 seconds of load.
 
@@ -20,7 +39,7 @@ Coordinated mode closes admission for all three experiment workers, waits at mos
 
 All three runs passed CRUD, SQLite and both external-content FTS integrity checks, and post-join truncation. The checkpoint event at/after 60 seconds is not counted as a runtime success. Full regression: 303 passed. Single runs are not statistically stable timing comparisons: baseline briefly overlapped the 11.72s pytest run, and instrumentation expanded between runs. Ten-second sampling is not a hard WAL maximum, the busy timeout is not a total execution deadline, and no production/hour-scale/multi-process guarantee is established.
 
-This is an explicit **experiment option only**, not a new SDK maintenance thread, global pause, queue, retry policy or changed connection default. Production integration requires all database users to participate in coordination and an agreed pause/space budget; an uncoordinated connection or long snapshot can still prevent truncation. Never delete WAL/SHM files to reclaim space. See [SQLite WAL checkpoint starvation](https://www.sqlite.org/wal.html) and [checkpoint modes](https://www.sqlite.org/pragma.html#pragma_wal_checkpoint).
+The original cooperative implementation measured in this section is an explicit **experiment option only**. The newer SDK controller is documented above and measured separately; these historical numbers do not establish its performance. Production use requires all database users to participate in coordination and an agreed pause/space budget; an uncoordinated connection or long snapshot can still prevent truncation. Never delete WAL/SHM files to reclaim space. See [SQLite WAL checkpoint starvation](https://www.sqlite.org/wal.html) and [checkpoint modes](https://www.sqlite.org/pragma.html#pragma_wal_checkpoint).
 
 
 Atom reinforcement now uses `storage.reinforce_atoms`: one scoped metadata-only UPDATE and commit for the batch, with current weight increment/clamp and access_count increment in SQL. It does not mention content/summary, so the existing UPDATE OF text FTS triggers do not run. Current rows are read within the same write transaction and replace returned SDK atoms only after successful commit. This preserves concurrent text edits and avoids lost access increments; other tenants/agents and non-active/non-warm rows are excluded. Atom batches are atomic; graph-edge reinforcement remains separately committed and the existing zero-wait BUSY/LOCKED skip policy is unchanged.

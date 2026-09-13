@@ -5,6 +5,7 @@
 __version__ = "0.3.0"
 
 from vibe_memory.sdk import VibeMemory
+from vibe_memory.maintenance import WALMaintenance
 from vibe_memory.models.memory_atom import (
     MemoryAtom, Edge, Episode,
     EdgeLabel, EdgeSource, EdgeStatus,
@@ -13,6 +14,7 @@ from vibe_memory.models.memory_atom import (
 
 __all__ = [
     "VibeMemory",
+    "WALMaintenance",
     "MemoryAtom", "Edge", "Episode",
     "EdgeLabel", "EdgeSource", "EdgeStatus",
     "GraphPartition", "Lifecycle",

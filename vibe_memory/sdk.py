@@ -24,6 +24,7 @@ collect_garbage()                 → GC 压缩
 import uuid
 import sqlite3
 from copy import deepcopy
+from contextlib import nullcontext
 from typing import Optional
 from datetime import datetime
 from enum import Enum
@@ -54,6 +55,7 @@ from vibe_memory.llm.edge_classifier import LLMEdgeClassifier, create_llm_classi
 from vibe_memory.injection import build_injection, MACInjector, MAGInjector
 from vibe_memory.defense import MemoryDefense, scan_before_store
 from vibe_memory.reflect import Reflector
+from vibe_memory.maintenance import WALMaintenance, coordinated
 
 
 class VibeMemory:
@@ -74,6 +76,7 @@ class VibeMemory:
         embedding_backend: 向量化后端（"auto" | "tfidf" | "st"）
         embedding_model: 语义模型名（仅 st/auto 时生效）
         journal_mode: None 保持数据库现有日志模式；"wal" / "delete" 显式设置
+        wal_maintenance: None 默认关闭；同库 SDK 显式共享 WALMaintenance，维护由应用主动触发
     """
 
     def __init__(
@@ -87,68 +90,74 @@ class VibeMemory:
         defense: Optional[MemoryDefense] = None,
         reflector: Optional[Reflector] = None,
         journal_mode: Optional[str] = None,
+        wal_maintenance: Optional[WALMaintenance] = None,
     ):
-        self.agent_id = agent_id
-        self.tenant_id = tenant_id
+        self.wal_maintenance = wal_maintenance
+        if wal_maintenance is not None:
+            wal_maintenance.validate_path(db_path)
+        with wal_maintenance.operation() if wal_maintenance is not None else nullcontext():
+            self.agent_id = agent_id
+            self.tenant_id = tenant_id
 
-        # 存储层
-        self.storage = VibeStorage(db_path=db_path, tenant_id=tenant_id, journal_mode=journal_mode)
+            # 存储层
+            self.storage = VibeStorage(db_path=db_path, tenant_id=tenant_id, journal_mode=journal_mode)
 
-        # Embedding
-        self.embedding = create_provider(backend=embedding_backend, model_name=embedding_model)
+            # Embedding
+            self.embedding = create_provider(backend=embedding_backend, model_name=embedding_model)
 
-        # 隐私扫描
-        self.defense = defense or MemoryDefense(mode="redact")
+            # 隐私扫描
+            self.defense = defense or MemoryDefense(mode="redact")
 
-        # 反思
-        self.reflector = reflector
-        self.defense = defense or MemoryDefense(mode="redact")
+            # 反思
+            self.reflector = reflector
+            self.defense = defense or MemoryDefense(mode="redact")
 
-        # 种子过滤
-        self.seed_filter = SeedFilter()
+            # 种子过滤
+            self.seed_filter = SeedFilter()
 
-        # 衰减管理器
-        self.decay_manager = DecayManager()
+            # 衰减管理器
+            self.decay_manager = DecayManager()
 
-        # 冷启动管理器
-        self.cold_start = ColdStartManager(
-            storage=self.storage,
-            agent_id=agent_id,
-            tenant_id=tenant_id,
-            embedding_provider=self.embedding,
-        )
+            # 冷启动管理器
+            self.cold_start = ColdStartManager(
+                storage=self.storage,
+                agent_id=agent_id,
+                tenant_id=tenant_id,
+                embedding_provider=self.embedding,
+            )
 
-        # 可观测性
-        self.metrics = MetricsCollector()
+            # 可观测性
+            self.metrics = MetricsCollector()
 
-        # GC 垃圾回收
-        self.gc = GarbageCollector(
-            storage=self.storage,
-            agent_id=agent_id,
-            tenant_id=tenant_id,
-        )
+            # GC 垃圾回收
+            self.gc = GarbageCollector(
+                storage=self.storage,
+                agent_id=agent_id,
+                tenant_id=tenant_id,
+            )
 
-        # LLM 分类器
-        self.llm_classifier = llm_classifier
-        llm_callback = create_llm_classify_callback(llm_classifier) if llm_classifier else None
+            # LLM 分类器
+            self.llm_classifier = llm_classifier
+            llm_callback = create_llm_classify_callback(llm_classifier) if llm_classifier else None
 
-        # 增量索引
-        self.indexer = IncrementalIndexer(
-            storage=self.storage,
-            agent_id=agent_id,
-            tenant_id=tenant_id,
-            llm_classify=llm_callback,
-        )
+            # 增量索引
+            self.indexer = IncrementalIndexer(
+                storage=self.storage,
+                agent_id=agent_id,
+                tenant_id=tenant_id,
+                llm_classify=llm_callback,
+            )
 
-        # 统计
-        self._store_count: int = 0
-        self._recall_count: int = 0
-        self._edge_count: int = 0
-        self._semantic_cache: dict = {}
-        self._bm25_cache: dict = {}
+            # 统计
+            self._store_count: int = 0
+            self._recall_count: int = 0
+            self._edge_count: int = 0
+            self._semantic_cache: dict = {}
+            self._bm25_cache: dict = {}
 
     # ── 1. store ──
 
+    @coordinated
     def store(
         self,
         content: str,
@@ -234,6 +243,7 @@ class VibeMemory:
 
         return atom
 
+    @coordinated
     def store_batch(
         self,
         messages: list[dict],
@@ -276,6 +286,7 @@ class VibeMemory:
 
     # ── 2. recall ──
 
+    @coordinated
     def recall(
         self,
         query: str,
@@ -348,6 +359,7 @@ class VibeMemory:
 
     # ── 2b. inject ──
 
+    @coordinated
     def inject(
         self,
         query: str,
@@ -374,6 +386,7 @@ class VibeMemory:
 
     # ── 2c. reflect ──
 
+    @coordinated
     def reflect(
         self,
         prompt: Optional[str] = None,
@@ -398,6 +411,7 @@ class VibeMemory:
 
     # ── 3. link ──
 
+    @coordinated
     def link(
         self,
         from_atom_id: str,
@@ -449,6 +463,7 @@ class VibeMemory:
 
     # ── 4. migrate ──
 
+    @coordinated
     def migrate(
         self,
         atom_id: str,
@@ -484,6 +499,7 @@ class VibeMemory:
 
     # ── 5. forget ──
 
+    @coordinated
     def forget(self, atom_id: str) -> bool:
         """
         删除一条记忆。
@@ -504,6 +520,7 @@ class VibeMemory:
 
     # ── 6. update ──
 
+    @coordinated
     def update(
         self,
         atom_id: str,
@@ -535,6 +552,7 @@ class VibeMemory:
 
     # ── 7. history ──
 
+    @coordinated
     def history(
         self,
         session_id: Optional[str] = None,
@@ -561,6 +579,7 @@ class VibeMemory:
 
     # ── 8. stats ──
 
+    @coordinated
     def stats(self) -> dict:
         """
         获取统计信息。
@@ -644,6 +663,7 @@ class VibeMemory:
 
     # ── 9. collect_garbage ──
 
+    @coordinated
     def collect_garbage(self, dry_run: bool = False) -> dict:
         """
         执行 GC 压缩管线。
@@ -667,6 +687,7 @@ class VibeMemory:
 
     # ── 10. flush_index ──
 
+    @coordinated
     def flush_index(self, max_batch: Optional[int] = None) -> int:
         """
         批量处理增量索引队列中的跨会话边候选。

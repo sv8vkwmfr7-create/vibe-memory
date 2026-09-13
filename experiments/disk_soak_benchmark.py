@@ -12,7 +12,7 @@ from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from vibe_memory import VibeMemory
+from vibe_memory import VibeMemory, WALMaintenance
 from vibe_memory.models.memory_atom import MemoryAtom
 from vibe_memory.storage.sqlite_store import VibeStorage
 from experiments.disk_pressure_benchmark import QUERY
@@ -20,10 +20,11 @@ from experiments.scale_visibility_benchmark import _summary
 
 
 def run(scale=100000, seconds=300, checkpoint_strategy="passive"):
-    if checkpoint_strategy not in ("passive", "truncate", "coordinated"):
+    if checkpoint_strategy not in ("passive", "truncate", "coordinated", "sdk-coordinated"):
         raise ValueError("Unknown checkpoint strategy")
     path = str(Path(tempfile.mkdtemp(prefix="vibe-disk-soak-")) / "test.db")
     storage = VibeStorage(path, journal_mode="wal")
+    maintenance = WALMaintenance(path) if checkpoint_strategy == "sdk-coordinated" else None
     background = QUERY + " " + "桌面背景颜色图片设置日常维护记录 " * 5
     try:
         for i in range(scale):
@@ -40,8 +41,12 @@ def run(scale=100000, seconds=300, checkpoint_strategy="passive"):
         paused, active = [False], [0]
 
         @contextmanager
-        def admitted():
+        def admitted(raw_storage=False):
             # Experiment-local cooperative gate; all three workers participate.
+            if maintenance is not None and raw_storage:
+                with maintenance.operation():
+                    yield
+                return
             if checkpoint_strategy != "coordinated":
                 yield
                 return
@@ -56,7 +61,7 @@ def run(scale=100000, seconds=300, checkpoint_strategy="passive"):
                     condition.notify_all()
 
         def reader(worker):
-            memory = VibeMemory("dense", path, embedding_backend="tfidf")
+            memory = VibeMemory("dense", path, embedding_backend="tfidf", wal_maintenance=maintenance)
             times, hits, skipped = [], 0, 0
             try:
                 barrier.wait(timeout=30)
@@ -79,7 +84,7 @@ def run(scale=100000, seconds=300, checkpoint_strategy="passive"):
                 barrier.wait(timeout=30)
                 while time.perf_counter() < deadline[0] and not stop.is_set():
                     start = time.perf_counter()
-                    with admitted():
+                    with admitted(raw_storage=True):
                         atom = MemoryAtom(id=f"write-{cycles}", agent_id="dense", session_id="writer",
                                           content=background, summary=background)
                         store.insert_atom(atom)
@@ -123,8 +128,14 @@ def run(scale=100000, seconds=300, checkpoint_strategy="passive"):
                             paused[0] = True
                             quiesced = condition.wait_for(lambda: active[0] == 0, timeout=1)
                     try:
-                        mode = "PASSIVE" if checkpoint_strategy == "passive" or quiesced is False else "TRUNCATE"
-                        checkpoint = list(storage.conn.execute(f"PRAGMA wal_checkpoint({mode})").fetchone())
+                        if maintenance is not None:
+                            maintenance_report = maintenance.checkpoint()
+                            checkpoint = maintenance_report["checkpoint"]
+                            quiesced = maintenance_report["status"] not in ("drain_timeout", "maintenance_busy")
+                            mode = "TRUNCATE" if checkpoint is not None else "SKIPPED"
+                        else:
+                            mode = "PASSIVE" if checkpoint_strategy == "passive" or quiesced is False else "TRUNCATE"
+                            checkpoint = list(storage.conn.execute(f"PRAGMA wal_checkpoint({mode})").fetchone())
                     finally:
                         with condition:
                             paused[0] = False
@@ -132,6 +143,7 @@ def run(scale=100000, seconds=300, checkpoint_strategy="passive"):
                     checkpoints.append(checkpoint)
                     checkpoint_events.append({"elapsed_seconds": round(checkpoint_start - start, 3),
                                               "result": checkpoint, "mode": mode, "quiesced": quiesced,
+                                              "maintenance_status": maintenance_report["status"] if maintenance is not None else None,
                                               "duration_ms": round((time.perf_counter() - checkpoint_start) * 1000, 3),
                                               "wal_bytes_after": Path(path + "-wal").stat().st_size})
                     print(f"Elapsed {time.perf_counter() - start:.1f}s; sampled WAL peak {wal_peak} bytes", flush=True)
@@ -154,8 +166,8 @@ def run(scale=100000, seconds=300, checkpoint_strategy="passive"):
                 "initial_atoms": scale, "requested_seconds": seconds,
                 "elapsed_seconds": round(elapsed, 3), "readers": workers[:2], "writer": workers[2],
                 "wal_sampled_peak_bytes": wal_peak, "checkpoint_strategy": checkpoint_strategy,
-                "checkpoint_wait_limit_ms": 500 if checkpoint_strategy != "passive" else 0,
-                "coordinator_drain_limit_ms": 1000 if checkpoint_strategy == "coordinated" else 0,
+                "checkpoint_wait_limit_ms": 500 if checkpoint_strategy in ("truncate", "coordinated") else 0,
+                "coordinator_drain_limit_ms": 1000 if checkpoint_strategy in ("coordinated", "sdk-coordinated") else 0,
                 "checkpoint_events": checkpoint_events, "checkpoint_samples": len(checkpoints),
                 "passive_checkpoint_samples": len(checkpoints) if checkpoint_strategy == "passive" else 0,
                 "last_passive_checkpoint": checkpoints[-1] if checkpoint_strategy == "passive" else None,
@@ -167,8 +179,9 @@ def run(scale=100000, seconds=300, checkpoint_strategy="passive"):
                          "all records contain the whole repeated query; no graph, no held reader snapshot; "
                          "writer adds 50ms lock per cycle; default auto-checkpoint plus selected checkpoint every 10s; "
                          "seeding excluded, barrier startup included, no retries; cooperative gate waiting included in worker latency; "
-                         "coordinated mode waits up to 1s for active calls/cycles before TRUNCATE, else PASSIVE; "
+                         "experiment-coordinated mode drains up to 1s, else PASSIVE; SDK drain timeout skips maintenance; "
                          "busy_timeout limits lock waiting, not total checkpoint execution time; "
+                         "sdk-coordinated uses the public controller: SDK readers automatic, raw CRUD writer explicitly scoped; "
                          "skipped flag may include partial reinforcement; "
                          "10s WAL sampling is not a hard maximum; local temp DB retained"}
     finally:
@@ -179,7 +192,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--scale", type=int, default=100000)
     parser.add_argument("--seconds", type=float, default=300)
-    parser.add_argument("--checkpoint-strategy", choices=("passive", "truncate", "coordinated"), default="passive")
+    parser.add_argument("--checkpoint-strategy", choices=("passive", "truncate", "coordinated", "sdk-coordinated"), default="passive")
     args = parser.parse_args()
     if args.scale <= 100 or args.seconds <= 0:
         parser.error("Scale must exceed 100 and seconds must be positive")

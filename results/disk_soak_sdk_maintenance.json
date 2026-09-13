@@ -1,0 +1,145 @@
+{
+  "dataset_version": "disk-soak-v2",
+  "sqlite_version": "3.53.1",
+  "initial_atoms": 100000,
+  "requested_seconds": 60,
+  "elapsed_seconds": 60.378,
+  "readers": [
+    {
+      "worker": 0,
+      "calls": 150,
+      "anchor_hits": 150,
+      "reinforcement_skipped_calls": 142,
+      "sdk_ms": {
+        "p50": 396.282,
+        "p95": 444.659,
+        "p99": 504.611
+      }
+    },
+    {
+      "worker": 1,
+      "calls": 149,
+      "anchor_hits": 149,
+      "reinforcement_skipped_calls": 144,
+      "sdk_ms": {
+        "p50": 398.269,
+        "p95": 434.051,
+        "p99": 580.609
+      }
+    }
+  ],
+  "writer": {
+    "cycles": 1100,
+    "inserts": 1100,
+    "updates": 1100,
+    "deletes": 972,
+    "deliberate_hold_ms": 50,
+    "cycle_ms": {
+      "p50": 53.163,
+      "p95": 54.263,
+      "p99": 58.878
+    }
+  },
+  "wal_sampled_peak_bytes": 47668432,
+  "checkpoint_strategy": "sdk-coordinated",
+  "checkpoint_wait_limit_ms": 0,
+  "coordinator_drain_limit_ms": 1000,
+  "checkpoint_events": [
+    {
+      "elapsed_seconds": 10.015,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 335.893,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 20.358,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 396.609,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 30.767,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 314.206,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 41.095,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 151.28,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 51.251,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 278.528,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 60.013,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 364.93,
+      "wal_bytes_after": 0
+    }
+  ],
+  "checkpoint_samples": 6,
+  "passive_checkpoint_samples": 0,
+  "last_passive_checkpoint": null,
+  "last_checkpoint": [
+    0,
+    0,
+    0
+  ],
+  "final_truncate": [
+    0,
+    0,
+    0
+  ],
+  "wal_bytes_after_truncate": 0,
+  "post_join_crud_consistent": true,
+  "integrity_check": "ok",
+  "fts_external_content_integrity": "ok",
+  "notes": "Fresh WAL file; two independent SDK readers and one CRUD writer; all records contain the whole repeated query; no graph, no held reader snapshot; writer adds 50ms lock per cycle; default auto-checkpoint plus selected checkpoint every 10s; seeding excluded, barrier startup included, no retries; cooperative gate waiting included in worker latency; experiment-coordinated mode drains up to 1s, else PASSIVE; SDK drain timeout skips maintenance; busy_timeout limits lock waiting, not total checkpoint execution time; sdk-coordinated uses the public controller: SDK readers automatic, raw CRUD writer explicitly scoped; skipped flag may include partial reinforcement; 10s WAL sampling is not a hard maximum; local temp DB retained"
+}
