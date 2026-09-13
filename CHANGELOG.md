@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Disk validation
+- Add a temporary-file SQLite multi-connection CRUD/recall benchmark with DELETE/WAL controls, post-join candidate checks and external-content FTS integrity verification. No core journal defaults changed.
+
 ### Evaluation preparation
 - Add an external labeled-session evaluation entry point with historical cutoffs, local-only corpus reading, and four retrieval baselines. Real-session results remain pending user-provided anonymized data.
 

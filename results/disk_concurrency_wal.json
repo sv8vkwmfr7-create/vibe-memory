@@ -1,0 +1,59 @@
+{
+  "dataset_version": "disk-concurrency-v1",
+  "temporary_database": "<temporary-local-test-db>",
+  "journal_mode": "wal",
+  "seed_atoms": 10000,
+  "writes_per_worker": 200,
+  "reads_per_worker": 200,
+  "elapsed_seconds": 0.968,
+  "writers": [
+    {
+      "worker": 0,
+      "completed": 200,
+      "errors": [],
+      "crud_cycle_ms": {
+        "p50": 2.351,
+        "p95": 17.61,
+        "p99": 35.437
+      }
+    },
+    {
+      "worker": 1,
+      "completed": 200,
+      "errors": [],
+      "crud_cycle_ms": {
+        "p50": 2.389,
+        "p95": 19.458,
+        "p99": 51.524
+      }
+    }
+  ],
+  "readers": [
+    {
+      "worker": 0,
+      "completed": 200,
+      "anchor_hits": 200,
+      "errors": [],
+      "recall_ms": {
+        "p50": 4.895,
+        "p95": 5.536,
+        "p99": 6.106
+      }
+    },
+    {
+      "worker": 1,
+      "completed": 200,
+      "anchor_hits": 200,
+      "errors": [],
+      "recall_ms": {
+        "p50": 4.869,
+        "p95": 5.632,
+        "p99": 7.179
+      }
+    }
+  ],
+  "post_join_crud_consistent": true,
+  "integrity_check": "ok",
+  "fts_external_content_integrity": "ok",
+  "notes": "Independent connection per thread; synthetic selective query; reader/writer overlap begins at barrier; post-join checks are not an atomic cross-connection read-your-writes guarantee; temp DB retained"
+}

@@ -1,0 +1,59 @@
+{
+  "dataset_version": "disk-concurrency-v1",
+  "temporary_database": "<temporary-local-test-db>",
+  "journal_mode": "delete",
+  "seed_atoms": 10000,
+  "writes_per_worker": 200,
+  "reads_per_worker": 200,
+  "elapsed_seconds": 2.575,
+  "writers": [
+    {
+      "worker": 0,
+      "completed": 200,
+      "errors": [],
+      "crud_cycle_ms": {
+        "p50": 4.211,
+        "p95": 8.122,
+        "p99": 22.166
+      }
+    },
+    {
+      "worker": 1,
+      "completed": 200,
+      "errors": [],
+      "crud_cycle_ms": {
+        "p50": 4.191,
+        "p95": 17.572,
+        "p99": 21.544
+      }
+    }
+  ],
+  "readers": [
+    {
+      "worker": 0,
+      "completed": 200,
+      "anchor_hits": 200,
+      "errors": [],
+      "recall_ms": {
+        "p50": 3.03,
+        "p95": 4.058,
+        "p99": 480.591
+      }
+    },
+    {
+      "worker": 1,
+      "completed": 200,
+      "anchor_hits": 200,
+      "errors": [],
+      "recall_ms": {
+        "p50": 3.015,
+        "p95": 3.97,
+        "p99": 282.235
+      }
+    }
+  ],
+  "post_join_crud_consistent": true,
+  "integrity_check": "ok",
+  "notes": "Independent connection per thread; synthetic selective query; reader/writer overlap begins at barrier; post-join checks are not an atomic cross-connection read-your-writes guarantee; temp DB retained",
+  "fts_external_content_integrity": "ok"
+}
