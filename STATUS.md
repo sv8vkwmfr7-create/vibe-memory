@@ -6,6 +6,8 @@ Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK
 
 ## Verified Baseline
 
+External session retrieval evaluation is available via `experiments/session_evaluation.py`; see `experiments/SESSION_EVALUATION.md`. It uses query cutoffs and human relevance labels, compares empty retrieval/BM25/TF-IDF/two-hop budget, and prints IDs/metrics rather than corpus text. Only an explicitly synthetic interface smoke has run; no real corpus or Agent answer-quality evidence is available yet. Corpus snapshots and anonymized IDs must be reviewed before use. This preparatory addition does not change the core retrieval path.
+
 PPR and recall traces now load only active edges whose two endpoints are active/warm memories in the seed agent/tenant scope. Foreign-agent, foreign-tenant and archived bridge nodes cannot influence PPR scores. Mixed-scope seeds raise ValueError; warm memories and a seed tenant different from the storage default remain supported. This avoids materializing other scopes' edges, but does not cap the current scope's graph size or SQL scanning time. The v3 quality sweep is unchanged (0.808 one hop, 0.984 two hops); this run's p95 was 8.760 / 8.719 ms, so no speedup is claimed.
 
 Candidate expansion now caps depth at two hops, returned edge rows at `2 * candidate_limit` per hop, and frontier nodes at `candidate_limit`. A 500-neighbor regression retains the strongest causal answer within 10 candidates. The v3 quality sweep remains 0.808 for one hop and 0.984 for two hops; SQL scanning/sorting and full PPR traversal still have no strict time bound. High-fanout truncation can omit weaker paths and is not a lossless graph search.
