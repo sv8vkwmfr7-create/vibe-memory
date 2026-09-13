@@ -6,6 +6,8 @@ Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK
 
 ## Verified Baseline
 
+High-match Chinese candidate selection now uses `bm25(atoms_trigram)` before recency, rather than newest-row-only truncation. A public recall regression keeps an older exact answer ahead of 250 verbose full-query matches while excluding foreign tenant/agent and archived atoms. In `chinese-dense-v1`, old-answer Top-5 hits changed from 0/10 to 10/10 at 1k and 10k; the fixed implementation also achieved 10/10 at 100k. This quality fix costs scoring all matches: warm p95 at 10k rose from 1.783 to 24.587 ms, and fixed 100k p95 was 323.531 ms. The prior 6.426 ms selective-query result is not a high-match-rate SLA. English candidate ordering is unchanged, and existing English/pilot quality remained unchanged. Equally relevant matches can still be resolved by recency; old memories are not unconditionally preferred.
+
 Chinese candidate scaling now uses a native SQLite FTS5 trigram external-content index with insert/update/delete triggers and a tenant/agent recency index for candidate backfill. Existing databases backfill the trigram index at first open. Queries with Chinese runs of at least three characters use indexed trigrams; two-character-only queries or unsupported SQLite builds keep LIKE. English uses unicode61 as before. The previous Chinese LIKE paragraph below records the earlier implementation.
 
 `experiments/chinese_scale_benchmark.py` measures serial in-memory Chinese retrieval with tracemalloc enabled, 20 repeats of one selective query and no graph edges. At 1k/10k/100k atoms, warm p95 changed from 16.923/113.272/918.594 ms to 6.038/6.249/6.426 ms; the old answer was in Top-5 for 20/20 calls at each scale. At 100k, process working set after recall rose from 96.91 to 140.50 MB; Python recall allocation peak stayed 0.63 MB. Working sets are process-wide and scales share a process, not isolated per-store memory. Synthetic results do not establish disk/concurrency/high-match-rate performance. Legacy migration smoke, edit/delete/reopen and short-query tests passed. Local reconstructed pilot quality remains BM25 0.85, TF-IDF 0.90, budget 0.85; English v3 remains 0.808/0.984.
@@ -24,7 +26,7 @@ The 2026-09-13 v3 retrieval run removes query-word leakage from graph-only answe
 |------|--------|
 | Platform | Windows, Python 3.12.14 |
 | Test command | `python -m pytest -q` |
-| Test result | **286 passed, 0 failed** |
+| Test result | **287 passed, 0 failed** |
 | Coverage | **74%** aggregate (previous run; not remeasured this round) |
 | Package version | 0.3.0 |
 

@@ -569,6 +569,29 @@ def test_chinese_candidates_follow_edits_deletes_and_short_queries(tmp_path):
     store.conn.close()
 
 
+def test_high_match_chinese_recall_prefers_relevant_old_answer():
+    store = VibeStorage(":memory:", tenant_id="tenant-a")
+    answer = _make_atom("dense-answer", "tenant-a", "agent-1", "s1", "连接池超时修复")
+    answer.summary = answer.content
+    answer.created_at = datetime(2026, 1, 1)
+    store.insert_atom(answer)
+    for i in range(250):
+        noise = _make_atom(f"dense-noise-{i}", "tenant-a", "agent-1", "s2",
+                           "连接池超时修复 " + "桌面背景颜色图片设置日常维护记录 " * 20)
+        noise.summary = noise.content
+        store.insert_atom(noise)
+    for atom_id, tenant, agent, lifecycle in (
+        ("dense-foreign", "tenant-b", "agent-1", Lifecycle.ACTIVE),
+        ("dense-agent", "tenant-a", "agent-2", Lifecycle.ACTIVE),
+        ("dense-archived", "tenant-a", "agent-1", Lifecycle.ARCHIVED),
+    ):
+        atom = _make_atom(atom_id, tenant, agent, "s3", answer.content)
+        atom.lifecycle = lifecycle
+        store.insert_atom(atom)
+    result = recall("连接池超时修复", "agent-1", store, mode="budget", top_k=1)
+    assert [a.id for a in result["atoms"]] == [answer.id]
+
+
 def run_all():
     print("=" * 50)
     print("VibeMemory M3 Multi-Tenant Tests")

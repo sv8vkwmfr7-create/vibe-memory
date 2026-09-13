@@ -1,0 +1,58 @@
+{
+  "dataset_version": "chinese-dense-v1",
+  "storage": ":memory:",
+  "notes": "All memories contain the whole query; old exact answer vs long background matches; single repeated query; no graph; no tracemalloc; not real-session evidence",
+  "scales": [
+    {
+      "atoms": 1000,
+      "samples": 10,
+      "old_answer_candidate_hits": 10,
+      "old_answer_top5_hits": 10,
+      "candidate_ms": {
+        "p50": 3.105,
+        "p95": 3.947,
+        "p99": 4.348
+      },
+      "recall_cold_ms": 10.419,
+      "recall_warm_ms": {
+        "p50": 3.567,
+        "p95": 4.055,
+        "p99": 4.088
+      }
+    },
+    {
+      "atoms": 10000,
+      "samples": 10,
+      "old_answer_candidate_hits": 10,
+      "old_answer_top5_hits": 10,
+      "candidate_ms": {
+        "p50": 23.942,
+        "p95": 24.276,
+        "p99": 24.442
+      },
+      "recall_cold_ms": 26.296,
+      "recall_warm_ms": {
+        "p50": 23.808,
+        "p95": 24.587,
+        "p99": 24.593
+      }
+    },
+    {
+      "atoms": 100000,
+      "samples": 10,
+      "old_answer_candidate_hits": 10,
+      "old_answer_top5_hits": 10,
+      "candidate_ms": {
+        "p50": 294.794,
+        "p95": 313.334,
+        "p99": 314.162
+      },
+      "recall_cold_ms": 258.213,
+      "recall_warm_ms": {
+        "p50": 288.324,
+        "p95": 323.531,
+        "p99": 340.166
+      }
+    }
+  ]
+}

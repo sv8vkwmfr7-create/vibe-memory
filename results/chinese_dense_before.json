@@ -1,0 +1,40 @@
+{
+  "dataset_version": "chinese-dense-v1",
+  "implementation": "ffeae14-newest-first",
+  "scales": [
+    {
+      "atoms": 1000,
+      "samples": 10,
+      "old_answer_candidate_hits": 0,
+      "old_answer_top5_hits": 0,
+      "candidate_ms": {
+        "p50": 0.961,
+        "p95": 1.868,
+        "p99": 2.436
+      },
+      "recall_cold_ms": 8.244,
+      "recall_warm_ms": {
+        "p50": 1.472,
+        "p95": 1.622,
+        "p99": 1.653
+      }
+    },
+    {
+      "atoms": 10000,
+      "samples": 10,
+      "old_answer_candidate_hits": 0,
+      "old_answer_top5_hits": 0,
+      "candidate_ms": {
+        "p50": 1.004,
+        "p95": 1.072,
+        "p99": 1.084
+      },
+      "recall_cold_ms": 6.453,
+      "recall_warm_ms": {
+        "p50": 1.586,
+        "p95": 1.783,
+        "p99": 1.876
+      }
+    }
+  ]
+}

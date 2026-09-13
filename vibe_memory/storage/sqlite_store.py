@@ -263,6 +263,10 @@ class VibeStorage:
         ))[:32]
         use_trigram = bool(chinese_trigrams and self._trigram_enabled)
         fts_table = 'atoms_trigram' if use_trigram else 'atoms_fts'
+        match_order = (
+            f'bm25({fts_table}), {fts_table}.rowid DESC'
+            if use_trigram else f'{fts_table}.rowid DESC'
+        )
         if use_trigram:
             terms = chinese_trigrams
         if use_trigram or (self._fts_enabled and terms and not chinese_terms):
@@ -289,7 +293,7 @@ class VibeStorage:
                           AND atoms.tenant_id = ? AND atoms.agent_id = ?
                           AND atoms.lifecycle IN ('active', 'warm')
                           {exclude_sql}
-                        ORDER BY {fts_table}.rowid DESC
+                        ORDER BY {match_order}
                         LIMIT ?""",
                     (
                         match_query,

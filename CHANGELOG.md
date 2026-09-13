@@ -6,6 +6,7 @@
 - Add an external labeled-session evaluation entry point with historical cutoffs, local-only corpus reading, and four retrieval baselines. Real-session results remain pending user-provided anonymized data.
 
 ### Fixed
+- Rank Chinese trigram candidates by BM25 before recency so verbose recent matches cannot evict stronger old matches at the candidate cutoff; add a public isolation regression and high-match-rate benchmark. Scoring dense matches has measurable latency cost.
 - Add native FTS5 trigram Chinese candidate indexing with synchronous CRUD triggers and first-open backfill; add scoped recency indexing to avoid candidate-backfill scans. Keep short-query/unsupported-build LIKE fallback. Add Chinese scale/memory benchmark and edit/delete/reopen regression.
 - Add dependency-free Chinese character bigrams to TF-IDF and BM25, use scoped LIKE matching for Chinese budget candidates, and stop zero-score TF-IDF padding from becoming budget graph seeds. Add old-answer and padding regressions; large-corpus Chinese scan performance remains unverified.
 - Scope PPR and recall trace edge loading to one tenant/agent with active/warm endpoints; prevent invalid nodes from acting as graph bridges. Preserve warm recall and explicit tenant behavior.
