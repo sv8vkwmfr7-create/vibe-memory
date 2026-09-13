@@ -137,8 +137,19 @@ END;
 class VibeStorage:
     """VibeMemory SQLite 存储（多租户，M3）"""
 
-    def __init__(self, db_path: str = ":memory:", tenant_id: str = DEFAULT_TENANT):
+    def __init__(self, db_path: str = ":memory:", tenant_id: str = DEFAULT_TENANT,
+                 journal_mode: Optional[str] = None):
+        if journal_mode not in (None, "delete", "wal"):
+            raise ValueError("journal_mode must be None, 'delete', or 'wal'")
         self.conn = sqlite3.connect(db_path, check_same_thread=False)
+        if journal_mode is not None:
+            try:
+                actual = self.conn.execute(f"PRAGMA journal_mode={journal_mode}").fetchone()[0]
+                if actual != journal_mode:
+                    raise ValueError(f"Cannot enable journal_mode={journal_mode}: SQLite returned {actual}")
+            except Exception:
+                self.conn.close()
+                raise
         self.conn.row_factory = sqlite3.Row
         self.conn.executescript(SCHEMA)
         self.conn.commit()

@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### SQLite configuration
+- Add opt-in `journal_mode` to SDK/storage, preserving existing modes by default and rejecting invalid or unavailable settings. Verify persisted WAL memory/reopens and explicit DELETE with seven regression cases (294 tests passing). Disk validation uses the public constructor option.
+
 ### Disk validation
 - Add a temporary-file SQLite multi-connection CRUD/recall benchmark with DELETE/WAL controls, post-join candidate checks and external-content FTS integrity verification. No core journal defaults changed.
 

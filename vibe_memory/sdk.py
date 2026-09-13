@@ -71,6 +71,7 @@ class VibeMemory:
         tenant_id: 租户 ID（默认 "default"）
         embedding_backend: 向量化后端（"auto" | "tfidf" | "st"）
         embedding_model: 语义模型名（仅 st/auto 时生效）
+        journal_mode: None 保持数据库现有日志模式；"wal" / "delete" 显式设置
     """
 
     def __init__(
@@ -83,12 +84,13 @@ class VibeMemory:
         llm_classifier: Optional[LLMEdgeClassifier] = None,
         defense: Optional[MemoryDefense] = None,
         reflector: Optional[Reflector] = None,
+        journal_mode: Optional[str] = None,
     ):
         self.agent_id = agent_id
         self.tenant_id = tenant_id
 
         # 存储层
-        self.storage = VibeStorage(db_path=db_path, tenant_id=tenant_id)
+        self.storage = VibeStorage(db_path=db_path, tenant_id=tenant_id, journal_mode=journal_mode)
 
         # Embedding
         self.embedding = create_provider(backend=embedding_backend, model_name=embedding_model)

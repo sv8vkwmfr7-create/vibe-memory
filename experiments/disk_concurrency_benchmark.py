@@ -19,10 +19,9 @@ from experiments.scale_visibility_benchmark import _summary
 def run(seed_count=10000, writes=200, reads=200, journal_mode="delete"):
     directory = tempfile.mkdtemp(prefix="vibe-disk-concurrency-")
     path = str(Path(directory) / "test.db")
-    storage = VibeStorage(path)
     if journal_mode not in ("delete", "wal"):
         raise ValueError("Expected delete or wal journal mode")
-    storage.conn.execute(f"PRAGMA journal_mode={journal_mode}")
+    storage = VibeStorage(path, journal_mode=journal_mode)
     storage.insert_atom(MemoryAtom(id="anchor", agent_id="test", session_id="old",
                                   content="连接池超时修复", summary="连接池超时修复"))
     for i in range(seed_count):

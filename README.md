@@ -1,5 +1,9 @@
 # Vibe Memory
 
+SQLite 日志模式可显式配置：`VibeMemory(agent_id="my-agent", db_path="memory.db", journal_mode="wal")`。默认 `None` 不改变数据库现有模式；新文件库保持 SQLite 默认行为，已有 WAL 库重开仍保留 WAL。支持小写 `"wal"`、`"delete"`；内存库无法启用 WAL 时明确报错。未修改 synchronous/超时默认值。
+
+WAL 用于本机文件库，不代表单个 SDK 实例可被多线程安全共享。备份应使用 SQLite 备份接口，不能在运行中只复制主数据库而遗漏 WAL；不要手动删除 `-wal` / `-shm` 文件。
+
 高命中率边界：中文候选先相关性、同分再近期排序，287 测试通过。固定10万条全匹配基准旧答案 10/10 命中，但 warm p95 约324 ms；此前6.4 ms仅适用于选择性查询，不是统一 SLA。
 
 中文规模优化：三字及以上中文查询使用原生 trigram 索引，近期候选补齐使用复合索引；短查询保留 LIKE。单次 10万条内存库基准 warm p95 6.4 ms、旧答案 20/20 命中，286 测试通过；索引空间和生产边界见 [STATUS.md](STATUS.md)。
