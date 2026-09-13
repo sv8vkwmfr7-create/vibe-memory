@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Fixed
+- Cap budget candidate expansion at two hops, 2 * candidate_limit materialized edge rows per hop, and candidate_limit frontier nodes; prioritize stronger edges deterministically. This does not bound SQL scans or full PPR time.
 - Prevent budget lexical fusion from reintroducing connectivity-rejected semantic seeds; add a public recall regression.
 - Force MCP stdio to UTF-8 so JSON-RPC responses containing Chinese edge labels work on Windows.
 - Evaluate the PPR edge threshold against edge strength instead of seed-count-dependent probability mass.

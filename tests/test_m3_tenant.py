@@ -418,6 +418,54 @@ def test_budget_recall_keeps_causal_outcomes_over_isolated_cross_reference():
     }
 
 
+def test_recall_candidate_graph_depth_is_capped_at_two_hops():
+    """A caller cannot turn budget candidate expansion into a full graph walk."""
+    store = VibeStorage(":memory:")
+    for i in range(4):
+        atom = _make_atom(
+            f"depth-{i}", DEFAULT_TENANT, "agent-1", "s1",
+            "Unique incident" if i == 0 else "Resolution detail",
+        )
+        atom.created_at = datetime(2026, 1, 1)
+        store.insert_atom(atom)
+    for i in range(3):
+        store.insert_edge(Edge(
+            id=f"depth-edge-{i}", from_atom_id=f"depth-{i}",
+            to_atom_id=f"depth-{i+1}", label=EdgeLabel.CAUSAL,
+        ))
+    for i in range(20):
+        store.insert_atom(_make_atom(
+            f"depth-noise-{i}", DEFAULT_TENANT, "agent-1", "s2", "Background",
+        ))
+    candidates = store.get_recall_candidates(
+        "agent-1", "Unique incident", limit=10, graph_seed_limit=1,
+        graph_neighbor_limit=3, graph_hops=100,
+    )
+    ids = {a.id for a in candidates}
+    assert "depth-1" in ids and "depth-2" in ids and "depth-3" not in ids
+
+
+def test_high_fanout_candidates_keep_strong_causal_neighbor():
+    """Hundreds of weak neighbors cannot crowd out a later strong answer."""
+    store = VibeStorage(":memory:")
+    store.insert_atom(_make_atom("fan-seed", DEFAULT_TENANT, "agent-1", "s1", "Payment outage"))
+    for i in range(500):
+        atom = _make_atom(f"fan-{i:03}", DEFAULT_TENANT, "agent-1", "s2", "Follow-up")
+        atom.created_at = datetime(2026, 1, 1)
+        store.insert_atom(atom)
+        store.insert_edge(Edge(
+            id=f"fan-edge-{i}", from_atom_id="fan-seed", to_atom_id=atom.id,
+            label=EdgeLabel.CAUSAL, weight=1.0 if i == 499 else 0.1,
+        ))
+    for i in range(30):
+        store.insert_atom(_make_atom(f"fan-noise-{i}", DEFAULT_TENANT, "agent-1", "s3", "Background"))
+    candidates = store.get_recall_candidates(
+        "agent-1", "Payment outage", limit=10, graph_seed_limit=1,
+        graph_neighbor_limit=2, graph_hops=2,
+    )
+    assert len(candidates) == 10 and "fan-499" in {a.id for a in candidates}
+
+
 def run_all():
     print("=" * 50)
     print("VibeMemory M3 Multi-Tenant Tests")

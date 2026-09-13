@@ -291,7 +291,7 @@ def recall(
         strategies: 启用的检索策略，默认 ["semantic", "bm25", "graph", "temporal"]
         semantic_cache: 可选的 SDK 级语义索引缓存；按 atom ID/version 自动失效
         bm25_cache: 可选的 SDK 级 BM25 索引缓存；按 atom ID/version 自动失效
-        budget_graph_hops: budget 候选池的因果邻居扩展跳数
+        budget_graph_hops: budget 候选池的因果邻居扩展跳数（最多两跳）
         budget_graph_ratio: budget 候选池中图邻居的最大占比
 
     Returns:

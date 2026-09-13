@@ -213,7 +213,11 @@ class VibeStorage:
         graph_neighbor_limit: Optional[int] = None,
         graph_hops: int = 1,
     ) -> list[MemoryAtom]:
-        """Return bounded active/warm text and causal-neighbor candidates."""
+        """Return bounded candidates; expand at most two causal hops.
+
+        Each hop materializes at most 2 * limit edges and retains limit
+        frontier nodes. SQL scanning/sorting time is not bounded by this cap.
+        """
         if limit <= 0:
             return []
 
@@ -304,14 +308,14 @@ class VibeStorage:
             ).fetchall()
 
         if neighbor_limit and graph_hops > 0 and rows:
-            seed_ids = [row["id"] for row in rows[:graph_seed_limit]]
+            seed_ids = [row["id"] for row in rows[:min(graph_seed_limit, limit)]]
             selected_ids = [row["id"] for row in rows]
             selected_id_set = set(selected_ids)
             frontier_scores = {atom_id: 1.0 for atom_id in seed_ids}
             visited_ids = set(seed_ids)
             neighbor_scores: dict[str, tuple[float, int]] = {}
 
-            for hop in range(1, graph_hops + 1):
+            for hop in range(1, min(graph_hops, 2) + 1):
                 frontier_ids = list(frontier_scores)
                 if not frontier_ids:
                     break
@@ -339,7 +343,9 @@ class VibeStorage:
                           AND edges.label = ?
                           AND edges.weight * edges.confidence >= 0.05
                           AND atoms.tenant_id = ? AND atoms.agent_id = ?
-                          AND atoms.lifecycle IN ('active', 'warm')""",
+                          AND atoms.lifecycle IN ('active', 'warm')
+                        ORDER BY edge_score DESC, atom_id, source_id
+                        LIMIT ?""",
                     (
                         *frontier_ids,
                         tid,
@@ -351,6 +357,7 @@ class VibeStorage:
                         EdgeLabel.CAUSAL.value,
                         tid,
                         agent_id,
+                        2 * limit,
                     ),
                 ).fetchall()
 
@@ -361,6 +368,9 @@ class VibeStorage:
                         continue
                     score = frontier_scores[edge_row["source_id"]] * edge_row["edge_score"]
                     next_scores[atom_id] = max(next_scores.get(atom_id, 0.0), score)
+                next_scores = dict(sorted(
+                    next_scores.items(), key=lambda item: (-item[1], item[0])
+                )[:limit])
                 visited_ids.update(next_scores)
                 frontier_scores = next_scores
 

@@ -6,13 +6,15 @@ Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK
 
 ## Verified Baseline
 
+Candidate expansion now caps depth at two hops, returned edge rows at `2 * candidate_limit` per hop, and frontier nodes at `candidate_limit`. A 500-neighbor regression retains the strongest causal answer within 10 candidates. The v3 quality sweep remains 0.808 for one hop and 0.984 for two hops; SQL scanning/sorting and full PPR traversal still have no strict time bound. High-fanout truncation can omit weaker paths and is not a lossless graph search.
+
 The 2026-09-13 v3 retrieval run removes query-word leakage from graph-only answers. Budget fusion now respects connectivity-rejected semantic seeds across lexical lists. On the same v3 corpus, default one-hop/20% Recall@5 improved from 0.792 to 0.808 (p95 5.771 ms); explicit two-hop/20% reached 0.984 (p95 5.816 ms). One hop remains the default. Candidate hydration is bounded, but graph edge traversal is not a strict execution-time budget. These are synthetic regression results, not held-out production evidence. Full tests passed with a fresh `--basetemp` directory, avoiding inaccessible old Windows pytest temp files.
 
 | Item | Result |
 |------|--------|
 | Platform | Windows, Python 3.12.14 |
 | Test command | `python -m pytest -q` |
-| Test result | **278 passed, 0 failed** |
+| Test result | **280 passed, 0 failed** |
 | Coverage | **74%** aggregate (previous run; not remeasured this round) |
 | Package version | 0.3.0 |
 
