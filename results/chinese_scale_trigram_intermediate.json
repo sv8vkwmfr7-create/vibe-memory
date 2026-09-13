@@ -1,0 +1,69 @@
+{
+  "dataset_version": "chinese-scale-v1",
+  "python": "3.12.14",
+  "storage": ":memory:",
+  "candidate_backend": "fts5-trigram-before-recency-index",
+  "notes": "Repeated fixed query; tracemalloc enabled for recall, excludes native SQLite allocations; working set is process-wide and scales share a process; no graph edges",
+  "scales": [
+    {
+      "atoms": 1000,
+      "samples": 20,
+      "old_answer_hits": 20,
+      "candidate_latency_ms": {
+        "p50": 6.192,
+        "p95": 7.374,
+        "p99": 19.51
+      },
+      "recall_cold_ms": 27.115,
+      "recall_warm_ms": {
+        "p50": 7.817,
+        "p95": 8.625,
+        "p99": 8.747
+      },
+      "store_ops_per_sec": 8276.03,
+      "working_set_before_recall_mb": 37.53,
+      "working_set_after_recall_mb": 40.28,
+      "python_recall_peak_mb": 0.79
+    },
+    {
+      "atoms": 10000,
+      "samples": 20,
+      "old_answer_hits": 20,
+      "candidate_latency_ms": {
+        "p50": 19.205,
+        "p95": 20.608,
+        "p99": 20.787
+      },
+      "recall_cold_ms": 35.648,
+      "recall_warm_ms": {
+        "p50": 21.947,
+        "p95": 22.958,
+        "p99": 23.122
+      },
+      "store_ops_per_sec": 8380.91,
+      "working_set_before_recall_mb": 45.81,
+      "working_set_after_recall_mb": 47.24,
+      "python_recall_peak_mb": 0.63
+    },
+    {
+      "atoms": 100000,
+      "samples": 20,
+      "old_answer_hits": 20,
+      "candidate_latency_ms": {
+        "p50": 147.753,
+        "p95": 161.947,
+        "p99": 185.397
+      },
+      "recall_cold_ms": 154.579,
+      "recall_warm_ms": {
+        "p50": 150.942,
+        "p95": 179.248,
+        "p99": 187.181
+      },
+      "store_ops_per_sec": 5069.68,
+      "working_set_before_recall_mb": 117.55,
+      "working_set_after_recall_mb": 118.28,
+      "python_recall_peak_mb": 0.63
+    }
+  ]
+}

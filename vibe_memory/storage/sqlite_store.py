@@ -56,6 +56,8 @@ CREATE INDEX IF NOT EXISTS idx_atoms_session ON atoms(session_id);
 CREATE INDEX IF NOT EXISTS idx_atoms_type ON atoms(type);
 CREATE INDEX IF NOT EXISTS idx_atoms_lifecycle ON atoms(lifecycle);
 CREATE INDEX IF NOT EXISTS idx_atoms_tenant ON atoms(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_atoms_recall_recent
+    ON atoms(tenant_id, agent_id, created_at DESC, id, lifecycle);
 
 CREATE TABLE IF NOT EXISTS edges (
     id TEXT PRIMARY KEY,
@@ -141,6 +143,7 @@ class VibeStorage:
         self.conn.executescript(SCHEMA)
         self.conn.commit()
         self._fts_enabled = self._initialize_fts()
+        self._trigram_enabled = self._initialize_trigram()
         self.tenant_id = tenant_id
 
     def _initialize_fts(self) -> bool:
@@ -151,6 +154,24 @@ class VibeStorage:
             self.conn.executescript(FTS_SCHEMA)
             if not existed:
                 self.conn.execute("INSERT INTO atoms_fts(atoms_fts) VALUES ('rebuild')")
+            self.conn.commit()
+            return True
+        except sqlite3.OperationalError:
+            return False
+
+    def _initialize_trigram(self) -> bool:
+        """Native trigram index; older SQLite builds keep the LIKE fallback."""
+        existed = self.conn.execute(
+            "SELECT 1 FROM sqlite_master WHERE name = 'atoms_trigram'"
+        ).fetchone()
+        # Same external-content schema and native SQL triggers as unicode61.
+        schema = FTS_SCHEMA.replace('atoms_fts', 'atoms_trigram').replace(
+            "tokenize='unicode61'", "tokenize='trigram'"
+        )
+        try:
+            self.conn.executescript(schema)
+            if not existed:
+                self.conn.execute("INSERT INTO atoms_trigram(atoms_trigram) VALUES ('rebuild')")
             self.conn.commit()
             return True
         except sqlite3.OperationalError:
@@ -235,10 +256,16 @@ class VibeStorage:
         chinese_terms = cjk_bigrams(query)
         if chinese_terms:
             terms = list(dict.fromkeys(chinese_terms + terms))[:32]
-        # unicode61 does not segment Chinese phrases into matching bigrams.
-        # Mixed/CJK queries use the scoped LIKE fallback rather than lose old
-        # matches behind the FTS newest-row backfill.
-        if self._fts_enabled and terms and not chinese_terms:
+        chinese_trigrams = list(dict.fromkeys(
+            run[i:i + 3]
+            for run in re.findall(r'[\u3400-\u4dbf\u4e00-\u9fff]+', query)
+            for i in range(len(run) - 2)
+        ))[:32]
+        use_trigram = bool(chinese_trigrams and self._trigram_enabled)
+        fts_table = 'atoms_trigram' if use_trigram else 'atoms_fts'
+        if use_trigram:
+            terms = chinese_trigrams
+        if use_trigram or (self._fts_enabled and terms and not chinese_terms):
             quoted_terms = [f'"{term}"' for term in terms]
             match_queries = [" AND ".join(quoted_terms)]
             any_term_query = " OR ".join(quoted_terms)
@@ -256,13 +283,13 @@ class VibeStorage:
                     exclude_params = selected_ids
                 rows.extend(self.conn.execute(
                     f"""SELECT atoms.*
-                        FROM atoms_fts
-                        JOIN atoms ON atoms.rowid = atoms_fts.rowid
-                        WHERE atoms_fts MATCH ?
+                        FROM {fts_table}
+                        JOIN atoms ON atoms.rowid = {fts_table}.rowid
+                        WHERE {fts_table} MATCH ?
                           AND atoms.tenant_id = ? AND atoms.agent_id = ?
                           AND atoms.lifecycle IN ('active', 'warm')
                           {exclude_sql}
-                        ORDER BY atoms_fts.rowid DESC
+                        ORDER BY {fts_table}.rowid DESC
                         LIMIT ?""",
                     (
                         match_query,

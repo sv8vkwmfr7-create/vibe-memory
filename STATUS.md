@@ -6,6 +6,10 @@ Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK
 
 ## Verified Baseline
 
+Chinese candidate scaling now uses a native SQLite FTS5 trigram external-content index with insert/update/delete triggers and a tenant/agent recency index for candidate backfill. Existing databases backfill the trigram index at first open. Queries with Chinese runs of at least three characters use indexed trigrams; two-character-only queries or unsupported SQLite builds keep LIKE. English uses unicode61 as before. The previous Chinese LIKE paragraph below records the earlier implementation.
+
+`experiments/chinese_scale_benchmark.py` measures serial in-memory Chinese retrieval with tracemalloc enabled, 20 repeats of one selective query and no graph edges. At 1k/10k/100k atoms, warm p95 changed from 16.923/113.272/918.594 ms to 6.038/6.249/6.426 ms; the old answer was in Top-5 for 20/20 calls at each scale. At 100k, process working set after recall rose from 96.91 to 140.50 MB; Python recall allocation peak stayed 0.63 MB. Working sets are process-wide and scales share a process, not isolated per-store memory. Synthetic results do not establish disk/concurrency/high-match-rate performance. Legacy migration smoke, edit/delete/reopen and short-query tests passed. Local reconstructed pilot quality remains BM25 0.85, TF-IDF 0.90, budget 0.85; English v3 remains 0.808/0.984.
+
 Chinese lexical retrieval now uses dependency-free CJK character bigrams in TF-IDF/BM25. CJK budget queries use the tenant/agent-scoped LIKE candidate fallback because unicode61 does not segment Chinese into matching bigrams; candidate hydration stays bounded but SQL scan cost increases. Budget TF-IDF zero-score padding no longer counts as semantic graph seeds. A 131-atom regression retrieves an old Chinese answer beyond the 100-candidate cutoff. On a local 5-incident/10-question document-reconstructed debugging set, Recall@5 changed: BM25 0.25→0.85, TF-IDF 0.60→0.90, two-hop budget 0.45→0.85. These assistant-authored labels/edges are not independent held-out evidence and the private corpus is not published. English synthetic v3 quality remains 0.808/0.984 (one/two hops). Large Chinese corpus latency and synonym understanding remain unverified.
 
 External session retrieval evaluation is available via `experiments/session_evaluation.py`; see `experiments/SESSION_EVALUATION.md`. It uses query cutoffs and human relevance labels, compares empty retrieval/BM25/TF-IDF/two-hop budget, and prints IDs/metrics rather than corpus text. Only an explicitly synthetic interface smoke has run; no real corpus or Agent answer-quality evidence is available yet. Corpus snapshots and anonymized IDs must be reviewed before use. This preparatory addition does not change the core retrieval path.
@@ -20,7 +24,7 @@ The 2026-09-13 v3 retrieval run removes query-word leakage from graph-only answe
 |------|--------|
 | Platform | Windows, Python 3.12.14 |
 | Test command | `python -m pytest -q` |
-| Test result | **285 passed, 0 failed** |
+| Test result | **286 passed, 0 failed** |
 | Coverage | **74%** aggregate (previous run; not remeasured this round) |
 | Package version | 0.3.0 |
 

@@ -547,6 +547,28 @@ def test_budget_zero_match_padding_cannot_displace_chinese_seed():
     assert {a.id for a in result["atoms"]} == {"pad-seed", "pad-answer"}
 
 
+def test_chinese_candidates_follow_edits_deletes_and_short_queries(tmp_path):
+    path = str(tmp_path / "chinese.db")
+    store = VibeStorage(path)
+    answer = _make_atom("zh-edit", DEFAULT_TENANT, "agent-1", "s1", "连接池耗尽导致接口超时")
+    answer.created_at = datetime(2026, 1, 1)
+    store.insert_atom(answer)
+    for i in range(12):
+        store.insert_atom(_make_atom(f"zh-edit-noise-{i}", DEFAULT_TENANT, "agent-1", "s2", "桌面背景设置"))
+    assert store.get_recall_candidates("agent-1", "连接池", 1)[0].id == answer.id
+    assert store.get_recall_candidates("agent-1", "超时", 1)[0].id == answer.id
+    answer.content = answer.summary = "验证码识别失败后重新采集"
+    store.update_atom(answer)
+    assert store.get_recall_candidates("agent-1", "连接池", 1)[0].id != answer.id
+    assert store.get_recall_candidates("agent-1", "验证码", 1)[0].id == answer.id
+    store.conn.close()
+    store = VibeStorage(path)
+    assert store.get_recall_candidates("agent-1", "验证码", 1)[0].id == answer.id
+    store.delete_atom(answer.id)
+    assert store.get_recall_candidates("agent-1", "验证码", 1)[0].id != answer.id
+    store.conn.close()
+
+
 def run_all():
     print("=" * 50)
     print("VibeMemory M3 Multi-Tenant Tests")
