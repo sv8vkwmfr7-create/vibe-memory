@@ -13,9 +13,10 @@ from vibe_memory.models.memory_atom import MemoryAtom, Edge, EdgeLabel
 from vibe_memory.storage.sqlite_store import VibeStorage
 
 
-def probe(data):
+def probe(data, id_order=None, repeats=12):
     data = deepcopy(data)
-    mapping = {a['id']: f'{i:08x}-0000-0000-0000-000000000000' for i,a in enumerate(data['atoms'])}
+    id_order = list(range(len(data['atoms']))) if id_order is None else id_order
+    mapping = {a['id']: f'{id_order[i]:08x}-0000-0000-0000-000000000000' for i,a in enumerate(data['atoms'])}
     root = Path(tempfile.mkdtemp(prefix='vibe-frozen-probe-'))
     store = VibeStorage(str(root/'seed.db'), journal_mode='wal')
     for atom in data['atoms']:
@@ -27,15 +28,25 @@ def probe(data):
         edge['to_atom_id']=mapping[edge['to_atom_id']]
         store.insert_edge(Edge(id=f'edge-{i}',from_atom_id=edge['from_atom_id'], to_atom_id=edge['to_atom_id'],
                          label=EdgeLabel(edge['label']), created_at=datetime(2026,9,14)))
+    anonymous = {a['id']: f'atom-{i}' for i,a in enumerate(data['atoms'])}
+    candidates = [{ 'query_id': f'query-{i}', 'ids': [anonymous[a.id] for a in store.get_recall_candidates(
+                    'local-replay',q['text'],limit=100,graph_seed_limit=5,graph_neighbor_limit=20)]}
+                  for i,q in enumerate(data['queries'])]
+    from vibe_memory.retrieval.ppr import recall
+    q = data['queries'][1]
+    ablation = {name: [anonymous[a.id] for a in recall(q['text'], 'local-replay', store,
+                        mode='budget', top_k=5, strategies=strategies)['atoms']]
+                for name,strategies in [('default',['semantic','bm25','graph','temporal']),
+                                        ('no_temporal',['semantic','bm25','graph'])]}
     store.conn.close()
     for q in data['queries']:
         q['relevant_ids']=[mapping[x] for x in q['relevant_ids']]
     runs=[]
-    for i in range(12):
+    for i in range(repeats):
         r=replay(data, bool(i%2), seed_path=root/'seed.db')
         runs.append({'maintenance':bool(i%2),'rows':[{'query_id':x['query_id'],'mode':x['mode'],
                      'recall':x['recall'],'returned_ids':x['returned_ids']} for x in r['rows']]})
-    return {'conditions':'Fixed IDs, creation timestamps, insertion order and manual edges; read-only seed cloned into fresh WAL DB for each real MCP subprocess; twelve off/on alternating runs; no automatic edges. Current time and reinforcement last-access timestamps not frozen. Not equivalent to original store-built graph or independent labels. Private text never reported; test DBs retained.', 'runs':runs}
+    return {'conditions':'Fixed creation timestamps, insertion order and manual edges; read-only seed cloned into fresh WAL DB for each real MCP subprocess; off/on alternating runs; no automatic edges. Current time and reinforcement last-access timestamps not frozen. Not equivalent to original store-built graph or independent labels. Private text never reported; test DBs retained.', 'candidates':candidates, 'query_1_initial_ablation':ablation, 'runs':runs}
 
 
 if __name__=='__main__':

@@ -6,6 +6,12 @@ Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK
 
 ## Verified Baseline
 
+### ID-only permutation: graph ties and neutral temporal votes
+
+`python -m experiments.id_permutation_probe /path/to/private-corpus.json` varies only IDs across twelve fixed permutations, each with off/on fresh WAL clones and the same MCP call sequence. All 15 candidates remained eligible; candidate order changed. Before: query-1 budget half hits in **5/12** permutations (both flags). Query-ranked PPR seed order now controls stable equal-score discovery/ranking instead of UUID order; hash determinism retained. This alone reduced failures to one permutation. In that case, removing temporal votes restored the answer: every recency score was 1, but top-K selected an arbitrary five candidates to boost. Temporal now abstains when all input recency scores are equal; still ranks genuinely different recency values. No score weights, default graph hops or maintenance policy changed.
+
+Both defect regressions red before/green after; additional mixed-recency guard passed. Full suite **323 passed in 17.30s**, English v3 default/explicit two-hop recall **0.808/0.984** unchanged. Final ID permutations: **24/24** query-1 full hits and macro budget Recall@5 **1.00 in every run**; original fresh-ID store/link replay **12/12** query-1 full hits (`results/id_permutation_probe.json`). This is one assistant-authored 15-memory debugging corpus, not independent labels or general ID-invariance proof. Precision half hits, partial temporal ties, seed-order ties, high-degree/full-graph cost and production chat quality remain boundaries. Existing DBs/private corpus/raw/client configuration unchanged; test DBs retained. Prior sections preserve historical observations, including ID-based graph tie handling now superseded.
+
 ### Stable graph ranking and high-degree SDK cost
 
 Fixed unordered PPR restart iteration, added an atom-ID tie-break to graph ranks, and made trace seed selection deterministic. A six-hash-seed subprocess regression failed before the fix and passed after; **320 passed in 13.87s**. English v3 quality remains **0.808/0.984**. Frozen manually seeded database, fixed IDs/creation times/insertion order and alternating maintenance off/on: twelve runs previously varied, now **all complete rankings identical**, query-1 budget **12/12 full hits** (`results/frozen_replay_probe.json`). Current clock/last-access timestamps are not frozen, and this manual graph differs from store-built graphs.

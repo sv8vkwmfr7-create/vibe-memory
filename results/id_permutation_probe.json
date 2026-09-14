@@ -1,0 +1,1817 @@
+{
+  "conditions": "Only atom IDs permuted (fixed random seeds 0-11); content, insertion order, creation times and manual edges unchanged. Each permutation has off/on fresh WAL clones with actual MCP session/precision/budget sequence. Candidate snapshot taken before reinforcement. Current clock not frozen; assistant labels/private corpus are not independent quality proof.",
+  "baseline_commit": "6b3d1fa",
+  "before": [
+    {
+      "permutation": 0,
+      "candidates": {
+        "query_id": "query-1",
+        "ids": [
+          "atom-0",
+          "atom-3",
+          "atom-10",
+          "atom-5",
+          "atom-6",
+          "atom-13",
+          "atom-8",
+          "atom-2",
+          "atom-12",
+          "atom-14",
+          "atom-9",
+          "atom-7",
+          "atom-1",
+          "atom-4",
+          "atom-11"
+        ]
+      },
+      "runs": [
+        {
+          "maintenance": false,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-11",
+                "atom-5"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 1,
+              "returned_ids": [
+                "atom-5",
+                "atom-0",
+                "atom-2",
+                "atom-3",
+                "atom-1"
+              ]
+            }
+          ]
+        },
+        {
+          "maintenance": true,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-11",
+                "atom-5"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 1,
+              "returned_ids": [
+                "atom-5",
+                "atom-0",
+                "atom-2",
+                "atom-3",
+                "atom-1"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "permutation": 1,
+      "candidates": {
+        "query_id": "query-1",
+        "ids": [
+          "atom-0",
+          "atom-3",
+          "atom-2",
+          "atom-11",
+          "atom-14",
+          "atom-6",
+          "atom-5",
+          "atom-8",
+          "atom-7",
+          "atom-9",
+          "atom-12",
+          "atom-10",
+          "atom-4",
+          "atom-13",
+          "atom-1"
+        ]
+      },
+      "runs": [
+        {
+          "maintenance": false,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-11",
+                "atom-5"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-2",
+                "atom-3",
+                "atom-5",
+                "atom-0",
+                "atom-4"
+              ]
+            }
+          ]
+        },
+        {
+          "maintenance": true,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-11",
+                "atom-5"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-2",
+                "atom-3",
+                "atom-5",
+                "atom-0",
+                "atom-4"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "permutation": 2,
+      "candidates": {
+        "query_id": "query-1",
+        "ids": [
+          "atom-0",
+          "atom-3",
+          "atom-12",
+          "atom-11",
+          "atom-8",
+          "atom-9",
+          "atom-2",
+          "atom-5",
+          "atom-6",
+          "atom-14",
+          "atom-1",
+          "atom-7",
+          "atom-4",
+          "atom-10",
+          "atom-13"
+        ]
+      },
+      "runs": [
+        {
+          "maintenance": false,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-11",
+                "atom-5"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 1,
+              "returned_ids": [
+                "atom-0",
+                "atom-2",
+                "atom-5",
+                "atom-3",
+                "atom-1"
+              ]
+            }
+          ]
+        },
+        {
+          "maintenance": true,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-11",
+                "atom-5"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 1,
+              "returned_ids": [
+                "atom-0",
+                "atom-2",
+                "atom-5",
+                "atom-3",
+                "atom-1"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "permutation": 3,
+      "candidates": {
+        "query_id": "query-1",
+        "ids": [
+          "atom-0",
+          "atom-3",
+          "atom-5",
+          "atom-7",
+          "atom-11",
+          "atom-14",
+          "atom-2",
+          "atom-12",
+          "atom-13",
+          "atom-9",
+          "atom-6",
+          "atom-10",
+          "atom-8",
+          "atom-1",
+          "atom-4"
+        ]
+      },
+      "runs": [
+        {
+          "maintenance": false,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-11",
+                "atom-5"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 1,
+              "returned_ids": [
+                "atom-5",
+                "atom-3",
+                "atom-2",
+                "atom-0",
+                "atom-1"
+              ]
+            }
+          ]
+        },
+        {
+          "maintenance": true,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-11",
+                "atom-5"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 1,
+              "returned_ids": [
+                "atom-5",
+                "atom-3",
+                "atom-2",
+                "atom-0",
+                "atom-1"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "permutation": 4,
+      "candidates": {
+        "query_id": "query-1",
+        "ids": [
+          "atom-0",
+          "atom-3",
+          "atom-6",
+          "atom-12",
+          "atom-8",
+          "atom-14",
+          "atom-2",
+          "atom-10",
+          "atom-9",
+          "atom-5",
+          "atom-11",
+          "atom-13",
+          "atom-7",
+          "atom-1",
+          "atom-4"
+        ]
+      },
+      "runs": [
+        {
+          "maintenance": false,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-11",
+                "atom-5"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 1,
+              "returned_ids": [
+                "atom-3",
+                "atom-2",
+                "atom-5",
+                "atom-0",
+                "atom-1"
+              ]
+            }
+          ]
+        },
+        {
+          "maintenance": true,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-11",
+                "atom-5"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 1,
+              "returned_ids": [
+                "atom-3",
+                "atom-2",
+                "atom-5",
+                "atom-0",
+                "atom-1"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "permutation": 5,
+      "candidates": {
+        "query_id": "query-1",
+        "ids": [
+          "atom-0",
+          "atom-3",
+          "atom-8",
+          "atom-5",
+          "atom-1",
+          "atom-13",
+          "atom-11",
+          "atom-6",
+          "atom-9",
+          "atom-14",
+          "atom-10",
+          "atom-12",
+          "atom-7",
+          "atom-2",
+          "atom-4"
+        ]
+      },
+      "runs": [
+        {
+          "maintenance": false,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-11",
+                "atom-5"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 1,
+              "returned_ids": [
+                "atom-5",
+                "atom-0",
+                "atom-2",
+                "atom-3",
+                "atom-1"
+              ]
+            }
+          ]
+        },
+        {
+          "maintenance": true,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-11",
+                "atom-5"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 1,
+              "returned_ids": [
+                "atom-5",
+                "atom-0",
+                "atom-2",
+                "atom-3",
+                "atom-1"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "permutation": 6,
+      "candidates": {
+        "query_id": "query-1",
+        "ids": [
+          "atom-0",
+          "atom-3",
+          "atom-9",
+          "atom-12",
+          "atom-7",
+          "atom-11",
+          "atom-5",
+          "atom-14",
+          "atom-2",
+          "atom-4",
+          "atom-10",
+          "atom-6",
+          "atom-1",
+          "atom-13",
+          "atom-8"
+        ]
+      },
+      "runs": [
+        {
+          "maintenance": false,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-5",
+                "atom-11"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-5",
+                "atom-2",
+                "atom-3",
+                "atom-4"
+              ]
+            }
+          ]
+        },
+        {
+          "maintenance": true,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-5",
+                "atom-11"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-5",
+                "atom-2",
+                "atom-3",
+                "atom-4"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "permutation": 7,
+      "candidates": {
+        "query_id": "query-1",
+        "ids": [
+          "atom-0",
+          "atom-3",
+          "atom-10",
+          "atom-9",
+          "atom-13",
+          "atom-5",
+          "atom-8",
+          "atom-7",
+          "atom-6",
+          "atom-2",
+          "atom-14",
+          "atom-12",
+          "atom-11",
+          "atom-4",
+          "atom-1"
+        ]
+      },
+      "runs": [
+        {
+          "maintenance": false,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-11",
+                "atom-5"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-5",
+                "atom-2",
+                "atom-3",
+                "atom-4"
+              ]
+            }
+          ]
+        },
+        {
+          "maintenance": true,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-11",
+                "atom-5"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-5",
+                "atom-2",
+                "atom-3",
+                "atom-4"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "permutation": 8,
+      "candidates": {
+        "query_id": "query-1",
+        "ids": [
+          "atom-0",
+          "atom-3",
+          "atom-9",
+          "atom-8",
+          "atom-11",
+          "atom-14",
+          "atom-5",
+          "atom-13",
+          "atom-12",
+          "atom-2",
+          "atom-6",
+          "atom-1",
+          "atom-7",
+          "atom-4",
+          "atom-10"
+        ]
+      },
+      "runs": [
+        {
+          "maintenance": false,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-11",
+                "atom-5"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 1,
+              "returned_ids": [
+                "atom-3",
+                "atom-5",
+                "atom-2",
+                "atom-0",
+                "atom-1"
+              ]
+            }
+          ]
+        },
+        {
+          "maintenance": true,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-11",
+                "atom-5"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 1,
+              "returned_ids": [
+                "atom-3",
+                "atom-5",
+                "atom-2",
+                "atom-0",
+                "atom-1"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "permutation": 9,
+      "candidates": {
+        "query_id": "query-1",
+        "ids": [
+          "atom-0",
+          "atom-3",
+          "atom-8",
+          "atom-2",
+          "atom-10",
+          "atom-5",
+          "atom-12",
+          "atom-14",
+          "atom-13",
+          "atom-6",
+          "atom-11",
+          "atom-4",
+          "atom-9",
+          "atom-7",
+          "atom-1"
+        ]
+      },
+      "runs": [
+        {
+          "maintenance": false,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-11",
+                "atom-5"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-2",
+                "atom-3",
+                "atom-5",
+                "atom-0",
+                "atom-4"
+              ]
+            }
+          ]
+        },
+        {
+          "maintenance": true,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-11",
+                "atom-5"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-2",
+                "atom-3",
+                "atom-5",
+                "atom-0",
+                "atom-4"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "permutation": 10,
+      "candidates": {
+        "query_id": "query-1",
+        "ids": [
+          "atom-0",
+          "atom-3",
+          "atom-13",
+          "atom-4",
+          "atom-8",
+          "atom-11",
+          "atom-2",
+          "atom-6",
+          "atom-9",
+          "atom-10",
+          "atom-1",
+          "atom-12",
+          "atom-5",
+          "atom-14",
+          "atom-7"
+        ]
+      },
+      "runs": [
+        {
+          "maintenance": false,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-11",
+                "atom-5"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-3",
+                "atom-5",
+                "atom-2",
+                "atom-0",
+                "atom-4"
+              ]
+            }
+          ]
+        },
+        {
+          "maintenance": true,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-11",
+                "atom-5"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-3",
+                "atom-5",
+                "atom-2",
+                "atom-0",
+                "atom-4"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "permutation": 11,
+      "candidates": {
+        "query_id": "query-1",
+        "ids": [
+          "atom-0",
+          "atom-3",
+          "atom-2",
+          "atom-7",
+          "atom-8",
+          "atom-5",
+          "atom-14",
+          "atom-12",
+          "atom-10",
+          "atom-9",
+          "atom-13",
+          "atom-11",
+          "atom-1",
+          "atom-6",
+          "atom-4"
+        ]
+      },
+      "runs": [
+        {
+          "maintenance": false,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-11",
+                "atom-5"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 1,
+              "returned_ids": [
+                "atom-2",
+                "atom-3",
+                "atom-5",
+                "atom-0",
+                "atom-1"
+              ]
+            }
+          ]
+        },
+        {
+          "maintenance": true,
+          "query_1": [
+            {
+              "query_id": "query-1",
+              "mode": "precision",
+              "recall": 0.5,
+              "returned_ids": [
+                "atom-0",
+                "atom-3",
+                "atom-2",
+                "atom-11",
+                "atom-5"
+              ]
+            },
+            {
+              "query_id": "query-1",
+              "mode": "budget",
+              "recall": 1,
+              "returned_ids": [
+                "atom-2",
+                "atom-3",
+                "atom-5",
+                "atom-0",
+                "atom-1"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "after": {
+    "id_permutations": [
+      {
+        "permutation": 0,
+        "runs": [
+          {
+            "maintenance": false,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          },
+          {
+            "maintenance": true,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          }
+        ]
+      },
+      {
+        "permutation": 1,
+        "runs": [
+          {
+            "maintenance": false,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          },
+          {
+            "maintenance": true,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          }
+        ]
+      },
+      {
+        "permutation": 2,
+        "runs": [
+          {
+            "maintenance": false,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          },
+          {
+            "maintenance": true,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          }
+        ]
+      },
+      {
+        "permutation": 3,
+        "runs": [
+          {
+            "maintenance": false,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          },
+          {
+            "maintenance": true,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          }
+        ]
+      },
+      {
+        "permutation": 4,
+        "runs": [
+          {
+            "maintenance": false,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          },
+          {
+            "maintenance": true,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          }
+        ]
+      },
+      {
+        "permutation": 5,
+        "runs": [
+          {
+            "maintenance": false,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          },
+          {
+            "maintenance": true,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          }
+        ]
+      },
+      {
+        "permutation": 6,
+        "runs": [
+          {
+            "maintenance": false,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          },
+          {
+            "maintenance": true,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          }
+        ]
+      },
+      {
+        "permutation": 7,
+        "runs": [
+          {
+            "maintenance": false,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          },
+          {
+            "maintenance": true,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          }
+        ]
+      },
+      {
+        "permutation": 8,
+        "runs": [
+          {
+            "maintenance": false,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          },
+          {
+            "maintenance": true,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          }
+        ]
+      },
+      {
+        "permutation": 9,
+        "runs": [
+          {
+            "maintenance": false,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          },
+          {
+            "maintenance": true,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          }
+        ]
+      },
+      {
+        "permutation": 10,
+        "runs": [
+          {
+            "maintenance": false,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          },
+          {
+            "maintenance": true,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          }
+        ]
+      },
+      {
+        "permutation": 11,
+        "runs": [
+          {
+            "maintenance": false,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          },
+          {
+            "maintenance": true,
+            "query_1": [
+              {
+                "query_id": "query-1",
+                "mode": "precision",
+                "recall": 0.5,
+                "returned_ids": [
+                  "atom-0",
+                  "atom-3",
+                  "atom-2",
+                  "atom-11",
+                  "atom-5"
+                ]
+              },
+              {
+                "query_id": "query-1",
+                "mode": "budget",
+                "recall": 1,
+                "returned_ids": [
+                  "atom-2",
+                  "atom-0",
+                  "atom-5",
+                  "atom-3",
+                  "atom-1"
+                ]
+              }
+            ],
+            "macro_budget_recall": 1
+          }
+        ]
+      }
+    ],
+    "original_store_query_1_recall": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "ablation_permutation_10_after_graph_fix_before_temporal_fix": {
+    "default": [
+      "atom-0",
+      "atom-2",
+      "atom-5",
+      "atom-3",
+      "atom-4"
+    ],
+    "no_temporal": [
+      "atom-2",
+      "atom-0",
+      "atom-5",
+      "atom-3",
+      "atom-1"
+    ]
+  },
+  "limits": "Only this 15-atom assistant-labelled local debug corpus, no independent generalization claim. Precision half hits remain. Candidate snapshot before reinforcement; not original timestamps or temporal-cutoff replay."
+}

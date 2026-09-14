@@ -144,7 +144,8 @@ def personalized_pagerank(
 
     alpha = cfg.restart_probability
     epsilon = cfg.convergence_threshold
-    personalization = {sid: 1.0 / len(seed_ids) for sid in sorted(seed_ids)}
+    # Preserve ranked query-seed order without depending on set/hash or UUID order.
+    personalization = {atom.id: 1.0 / len(seed_ids) for atom in seed_atoms}
 
     for _ in range(cfg.max_iterations):
         new_scores: dict[str, float] = defaultdict(float)

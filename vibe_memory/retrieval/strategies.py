@@ -171,7 +171,7 @@ class GraphStrategy:
 
         config.top_n = top_k
         scores = personalized_pagerank(seed_atoms, self.storage, config)
-        ranked = sorted(scores.items(), key=lambda x: (-x[1], x[0]))
+        ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)
         return ranked[:top_k]
 
 
@@ -218,5 +218,8 @@ class TemporalStrategy:
                 score = 0.5  # Unknown time → neutral
             scores.append((i, score))
 
+        # No recency signal: a top-K subset would reward arbitrary input order.
+        if scores and len({score for _, score in scores}) == 1:
+            return []
         scores.sort(key=lambda x: x[1], reverse=True)
         return scores[:top_k]
