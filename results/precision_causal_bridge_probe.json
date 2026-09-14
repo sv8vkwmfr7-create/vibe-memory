@@ -1,0 +1,2899 @@
+{
+  "synthetic_v3": {
+    "queries": 100,
+    "macro": {
+      "raw": {
+        "recall": 0.6,
+        "precision_at_5": 0.6
+      },
+      "causal_bridge": {
+        "recall": 0.6,
+        "precision_at_5": 0.6
+      }
+    },
+    "rows": [
+      {
+        "query_id": "query-0",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-1",
+            "atom-2",
+            "atom-0",
+            "atom-99",
+            "atom-652"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-1",
+            "atom-2",
+            "atom-0",
+            "atom-99",
+            "atom-652"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-1",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-1",
+            "atom-2",
+            "atom-0",
+            "atom-99",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-1",
+            "atom-2",
+            "atom-0",
+            "atom-99",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-2",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-1",
+            "atom-2",
+            "atom-0",
+            "atom-99",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-1",
+            "atom-2",
+            "atom-0",
+            "atom-99",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-3",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-1",
+            "atom-2",
+            "atom-0",
+            "atom-99",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-1",
+            "atom-2",
+            "atom-0",
+            "atom-99",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-4",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-1",
+            "atom-2",
+            "atom-0",
+            "atom-99",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-1",
+            "atom-2",
+            "atom-0",
+            "atom-99",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-5",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-51",
+            "atom-52",
+            "atom-50",
+            "atom-149",
+            "atom-652"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-51",
+            "atom-52",
+            "atom-50",
+            "atom-149",
+            "atom-652"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-6",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-51",
+            "atom-52",
+            "atom-50",
+            "atom-149",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-51",
+            "atom-52",
+            "atom-50",
+            "atom-149",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-7",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-51",
+            "atom-52",
+            "atom-50",
+            "atom-149",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-51",
+            "atom-52",
+            "atom-50",
+            "atom-149",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-8",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-51",
+            "atom-52",
+            "atom-50",
+            "atom-149",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-51",
+            "atom-52",
+            "atom-50",
+            "atom-149",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-9",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-51",
+            "atom-52",
+            "atom-50",
+            "atom-149",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-51",
+            "atom-52",
+            "atom-50",
+            "atom-149",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-10",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-101",
+            "atom-102",
+            "atom-100",
+            "atom-199",
+            "atom-652"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-101",
+            "atom-102",
+            "atom-100",
+            "atom-199",
+            "atom-652"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-11",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-101",
+            "atom-102",
+            "atom-100",
+            "atom-199",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-101",
+            "atom-102",
+            "atom-100",
+            "atom-199",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-12",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-101",
+            "atom-102",
+            "atom-100",
+            "atom-199",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-101",
+            "atom-102",
+            "atom-100",
+            "atom-199",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-13",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-101",
+            "atom-102",
+            "atom-100",
+            "atom-199",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-101",
+            "atom-102",
+            "atom-100",
+            "atom-199",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-14",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-101",
+            "atom-102",
+            "atom-100",
+            "atom-199",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-101",
+            "atom-102",
+            "atom-100",
+            "atom-199",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-15",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-151",
+            "atom-152",
+            "atom-150",
+            "atom-249",
+            "atom-652"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-151",
+            "atom-152",
+            "atom-150",
+            "atom-249",
+            "atom-652"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-16",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-151",
+            "atom-152",
+            "atom-150",
+            "atom-249",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-151",
+            "atom-152",
+            "atom-150",
+            "atom-249",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-17",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-151",
+            "atom-152",
+            "atom-150",
+            "atom-249",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-151",
+            "atom-152",
+            "atom-150",
+            "atom-249",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-18",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-151",
+            "atom-152",
+            "atom-150",
+            "atom-249",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-151",
+            "atom-152",
+            "atom-150",
+            "atom-249",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-19",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-151",
+            "atom-152",
+            "atom-150",
+            "atom-249",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-151",
+            "atom-152",
+            "atom-150",
+            "atom-249",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-20",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-201",
+            "atom-202",
+            "atom-200",
+            "atom-299",
+            "atom-652"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-201",
+            "atom-202",
+            "atom-200",
+            "atom-299",
+            "atom-652"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-21",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-201",
+            "atom-202",
+            "atom-200",
+            "atom-299",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-201",
+            "atom-202",
+            "atom-200",
+            "atom-299",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-22",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-201",
+            "atom-202",
+            "atom-200",
+            "atom-299",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-201",
+            "atom-202",
+            "atom-200",
+            "atom-299",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-23",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-201",
+            "atom-202",
+            "atom-200",
+            "atom-299",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-201",
+            "atom-202",
+            "atom-200",
+            "atom-299",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-24",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-201",
+            "atom-202",
+            "atom-200",
+            "atom-299",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-201",
+            "atom-202",
+            "atom-200",
+            "atom-299",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-25",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-251",
+            "atom-252",
+            "atom-250",
+            "atom-349",
+            "atom-652"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-251",
+            "atom-252",
+            "atom-250",
+            "atom-349",
+            "atom-652"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-26",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-251",
+            "atom-252",
+            "atom-250",
+            "atom-349",
+            "atom-652"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-251",
+            "atom-252",
+            "atom-250",
+            "atom-349",
+            "atom-652"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-27",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-251",
+            "atom-252",
+            "atom-250",
+            "atom-349",
+            "atom-652"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-251",
+            "atom-252",
+            "atom-250",
+            "atom-349",
+            "atom-652"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-28",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-251",
+            "atom-252",
+            "atom-250",
+            "atom-349",
+            "atom-652"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-251",
+            "atom-252",
+            "atom-250",
+            "atom-349",
+            "atom-652"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-29",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-251",
+            "atom-252",
+            "atom-250",
+            "atom-349",
+            "atom-652"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-251",
+            "atom-252",
+            "atom-250",
+            "atom-349",
+            "atom-652"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-30",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-301",
+            "atom-302",
+            "atom-300",
+            "atom-399",
+            "atom-652"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-301",
+            "atom-302",
+            "atom-300",
+            "atom-399",
+            "atom-652"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-31",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-301",
+            "atom-302",
+            "atom-300",
+            "atom-399",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-301",
+            "atom-302",
+            "atom-300",
+            "atom-399",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-32",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-301",
+            "atom-302",
+            "atom-300",
+            "atom-399",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-301",
+            "atom-302",
+            "atom-300",
+            "atom-399",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-33",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-301",
+            "atom-302",
+            "atom-300",
+            "atom-399",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-301",
+            "atom-302",
+            "atom-300",
+            "atom-399",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-34",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-301",
+            "atom-302",
+            "atom-300",
+            "atom-399",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-301",
+            "atom-302",
+            "atom-300",
+            "atom-399",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-35",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-351",
+            "atom-352",
+            "atom-350",
+            "atom-449",
+            "atom-652"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-351",
+            "atom-352",
+            "atom-350",
+            "atom-449",
+            "atom-652"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-36",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-351",
+            "atom-352",
+            "atom-350",
+            "atom-449",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-351",
+            "atom-352",
+            "atom-350",
+            "atom-449",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-37",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-351",
+            "atom-352",
+            "atom-350",
+            "atom-449",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-351",
+            "atom-352",
+            "atom-350",
+            "atom-449",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-38",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-351",
+            "atom-352",
+            "atom-350",
+            "atom-449",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-351",
+            "atom-352",
+            "atom-350",
+            "atom-449",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-39",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-351",
+            "atom-352",
+            "atom-350",
+            "atom-449",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-351",
+            "atom-352",
+            "atom-350",
+            "atom-449",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-40",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-401",
+            "atom-402",
+            "atom-400",
+            "atom-499",
+            "atom-652"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-401",
+            "atom-402",
+            "atom-400",
+            "atom-499",
+            "atom-652"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-41",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-401",
+            "atom-402",
+            "atom-400",
+            "atom-499",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-401",
+            "atom-402",
+            "atom-400",
+            "atom-499",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-42",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-401",
+            "atom-402",
+            "atom-400",
+            "atom-499",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-401",
+            "atom-402",
+            "atom-400",
+            "atom-499",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-43",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-401",
+            "atom-402",
+            "atom-400",
+            "atom-499",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-401",
+            "atom-402",
+            "atom-400",
+            "atom-499",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-44",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-401",
+            "atom-402",
+            "atom-400",
+            "atom-499",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-401",
+            "atom-402",
+            "atom-400",
+            "atom-499",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-45",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-451",
+            "atom-452",
+            "atom-450",
+            "atom-549",
+            "atom-652"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-451",
+            "atom-452",
+            "atom-450",
+            "atom-549",
+            "atom-652"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-46",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-451",
+            "atom-452",
+            "atom-450",
+            "atom-549",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-451",
+            "atom-452",
+            "atom-450",
+            "atom-549",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-47",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-451",
+            "atom-452",
+            "atom-450",
+            "atom-549",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-451",
+            "atom-452",
+            "atom-450",
+            "atom-549",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-48",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-451",
+            "atom-452",
+            "atom-450",
+            "atom-549",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-451",
+            "atom-452",
+            "atom-450",
+            "atom-549",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-49",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-451",
+            "atom-452",
+            "atom-450",
+            "atom-549",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-451",
+            "atom-452",
+            "atom-450",
+            "atom-549",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-50",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-501",
+            "atom-502",
+            "atom-500",
+            "atom-599",
+            "atom-652"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-501",
+            "atom-502",
+            "atom-500",
+            "atom-599",
+            "atom-652"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-51",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-501",
+            "atom-502",
+            "atom-500",
+            "atom-599",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-501",
+            "atom-502",
+            "atom-500",
+            "atom-599",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-52",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-501",
+            "atom-502",
+            "atom-500",
+            "atom-599",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-501",
+            "atom-502",
+            "atom-500",
+            "atom-599",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-53",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-501",
+            "atom-502",
+            "atom-500",
+            "atom-599",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-501",
+            "atom-502",
+            "atom-500",
+            "atom-599",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-54",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-501",
+            "atom-502",
+            "atom-500",
+            "atom-599",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-501",
+            "atom-502",
+            "atom-500",
+            "atom-599",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-55",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-551",
+            "atom-552",
+            "atom-550",
+            "atom-649",
+            "atom-652"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-551",
+            "atom-552",
+            "atom-550",
+            "atom-649",
+            "atom-652"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-56",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-551",
+            "atom-552",
+            "atom-550",
+            "atom-649",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-551",
+            "atom-552",
+            "atom-550",
+            "atom-649",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-57",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-551",
+            "atom-552",
+            "atom-550",
+            "atom-649",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-551",
+            "atom-552",
+            "atom-550",
+            "atom-649",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-58",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-551",
+            "atom-552",
+            "atom-550",
+            "atom-649",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-551",
+            "atom-552",
+            "atom-550",
+            "atom-649",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-59",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-551",
+            "atom-552",
+            "atom-550",
+            "atom-649",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-551",
+            "atom-552",
+            "atom-550",
+            "atom-649",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-60",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-601",
+            "atom-602",
+            "atom-600",
+            "atom-699",
+            "atom-652"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-601",
+            "atom-602",
+            "atom-600",
+            "atom-699",
+            "atom-652"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-61",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-601",
+            "atom-602",
+            "atom-600",
+            "atom-699",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-601",
+            "atom-602",
+            "atom-600",
+            "atom-699",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-62",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-601",
+            "atom-602",
+            "atom-600",
+            "atom-699",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-601",
+            "atom-602",
+            "atom-600",
+            "atom-699",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-63",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-601",
+            "atom-602",
+            "atom-600",
+            "atom-699",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-601",
+            "atom-602",
+            "atom-600",
+            "atom-699",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-64",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-601",
+            "atom-602",
+            "atom-600",
+            "atom-699",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-601",
+            "atom-602",
+            "atom-600",
+            "atom-699",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-65",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-651",
+            "atom-652",
+            "atom-650",
+            "atom-749",
+            "atom-252"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-651",
+            "atom-652",
+            "atom-650",
+            "atom-749",
+            "atom-252"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-66",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-651",
+            "atom-652",
+            "atom-650",
+            "atom-749",
+            "atom-252"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-651",
+            "atom-652",
+            "atom-650",
+            "atom-749",
+            "atom-252"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-67",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-651",
+            "atom-652",
+            "atom-650",
+            "atom-749",
+            "atom-252"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-651",
+            "atom-652",
+            "atom-650",
+            "atom-749",
+            "atom-252"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-68",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-651",
+            "atom-652",
+            "atom-650",
+            "atom-749",
+            "atom-252"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-651",
+            "atom-652",
+            "atom-650",
+            "atom-749",
+            "atom-252"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-69",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-651",
+            "atom-652",
+            "atom-650",
+            "atom-749",
+            "atom-252"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-651",
+            "atom-652",
+            "atom-650",
+            "atom-749",
+            "atom-252"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-70",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-701",
+            "atom-702",
+            "atom-700",
+            "atom-799",
+            "atom-652"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-701",
+            "atom-702",
+            "atom-700",
+            "atom-799",
+            "atom-652"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-71",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-701",
+            "atom-702",
+            "atom-700",
+            "atom-799",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-701",
+            "atom-702",
+            "atom-700",
+            "atom-799",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-72",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-701",
+            "atom-702",
+            "atom-700",
+            "atom-799",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-701",
+            "atom-702",
+            "atom-700",
+            "atom-799",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-73",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-701",
+            "atom-702",
+            "atom-700",
+            "atom-799",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-701",
+            "atom-702",
+            "atom-700",
+            "atom-799",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-74",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-701",
+            "atom-702",
+            "atom-700",
+            "atom-799",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-701",
+            "atom-702",
+            "atom-700",
+            "atom-799",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-75",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-751",
+            "atom-752",
+            "atom-750",
+            "atom-849",
+            "atom-652"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-751",
+            "atom-752",
+            "atom-750",
+            "atom-849",
+            "atom-652"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-76",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-751",
+            "atom-752",
+            "atom-750",
+            "atom-849",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-751",
+            "atom-752",
+            "atom-750",
+            "atom-849",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-77",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-751",
+            "atom-752",
+            "atom-750",
+            "atom-849",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-751",
+            "atom-752",
+            "atom-750",
+            "atom-849",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-78",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-751",
+            "atom-752",
+            "atom-750",
+            "atom-849",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-751",
+            "atom-752",
+            "atom-750",
+            "atom-849",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-79",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-751",
+            "atom-752",
+            "atom-750",
+            "atom-849",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-751",
+            "atom-752",
+            "atom-750",
+            "atom-849",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-80",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-801",
+            "atom-802",
+            "atom-800",
+            "atom-899",
+            "atom-652"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-801",
+            "atom-802",
+            "atom-800",
+            "atom-899",
+            "atom-652"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-81",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-801",
+            "atom-802",
+            "atom-800",
+            "atom-899",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-801",
+            "atom-802",
+            "atom-800",
+            "atom-899",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-82",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-801",
+            "atom-802",
+            "atom-800",
+            "atom-899",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-801",
+            "atom-802",
+            "atom-800",
+            "atom-899",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-83",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-801",
+            "atom-802",
+            "atom-800",
+            "atom-899",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-801",
+            "atom-802",
+            "atom-800",
+            "atom-899",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-84",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-801",
+            "atom-802",
+            "atom-800",
+            "atom-899",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-801",
+            "atom-802",
+            "atom-800",
+            "atom-899",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-85",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-851",
+            "atom-852",
+            "atom-850",
+            "atom-949",
+            "atom-652"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-851",
+            "atom-852",
+            "atom-850",
+            "atom-949",
+            "atom-652"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-86",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-851",
+            "atom-852",
+            "atom-850",
+            "atom-949",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-851",
+            "atom-852",
+            "atom-850",
+            "atom-949",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-87",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-851",
+            "atom-852",
+            "atom-850",
+            "atom-949",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-851",
+            "atom-852",
+            "atom-850",
+            "atom-949",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-88",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-851",
+            "atom-852",
+            "atom-850",
+            "atom-949",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-851",
+            "atom-852",
+            "atom-850",
+            "atom-949",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-89",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-851",
+            "atom-852",
+            "atom-850",
+            "atom-949",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-851",
+            "atom-852",
+            "atom-850",
+            "atom-949",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-90",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-901",
+            "atom-902",
+            "atom-900",
+            "atom-999",
+            "atom-652"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-901",
+            "atom-902",
+            "atom-900",
+            "atom-999",
+            "atom-652"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-91",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-901",
+            "atom-902",
+            "atom-900",
+            "atom-999",
+            "atom-998"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-901",
+            "atom-902",
+            "atom-900",
+            "atom-999",
+            "atom-998"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-92",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-901",
+            "atom-902",
+            "atom-900",
+            "atom-999",
+            "atom-998"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-901",
+            "atom-902",
+            "atom-900",
+            "atom-999",
+            "atom-998"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-93",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-901",
+            "atom-902",
+            "atom-900",
+            "atom-999",
+            "atom-998"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-901",
+            "atom-902",
+            "atom-900",
+            "atom-999",
+            "atom-998"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-94",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-901",
+            "atom-902",
+            "atom-900",
+            "atom-999",
+            "atom-998"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-901",
+            "atom-902",
+            "atom-900",
+            "atom-999",
+            "atom-998"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-95",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-951",
+            "atom-952",
+            "atom-950",
+            "atom-49",
+            "atom-652"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-951",
+            "atom-952",
+            "atom-950",
+            "atom-49",
+            "atom-652"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-96",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-951",
+            "atom-952",
+            "atom-950",
+            "atom-49",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-951",
+            "atom-952",
+            "atom-950",
+            "atom-49",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-97",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-951",
+            "atom-952",
+            "atom-950",
+            "atom-49",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-951",
+            "atom-952",
+            "atom-950",
+            "atom-49",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-98",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-951",
+            "atom-952",
+            "atom-950",
+            "atom-49",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-951",
+            "atom-952",
+            "atom-950",
+            "atom-49",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-99",
+        "raw": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-951",
+            "atom-952",
+            "atom-950",
+            "atom-49",
+            "atom-999"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 0.6,
+          "precision_at_5": 0.6,
+          "returned_ids": [
+            "atom-951",
+            "atom-952",
+            "atom-950",
+            "atom-49",
+            "atom-999"
+          ],
+          "new_unlabeled_ids": []
+        }
+      }
+    ]
+  },
+  "local_debug": {
+    "queries": 10,
+    "macro": {
+      "raw": {
+        "recall": 0.85,
+        "precision_at_5": 0.34
+      },
+      "causal_bridge": {
+        "recall": 1,
+        "precision_at_5": 0.4
+      }
+    },
+    "rows": [
+      {
+        "query_id": "query-0",
+        "raw": {
+          "recall": 0.5,
+          "precision_at_5": 0.2,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-12",
+            "atom-2",
+            "atom-13"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 1,
+          "precision_at_5": 0.4,
+          "returned_ids": [
+            "atom-1",
+            "atom-0",
+            "atom-3",
+            "atom-12",
+            "atom-2"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-1",
+        "raw": {
+          "recall": 0.5,
+          "precision_at_5": 0.2,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 1,
+          "precision_at_5": 0.4,
+          "returned_ids": [
+            "atom-1",
+            "atom-4",
+            "atom-0",
+            "atom-3",
+            "atom-2"
+          ],
+          "new_unlabeled_ids": [
+            "atom-4"
+          ]
+        }
+      },
+      {
+        "query_id": "query-2",
+        "raw": {
+          "recall": 0.5,
+          "precision_at_5": 0.2,
+          "returned_ids": [
+            "atom-3",
+            "atom-0",
+            "atom-5",
+            "atom-13",
+            "atom-12"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 1,
+          "precision_at_5": 0.4,
+          "returned_ids": [
+            "atom-4",
+            "atom-3",
+            "atom-0",
+            "atom-5",
+            "atom-13"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-3",
+        "raw": {
+          "recall": 1,
+          "precision_at_5": 0.4,
+          "returned_ids": [
+            "atom-3",
+            "atom-4",
+            "atom-5",
+            "atom-13",
+            "atom-12"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 1,
+          "precision_at_5": 0.4,
+          "returned_ids": [
+            "atom-3",
+            "atom-4",
+            "atom-5",
+            "atom-13",
+            "atom-12"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-4",
+        "raw": {
+          "recall": 1,
+          "precision_at_5": 0.4,
+          "returned_ids": [
+            "atom-6",
+            "atom-9",
+            "atom-7",
+            "atom-8",
+            "atom-10"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 1,
+          "precision_at_5": 0.4,
+          "returned_ids": [
+            "atom-6",
+            "atom-9",
+            "atom-7",
+            "atom-8",
+            "atom-10"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-5",
+        "raw": {
+          "recall": 1,
+          "precision_at_5": 0.4,
+          "returned_ids": [
+            "atom-6",
+            "atom-8",
+            "atom-5",
+            "atom-7",
+            "atom-12"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 1,
+          "precision_at_5": 0.4,
+          "returned_ids": [
+            "atom-6",
+            "atom-8",
+            "atom-5",
+            "atom-7",
+            "atom-12"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-6",
+        "raw": {
+          "recall": 1,
+          "precision_at_5": 0.4,
+          "returned_ids": [
+            "atom-9",
+            "atom-10",
+            "atom-11",
+            "atom-6",
+            "atom-8"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 1,
+          "precision_at_5": 0.4,
+          "returned_ids": [
+            "atom-7",
+            "atom-9",
+            "atom-10",
+            "atom-11",
+            "atom-6"
+          ],
+          "new_unlabeled_ids": [
+            "atom-7"
+          ]
+        }
+      },
+      {
+        "query_id": "query-7",
+        "raw": {
+          "recall": 1,
+          "precision_at_5": 0.4,
+          "returned_ids": [
+            "atom-10",
+            "atom-11",
+            "atom-5",
+            "atom-0",
+            "atom-2"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 1,
+          "precision_at_5": 0.4,
+          "returned_ids": [
+            "atom-1",
+            "atom-10",
+            "atom-11",
+            "atom-5",
+            "atom-0"
+          ],
+          "new_unlabeled_ids": [
+            "atom-1"
+          ]
+        }
+      },
+      {
+        "query_id": "query-8",
+        "raw": {
+          "recall": 1,
+          "precision_at_5": 0.4,
+          "returned_ids": [
+            "atom-12",
+            "atom-0",
+            "atom-13",
+            "atom-14",
+            "atom-1"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 1,
+          "precision_at_5": 0.4,
+          "returned_ids": [
+            "atom-12",
+            "atom-0",
+            "atom-13",
+            "atom-14",
+            "atom-1"
+          ],
+          "new_unlabeled_ids": []
+        }
+      },
+      {
+        "query_id": "query-9",
+        "raw": {
+          "recall": 1,
+          "precision_at_5": 0.4,
+          "returned_ids": [
+            "atom-12",
+            "atom-14",
+            "atom-13",
+            "atom-1",
+            "atom-0"
+          ]
+        },
+        "causal_bridge": {
+          "recall": 1,
+          "precision_at_5": 0.4,
+          "returned_ids": [
+            "atom-12",
+            "atom-14",
+            "atom-13",
+            "atom-1",
+            "atom-0"
+          ],
+          "new_unlabeled_ids": []
+        }
+      }
+    ]
+  },
+  "conditions": "Fresh core precision Top-5; no reinforcement or automatic edges. Max normalization divides each fused score by the maximum before the existing reranker. Default production formula unchanged. Synthetic labels and local debug labels are not independent human quality evidence. Private text is never reported. Experimental causal bridge promotes fused non-anchor nodes connected by qualifying CAUSAL edges to two distinct semantic/BM25 agreed anchors. Direction is ignored; no claim of cause-only relevance. Newly promoted unlabeled nodes are reported as review risks, not proven irrelevant without complete labels."
+}
