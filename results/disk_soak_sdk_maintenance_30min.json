@@ -1,0 +1,2517 @@
+{
+  "dataset_version": "disk-soak-v2",
+  "sqlite_version": "3.53.1",
+  "initial_atoms": 100000,
+  "requested_seconds": 1800,
+  "elapsed_seconds": 1800.464,
+  "readers": [
+    {
+      "worker": 0,
+      "calls": 4494,
+      "anchor_hits": 4494,
+      "reinforcement_skipped_calls": 4296,
+      "sdk_ms": {
+        "p50": 396.644,
+        "p95": 434.085,
+        "p99": 464.066
+      }
+    },
+    {
+      "worker": 1,
+      "calls": 4480,
+      "anchor_hits": 4480,
+      "reinforcement_skipped_calls": 4341,
+      "sdk_ms": {
+        "p50": 397.79,
+        "p95": 428.814,
+        "p99": 462.783
+      }
+    }
+  ],
+  "writer": {
+    "cycles": 32426,
+    "inserts": 32426,
+    "updates": 32426,
+    "deletes": 32298,
+    "deliberate_hold_ms": 50,
+    "cycle_ms": {
+      "p50": 53.41,
+      "p95": 54.603,
+      "p99": 68.659
+    }
+  },
+  "wal_sampled_peak_bytes": 57980792,
+  "checkpoint_strategy": "sdk-coordinated",
+  "checkpoint_wait_limit_ms": 0,
+  "coordinator_drain_limit_ms": 1000,
+  "checkpoint_events": [
+    {
+      "elapsed_seconds": 10.013,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 421.636,
+      "wal_bytes_before": 34245472,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 20.447,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 424.42,
+      "wal_bytes_before": 45476592,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 30.875,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 407.817,
+      "wal_bytes_before": 46523072,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 41.287,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 425.852,
+      "wal_bytes_before": 47408872,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 51.724,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 411.877,
+      "wal_bytes_before": 45072832,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 62.149,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 447.465,
+      "wal_bytes_before": 45880352,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 72.599,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 75.62,
+      "wal_bytes_before": 47907392,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 82.687,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 207.504,
+      "wal_bytes_before": 47544832,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 92.898,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 436.808,
+      "wal_bytes_before": 48101032,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 103.337,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 290.505,
+      "wal_bytes_before": 46090472,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 113.64,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 336.656,
+      "wal_bytes_before": 46601352,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 123.987,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 58.208,
+      "wal_bytes_before": 46914472,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 134.046,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 149.529,
+      "wal_bytes_before": 46968032,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 144.198,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 376.411,
+      "wal_bytes_before": 47454192,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 154.578,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 355.041,
+      "wal_bytes_before": 38550872,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 164.944,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 372.915,
+      "wal_bytes_before": 36066512,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 175.318,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 355.96,
+      "wal_bytes_before": 46930952,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 185.689,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 60.544,
+      "wal_bytes_before": 47145192,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 195.754,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 327.217,
+      "wal_bytes_before": 47309992,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 206.088,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 317.401,
+      "wal_bytes_before": 48962112,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 216.406,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 348.805,
+      "wal_bytes_before": 46255272,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 226.761,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 418.204,
+      "wal_bytes_before": 47380032,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 237.188,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 409.92,
+      "wal_bytes_before": 48508912,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 247.598,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 400.546,
+      "wal_bytes_before": 45835032,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 258.012,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 58.811,
+      "wal_bytes_before": 47161672,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 268.081,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 351.444,
+      "wal_bytes_before": 45171712,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 278.434,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 386.63,
+      "wal_bytes_before": 45114032,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 288.827,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 375.916,
+      "wal_bytes_before": 46860912,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 299.21,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 372.147,
+      "wal_bytes_before": 46963912,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 309.587,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 181.48,
+      "wal_bytes_before": 50700752,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 319.771,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 415.035,
+      "wal_bytes_before": 46189352,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 330.197,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 374.683,
+      "wal_bytes_before": 46494232,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 340.58,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 379.458,
+      "wal_bytes_before": 44244712,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 350.97,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 364.492,
+      "wal_bytes_before": 45072832,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 361.34,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 480.263,
+      "wal_bytes_before": 46362392,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 371.833,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 501.056,
+      "wal_bytes_before": 45608432,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 382.336,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 398.983,
+      "wal_bytes_before": 45946272,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 392.747,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 413.844,
+      "wal_bytes_before": 44854472,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 403.17,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 291.809,
+      "wal_bytes_before": 44846232,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 413.475,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 375.395,
+      "wal_bytes_before": 45946272,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 423.863,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 331.12,
+      "wal_bytes_before": 45130512,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 434.198,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 118.526,
+      "wal_bytes_before": 45093432,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 444.321,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 406.906,
+      "wal_bytes_before": 44903912,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 454.742,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 361.074,
+      "wal_bytes_before": 44722632,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 465.112,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 332.11,
+      "wal_bytes_before": 45155232,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 475.448,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 85.858,
+      "wal_bytes_before": 45184072,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 485.544,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 251.75,
+      "wal_bytes_before": 46127552,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 495.801,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 401.687,
+      "wal_bytes_before": 46972152,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 506.218,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 389.683,
+      "wal_bytes_before": 45048112,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 516.616,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 395.21,
+      "wal_bytes_before": 45027512,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 527.012,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 405.804,
+      "wal_bytes_before": 42386592,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 537.422,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 251.679,
+      "wal_bytes_before": 45320032,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 547.689,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 390.855,
+      "wal_bytes_before": 47511872,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 558.085,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 121.598,
+      "wal_bytes_before": 46160512,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 568.213,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 353.978,
+      "wal_bytes_before": 46539552,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 578.583,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 312.568,
+      "wal_bytes_before": 46902112,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 588.907,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 354.005,
+      "wal_bytes_before": 46259392,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 599.268,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 417.798,
+      "wal_bytes_before": 45167592,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 609.696,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 338.651,
+      "wal_bytes_before": 45352992,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 620.044,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 345.604,
+      "wal_bytes_before": 45233512,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 630.404,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 444.36,
+      "wal_bytes_before": 46168752,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 640.858,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 340.977,
+      "wal_bytes_before": 47198752,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 651.199,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 380.613,
+      "wal_bytes_before": 46972152,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 661.593,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 352.979,
+      "wal_bytes_before": 47647832,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 671.948,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 367.319,
+      "wal_bytes_before": 47643712,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 682.326,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 119.587,
+      "wal_bytes_before": 45917432,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 692.447,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 290.277,
+      "wal_bytes_before": 36779272,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 702.741,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 378.29,
+      "wal_bytes_before": 46786752,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 713.132,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 365.91,
+      "wal_bytes_before": 46873272,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 723.505,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 411.029,
+      "wal_bytes_before": 47095752,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 733.924,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 88.488,
+      "wal_bytes_before": 45962752,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 744.021,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 298.247,
+      "wal_bytes_before": 45694952,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 754.33,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 390.945,
+      "wal_bytes_before": 46560152,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 764.722,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 308.124,
+      "wal_bytes_before": 45670232,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 775.033,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 352.536,
+      "wal_bytes_before": 45229392,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 785.394,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 344.774,
+      "wal_bytes_before": 44936872,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 795.741,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 442.041,
+      "wal_bytes_before": 45093432,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 806.194,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 374.827,
+      "wal_bytes_before": 44792672,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 816.583,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 255.637,
+      "wal_bytes_before": 46209952,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 826.846,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 255.582,
+      "wal_bytes_before": 45546632,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 837.104,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 405.574,
+      "wal_bytes_before": 47520112,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 847.519,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 445.194,
+      "wal_bytes_before": 46972152,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 857.976,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 423.422,
+      "wal_bytes_before": 46593112,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 868.411,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 388.769,
+      "wal_bytes_before": 48212272,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 878.804,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 366.574,
+      "wal_bytes_before": 47281152,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 889.173,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 262.157,
+      "wal_bytes_before": 47544832,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 899.44,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 310.071,
+      "wal_bytes_before": 45670232,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 909.758,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 440.691,
+      "wal_bytes_before": 45509552,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 920.213,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 150.664,
+      "wal_bytes_before": 47305872,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 930.364,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 375.199,
+      "wal_bytes_before": 46275872,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 940.748,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 357.354,
+      "wal_bytes_before": 50478272,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 951.107,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 433.698,
+      "wal_bytes_before": 46008072,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 961.544,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 404.682,
+      "wal_bytes_before": 45682592,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 971.961,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 376.698,
+      "wal_bytes_before": 48092792,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 982.351,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 134.709,
+      "wal_bytes_before": 47680792,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 992.486,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 323.557,
+      "wal_bytes_before": 49917952,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1002.811,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 327.546,
+      "wal_bytes_before": 46605472,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1013.149,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 441.033,
+      "wal_bytes_before": 46712592,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1023.597,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 439.178,
+      "wal_bytes_before": 45822672,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1034.041,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 339.951,
+      "wal_bytes_before": 46803232,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1044.394,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 201.701,
+      "wal_bytes_before": 45822672,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1054.6,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 388.082,
+      "wal_bytes_before": 45142872,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1064.992,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 56.334,
+      "wal_bytes_before": 45542512,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1075.061,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 455.554,
+      "wal_bytes_before": 34257832,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1085.522,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 374.539,
+      "wal_bytes_before": 45163472,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1095.908,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 335.789,
+      "wal_bytes_before": 45785592,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1106.25,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 427.02,
+      "wal_bytes_before": 46869152,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1116.686,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 321.083,
+      "wal_bytes_before": 45719672,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1127.012,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 380.259,
+      "wal_bytes_before": 45381832,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1137.403,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 356.333,
+      "wal_bytes_before": 40388392,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1147.766,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 340.475,
+      "wal_bytes_before": 46069872,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1158.12,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 393.702,
+      "wal_bytes_before": 57980792,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1168.525,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 281.632,
+      "wal_bytes_before": 46621952,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1178.819,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 165.573,
+      "wal_bytes_before": 47441832,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1188.993,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 374.602,
+      "wal_bytes_before": 45810312,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1199.375,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 319.149,
+      "wal_bytes_before": 45892712,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1209.703,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 361.506,
+      "wal_bytes_before": 47132832,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1220.068,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 381.821,
+      "wal_bytes_before": 45171712,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1230.461,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 144.602,
+      "wal_bytes_before": 45839152,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1240.617,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 399.865,
+      "wal_bytes_before": 44792672,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1251.023,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 404.105,
+      "wal_bytes_before": 45377712,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1261.436,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 365.458,
+      "wal_bytes_before": 45727912,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1271.812,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 373.068,
+      "wal_bytes_before": 46564272,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1282.187,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 306.637,
+      "wal_bytes_before": 46794992,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1292.495,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 42.519,
+      "wal_bytes_before": 44920392,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1302.542,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 138.63,
+      "wal_bytes_before": 45212912,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1312.69,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 444.935,
+      "wal_bytes_before": 47244072,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1323.138,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 325.161,
+      "wal_bytes_before": 47005112,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1333.468,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 364.213,
+      "wal_bytes_before": 46724952,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1343.834,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 429.753,
+      "wal_bytes_before": 47351192,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1354.265,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 334.124,
+      "wal_bytes_before": 46453032,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1364.612,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 397.545,
+      "wal_bytes_before": 45097552,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1375.022,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 300.154,
+      "wal_bytes_before": 45921552,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1385.323,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 346.098,
+      "wal_bytes_before": 46440672,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1395.677,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 438.334,
+      "wal_bytes_before": 45439512,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1406.118,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 354.683,
+      "wal_bytes_before": 44957472,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1416.486,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 377.86,
+      "wal_bytes_before": 45587832,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1426.867,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 413.979,
+      "wal_bytes_before": 45591952,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1437.286,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 353.613,
+      "wal_bytes_before": 46914472,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1447.646,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 323.998,
+      "wal_bytes_before": 47664312,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1457.971,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 389.044,
+      "wal_bytes_before": 46317072,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1468.361,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 392.881,
+      "wal_bytes_before": 46127552,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1478.765,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 342.526,
+      "wal_bytes_before": 46551912,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1489.119,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 364.533,
+      "wal_bytes_before": 46444792,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1499.485,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 359.648,
+      "wal_bytes_before": 47322352,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1509.851,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 366.138,
+      "wal_bytes_before": 46856792,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1520.225,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 232.897,
+      "wal_bytes_before": 41410152,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1530.461,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 317.512,
+      "wal_bytes_before": 46024552,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1540.787,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 290.211,
+      "wal_bytes_before": 45410672,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1551.088,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 277.524,
+      "wal_bytes_before": 46560152,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1561.381,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 450.585,
+      "wal_bytes_before": 48121632,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1571.837,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 327.523,
+      "wal_bytes_before": 47907392,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1582.171,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 389.501,
+      "wal_bytes_before": 45752632,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1592.562,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 190.621,
+      "wal_bytes_before": 46914472,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1602.766,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 83.946,
+      "wal_bytes_before": 47441832,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1612.859,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 172.85,
+      "wal_bytes_before": 46897992,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1623.044,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 430.202,
+      "wal_bytes_before": 39976392,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1633.482,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 433.846,
+      "wal_bytes_before": 45352992,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1643.931,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 378.214,
+      "wal_bytes_before": 44722632,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1654.313,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 139.74,
+      "wal_bytes_before": 46032792,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1664.46,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 248.064,
+      "wal_bytes_before": 46465392,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1674.721,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 384.79,
+      "wal_bytes_before": 46514832,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1685.119,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 386.513,
+      "wal_bytes_before": 46440672,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1695.514,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 320.362,
+      "wal_bytes_before": 45740272,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1705.85,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 348.24,
+      "wal_bytes_before": 44916272,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1716.2,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 321.731,
+      "wal_bytes_before": 45365352,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1726.533,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 176.696,
+      "wal_bytes_before": 46481872,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1736.721,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 136.87,
+      "wal_bytes_before": 36824592,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1746.866,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 92.153,
+      "wal_bytes_before": 37578552,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1756.971,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 391.23,
+      "wal_bytes_before": 45262352,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1767.365,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 414.128,
+      "wal_bytes_before": 46160512,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1777.781,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 255.618,
+      "wal_bytes_before": 47194632,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1788.045,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 96.567,
+      "wal_bytes_before": 46935072,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1798.154,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 258.633,
+      "wal_bytes_before": 46667272,
+      "wal_bytes_after": 0
+    },
+    {
+      "elapsed_seconds": 1800.005,
+      "result": [
+        0,
+        0,
+        0
+      ],
+      "mode": "TRUNCATE",
+      "quiesced": true,
+      "maintenance_status": "truncated",
+      "duration_ms": 457.894,
+      "wal_bytes_before": 7094672,
+      "wal_bytes_after": 0
+    }
+  ],
+  "checkpoint_samples": 175,
+  "passive_checkpoint_samples": 0,
+  "last_passive_checkpoint": null,
+  "last_checkpoint": [
+    0,
+    0,
+    0
+  ],
+  "final_truncate": [
+    0,
+    0,
+    0
+  ],
+  "wal_bytes_after_truncate": 0,
+  "post_join_crud_consistent": true,
+  "integrity_check": "ok",
+  "fts_external_content_integrity": "ok",
+  "notes": "Fresh WAL file; two independent SDK readers and one CRUD writer; all records contain the whole repeated query; no graph, no held reader snapshot; writer adds 50ms lock per cycle; default auto-checkpoint plus selected checkpoint every 10s; seeding excluded, barrier startup included, no retries; cooperative gate waiting included in worker latency; experiment-coordinated mode drains up to 1s, else PASSIVE; SDK drain timeout skips maintenance; busy_timeout limits lock waiting, not total checkpoint execution time; sdk-coordinated uses the public controller: SDK readers automatic, raw CRUD writer explicitly scoped; skipped flag may include partial reinforcement; 10s WAL sampling is not a hard maximum; local temp DB retained"
+}

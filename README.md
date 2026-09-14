@@ -1,5 +1,7 @@
 # Vibe Memory
 
+最新验证：10万条临时WAL库持续30分钟，8974/8974旧答案命中、174次运行中维护全部截断成功，WAL采样峰值约58MB；SQLite/FTS/CRUD一致性通过，312项测试通过。维护最长约501ms、强化仍96.2%调用跳过；默认关闭，不代表真实聊天、硬容量/暂停上限或生产保证。复跑条件与完整结果见 [STATUS.md](STATUS.md) 和 [30分钟JSON](results/disk_soak_sdk_maintenance_30min.json)。
+
 可选WAL维护已接入SDK，默认 `wal_maintenance=None`，不启动后台线程。同一文件库的实例显式共享控制器，应用主动触发：
 
 ```python

@@ -6,6 +6,16 @@ Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK
 
 ## Verified Baseline
 
+### 30-minute SDK maintenance endurance check
+
+`results/disk_soak_sdk_maintenance_30min.json` records a fresh synthetic 100k WAL database running for 1800.464 seconds (seeding excluded), two independent SDK readers and one explicitly coordinated raw CRUD writer holding a write lock for 50ms per cycle. Replay: `python experiments/disk_soak_benchmark.py --scale 100000 --seconds 1800 --checkpoint-strategy sdk-coordinated`. Full regression before load: **312 passed in 12.56s**; no formal tests or benchmarks ran concurrently during load. Only benchmark instrumentation changed: checkpoint events now retain pre-maintenance WAL size.
+
+**8974/8974** anchor hits; reader p95 **434.085/428.814ms**, p99 **464.066/462.783ms**, including admission waiting. The writer completed **32426** insert/update cycles and **32298** deletions (~18.0 cycles/s), with cycle p95/p99 **54.603/68.659ms**. Post-join retained IDs/content, SQLite and both external-content FTS integrity checks passed; final TRUNCATE returned [0,0,0] and observed WAL zero.
+
+All **174** checkpoints started before the 1800-second deadline succeeded and observed WAL zero; the 175th started at the deadline and is excluded from runtime success counts. Sampled WAL peak: **57,980,792 bytes**. Ten-minute phase peaks were **50,700,752 / 57,980,792 / 48,121,632 bytes** (58 runtime samples each), showing no cumulative growth at the sampled points. Drain/checkpoint duration was **42.519–501.056ms**, p50/p95/p99 **358.501/441.386/462.225ms** (linear percentiles). Reader percentiles are whole-run aggregates, not time-window tail stability proof.
+
+Skipped reinforcement remained **8637/8974 (~96.2%)**; successful retrieval does not prove reliable learning updates. This single local synthetic run is not a hard WAL/pause bound, real-chat quality test, hour-scale endurance, multi-process coordination or power-loss proof. Maintenance remains opt-in/default-off; no SDK policy or background scheduler changed. Next: inventory actual application accesses and test user-visible maintenance pauses in realistic interactions before enabling it.
+
 ### Explicit SDK WAL maintenance
 
 `WALMaintenance(db_path)` is now exported alongside `VibeMemory`. Pass the same controller to each same-file SDK instance via `wal_maintenance=controller`; the default is `None`, and no scheduler, maintenance thread or default journal/timeout change is introduced. The application explicitly calls `controller.checkpoint(drain_timeout=1.0)`. SDK initialization and all public operations participate in a reentrant, process-local admission gate. Nested SDK operations already admitted on the same thread continue during draining; independent SDK instances retain independent SQLite connections. This does **not** make one SDK/connection safe to share concurrently.

@@ -120,7 +120,8 @@ def run(scale=100000, seconds=300, checkpoint_strategy="passive"):
                     for future in futures:
                         if future.done():
                             future.result()  # Surface errors rather than count them as success.
-                    wal_peak = max(wal_peak, Path(path + "-wal").stat().st_size)
+                    wal_before = Path(path + "-wal").stat().st_size
+                    wal_peak = max(wal_peak, wal_before)
                     checkpoint_start = time.perf_counter()
                     quiesced = None
                     if checkpoint_strategy == "coordinated":
@@ -145,8 +146,13 @@ def run(scale=100000, seconds=300, checkpoint_strategy="passive"):
                                               "result": checkpoint, "mode": mode, "quiesced": quiesced,
                                               "maintenance_status": maintenance_report["status"] if maintenance is not None else None,
                                               "duration_ms": round((time.perf_counter() - checkpoint_start) * 1000, 3),
+                                              "wal_bytes_before": wal_before,
                                               "wal_bytes_after": Path(path + "-wal").stat().st_size})
-                    print(f"Elapsed {time.perf_counter() - start:.1f}s; sampled WAL peak {wal_peak} bytes", flush=True)
+                    event = checkpoint_events[-1]
+                    print(f"Elapsed {time.perf_counter() - start:.1f}s; "
+                          f"WAL {wal_before}->{event['wal_bytes_after']} bytes; peak {wal_peak}; "
+                          f"checkpoint {event['maintenance_status'] or checkpoint} "
+                          f"in {event['duration_ms']:.1f}ms", flush=True)
                 workers = [future.result(timeout=15) for future in futures]
             finally:
                 stop.set()
