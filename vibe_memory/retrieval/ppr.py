@@ -144,7 +144,7 @@ def personalized_pagerank(
 
     alpha = cfg.restart_probability
     epsilon = cfg.convergence_threshold
-    personalization = {sid: 1.0 / len(seed_ids) for sid in seed_ids}
+    personalization = {sid: 1.0 / len(seed_ids) for sid in sorted(seed_ids)}
 
     for _ in range(cfg.max_iterations):
         new_scores: dict[str, float] = defaultdict(float)
@@ -226,7 +226,7 @@ def build_trace(
         [{from, to, edge_label, depth, confidence}, ...]
     """
     traces: list[dict] = []
-    seed_ids = {a.id for a in seed_atoms}
+    seed_ids = sorted({a.id for a in seed_atoms})
 
     # 简单路径：对每个召回分片，检查是否有直连边到任何种子
     if not seed_atoms:

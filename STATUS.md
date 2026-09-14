@@ -6,6 +6,14 @@ Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK
 
 ## Verified Baseline
 
+### Stable graph ranking and high-degree SDK cost
+
+Fixed unordered PPR restart iteration, added an atom-ID tie-break to graph ranks, and made trace seed selection deterministic. A six-hash-seed subprocess regression failed before the fix and passed after; **320 passed in 13.87s**. English v3 quality remains **0.808/0.984**. Frozen manually seeded database, fixed IDs/creation times/insertion order and alternating maintenance off/on: twelve runs previously varied, now **all complete rankings identical**, query-1 budget **12/12 full hits** (`results/frozen_replay_probe.json`). Current clock/last-access timestamps are not frozen, and this manual graph differs from store-built graphs.
+
+Original store/link replay with newly generated IDs still produced **5/12** query-1 budget half hits after the fix (before: 6/12). Thus only same-input hash-order nondeterminism is fixed; new-ID tie/candidate ordering and precision half hits remain quality boundaries. No tuning of labels, weights, hops or maintenance policy; no independent chat-quality proof.
+
+Actual SDK budget recall including trace/reinforcement on a uniform causal star (`experiments/high_degree_recall.py`, `results/high_degree_recall.json`): 1k/10k hub degree, five warm samples each, answer **5/5** both; p50 **16.893/179.419ms**, p95 **17.402/183.220ms**. Single-process in-memory synthetic workload, setup/warmup excluded; not disk/concurrency, stable timing or production SLA. Full scoped graph traversal remains a high-degree cost. Existing databases/private corpus/client configuration untouched, temporary DBs retained.
+
 ### Indexed seed-incident edges: scale regression
 
 Reproducer: `python experiments/seed_filter_scale.py`; measurements in `results/seed_filter_scale.json`. Four seeds, 1007 atoms and 1k/10k/100k unrelated directed edges in memory; warmup/setup excluded, ten isolated filter samples. Baseline p50 **5.169/58.041/633.418ms**, fixed **0.071/0.070/0.068ms**; all four seeds retained. Retrieval-edge API optionally restricts to seed-incident edges while preserving endpoint scope checks and its unrestricted default. Two-edge seed connections only need incident edges. Endpoint indexes and edge-first checks avoid planner-selected live-edge scans and atom cross products. Direct incoming/outgoing queries also explicitly use their existing endpoint indexes; semantics unchanged.

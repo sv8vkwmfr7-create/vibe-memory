@@ -1,0 +1,25 @@
+{
+  "conditions": "Single process in-memory SDK budget recall including reinforcement/trace; causal star, uniform edge weights, synthetic lexical hub and graph-only answer; one warmup, five sequential samples; setup excluded. Not production, disk/concurrency, stable timings or independent quality proof.",
+  "runs": [
+    {
+      "hub_degree": 1000,
+      "samples": 5,
+      "answer_hits": 5,
+      "latency_ms": {
+        "p50": 16.893,
+        "p95": 17.402,
+        "p99": 17.499
+      }
+    },
+    {
+      "hub_degree": 10000,
+      "samples": 5,
+      "answer_hits": 5,
+      "latency_ms": {
+        "p50": 179.419,
+        "p95": 183.22,
+        "p99": 183.596
+      }
+    }
+  ]
+}

@@ -1,0 +1,704 @@
+{
+  "conditions": "Fixed IDs, creation timestamps, insertion order and manual edges; read-only seed cloned into fresh WAL DB for each real MCP subprocess; twelve off/on alternating runs; no automatic edges. Current time and reinforcement last-access timestamps not frozen. Not equivalent to original store-built graph or independent labels. Private text never reported; test DBs retained.",
+  "before": [
+    {
+      "maintenance": false,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 1,
+          "returned_ids": [
+            "atom-2",
+            "atom-3",
+            "atom-5",
+            "atom-0",
+            "atom-1"
+          ]
+        }
+      ]
+    },
+    {
+      "maintenance": true,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 1,
+          "returned_ids": [
+            "atom-2",
+            "atom-3",
+            "atom-5",
+            "atom-0",
+            "atom-1"
+          ]
+        }
+      ]
+    },
+    {
+      "maintenance": false,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 1,
+          "returned_ids": [
+            "atom-2",
+            "atom-0",
+            "atom-5",
+            "atom-3",
+            "atom-1"
+          ]
+        }
+      ]
+    },
+    {
+      "maintenance": true,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-2",
+            "atom-0",
+            "atom-5",
+            "atom-3",
+            "atom-4"
+          ]
+        }
+      ]
+    },
+    {
+      "maintenance": false,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-2",
+            "atom-3",
+            "atom-5",
+            "atom-0",
+            "atom-4"
+          ]
+        }
+      ]
+    },
+    {
+      "maintenance": true,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 1,
+          "returned_ids": [
+            "atom-2",
+            "atom-3",
+            "atom-5",
+            "atom-0",
+            "atom-1"
+          ]
+        }
+      ]
+    },
+    {
+      "maintenance": false,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-2",
+            "atom-3",
+            "atom-5",
+            "atom-0",
+            "atom-4"
+          ]
+        }
+      ]
+    },
+    {
+      "maintenance": true,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 1,
+          "returned_ids": [
+            "atom-2",
+            "atom-3",
+            "atom-5",
+            "atom-0",
+            "atom-1"
+          ]
+        }
+      ]
+    },
+    {
+      "maintenance": false,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 1,
+          "returned_ids": [
+            "atom-2",
+            "atom-0",
+            "atom-5",
+            "atom-3",
+            "atom-1"
+          ]
+        }
+      ]
+    },
+    {
+      "maintenance": true,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-2",
+            "atom-3",
+            "atom-5",
+            "atom-0",
+            "atom-4"
+          ]
+        }
+      ]
+    },
+    {
+      "maintenance": false,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 1,
+          "returned_ids": [
+            "atom-2",
+            "atom-0",
+            "atom-5",
+            "atom-3",
+            "atom-1"
+          ]
+        }
+      ]
+    },
+    {
+      "maintenance": true,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-2",
+            "atom-0",
+            "atom-5",
+            "atom-3",
+            "atom-4"
+          ]
+        }
+      ]
+    }
+  ],
+  "after": [
+    {
+      "maintenance": false,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 1,
+          "returned_ids": [
+            "atom-2",
+            "atom-0",
+            "atom-5",
+            "atom-3",
+            "atom-1"
+          ]
+        }
+      ]
+    },
+    {
+      "maintenance": true,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 1,
+          "returned_ids": [
+            "atom-2",
+            "atom-0",
+            "atom-5",
+            "atom-3",
+            "atom-1"
+          ]
+        }
+      ]
+    },
+    {
+      "maintenance": false,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 1,
+          "returned_ids": [
+            "atom-2",
+            "atom-0",
+            "atom-5",
+            "atom-3",
+            "atom-1"
+          ]
+        }
+      ]
+    },
+    {
+      "maintenance": true,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 1,
+          "returned_ids": [
+            "atom-2",
+            "atom-0",
+            "atom-5",
+            "atom-3",
+            "atom-1"
+          ]
+        }
+      ]
+    },
+    {
+      "maintenance": false,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 1,
+          "returned_ids": [
+            "atom-2",
+            "atom-0",
+            "atom-5",
+            "atom-3",
+            "atom-1"
+          ]
+        }
+      ]
+    },
+    {
+      "maintenance": true,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 1,
+          "returned_ids": [
+            "atom-2",
+            "atom-0",
+            "atom-5",
+            "atom-3",
+            "atom-1"
+          ]
+        }
+      ]
+    },
+    {
+      "maintenance": false,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 1,
+          "returned_ids": [
+            "atom-2",
+            "atom-0",
+            "atom-5",
+            "atom-3",
+            "atom-1"
+          ]
+        }
+      ]
+    },
+    {
+      "maintenance": true,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 1,
+          "returned_ids": [
+            "atom-2",
+            "atom-0",
+            "atom-5",
+            "atom-3",
+            "atom-1"
+          ]
+        }
+      ]
+    },
+    {
+      "maintenance": false,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 1,
+          "returned_ids": [
+            "atom-2",
+            "atom-0",
+            "atom-5",
+            "atom-3",
+            "atom-1"
+          ]
+        }
+      ]
+    },
+    {
+      "maintenance": true,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 1,
+          "returned_ids": [
+            "atom-2",
+            "atom-0",
+            "atom-5",
+            "atom-3",
+            "atom-1"
+          ]
+        }
+      ]
+    },
+    {
+      "maintenance": false,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 1,
+          "returned_ids": [
+            "atom-2",
+            "atom-0",
+            "atom-5",
+            "atom-3",
+            "atom-1"
+          ]
+        }
+      ]
+    },
+    {
+      "maintenance": true,
+      "rows": [
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "recall": 0.5,
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "recall": 1,
+          "returned_ids": [
+            "atom-2",
+            "atom-0",
+            "atom-5",
+            "atom-3",
+            "atom-1"
+          ]
+        }
+      ]
+    }
+  ],
+  "all_after_rankings_identical": true
+}

@@ -171,7 +171,7 @@ class GraphStrategy:
 
         config.top_n = top_k
         scores = personalized_pagerank(seed_atoms, self.storage, config)
-        ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+        ranked = sorted(scores.items(), key=lambda x: (-x[1], x[0]))
         return ranked[:top_k]
 
 
