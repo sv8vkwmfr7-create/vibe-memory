@@ -535,31 +535,45 @@ class VibeStorage:
 
     def get_outgoing_edges(self, atom_id: str) -> list[Edge]:
         rows = self.conn.execute(
-            "SELECT * FROM edges WHERE from_atom_id = ? AND status = 'active'",
+            "SELECT * FROM edges INDEXED BY idx_edges_from WHERE from_atom_id = ? AND status = 'active'",
             (atom_id,),
         ).fetchall()
         return [self._row_to_edge(r) for r in rows]
 
     def get_incoming_edges(self, atom_id: str) -> list[Edge]:
         rows = self.conn.execute(
-            "SELECT * FROM edges WHERE to_atom_id = ? AND status = 'active'",
+            "SELECT * FROM edges INDEXED BY idx_edges_to WHERE to_atom_id = ? AND status = 'active'",
             (atom_id,),
         ).fetchall()
         return [self._row_to_edge(r) for r in rows]
 
-    def get_retrieval_edges(self, agent_id: str, tenant_id: Optional[str] = None) -> list[Edge]:
-        """Read active edges with both endpoints in the live retrieval scope."""
+    def get_retrieval_edges(self, agent_id: str, tenant_id: Optional[str] = None,
+                            atom_ids: Optional[list[str]] = None) -> list[Edge]:
+        """Read live scoped edges, optionally only those incident to supplied atoms."""
         tid = tenant_id or self.tenant_id
+        if atom_ids is not None and not atom_ids:
+            return []
+        edge_source = "edges e"
+        endpoint_join = "JOIN"
+        params = (tid, tid, tid, agent_id, agent_id)
+        if atom_ids is not None:
+            # Start with indexed incident edges, not a cross product of live atoms.
+            endpoint_join = "CROSS JOIN"
+            placeholders = ",".join("?" for _ in atom_ids)
+            edge_source = f"""(
+                SELECT * FROM edges INDEXED BY idx_edges_from WHERE from_atom_id IN ({placeholders})
+                UNION SELECT * FROM edges INDEXED BY idx_edges_to WHERE to_atom_id IN ({placeholders})) e"""
+            params = tuple(atom_ids) + tuple(atom_ids) + params
         rows = self.conn.execute(
-            """SELECT e.* FROM edges e
-               JOIN atoms src ON src.id = e.from_atom_id
-               JOIN atoms dst ON dst.id = e.to_atom_id
+            f"""SELECT e.* FROM {edge_source}
+               {endpoint_join} atoms src ON src.id = e.from_atom_id
+               {endpoint_join} atoms dst ON dst.id = e.to_atom_id
                WHERE e.status = 'active' AND e.tenant_id = ?
                  AND src.tenant_id = ? AND dst.tenant_id = ?
                  AND src.agent_id = ? AND dst.agent_id = ?
                  AND src.lifecycle IN ('active', 'warm')
                  AND dst.lifecycle IN ('active', 'warm')""",
-            (tid, tid, tid, agent_id, agent_id),
+            params,
         ).fetchall()
         return [self._row_to_edge(row) for row in rows]
 

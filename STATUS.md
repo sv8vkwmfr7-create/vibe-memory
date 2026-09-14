@@ -6,6 +6,12 @@ Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK
 
 ## Verified Baseline
 
+### Indexed seed-incident edges: scale regression
+
+Reproducer: `python experiments/seed_filter_scale.py`; measurements in `results/seed_filter_scale.json`. Four seeds, 1007 atoms and 1k/10k/100k unrelated directed edges in memory; warmup/setup excluded, ten isolated filter samples. Baseline p50 **5.169/58.041/633.418ms**, fixed **0.071/0.070/0.068ms**; all four seeds retained. Retrieval-edge API optionally restricts to seed-incident edges while preserving endpoint scope checks and its unrestricted default. Two-edge seed connections only need incident edges. Endpoint indexes and edge-first checks avoid planner-selected live-edge scans and atom cross products. Direct incoming/outgoing queries also explicitly use their existing endpoint indexes; semantics unchanged.
+
+English v3 recall unchanged **0.808/0.984**. Final tiny MCP replay budget macro recall off/on **1.00/1.00**, precision **0.90/0.90**; earlier on-run query-1 half hit did not recur in this run, but variability is not established fixed. Precision query-0/query-1 remain half hits. No weight/default-hop/maintenance policy changes, no existing DB/private corpus changes. These are filter-stage synthetic measurements, not full recall latency, high-degree graph, disk/concurrent workload, statistical stability or production guarantees; unrestricted PPR still reads the scoped graph.
+
 ### MCP label validation and two-edge causal seed retention
 
 Fixed two independent defects: reconstructed replay passed internal Chinese enum values to the English public MCP label interface, which silently downgraded unknown labels to `similar`; direct-only seed filtering discarded seeds connected through a nonlexical causal intermediary. MCP now rejects unknown labels, replay converts enum names, and seed filtering additionally retains seeds supported by two valid causal edges (same agent/tenant, active/warm endpoints, weight*confidence >= 0.05, respecting the configured connectivity threshold). No weights, default candidate hops or maintenance defaults changed.

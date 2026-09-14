@@ -82,7 +82,8 @@ class SeedFilter:
 
         # Two query seeds may be linked through a nonlexical cause/outcome.
         causal_neighbors = {atom.id: set() for atom in seed_atoms}
-        for e in storage.get_retrieval_edges(seed_atoms[0].agent_id, seed_atoms[0].tenant_id):
+        for e in storage.get_retrieval_edges(seed_atoms[0].agent_id, seed_atoms[0].tenant_id,
+                                             atom_ids=list(seed_ids)):
             if e.status != EdgeStatus.ACTIVE or e.label != EdgeLabel.CAUSAL or e.weight * e.confidence < 0.05:
                 continue
             causal_neighbors.setdefault(e.from_atom_id, set()).add(e.to_atom_id)

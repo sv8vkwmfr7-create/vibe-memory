@@ -1,0 +1,12 @@
+{
+  "conditions": "Single Windows process; in-memory SQLite; 1007 atoms, four seeds; unique unrelated directed edges including self loops; one warmup then ten samples. Setup excluded. Isolated SeedFilter.filter, not total recall or production proof.",
+  "baseline_commit": "8c22187",
+  "background_edges": [1000, 10000, 100000],
+  "baseline_p50_ms": [5.169, 58.041, 633.418],
+  "baseline_p95_ms": [6.503, 64.09, 650.706],
+  "fixed_p50_ms": [0.071, 0.070, 0.068],
+  "fixed_p95_ms": [0.103, 0.077, 0.075],
+  "observations": "All four seeds retained in every sample. Initial invalid parallel-edge fixture hit UNIQUE constraint, then all measurements restarted with unique edges. Endpoint restriction alone retained status-index scans; EXPLAIN showed direct incoming/outgoing selecting idx_edges_status and scoped joins starting with both atom sets. Final query uses endpoint indexes and edge-first endpoint checks. Hub degree, large node count, disk, concurrency and full PPR cost not covered. Independent runs, no statistical stability claim.",
+  "quality_guard": {"english_v3_default_budget_recall": 0.808, "english_v3_explicit_two_hop_recall": 0.984},
+  "final_mcp_replay": {"atoms": 15, "queries": 10, "precision_recall_off_on": [0.9, 0.9], "budget_recall_off_on": [1.0, 1.0], "original_query_budget_recall_off_on": [1.0, 1.0], "notes": "Private assistant-authored debugging corpus, not independent labels. Earlier on-run query-1 had half hit; latest full hit does not prove that variability fixed. Precision query-0 and query-1 remain half hits."}
+}

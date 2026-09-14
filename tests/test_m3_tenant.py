@@ -455,6 +455,17 @@ def test_seed_filter_keeps_two_seeds_connected_through_nonlexical_cause():
     assert {atom.id for atom in kept} == {"incident", "outcome", "weak-a", "weak-b"}
 
 
+def test_retrieval_edges_can_select_only_edges_incident_to_seeds():
+    store = VibeStorage(":memory:")
+    for name in ("a", "bridge", "b", "noise-a", "noise-b"):
+        store.insert_atom(MemoryAtom(id=name, agent_id="test", session_id="s", content=name, summary=name))
+    for source, target in (("a", "bridge"), ("bridge", "b"), ("noise-a", "noise-b")):
+        store.insert_edge(Edge(id=source, from_atom_id=source, to_atom_id=target, label=EdgeLabel.CAUSAL))
+    assert {edge.id for edge in store.get_retrieval_edges("test", atom_ids=["a", "b"])} == {"a", "bridge"}
+    assert store.get_retrieval_edges("test", atom_ids=[]) == []
+    assert len(store.get_retrieval_edges("test")) == 3
+
+
 def test_recall_candidate_graph_depth_is_capped_at_two_hops():
     """A caller cannot turn budget candidate expansion into a full graph walk."""
     store = VibeStorage(":memory:")
