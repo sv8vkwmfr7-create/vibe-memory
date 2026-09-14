@@ -1,0 +1,296 @@
+{
+  "conditions": "New Wiki-source assistant paraphrases/labels/manual edges, not independent human labels. Fresh core precision Top-5, equal current creation timestamps, five cold calls per condition; setup excluded. No SDK cache, reinforcement, automatic edges, MCP, temporal cutoff or production latency proof. Private text omitted.",
+  "aggregates": {
+    "False": {
+      "macro_recall": 1,
+      "macro_precision_at_5": 0.4,
+      "queries_with_negative_hits": 5
+    },
+    "True": {
+      "macro_recall": 1,
+      "macro_precision_at_5": 0.4,
+      "queries_with_negative_hits": 5
+    }
+  },
+  "rows": [
+    {
+      "query_id": "query-0",
+      "causal_bridge": false,
+      "recall": 1,
+      "precision_at_5": 0.4,
+      "negative_hits": [],
+      "returned_ids": [
+        "atom-2",
+        "atom-0",
+        "atom-5",
+        "atom-1",
+        "atom-3"
+      ],
+      "repeat_ranking_stable": true,
+      "core_cold_p50_ms": 2.0918000000165193
+    },
+    {
+      "query_id": "query-0",
+      "causal_bridge": true,
+      "recall": 1,
+      "precision_at_5": 0.4,
+      "negative_hits": [],
+      "returned_ids": [
+        "atom-2",
+        "atom-0",
+        "atom-5",
+        "atom-1",
+        "atom-3"
+      ],
+      "repeat_ranking_stable": true,
+      "core_cold_p50_ms": 1.6804999995656544
+    },
+    {
+      "query_id": "query-1",
+      "causal_bridge": false,
+      "recall": 1,
+      "precision_at_5": 0.4,
+      "negative_hits": [
+        "atom-4",
+        "atom-10"
+      ],
+      "returned_ids": [
+        "atom-1",
+        "atom-0",
+        "atom-2",
+        "atom-4",
+        "atom-10"
+      ],
+      "repeat_ranking_stable": true,
+      "core_cold_p50_ms": 1.6220999996221508
+    },
+    {
+      "query_id": "query-1",
+      "causal_bridge": true,
+      "recall": 1,
+      "precision_at_5": 0.4,
+      "negative_hits": [
+        "atom-4",
+        "atom-10"
+      ],
+      "returned_ids": [
+        "atom-1",
+        "atom-0",
+        "atom-2",
+        "atom-4",
+        "atom-10"
+      ],
+      "repeat_ranking_stable": true,
+      "core_cold_p50_ms": 1.6531999999642721
+    },
+    {
+      "query_id": "query-2",
+      "causal_bridge": false,
+      "recall": 1,
+      "precision_at_5": 0.4,
+      "negative_hits": [
+        "atom-1"
+      ],
+      "returned_ids": [
+        "atom-3",
+        "atom-5",
+        "atom-4",
+        "atom-1",
+        "atom-9"
+      ],
+      "repeat_ranking_stable": true,
+      "core_cold_p50_ms": 1.5478000004804926
+    },
+    {
+      "query_id": "query-2",
+      "causal_bridge": true,
+      "recall": 1,
+      "precision_at_5": 0.4,
+      "negative_hits": [
+        "atom-1"
+      ],
+      "returned_ids": [
+        "atom-3",
+        "atom-5",
+        "atom-4",
+        "atom-1",
+        "atom-9"
+      ],
+      "repeat_ranking_stable": true,
+      "core_cold_p50_ms": 1.6158999997060164
+    },
+    {
+      "query_id": "query-3",
+      "causal_bridge": false,
+      "recall": 1,
+      "precision_at_5": 0.4,
+      "negative_hits": [
+        "atom-1"
+      ],
+      "returned_ids": [
+        "atom-4",
+        "atom-3",
+        "atom-2",
+        "atom-5",
+        "atom-1"
+      ],
+      "repeat_ranking_stable": true,
+      "core_cold_p50_ms": 1.7152999998870655
+    },
+    {
+      "query_id": "query-3",
+      "causal_bridge": true,
+      "recall": 1,
+      "precision_at_5": 0.4,
+      "negative_hits": [
+        "atom-1"
+      ],
+      "returned_ids": [
+        "atom-4",
+        "atom-3",
+        "atom-2",
+        "atom-5",
+        "atom-1"
+      ],
+      "repeat_ranking_stable": true,
+      "core_cold_p50_ms": 1.7518999993626494
+    },
+    {
+      "query_id": "query-4",
+      "causal_bridge": false,
+      "recall": 1,
+      "precision_at_5": 0.4,
+      "negative_hits": [
+        "atom-1"
+      ],
+      "returned_ids": [
+        "atom-6",
+        "atom-8",
+        "atom-7",
+        "atom-1",
+        "atom-0"
+      ],
+      "repeat_ranking_stable": true,
+      "core_cold_p50_ms": 1.4988000002631452
+    },
+    {
+      "query_id": "query-4",
+      "causal_bridge": true,
+      "recall": 1,
+      "precision_at_5": 0.4,
+      "negative_hits": [
+        "atom-1"
+      ],
+      "returned_ids": [
+        "atom-6",
+        "atom-8",
+        "atom-7",
+        "atom-1",
+        "atom-0"
+      ],
+      "repeat_ranking_stable": true,
+      "core_cold_p50_ms": 1.6410999996878672
+    },
+    {
+      "query_id": "query-5",
+      "causal_bridge": false,
+      "recall": 1,
+      "precision_at_5": 0.4,
+      "negative_hits": [
+        "atom-1"
+      ],
+      "returned_ids": [
+        "atom-7",
+        "atom-8",
+        "atom-6",
+        "atom-1",
+        "atom-0"
+      ],
+      "repeat_ranking_stable": true,
+      "core_cold_p50_ms": 1.6731999994590296
+    },
+    {
+      "query_id": "query-5",
+      "causal_bridge": true,
+      "recall": 1,
+      "precision_at_5": 0.4,
+      "negative_hits": [
+        "atom-1"
+      ],
+      "returned_ids": [
+        "atom-7",
+        "atom-8",
+        "atom-6",
+        "atom-1",
+        "atom-0"
+      ],
+      "repeat_ranking_stable": true,
+      "core_cold_p50_ms": 1.6566999993301579
+    },
+    {
+      "query_id": "query-6",
+      "causal_bridge": false,
+      "recall": 1,
+      "precision_at_5": 0.4,
+      "negative_hits": [],
+      "returned_ids": [
+        "atom-9",
+        "atom-11",
+        "atom-10",
+        "atom-8",
+        "atom-6"
+      ],
+      "repeat_ranking_stable": true,
+      "core_cold_p50_ms": 1.5450000000782893
+    },
+    {
+      "query_id": "query-6",
+      "causal_bridge": true,
+      "recall": 1,
+      "precision_at_5": 0.4,
+      "negative_hits": [],
+      "returned_ids": [
+        "atom-9",
+        "atom-11",
+        "atom-10",
+        "atom-8",
+        "atom-6"
+      ],
+      "repeat_ranking_stable": true,
+      "core_cold_p50_ms": 1.5954999998939456
+    },
+    {
+      "query_id": "query-7",
+      "causal_bridge": false,
+      "recall": 1,
+      "precision_at_5": 0.4,
+      "negative_hits": [],
+      "returned_ids": [
+        "atom-11",
+        "atom-9",
+        "atom-10",
+        "atom-8",
+        "atom-6"
+      ],
+      "repeat_ranking_stable": true,
+      "core_cold_p50_ms": 1.5443000002051122
+    },
+    {
+      "query_id": "query-7",
+      "causal_bridge": true,
+      "recall": 1,
+      "precision_at_5": 0.4,
+      "negative_hits": [],
+      "returned_ids": [
+        "atom-11",
+        "atom-9",
+        "atom-10",
+        "atom-8",
+        "atom-6"
+      ],
+      "repeat_ranking_stable": true,
+      "core_cold_p50_ms": 1.599000000169326
+    }
+  ],
+  "corpus_sha256": "b2dc206820f6d16efef80ef67981688c4bd681b16c6448b6ae8dafe52e7c27da"
+}
