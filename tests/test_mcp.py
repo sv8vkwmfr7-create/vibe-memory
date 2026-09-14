@@ -13,6 +13,7 @@ import json
 import subprocess
 import sys
 import os
+import sqlite3
 import pytest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -23,10 +24,11 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 class MCPClient:
     """Test client for MCP server via subprocess."""
 
-    def __init__(self, db_path=":memory:", agent_id="test-agent"):
+    def __init__(self, db_path=":memory:", agent_id="test-agent", wal_maintenance=False):
         self.proc = subprocess.Popen(
             [sys.executable, "-m", "vibe_memory.mcp_server",
-             "--db-path", db_path, "--agent-id", agent_id],
+             "--db-path", db_path, "--agent-id", agent_id]
+            + (["--wal-maintenance"] if wal_maintenance else []),
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -375,3 +377,67 @@ def test_missing_required_arguments(client):
     r = client.call_tool("vibe_store", {})
     # Should get an error about missing 'content'
     assert "error" in r or "content" in json.dumps(r).lower()
+
+
+def test_opt_in_maintenance_preserves_recall(tmp_path):
+    c = MCPClient(db_path=str(tmp_path / "memory.db"), wal_maintenance=True)
+    try:
+        c.send("initialize", {})
+        names = {t["name"] for t in c.send("tools/list")["result"]["tools"]}
+        assert "vibe_checkpoint" in names
+        c.call_tool("vibe_store", {"content": "API timeout fixed to 60 seconds"})
+        report = c.get_text(c.call_tool("vibe_checkpoint"))
+        assert report["status"] == "truncated"
+        assert report["checkpoint"] == [0, 0, 0]
+        assert report["wal_bytes_after"] == 0
+        recalled = c.get_text(c.call_tool("vibe_recall", {"query": "API timeout"}))
+        assert any("60 seconds" in m["content"] for m in recalled["memories"])
+    finally:
+        c.close()
+
+
+def test_checkpoint_unavailable_by_default(client):
+    response = client.call_tool("vibe_checkpoint")
+    assert response["error"]["code"] == -32601
+
+
+def test_maintenance_external_snapshot_busy_then_recovers(tmp_path):
+    path = str(tmp_path / "memory.db")
+    c = MCPClient(db_path=path, wal_maintenance=True)
+    reader = None
+    try:
+        c.send("initialize", {})
+        first = c.get_text(c.call_tool("vibe_store", {"content": "API timeout 60 seconds"}))
+        reader = sqlite3.connect(path)
+        reader.execute("BEGIN")
+        reader.execute("SELECT name FROM sqlite_master").fetchall()
+        second = c.get_text(c.call_tool("vibe_store", {"content": "API timeout connection pool 20"}))
+        report = c.get_text(c.call_tool("vibe_checkpoint"))
+        assert report["status"] == "busy"
+        assert reader.in_transaction  # Maintenance must not end an external snapshot.
+        reader.rollback()
+        assert c.get_text(c.call_tool("vibe_checkpoint"))["status"] == "truncated"
+        link = c.get_text(c.call_tool("vibe_link", {
+            "from_id": first["id"][:8], "to_id": second["id"][:8], "label": "causal",
+        }))
+        assert link["message"] == "Edge created successfully"
+        assert c.get_text(c.call_tool("vibe_forget", {"atom_id": second["id"][:8]}))["deleted"]
+        memories = c.get_text(c.call_tool("vibe_recall", {"query": "API timeout"}))["memories"]
+        assert any("60 seconds" in m["content"] for m in memories)
+    finally:
+        if reader is not None:
+            reader.close()
+        c.close()
+
+
+def test_bad_checkpoint_budget_does_not_break_tools(tmp_path):
+    c = MCPClient(db_path=str(tmp_path / "memory.db"), wal_maintenance=True)
+    try:
+        c.send("initialize", {})
+        error = c.call_tool("vibe_checkpoint", {"drain_timeout": -1})
+        assert error["error"]["code"] == -32000
+        assert "finite and non-negative" in error["error"]["message"]
+        c.call_tool("vibe_store", {"content": "API timeout 60 seconds"})
+        assert c.get_text(c.call_tool("vibe_checkpoint", {"drain_timeout": 0}))["status"] == "truncated"
+    finally:
+        c.close()

@@ -1,0 +1,21 @@
+{
+  "dataset": "mcp-maintenance-smoke-v1",
+  "initial_memories": 2,
+  "rounds": 30,
+  "anchor_hits": 30,
+  "maintenance_statuses": {
+    "truncated": 30
+  },
+  "checkpoint_round_trip_ms": {
+    "p50": 5.132,
+    "p95": 10.956,
+    "p99": 20.02
+  },
+  "queued_checkpoint_plus_recall_ms": {
+    "p50": 6.121,
+    "p95": 12.454,
+    "p99": 23.02
+  },
+  "maintenance_enabled": true,
+  "notes": "Fresh temporary file; actual MCP stdio subprocess; sequential server receives pipelined checkpoint then recall; queued latency includes maintenance and recall, not isolated recall latency. Two synthetic English memories, no other workers or external locks, no LLM/UI or user-perception claim. Temp DB retained; no background scheduler."
+}

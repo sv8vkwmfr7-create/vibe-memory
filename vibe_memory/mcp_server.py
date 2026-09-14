@@ -13,6 +13,7 @@ Tools:
   - vibe_link: Create manual edge between atoms
   - vibe_forget: Delete a memory atom
   - vibe_flush: Process LLM edge classification queue
+  - vibe_checkpoint: Manual WAL maintenance (only with --wal-maintenance)
 
 Usage:
   # In Claude Code claude.md or Codex AGENTS.md:
@@ -27,23 +28,28 @@ import sys
 import os
 import uuid
 import argparse
+from contextlib import nullcontext
 from typing import Optional
 from datetime import datetime
 
 
-def run_server(db_path: str, agent_id: str, vibe_dir: str):
+def run_server(db_path: str, agent_id: str, vibe_dir: str, wal_maintenance: bool = False):
     """Run MCP server over stdio."""
     if hasattr(sys.stdin, "reconfigure"):
         sys.stdin.reconfigure(encoding="utf-8")
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
 
-    from vibe_memory.sdk import VibeMemory
+    from vibe_memory import VibeMemory, WALMaintenance
+
+    maintenance = WALMaintenance(db_path) if wal_maintenance else None
 
     mem = VibeMemory(
         agent_id=agent_id,
         db_path=db_path,
         embedding_backend="tfidf",
+        journal_mode="wal" if maintenance else None,
+        wal_maintenance=maintenance,
     )
 
     session_id: Optional[str] = None
@@ -155,6 +161,18 @@ def run_server(db_path: str, agent_id: str, vibe_dir: str):
             },
         },
     }
+
+    if maintenance is not None:
+        tools["vibe_checkpoint"] = {
+            "description": "Explicitly drain this server's operations and truncate WAL. External connections are not coordinated. No automatic schedule; drain_timeout is not a total I/O deadline.",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "drain_timeout": {"type": "number", "minimum": 0,
+                                      "description": "Seconds to wait for admitted operations (default 1)."},
+                },
+            },
+        }
 
     def handle_tool_call(tool_name: str, arguments: dict):
         """Dispatch tool call to VibeMemory SDK."""
@@ -429,7 +447,14 @@ def run_server(db_path: str, agent_id: str, vibe_dir: str):
                 continue
 
             try:
-                result = handle_tool_call(tool_name, arguments)
+                if tool_name == "vibe_checkpoint":
+                    report = maintenance.checkpoint(
+                        drain_timeout=arguments.get("drain_timeout", 1.0)
+                    )
+                    result = {"content": [{"type": "text", "text": json.dumps(report)}]}
+                else:
+                    with maintenance.operation() if maintenance else nullcontext():
+                        result = handle_tool_call(tool_name, arguments)
                 send_response(req_id, result)
             except Exception as e:
                 send_error(req_id, -32000, f"Tool error: {e}")
@@ -446,12 +471,15 @@ def main():
     parser.add_argument("--db-path", default=".vibe/memory.db", help="SQLite database path")
     parser.add_argument("--agent-id", default="mcp-agent", help="Agent identifier")
     parser.add_argument("--vibe-dir", default=".vibe", help="Vibe state directory")
+    parser.add_argument("--wal-maintenance", action="store_true",
+                        help="Opt into WAL and expose the manual vibe_checkpoint tool; no scheduler")
     args = parser.parse_args()
 
     run_server(
         db_path=args.db_path,
         agent_id=args.agent_id,
         vibe_dir=args.vibe_dir,
+        wal_maintenance=args.wal_maintenance,
     )
 
 

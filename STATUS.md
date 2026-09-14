@@ -6,7 +6,17 @@ Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK
 
 ## Verified Baseline
 
-### Application-entry inventory and cross-session smoke
+### Explicit opt-in MCP maintenance
+
+MCP `--wal-maintenance` explicitly enables WAL for the selected file and exposes a ninth tool, `vibe_checkpoint`, with optional finite non-negative `drain_timeout` (default 1 second). Without the flag the original eight tools remain, checkpoint calls are unknown-tool errors, and the current journal mode is untouched. No scheduler, background thread or client configuration change is added. Ordinary tools enter one controller operation, including direct storage short-ID reads; nested SDK calls reuse admission. Checkpoint executes outside that operation to avoid self-draining. This sequential stdio server cannot process another request during maintenance: later requests wait in its input stream. External connections/processes remain uncoordinated and may produce busy. The drain budget is not a total pause/I/O deadline.
+
+TDD: the first public CLI/protocol test failed because the flag was unrecognized, then passed after wiring. Four real-subprocess regressions cover opt-in truncation with preserved recall, default tool unavailability, an external retained SQLite snapshot returning busy and recovery after release (plus short-ID link/forget), and invalid budget error followed by usable tools. **34 MCP tests pass; full regression 316 passed in 15.05s.** Whole-tool concurrent gating is not separately established by sequential MCP tests; controller concurrency remains covered by existing SDK tests.
+
+Replay `python experiments/mcp_maintenance_smoke.py`; `results/mcp_maintenance_smoke.json` uses a fresh temporary DB with two synthetic English memories and 30 pipelined checkpoint-then-recall rounds. **30/30** maintenance calls truncated, observed WAL zero, and **30/30** recalls retained the 60-second answer. Checkpoint round-trip p50/p95/p99: **5.132/10.956/20.020ms**. Time from sending both requests to receiving the queued recall (maintenance plus recall, not isolated recall latency): **6.121/12.454/23.020ms**. Initialization/seeding excluded; no other workers or external locks. This establishes enabled-entry protocol replay, not a 100k MCP result, maintenance-free comparison, user perception or LLM/UI chat. No existing DB changed; temporary DB retained. CLI/HTTP maintenance integration and HTTP thread/session risks remain outside this change.
+
+### Application-entry inventory and cross-session smoke (before MCP wiring)
+
+Historical inventory below motivated the MCP change above; its missing MCP controller/trigger and proposed implementation are no longer current. CLI/HTTP findings remain unimplemented. The counts and timings belong to that earlier smoke run.
 
 Local MCP stdio subprocess verification (`results/mcp_interaction_smoke.json`) initialized the server, started a session, stored a summary plus highlight at session end, started another session and recalled the exact 60-second API timeout answer. Two memories were recalled; measured end/start/recall round trips were **7.527/6.263/2.177ms**, with cold initialization **278.786ms**. These are individual tiny-corpus calls, not latency percentiles or an LLM-chat result. MCP/session-manager regressions: **54 passed in 6.43s**; replay with `python -m pytest tests/test_mcp.py tests/test_session_manager.py -q`. The 312-test total above belongs to the preceding endurance verification, not a new full-suite run here.
 
