@@ -343,7 +343,9 @@ def run_server(db_path: str, agent_id: str, vibe_dir: str, wal_maintenance: bool
                 "similar": EdgeLabel.SIMILAR,
                 "adjacent": EdgeLabel.ADJACENT,
             }
-            label = label_map.get(label_str, EdgeLabel.SIMILAR)
+            if label_str not in label_map:
+                raise ValueError("label must be causal, revision, similar or adjacent")
+            label = label_map[label_str]
 
             edge = mem.link(full_from, full_to, label=label)
             if edge:

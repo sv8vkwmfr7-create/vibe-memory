@@ -441,3 +441,13 @@ def test_bad_checkpoint_budget_does_not_break_tools(tmp_path):
         assert c.get_text(c.call_tool("vibe_checkpoint", {"drain_timeout": 0}))["status"] == "truncated"
     finally:
         c.close()
+
+
+def test_link_rejects_unknown_label_instead_of_silent_similarity(client):
+    first = client.get_text(client.call_tool("vibe_store", {"content": "Launch failed"}))
+    second = client.get_text(client.call_tool("vibe_store", {"content": "Missing runtime"}))
+    response = client.call_tool("vibe_link", {
+        "from_id": first["id"], "to_id": second["id"], "label": "unsupported",
+    })
+    assert "error" in response
+    assert "label" in response["error"]["message"]

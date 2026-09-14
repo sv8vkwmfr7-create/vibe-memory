@@ -9,6 +9,7 @@ from time import perf_counter
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from vibe_memory.storage.sqlite_store import VibeStorage
+from vibe_memory.models.memory_atom import EdgeLabel
 from experiments.mcp_maintenance_smoke import summary
 
 
@@ -51,7 +52,8 @@ def replay(data, enabled):
             anonymous[stored["id"][:8]] = f"atom-{index}"
         for edge in data.get("edges", []):
             linked = tool("vibe_link", {"from_id": mapping[edge["from_atom_id"]],
-                                        "to_id": mapping[edge["to_atom_id"]], "label": edge["label"]})
+                                        "to_id": mapping[edge["to_atom_id"]],
+                                        "label": EdgeLabel(edge["label"]).name.lower()})
             if "error" in linked:
                 raise RuntimeError("Corpus edge could not be replayed")
         for index, query in enumerate(data["queries"]):

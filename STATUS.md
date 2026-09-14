@@ -6,6 +6,14 @@ Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK
 
 ## Verified Baseline
 
+### MCP label validation and two-edge causal seed retention
+
+Fixed two independent defects: reconstructed replay passed internal Chinese enum values to the English public MCP label interface, which silently downgraded unknown labels to `similar`; direct-only seed filtering discarded seeds connected through a nonlexical causal intermediary. MCP now rejects unknown labels, replay converts enum names, and seed filtering additionally retains seeds supported by two valid causal edges (same agent/tenant, active/warm endpoints, weight*confidence >= 0.05, respecting the configured connectivity threshold). No weights, default candidate hops or maintenance defaults changed.
+
+Both public regression tests reproduced the defects before the fixes. Full suite: **318 passed in 12.95s**. Fresh corrected replay (`results/mcp_session_replay_fix.json`): original budget query-0 retrieves **2/2** labels with maintenance off and on; macro Recall@5 **1.00/0.95**, precision **0.40/0.38**. Precision mode macro recall is **0.90/0.90**. Label conversion alone did not resolve query-0. English v3 quality remains default budget **0.808**, explicit two-hop **0.984**. This is a tiny assistant-authored debugging corpus, not independent or raw-dialogue evidence; remaining half hits are not causally attributable to maintenance.
+
+Additional scope-wide edge materialization has unmeasured large-graph cost. Ten maintenance calls succeeded, but one maintenance round trip took **59.452ms** and on boundary-to-session responses ranged **11.154–66.030ms**; no imperceptibility claim. Existing databases/private corpus/client configuration untouched. The next section preserves the historical, incorrectly label-mapped replay and is **not evidence of correctly replayed causal edges**.
+
 ### Reconstructed incident corpus: MCP session and idle-boundary replay
 
 `python experiments/mcp_session_replay.py /path/to/private-corpus.json` replays the local corpus through actual MCP subprocess store/link/session-start/recall calls into two fresh WAL files, off then on. Report `results/mcp_session_replay.json` contains only ordinal IDs and metrics; private corpus text is not committed. The local corpus has 15 memories, 10 assistant-authored questions and manual causal edges reconstructed from five incident summaries: **not raw dialogue, independent labels or held-out evaluation**. Original timestamps, tenant scope and lifecycle are not reconstructed: all supplied atoms are treated as currently available to one test agent. This is not equivalent to the earlier cutoff-aware two-hop retrieval evaluation.

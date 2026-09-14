@@ -12,7 +12,7 @@ PPR 边标签过滤只能抑制图游走阶段引入的噪声，无法过滤种�
 
 from typing import Optional
 
-from vibe_memory.models.memory_atom import MemoryAtom, Edge, EdgeStatus
+from vibe_memory.models.memory_atom import MemoryAtom, Edge, EdgeStatus, EdgeLabel
 from vibe_memory.storage.sqlite_store import VibeStorage
 
 
@@ -74,11 +74,25 @@ class SeedFilter:
         """
         图连通性过滤：剔除与其他种子无边的孤立种子。
 
-        对每个种子，检查它是否有边连接到其他种子。
+        对每个种子，检查直接连接或通过非种子节点的两段有效因果连接。
         至少需要 min_cross_seed_edges 条跨种子边。
         """
         kept: list[MemoryAtom] = []
         removed: list[MemoryAtom] = []
+
+        # Two query seeds may be linked through a nonlexical cause/outcome.
+        causal_neighbors = {atom.id: set() for atom in seed_atoms}
+        for e in storage.get_retrieval_edges(seed_atoms[0].agent_id, seed_atoms[0].tenant_id):
+            if e.status != EdgeStatus.ACTIVE or e.label != EdgeLabel.CAUSAL or e.weight * e.confidence < 0.05:
+                continue
+            causal_neighbors.setdefault(e.from_atom_id, set()).add(e.to_atom_id)
+            causal_neighbors.setdefault(e.to_atom_id, set()).add(e.from_atom_id)
+        causal_nodes = {
+            atom.id for atom in seed_atoms
+            if len({other for neighbor in causal_neighbors[atom.id]
+                    for other in causal_neighbors[neighbor] & seed_ids
+                    if other != atom.id}) >= self.min_cross_seed_edges
+        }
 
         for atom in seed_atoms:
             outgoing = storage.get_outgoing_edges(atom.id)
@@ -95,7 +109,7 @@ class SeedFilter:
                 )
             )
 
-            if cross_seed_count >= self.min_cross_seed_edges:
+            if cross_seed_count >= self.min_cross_seed_edges or atom.id in causal_nodes:
                 kept.append(atom)
             else:
                 removed.append(atom)

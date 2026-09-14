@@ -441,6 +441,20 @@ def test_budget_recall_keeps_causal_outcomes_over_isolated_cross_reference():
     }
 
 
+def test_seed_filter_keeps_two_seeds_connected_through_nonlexical_cause():
+    from vibe_memory.retrieval.seed_filter import SeedFilter
+    store = VibeStorage(":memory:")
+    for atom_id in ("incident", "cause", "outcome", "weak-a", "weak-b"):
+        store.insert_atom(MemoryAtom(id=atom_id, agent_id="agent-1", session_id="s",
+                                     content=atom_id, summary=atom_id))
+    for source, target in (("incident", "cause"), ("cause", "outcome"), ("weak-a", "weak-b")):
+        store.insert_edge(Edge(id=source, from_atom_id=source, to_atom_id=target,
+                               label=EdgeLabel.CAUSAL))
+    seeds = [store.get_atom(atom_id) for atom_id in ("incident", "outcome", "weak-a", "weak-b")]
+    kept = SeedFilter().filter(seeds, store)
+    assert {atom.id for atom in kept} == {"incident", "outcome", "weak-a", "weak-b"}
+
+
 def test_recall_candidate_graph_depth_is_capped_at_two_hops():
     """A caller cannot turn budget candidate expansion into a full graph walk."""
     store = VibeStorage(":memory:")
