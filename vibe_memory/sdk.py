@@ -292,6 +292,8 @@ class VibeMemory:
         query: str,
         mode: str = "precision",
         top_k: int = 20,
+        *,
+        causal_bridge: bool = False,
     ) -> dict:
         """
         检索记忆。
@@ -300,6 +302,7 @@ class VibeMemory:
             query: 查询文本
             mode: "precision" | "recall" | "budget"
             top_k: 向量预筛 Top-K
+            causal_bridge: 可选主锚点因果桥保留，仅 precision，默认关闭
 
         Returns:
             {atoms: [MemoryAtom], trace: [...], mode: str, total_walked: int,
@@ -316,6 +319,7 @@ class VibeMemory:
             tenant_id=self.tenant_id,
             semantic_cache=self._semantic_cache,
             bm25_cache=self._bm25_cache,
+            causal_bridge=causal_bridge,
         )
         self._recall_count += 1
         self.metrics.record_recall(result_count=len(result.get("atoms", [])))

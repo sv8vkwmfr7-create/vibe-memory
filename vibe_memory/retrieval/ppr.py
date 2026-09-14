@@ -281,6 +281,7 @@ def recall(
     bm25_cache: Optional[dict] = None,
     budget_graph_hops: int = 1,
     budget_graph_ratio: float = 0.2,
+    causal_bridge: bool = False,
 ) -> dict:
     """
     统一检索入口（v3：多策略检索 + RRF 融合 + 可选重排）。
@@ -309,10 +310,15 @@ def recall(
         bm25_cache: 可选的 SDK 级 BM25 索引缓存；按 atom ID/version 自动失效
         budget_graph_hops: budget 候选池的因果邻居扩展跳数（最多两跳）
         budget_graph_ratio: budget 候选池中图邻居的最大占比
+        causal_bridge: 可选保留主语义锚点的双锚点因果桥，仅 precision
 
     Returns:
         {atoms, trace, mode, total_walked, seed_count, filtered_count, strategies_used}
     """
+    if not isinstance(causal_bridge, bool):
+        raise ValueError("causal_bridge must be a boolean")
+    if causal_bridge and mode != "precision":
+        raise ValueError("causal_bridge is supported only in precision mode")
     provider = embedding_provider or TfidfProvider()
     seed_filter = seed_filter or SeedFilter()
     tid = tenant_id or storage.tenant_id
@@ -353,6 +359,8 @@ def recall(
     fusion_weights = []
     query_vec = None
     doc_vectors = None
+    semantic_ranked = []
+    bm25_ranked = []
 
     from vibe_memory.retrieval.strategies import (
         BM25Strategy, SemanticStrategy, GraphStrategy, TemporalStrategy,
@@ -410,7 +418,8 @@ def recall(
                 query_vec = provider.encode_query(query)
                 indices, _ = index_flat(doc_vectors, query_vec, top_k=top_k)
             semantic_seeds = [active_atoms[i] for i in indices if i < len(active_atoms)]
-            all_ranked_lists.append([(a.id, 1.0 - i/len(semantic_seeds)) for i, a in enumerate(semantic_seeds)])
+            semantic_ranked = [(a.id, 1.0 - i/len(semantic_seeds)) for i, a in enumerate(semantic_seeds)]
+            all_ranked_lists.append(semantic_ranked)
             fusion_weights.append(1.0)
         except Exception:
             pass
@@ -433,9 +442,10 @@ def recall(
             bm25_results = bm25.search(query, top_k=top_k)
             # Normalize BM25 scores to [0, 1]
             max_bm25 = max(s for _, s in bm25_results) if bm25_results else 1.0
-            all_ranked_lists.append([
+            bm25_ranked = [
                 (active_atoms[i].id, s / max_bm25) for i, s in bm25_results
-            ])
+            ]
+            all_ranked_lists.append(bm25_ranked)
             fusion_weights.append(1.0)
         except Exception:
             pass
@@ -497,7 +507,25 @@ def recall(
             idx_map = {atom.id: i for i, atom in enumerate(candidate_atoms)}
         else:
             idx_map = {a.id: i for i, a in enumerate(active_atoms)}
-        fused = rerank_by_similarity(query_vec, fused, doc_vectors, idx_map, top_k=top_k)
+        if causal_bridge and "graph" in enabled_strategies and semantic_ranked and bm25_ranked:
+            anchors = {aid for aid, _ in semantic_ranked} & {
+                aid for aid, score in bm25_ranked if score > 0}
+            primary = semantic_ranked[0][0]
+            neighbors = {}
+            for edge in storage.get_retrieval_edges(agent_id, tid, atom_ids=list(anchors)):
+                if edge.label != EdgeLabel.CAUSAL or edge.weight * edge.confidence < 0.05:
+                    continue
+                for node, anchor in ((edge.from_atom_id, edge.to_atom_id),
+                                     (edge.to_atom_id, edge.from_atom_id)):
+                    if anchor in anchors and node not in anchors:
+                        neighbors.setdefault(node, set()).add(anchor)
+            supported = {node for node, links in neighbors.items()
+                         if len(links) >= 2 and primary in links}
+            fused = rerank_by_similarity(query_vec, fused, doc_vectors, idx_map, top_k=len(fused))
+            fused.sort(key=lambda item: item[0] not in supported)
+            fused = fused[:top_k]
+        else:
+            fused = rerank_by_similarity(query_vec, fused, doc_vectors, idx_map, top_k=top_k)
 
     # 阶段 4：构建结果
     ranked_atoms = []

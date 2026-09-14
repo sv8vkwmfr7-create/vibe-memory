@@ -13,7 +13,7 @@ from vibe_memory.models.memory_atom import EdgeLabel
 from experiments.mcp_maintenance_smoke import summary
 
 
-def replay(data, enabled, seed_path=None, server_module='vibe_memory.mcp_server'):
+def replay(data, enabled, seed_path=None, server_module='vibe_memory.mcp_server', causal_bridge=False):
     root = Path(tempfile.mkdtemp(prefix="vibe-mcp-session-"))
     path = root / "memory.db"
     # Both variants use WAL, so the flag does not change the journal-mode baseline.
@@ -79,7 +79,8 @@ def replay(data, enabled, seed_path=None, server_module='vibe_memory.mcp_server'
             relevant = {mapping[atom_id] for atom_id in query["relevant_ids"]}
             for mode in ("precision", "budget"):
                 start = perf_counter()
-                recalled = tool("vibe_recall", {"query": query["text"], "mode": mode, "top_k": 5})
+                recalled = tool("vibe_recall", {"query": query["text"], "mode": mode, "top_k": 5,
+                                               "causal_bridge": causal_bridge and mode == "precision"})
                 elapsed = (perf_counter() - start) * 1000
                 returned = [m["id"] for m in recalled["memories"]]
                 hits = len(set(returned) & relevant)

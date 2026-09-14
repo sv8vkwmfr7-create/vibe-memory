@@ -99,6 +99,7 @@ def run_server(db_path: str, agent_id: str, vibe_dir: str, wal_maintenance: bool
                     "query": {"type": "string", "description": "Search query"},
                     "mode": {"type": "string", "enum": ["precision", "recall", "budget"], "description": "Retrieval mode: precision (no noise, top-5), recall (comprehensive, top-15), budget (fast, top-3)"},
                     "top_k": {"type": "integer", "description": "Max seeds for vector pre-screening"},
+                    "causal_bridge": {"type": "boolean", "default": False, "description": "Opt into primary-anchor causal bridge retention; precision only"},
                 },
                 "required": ["query"],
             },
@@ -204,7 +205,8 @@ def run_server(db_path: str, agent_id: str, vibe_dir: str, wal_maintenance: bool
             query = arguments["query"]
             mode = arguments.get("mode", "precision")
             top_k = arguments.get("top_k", 20)
-            result = mem.recall(query=query, mode=mode, top_k=top_k)
+            result = mem.recall(query=query, mode=mode, top_k=top_k,
+                                causal_bridge=arguments.get("causal_bridge", False))
 
             atoms = result.get("atoms", [])
             trace = result.get("trace", [])

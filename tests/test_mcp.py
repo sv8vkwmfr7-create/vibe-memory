@@ -78,6 +78,18 @@ def test_ping(client):
     assert "error" not in r
 
 
+def test_causal_bridge_public_schema_and_validation(client):
+    tools = client.send('tools/list', {})['result']['tools']
+    schema = next(t['inputSchema'] for t in tools if t['name'] == 'vibe_recall')
+    assert schema['properties']['causal_bridge']['type'] == 'boolean'
+    good = client.call_tool('vibe_recall', {'query': 'timeout', 'causal_bridge': True})
+    assert 'error' not in good
+    for options in ({'mode': 'budget', 'causal_bridge': True}, {'causal_bridge': 'false'}):
+        bad = client.call_tool('vibe_recall', {'query': 'timeout', **options})
+        assert 'error' in bad
+        assert 'causal_bridge' in bad['error']['message']
+
+
 def test_tools_list(client):
     r = client.send("tools/list", {})
     tools = {t["name"] for t in r["result"]["tools"]}

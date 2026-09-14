@@ -130,6 +130,20 @@ for atom in result["atoms"]:
     print(atom.summary)
 ```
 
+### 可选因果桥保留
+
+默认排序保持不变。排障时可显式开启：
+
+```python
+result = mem.recall("API timeout", mode="precision", top_k=5, causal_bridge=True)
+```
+
+MCP `vibe_recall` 同样接受 `"causal_bridge": true`。参数必须为布尔值，开启时仅支持 `precision`；`session_start` 和 `inject` 暂不暴露此开关。
+
+它只提升已融合候选中，以有效因果边连接至少两个语义/BM25共同锚点、且包含首位语义锚点的非锚点节点。边强度 `weight * confidence >= 0.05`，遵守 Agent、租户和存活节点范围；不按会话过滤，边方向不用于判断。无合格桥时保持原相似度排序，不能保证主锚点正确或所有原因均被保留。
+
+本地助手调试集10题、真实MCP回放开启后的Recall为1.00，关闭为0.85；不是独立人工/生产质量证明。匿名报告见 `results/causal_bridge_opt_in_mcp.json`。专项测试覆盖默认保持、跨会话原因、标签/弱边、空图、参数校验和同库双租户4客户端并发；不等同于同一SDK实例跨线程安全或大图性能验证。
+
 ### 一键配置编程 Agent
 
 ```bash
