@@ -1,0 +1,71 @@
+{
+  "dataset_id": "relevance-diagnostics-v1",
+  "provenance": "Public assistant-authored synthetic cases and labels, frozen before first run. Separate isolated cases, not independent human labels or a production benchmark. Three-item cases deliberately guarantee candidate inclusion; eight-item synonym case tests candidate omission. Do not tune production rules against this set.",
+  "cases": [
+    {
+      "case_id": "wrong-service",
+      "atoms": [
+        {"id": "n0", "session_id": "catalog", "content": "request hangs request hangs in Catalog service"},
+        {"id": "n1", "session_id": "catalog", "content": "request hangs request hangs restart Catalog service"},
+        {"id": "a0", "session_id": "orders", "content": "Orders connection slots exhausted; enlarge pool capacity"}
+      ],
+      "edges": [["n0", "n1"]],
+      "queries": [{"text": "Orders request hangs", "relevant_ids": ["a0"], "negative_ids": ["n0", "n1"]}]
+    },
+    {
+      "case_id": "wrong-environment",
+      "atoms": [
+        {"id": "n0", "session_id": "staging", "content": "login fails login fails in staging environment"},
+        {"id": "n1", "session_id": "staging", "content": "login fails login fails restart staging environment"},
+        {"id": "a0", "session_id": "production", "content": "Production sign-in rejected because the signing certificate expired; rotate certificate"}
+      ],
+      "edges": [["n0", "n1"]],
+      "queries": [{"text": "production login fails", "relevant_ids": ["a0"], "negative_ids": ["n0", "n1"]}]
+    },
+    {
+      "case_id": "wrong-operation",
+      "atoms": [
+        {"id": "n0", "session_id": "import", "content": "document operation fails document operation fails while importing"},
+        {"id": "n1", "session_id": "import", "content": "document operation fails document operation fails fix import parser"},
+        {"id": "a0", "session_id": "export", "content": "Export renderer cannot locate the embedded typeface; bundle the font"}
+      ],
+      "edges": [["n0", "n1"]],
+      "queries": [{"text": "export document operation fails", "relevant_ids": ["a0"], "negative_ids": ["n0", "n1"]}]
+    },
+    {
+      "case_id": "chinese-paraphrase",
+      "atoms": [
+        {"id": "n0", "session_id": "inventory", "content": "库存系统页面变空白，库存页面空白问题"},
+        {"id": "n1", "session_id": "inventory", "content": "库存系统页面变空白，清除库存页面缓存"},
+        {"id": "a0", "session_id": "finance", "content": "财务客户端无法绘制界面，因为组件资源未加载，修正静态资源路径"}
+      ],
+      "edges": [["n0", "n1"]],
+      "queries": [{"text": "财务页面变空白", "relevant_ids": ["a0"], "negative_ids": ["n0", "n1"]}]
+    },
+    {
+      "case_id": "synonym-candidate-omission",
+      "atoms": [
+        {"id": "n0", "session_id": "other", "content": "payment slow in unrelated benchmark"},
+        {"id": "n1", "session_id": "other", "content": "payment slow during unrelated backup"},
+        {"id": "n2", "session_id": "other", "content": "payment slow in unrelated staging test"},
+        {"id": "n3", "session_id": "other", "content": "payment slow in unrelated archived experiment"},
+        {"id": "n4", "session_id": "other", "content": "payment slow in unrelated simulator"},
+        {"id": "n5", "session_id": "other", "content": "payment slow in unrelated load generator"},
+        {"id": "n6", "session_id": "other", "content": "payment slow in unrelated demonstration"},
+        {"id": "a0", "session_id": "checkout", "content": "Checkout latency increased because database connections were exhausted; increase pool capacity"}
+      ],
+      "edges": [],
+      "queries": [{"text": "payment slow", "relevant_ids": ["a0"], "negative_ids": ["n0", "n1", "n2", "n3", "n4", "n5", "n6"]}]
+    },
+    {
+      "case_id": "positive-control",
+      "atoms": [
+        {"id": "s0", "session_id": "scheduler", "content": "scheduler queue stalls scheduler queue stalls incident"},
+        {"id": "s1", "session_id": "scheduler", "content": "scheduler queue stalls because the consumer process terminated"},
+        {"id": "a0", "session_id": "scheduler", "content": "restore scheduler consumer process and drain pending work"}
+      ],
+      "edges": [["s0", "s1"], ["s1", "a0"]],
+      "queries": [{"text": "scheduler queue stalls", "relevant_ids": ["s1", "a0"], "negative_ids": []}]
+    }
+  ]
+}

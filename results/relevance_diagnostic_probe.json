@@ -1,0 +1,464 @@
+{
+  "conditions": "Public assistant-authored synthetic cases and labels, frozen before first run. Separate isolated cases, not independent human labels or a production benchmark. Three-item cases deliberately guarantee candidate inclusion; eight-item synonym case tests candidate omission. Do not tune production rules against this set.",
+  "corpus_sha256": "674c8962e1a436c53a09a37213f93b3d35befb57841ddff0cf4c4581c7b80f19",
+  "actual_auto_backend": "tfidf",
+  "semantic_model_evaluated": false,
+  "rows": [
+    {
+      "case_id": "wrong-service",
+      "candidate_count": 3,
+      "baseline": {
+        "query_id": "query-0",
+        "variant": "baseline",
+        "recall": 1,
+        "labeled_positive_precision": 0.3333333333333333,
+        "returned_count": 3,
+        "returned_ids": [
+          "atom-0",
+          "atom-1",
+          "atom-2"
+        ],
+        "negative_hits": [
+          "atom-0",
+          "atom-1"
+        ],
+        "semantic_scores": {
+          "atom-0": 0.6048397059208894,
+          "atom-1": 0.6048397059208894,
+          "atom-2": 0.25736302484329027
+        },
+        "primary_id": "atom-0"
+      },
+      "guard": {
+        "query_id": "query-0",
+        "variant": "guarded_causal_2hop",
+        "recall": 0,
+        "labeled_positive_precision": 0,
+        "returned_count": 2,
+        "returned_ids": [
+          "atom-0",
+          "atom-1"
+        ],
+        "negative_hits": [
+          "atom-0",
+          "atom-1"
+        ],
+        "semantic_scores": {
+          "atom-0": 0.6048397059208894,
+          "atom-1": 0.6048397059208894,
+          "atom-2": 0.25736302484329027
+        },
+        "primary_id": "atom-0",
+        "guard_decision": "filtered"
+      },
+      "evidence_preserving": {
+        "query_id": "query-0",
+        "variant": "evidence_preserving_causal_2hop",
+        "recall": 1,
+        "labeled_positive_precision": 0.3333333333333333,
+        "returned_count": 3,
+        "returned_ids": [
+          "atom-0",
+          "atom-1",
+          "atom-2"
+        ],
+        "negative_hits": [
+          "atom-0",
+          "atom-1"
+        ],
+        "semantic_scores": {
+          "atom-0": 0.6048397059208894,
+          "atom-1": 0.6048397059208894,
+          "atom-2": 0.25736302484329027
+        },
+        "primary_id": "atom-0"
+      },
+      "failure_stage": "filter_deletion",
+      "preserving_failure_stage": "none"
+    },
+    {
+      "case_id": "wrong-environment",
+      "candidate_count": 3,
+      "baseline": {
+        "query_id": "query-0",
+        "variant": "baseline",
+        "recall": 1,
+        "labeled_positive_precision": 0.3333333333333333,
+        "returned_count": 3,
+        "returned_ids": [
+          "atom-0",
+          "atom-1",
+          "atom-2"
+        ],
+        "negative_hits": [
+          "atom-0",
+          "atom-1"
+        ],
+        "semantic_scores": {
+          "atom-0": 0.624557975534164,
+          "atom-1": 0.6048397059208894,
+          "atom-2": 0.19199171188219372
+        },
+        "primary_id": "atom-0"
+      },
+      "guard": {
+        "query_id": "query-0",
+        "variant": "guarded_causal_2hop",
+        "recall": 0,
+        "labeled_positive_precision": 0,
+        "returned_count": 2,
+        "returned_ids": [
+          "atom-0",
+          "atom-1"
+        ],
+        "negative_hits": [
+          "atom-0",
+          "atom-1"
+        ],
+        "semantic_scores": {
+          "atom-0": 0.624557975534164,
+          "atom-1": 0.6048397059208894,
+          "atom-2": 0.19199171188219372
+        },
+        "primary_id": "atom-0",
+        "guard_decision": "filtered"
+      },
+      "evidence_preserving": {
+        "query_id": "query-0",
+        "variant": "evidence_preserving_causal_2hop",
+        "recall": 1,
+        "labeled_positive_precision": 0.3333333333333333,
+        "returned_count": 3,
+        "returned_ids": [
+          "atom-0",
+          "atom-1",
+          "atom-2"
+        ],
+        "negative_hits": [
+          "atom-0",
+          "atom-1"
+        ],
+        "semantic_scores": {
+          "atom-0": 0.624557975534164,
+          "atom-1": 0.6048397059208894,
+          "atom-2": 0.19199171188219372
+        },
+        "primary_id": "atom-0"
+      },
+      "failure_stage": "filter_deletion",
+      "preserving_failure_stage": "none"
+    },
+    {
+      "case_id": "wrong-operation",
+      "candidate_count": 3,
+      "baseline": {
+        "query_id": "query-0",
+        "variant": "baseline",
+        "recall": 1,
+        "labeled_positive_precision": 0.3333333333333333,
+        "returned_count": 3,
+        "returned_ids": [
+          "atom-0",
+          "atom-1",
+          "atom-2"
+        ],
+        "negative_hits": [
+          "atom-0",
+          "atom-1"
+        ],
+        "semantic_scores": {
+          "atom-0": 0.7017730404237799,
+          "atom-1": 0.6655400363868244,
+          "atom-2": 0.17454803452157575
+        },
+        "primary_id": "atom-0"
+      },
+      "guard": {
+        "query_id": "query-0",
+        "variant": "guarded_causal_2hop",
+        "recall": 0,
+        "labeled_positive_precision": 0,
+        "returned_count": 2,
+        "returned_ids": [
+          "atom-0",
+          "atom-1"
+        ],
+        "negative_hits": [
+          "atom-0",
+          "atom-1"
+        ],
+        "semantic_scores": {
+          "atom-0": 0.7017730404237799,
+          "atom-1": 0.6655400363868244,
+          "atom-2": 0.17454803452157575
+        },
+        "primary_id": "atom-0",
+        "guard_decision": "filtered"
+      },
+      "evidence_preserving": {
+        "query_id": "query-0",
+        "variant": "evidence_preserving_causal_2hop",
+        "recall": 1,
+        "labeled_positive_precision": 0.3333333333333333,
+        "returned_count": 3,
+        "returned_ids": [
+          "atom-0",
+          "atom-1",
+          "atom-2"
+        ],
+        "negative_hits": [
+          "atom-0",
+          "atom-1"
+        ],
+        "semantic_scores": {
+          "atom-0": 0.7017730404237799,
+          "atom-1": 0.6655400363868244,
+          "atom-2": 0.17454803452157575
+        },
+        "primary_id": "atom-0"
+      },
+      "failure_stage": "filter_deletion",
+      "preserving_failure_stage": "none"
+    },
+    {
+      "case_id": "chinese-paraphrase",
+      "candidate_count": 3,
+      "baseline": {
+        "query_id": "query-0",
+        "variant": "baseline",
+        "recall": 1,
+        "labeled_positive_precision": 0.3333333333333333,
+        "returned_count": 3,
+        "returned_ids": [
+          "atom-0",
+          "atom-1",
+          "atom-2"
+        ],
+        "negative_hits": [
+          "atom-0",
+          "atom-1"
+        ],
+        "semantic_scores": {
+          "atom-0": 0.5205896947200821,
+          "atom-1": 0.44622819348322523,
+          "atom-2": 0.1057226937042295
+        },
+        "primary_id": "atom-0"
+      },
+      "guard": {
+        "query_id": "query-0",
+        "variant": "guarded_causal_2hop",
+        "recall": 0,
+        "labeled_positive_precision": 0,
+        "returned_count": 2,
+        "returned_ids": [
+          "atom-0",
+          "atom-1"
+        ],
+        "negative_hits": [
+          "atom-0",
+          "atom-1"
+        ],
+        "semantic_scores": {
+          "atom-0": 0.5205896947200821,
+          "atom-1": 0.44622819348322523,
+          "atom-2": 0.1057226937042295
+        },
+        "primary_id": "atom-0",
+        "guard_decision": "filtered"
+      },
+      "evidence_preserving": {
+        "query_id": "query-0",
+        "variant": "evidence_preserving_causal_2hop",
+        "recall": 1,
+        "labeled_positive_precision": 0.3333333333333333,
+        "returned_count": 3,
+        "returned_ids": [
+          "atom-0",
+          "atom-1",
+          "atom-2"
+        ],
+        "negative_hits": [
+          "atom-0",
+          "atom-1"
+        ],
+        "semantic_scores": {
+          "atom-0": 0.5205896947200821,
+          "atom-1": 0.44622819348322523,
+          "atom-2": 0.1057226937042295
+        },
+        "primary_id": "atom-0"
+      },
+      "failure_stage": "filter_deletion",
+      "preserving_failure_stage": "none"
+    },
+    {
+      "case_id": "synonym-candidate-omission",
+      "candidate_count": 8,
+      "baseline": {
+        "query_id": "query-0",
+        "variant": "baseline",
+        "recall": 0,
+        "labeled_positive_precision": 0,
+        "returned_count": 5,
+        "returned_ids": [
+          "atom-0",
+          "atom-4",
+          "atom-6",
+          "atom-1",
+          "atom-2"
+        ],
+        "negative_hits": [
+          "atom-0",
+          "atom-4",
+          "atom-6",
+          "atom-1",
+          "atom-2"
+        ],
+        "semantic_scores": {
+          "atom-0": 0.46444438015598627,
+          "atom-4": 0.46444438015598627,
+          "atom-6": 0.46444438015598627,
+          "atom-1": 0.3916730120204985,
+          "atom-2": 0.37410512504556637
+        },
+        "primary_id": "atom-0"
+      },
+      "guard": {
+        "query_id": "query-0",
+        "variant": "guarded_causal_2hop",
+        "recall": 0,
+        "labeled_positive_precision": 0,
+        "returned_count": 5,
+        "returned_ids": [
+          "atom-0",
+          "atom-4",
+          "atom-6",
+          "atom-1",
+          "atom-2"
+        ],
+        "negative_hits": [
+          "atom-0",
+          "atom-4",
+          "atom-6",
+          "atom-1",
+          "atom-2"
+        ],
+        "semantic_scores": {
+          "atom-0": 0.46444438015598627,
+          "atom-4": 0.46444438015598627,
+          "atom-6": 0.46444438015598627,
+          "atom-1": 0.3916730120204985,
+          "atom-2": 0.37410512504556637
+        },
+        "primary_id": "atom-0",
+        "guard_decision": "no_causal_support"
+      },
+      "evidence_preserving": {
+        "query_id": "query-0",
+        "variant": "evidence_preserving_causal_2hop",
+        "recall": 0,
+        "labeled_positive_precision": 0,
+        "returned_count": 5,
+        "returned_ids": [
+          "atom-0",
+          "atom-4",
+          "atom-6",
+          "atom-1",
+          "atom-2"
+        ],
+        "negative_hits": [
+          "atom-0",
+          "atom-4",
+          "atom-6",
+          "atom-1",
+          "atom-2"
+        ],
+        "semantic_scores": {
+          "atom-0": 0.46444438015598627,
+          "atom-4": 0.46444438015598627,
+          "atom-6": 0.46444438015598627,
+          "atom-1": 0.3916730120204985,
+          "atom-2": 0.37410512504556637
+        },
+        "primary_id": "atom-0"
+      },
+      "failure_stage": "candidate_omission",
+      "preserving_failure_stage": "candidate_omission"
+    },
+    {
+      "case_id": "positive-control",
+      "candidate_count": 3,
+      "baseline": {
+        "query_id": "query-0",
+        "variant": "baseline",
+        "recall": 1,
+        "labeled_positive_precision": 0.6666666666666666,
+        "returned_count": 3,
+        "returned_ids": [
+          "atom-0",
+          "atom-1",
+          "atom-2"
+        ],
+        "negative_hits": [],
+        "semantic_scores": {
+          "atom-0": 0.9260673166304956,
+          "atom-1": 0.5156527718258274,
+          "atom-2": 0.11145701922628355
+        },
+        "primary_id": "atom-0"
+      },
+      "guard": {
+        "query_id": "query-0",
+        "variant": "guarded_causal_2hop",
+        "recall": 1,
+        "labeled_positive_precision": 0.6666666666666666,
+        "returned_count": 3,
+        "returned_ids": [
+          "atom-0",
+          "atom-1",
+          "atom-2"
+        ],
+        "negative_hits": [],
+        "semantic_scores": {
+          "atom-0": 0.9260673166304956,
+          "atom-1": 0.5156527718258274,
+          "atom-2": 0.11145701922628355
+        },
+        "primary_id": "atom-0",
+        "guard_decision": "filtered"
+      },
+      "evidence_preserving": {
+        "query_id": "query-0",
+        "variant": "evidence_preserving_causal_2hop",
+        "recall": 1,
+        "labeled_positive_precision": 0.6666666666666666,
+        "returned_count": 3,
+        "returned_ids": [
+          "atom-0",
+          "atom-1",
+          "atom-2"
+        ],
+        "negative_hits": [],
+        "semantic_scores": {
+          "atom-0": 0.9260673166304956,
+          "atom-1": 0.5156527718258274,
+          "atom-2": 0.11145701922628355
+        },
+        "primary_id": "atom-0"
+      },
+      "failure_stage": "none",
+      "preserving_failure_stage": "none"
+    }
+  ],
+  "summary": {
+    "candidate_omission": 1,
+    "filter_deletion": 4,
+    "none": 1
+  },
+  "evidence_preserving_summary": {
+    "candidate_omission": 1,
+    "filter_deletion": 0,
+    "none": 5
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "conditions": "Same normalized core setup and unchanged private source hashes as prior fallback report. Evidence-preserving lexical post-filter is experimental only. No independent human labeling or semantic model. Old pilot lacks explicit negative labels.",
+  "reports": {
+    "new_source": {
+      "baseline": {
+        "macro_recall": 1,
+        "macro_labeled_positive_precision": 0.4,
+        "mean_returned_count": 5,
+        "queries_with_negative_hits": 5
+      },
+      "truncate_3": {
+        "macro_recall": 0.875,
+        "macro_labeled_positive_precision": 0.5833333333333333,
+        "mean_returned_count": 3,
+        "queries_with_negative_hits": 0
+      },
+      "positive_similarity": {
+        "macro_recall": 1,
+        "macro_labeled_positive_precision": 0.4916666666666667,
+        "mean_returned_count": 4.25,
+        "queries_with_negative_hits": 2
+      },
+      "primary_causal_1hop": {
+        "macro_recall": 0.8125,
+        "macro_labeled_positive_precision": 0.6875,
+        "mean_returned_count": 2.375,
+        "queries_with_negative_hits": 0
+      },
+      "primary_causal_2hop": {
+        "macro_recall": 1,
+        "macro_labeled_positive_precision": 0.6666666666666666,
+        "mean_returned_count": 3,
+        "queries_with_negative_hits": 0
+      },
+      "guarded_causal_2hop": {
+        "macro_recall": 1,
+        "macro_labeled_positive_precision": 0.6666666666666666,
+        "mean_returned_count": 3,
+        "queries_with_negative_hits": 0
+      },
+      "evidence_preserving_causal_2hop": {
+        "macro_recall": 1,
+        "macro_labeled_positive_precision": 0.4916666666666667,
+        "mean_returned_count": 4.25,
+        "queries_with_negative_hits": 2
+      }
+    },
+    "old_pilot": {
+      "baseline": {
+        "macro_recall": 0.85,
+        "macro_labeled_positive_precision": 0.34,
+        "mean_returned_count": 5,
+        "queries_with_negative_hits": 0
+      },
+      "truncate_3": {
+        "macro_recall": 0.65,
+        "macro_labeled_positive_precision": 0.4333333333333333,
+        "mean_returned_count": 3,
+        "queries_with_negative_hits": 0
+      },
+      "positive_similarity": {
+        "macro_recall": 0.85,
+        "macro_labeled_positive_precision": 0.42666666666666664,
+        "mean_returned_count": 4.2,
+        "queries_with_negative_hits": 0
+      },
+      "primary_causal_1hop": {
+        "macro_recall": 0.4,
+        "macro_labeled_positive_precision": 0.4,
+        "mean_returned_count": 1.7,
+        "queries_with_negative_hits": 0
+      },
+      "primary_causal_2hop": {
+        "macro_recall": 0.85,
+        "macro_labeled_positive_precision": 0.65,
+        "mean_returned_count": 2.6,
+        "queries_with_negative_hits": 0
+      },
+      "guarded_causal_2hop": {
+        "macro_recall": 0.85,
+        "macro_labeled_positive_precision": 0.48,
+        "mean_returned_count": 4.1,
+        "queries_with_negative_hits": 0
+      },
+      "evidence_preserving_causal_2hop": {
+        "macro_recall": 0.85,
+        "macro_labeled_positive_precision": 0.39333333333333337,
+        "mean_returned_count": 4.6,
+        "queries_with_negative_hits": 0
+      }
+    },
+    "new_source_no_edges": {
+      "baseline": {
+        "macro_recall": 1,
+        "macro_labeled_positive_precision": 0.4,
+        "mean_returned_count": 5,
+        "queries_with_negative_hits": 4
+      },
+      "truncate_3": {
+        "macro_recall": 0.875,
+        "macro_labeled_positive_precision": 0.5833333333333333,
+        "mean_returned_count": 3,
+        "queries_with_negative_hits": 0
+      },
+      "positive_similarity": {
+        "macro_recall": 1,
+        "macro_labeled_positive_precision": 0.4916666666666667,
+        "mean_returned_count": 4.25,
+        "queries_with_negative_hits": 2
+      },
+      "primary_causal_1hop": {
+        "macro_recall": 0.3125,
+        "macro_labeled_positive_precision": 0.625,
+        "mean_returned_count": 1,
+        "queries_with_negative_hits": 0
+      },
+      "primary_causal_2hop": {
+        "macro_recall": 0.3125,
+        "macro_labeled_positive_precision": 0.625,
+        "mean_returned_count": 1,
+        "queries_with_negative_hits": 0
+      },
+      "guarded_causal_2hop": {
+        "macro_recall": 1,
+        "macro_labeled_positive_precision": 0.4,
+        "mean_returned_count": 5,
+        "queries_with_negative_hits": 4
+      },
+      "evidence_preserving_causal_2hop": {
+        "macro_recall": 1,
+        "macro_labeled_positive_precision": 0.4,
+        "mean_returned_count": 5,
+        "queries_with_negative_hits": 4
+      }
+    }
+  }
+}

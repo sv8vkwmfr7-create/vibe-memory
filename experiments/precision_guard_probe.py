@@ -73,6 +73,8 @@ def evaluate(data):
             guarded, decision = guarded_causal_ids(store, 'probe', store.tenant_id, baseline,
                 [atoms[index].id for index in indices], scores)
             variants['guarded_causal_2hop'] = guarded
+            variants['evidence_preserving_causal_2hop'] = [aid for aid in baseline
+                if aid in guarded or scores.get(aid, 0) > 0]
             positive, negative = set(q['relevant_ids']), set(q.get('negative_ids', []))
             for name, ids in variants.items():
                 rows.append({'query_id': f'query-{i}', 'variant': name,
@@ -92,7 +94,7 @@ def evaluate(data):
                 'macro_labeled_positive_precision': sum(r['labeled_positive_precision'] for r in selected) / len(selected),
                 'mean_returned_count': sum(r['returned_count'] for r in selected) / len(selected),
                 'queries_with_negative_hits': sum(bool(r['negative_hits']) for r in selected)}
-        return {'conditions': 'Offline post-filter of production core precision Top-5. Assistant labels/manual edges. Primary TF-IDF anchor, causal neighborhood ignores direction; no backfill or candidate expansion. Guard requires two positive TF-IDF anchors in the primary two-hop causal neighborhood, otherwise preserves baseline. Anchor agreement is not correctness proof; jointly wrong anchors remain unsafe. Truncate-3 is post-truncation, not recall(top_k=3). Unlabeled items not assumed irrelevant. Consumed holdout is now diagnostic/development data, not fresh generalization evidence. Not SDK/MCP implementation or production latency proof.',
+        return {'conditions': 'Offline post-filter of production core precision Top-5. Assistant labels/manual edges. Primary TF-IDF anchor, causal neighborhood ignores direction; no backfill or candidate expansion. Guard requires two positive TF-IDF anchors in the primary two-hop causal neighborhood, otherwise preserves baseline. Evidence-preserving variant additionally retains every original candidate with positive TF-IDF similarity; this is lexical support, not semantic correctness. Zero-overlap relevant candidates can still be lost if outside the causal neighborhood. Anchor agreement is not correctness proof; jointly wrong anchors remain unsafe. Truncate-3 is post-truncation, not recall(top_k=3). Unlabeled items not assumed irrelevant. Consumed holdout is now diagnostic/development data, not fresh generalization evidence. Not SDK/MCP implementation or production latency proof.',
             'aggregates': aggregates, 'rows': rows}
     finally:
         store.conn.close()
