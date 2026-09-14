@@ -1,0 +1,68 @@
+{
+  "conditions": "Same normalized current-time core setup as precision_guard_probe. Old pilot has no explicit negative labels, so zero negative_hits is NOT evidence of no false retrieval. No-edge ablation deletes graph only, retaining frozen new-source queries/labels; synthetic graph-free counterexample covered in tests.",
+  "old_pilot_sha256": "7aa17e456058e2ea56745082d3abaefda96d1332991e338e11b2e32e203abb62",
+  "old_pilot": {
+    "baseline": {
+      "macro_recall": 0.85,
+      "macro_labeled_positive_precision": 0.34,
+      "mean_returned_count": 5,
+      "queries_with_negative_hits": 0
+    },
+    "truncate_3": {
+      "macro_recall": 0.65,
+      "macro_labeled_positive_precision": 0.4333333333333333,
+      "mean_returned_count": 3,
+      "queries_with_negative_hits": 0
+    },
+    "positive_similarity": {
+      "macro_recall": 0.85,
+      "macro_labeled_positive_precision": 0.42666666666666664,
+      "mean_returned_count": 4.2,
+      "queries_with_negative_hits": 0
+    },
+    "primary_causal_1hop": {
+      "macro_recall": 0.4,
+      "macro_labeled_positive_precision": 0.4,
+      "mean_returned_count": 1.7,
+      "queries_with_negative_hits": 0
+    },
+    "primary_causal_2hop": {
+      "macro_recall": 0.85,
+      "macro_labeled_positive_precision": 0.65,
+      "mean_returned_count": 2.6,
+      "queries_with_negative_hits": 0
+    }
+  },
+  "new_source_no_edges": {
+    "baseline": {
+      "macro_recall": 1,
+      "macro_labeled_positive_precision": 0.4,
+      "mean_returned_count": 5,
+      "queries_with_negative_hits": 4
+    },
+    "truncate_3": {
+      "macro_recall": 0.875,
+      "macro_labeled_positive_precision": 0.5833333333333333,
+      "mean_returned_count": 3,
+      "queries_with_negative_hits": 0
+    },
+    "positive_similarity": {
+      "macro_recall": 1,
+      "macro_labeled_positive_precision": 0.4916666666666667,
+      "mean_returned_count": 4.25,
+      "queries_with_negative_hits": 2
+    },
+    "primary_causal_1hop": {
+      "macro_recall": 0.3125,
+      "macro_labeled_positive_precision": 0.625,
+      "mean_returned_count": 1,
+      "queries_with_negative_hits": 0
+    },
+    "primary_causal_2hop": {
+      "macro_recall": 0.3125,
+      "macro_labeled_positive_precision": 0.625,
+      "mean_returned_count": 1,
+      "queries_with_negative_hits": 0
+    }
+  }
+}

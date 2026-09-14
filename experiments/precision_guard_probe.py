@@ -1,0 +1,91 @@
+"""Offline precision ablations; never installed in SDK/MCP or default recall."""
+import argparse
+import hashlib
+import json
+from datetime import datetime
+from pathlib import Path
+
+from vibe_memory.embedding import TfidfProvider
+from vibe_memory.models.memory_atom import MemoryAtom, Edge, EdgeLabel
+from vibe_memory.retrieval.ppr import recall
+from vibe_memory.storage.sqlite_store import VibeStorage
+
+
+def causal_neighborhood(storage, agent_id, tenant_id, primary, hops):
+    """Experimental undirected, bounded causal neighborhood with live scope."""
+    reached = {primary}
+    frontier = {primary}
+    for _ in range(hops):
+        next_frontier = set()
+        for edge in storage.get_retrieval_edges(agent_id, tenant_id, atom_ids=list(frontier)):
+            if edge.label != EdgeLabel.CAUSAL or edge.weight * edge.confidence < 0.05:
+                continue
+            if edge.from_atom_id in frontier:
+                next_frontier.add(edge.to_atom_id)
+            if edge.to_atom_id in frontier:
+                next_frontier.add(edge.from_atom_id)
+        frontier = next_frontier - reached
+        reached.update(frontier)
+        if not frontier:
+            break
+    return reached
+
+
+def evaluate(data):
+    store = VibeStorage(':memory:')
+    anonymous = {a['id']: f'atom-{i}' for i, a in enumerate(data['atoms'])}
+    try:
+        for a in data['atoms']:
+            store.insert_atom(MemoryAtom(id=a['id'], agent_id='probe',
+                session_id=a['session_id'], content=a['content'], summary=a['content'],
+                created_at=datetime(2026, 9, 14)))
+        for i, e in enumerate(data['edges']):
+            source, target = (e['from_atom_id'], e['to_atom_id']) if isinstance(e, dict) else e
+            label = EdgeLabel(e['label']) if isinstance(e, dict) else EdgeLabel.CAUSAL
+            store.insert_edge(Edge(id=f'edge-{i}', from_atom_id=source,
+                to_atom_id=target, label=label))
+        atoms = store.get_atoms_by_agent('probe')
+        provider = TfidfProvider()
+        provider.fit([a.content for a in atoms])
+        rows = []
+        for i, q in enumerate(data['queries']):
+            indices, similarities = provider.search(q['text'], top_k=len(atoms))
+            scores = {atoms[index].id: float(score) for index, score in zip(indices, similarities)}
+            primary = atoms[indices[0]].id
+            baseline = [a.id for a in recall(q['text'], 'probe', store, top_k=5)['atoms']]
+            variants = {'baseline': baseline, 'truncate_3': baseline[:3],
+                'positive_similarity': [aid for aid in baseline if scores.get(aid, 0) > 0]}
+            for hops in (1, 2):
+                allowed = causal_neighborhood(store, 'probe', store.tenant_id, primary, hops)
+                variants[f'primary_causal_{hops}hop'] = [aid for aid in baseline if aid in allowed]
+            positive, negative = set(q['relevant_ids']), set(q.get('negative_ids', []))
+            for name, ids in variants.items():
+                rows.append({'query_id': f'query-{i}', 'variant': name,
+                    'recall': len(set(ids) & positive) / len(positive),
+                    'labeled_positive_precision': len(set(ids) & positive) / len(ids) if ids else 0,
+                    'returned_count': len(ids), 'returned_ids': [anonymous[x] for x in ids],
+                    'negative_hits': [anonymous[x] for x in ids if x in negative],
+                    'semantic_scores': {anonymous[x]: scores.get(x, 0) for x in baseline},
+                    'primary_id': anonymous[primary]})
+        aggregates = {}
+        for name in variants:
+            selected = [r for r in rows if r['variant'] == name]
+            aggregates[name] = {
+                'macro_recall': sum(r['recall'] for r in selected) / len(selected),
+                'macro_labeled_positive_precision': sum(r['labeled_positive_precision'] for r in selected) / len(selected),
+                'mean_returned_count': sum(r['returned_count'] for r in selected) / len(selected),
+                'queries_with_negative_hits': sum(bool(r['negative_hits']) for r in selected)}
+        return {'conditions': 'Offline post-filter of production core precision Top-5. Assistant labels/manual edges. Primary TF-IDF anchor, causal neighborhood ignores direction; no backfill or candidate expansion. Truncate-3 is post-truncation, not recall(top_k=3). Unlabeled items not assumed irrelevant. Consumed holdout is now diagnostic/development data, not fresh generalization evidence. Not SDK/MCP implementation or production latency proof.',
+            'aggregates': aggregates, 'rows': rows}
+    finally:
+        store.conn.close()
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('corpus', type=Path)
+    args = parser.parse_args()
+    raw = args.corpus.read_bytes()
+    result = evaluate(json.loads(raw.decode('utf-8-sig')))
+    result['corpus_sha256'] = hashlib.sha256(raw).hexdigest()
+    print(json.dumps(result, indent=2))

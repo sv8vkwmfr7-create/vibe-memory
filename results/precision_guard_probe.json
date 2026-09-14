@@ -1,0 +1,914 @@
+{
+  "conditions": "Offline post-filter of production core precision Top-5. Assistant labels/manual edges. Primary TF-IDF anchor, causal neighborhood ignores direction; no backfill or candidate expansion. Truncate-3 is post-truncation, not recall(top_k=3). Unlabeled items not assumed irrelevant. Consumed holdout is now diagnostic/development data, not fresh generalization evidence. Not SDK/MCP implementation or production latency proof.",
+  "aggregates": {
+    "baseline": {
+      "macro_recall": 1,
+      "macro_labeled_positive_precision": 0.4,
+      "mean_returned_count": 5,
+      "queries_with_negative_hits": 5
+    },
+    "truncate_3": {
+      "macro_recall": 0.875,
+      "macro_labeled_positive_precision": 0.5833333333333333,
+      "mean_returned_count": 3,
+      "queries_with_negative_hits": 0
+    },
+    "positive_similarity": {
+      "macro_recall": 1,
+      "macro_labeled_positive_precision": 0.4916666666666667,
+      "mean_returned_count": 4.25,
+      "queries_with_negative_hits": 2
+    },
+    "primary_causal_1hop": {
+      "macro_recall": 0.8125,
+      "macro_labeled_positive_precision": 0.6875,
+      "mean_returned_count": 2.375,
+      "queries_with_negative_hits": 0
+    },
+    "primary_causal_2hop": {
+      "macro_recall": 1,
+      "macro_labeled_positive_precision": 0.6666666666666666,
+      "mean_returned_count": 3,
+      "queries_with_negative_hits": 0
+    }
+  },
+  "rows": [
+    {
+      "query_id": "query-0",
+      "variant": "baseline",
+      "recall": 1,
+      "labeled_positive_precision": 0.4,
+      "returned_count": 5,
+      "returned_ids": [
+        "atom-2",
+        "atom-0",
+        "atom-5",
+        "atom-1",
+        "atom-3"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-2": 0.3221311410284409,
+        "atom-0": 0.23844162078044057,
+        "atom-5": 0.21431703986409495,
+        "atom-1": 0.08480602888120194,
+        "atom-3": 0.06138699469290621
+      },
+      "primary_id": "atom-2"
+    },
+    {
+      "query_id": "query-0",
+      "variant": "truncate_3",
+      "recall": 0.5,
+      "labeled_positive_precision": 0.3333333333333333,
+      "returned_count": 3,
+      "returned_ids": [
+        "atom-2",
+        "atom-0",
+        "atom-5"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-2": 0.3221311410284409,
+        "atom-0": 0.23844162078044057,
+        "atom-5": 0.21431703986409495,
+        "atom-1": 0.08480602888120194,
+        "atom-3": 0.06138699469290621
+      },
+      "primary_id": "atom-2"
+    },
+    {
+      "query_id": "query-0",
+      "variant": "positive_similarity",
+      "recall": 1,
+      "labeled_positive_precision": 0.4,
+      "returned_count": 5,
+      "returned_ids": [
+        "atom-2",
+        "atom-0",
+        "atom-5",
+        "atom-1",
+        "atom-3"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-2": 0.3221311410284409,
+        "atom-0": 0.23844162078044057,
+        "atom-5": 0.21431703986409495,
+        "atom-1": 0.08480602888120194,
+        "atom-3": 0.06138699469290621
+      },
+      "primary_id": "atom-2"
+    },
+    {
+      "query_id": "query-0",
+      "variant": "primary_causal_1hop",
+      "recall": 1,
+      "labeled_positive_precision": 1,
+      "returned_count": 2,
+      "returned_ids": [
+        "atom-2",
+        "atom-1"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-2": 0.3221311410284409,
+        "atom-0": 0.23844162078044057,
+        "atom-5": 0.21431703986409495,
+        "atom-1": 0.08480602888120194,
+        "atom-3": 0.06138699469290621
+      },
+      "primary_id": "atom-2"
+    },
+    {
+      "query_id": "query-0",
+      "variant": "primary_causal_2hop",
+      "recall": 1,
+      "labeled_positive_precision": 0.6666666666666666,
+      "returned_count": 3,
+      "returned_ids": [
+        "atom-2",
+        "atom-0",
+        "atom-1"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-2": 0.3221311410284409,
+        "atom-0": 0.23844162078044057,
+        "atom-5": 0.21431703986409495,
+        "atom-1": 0.08480602888120194,
+        "atom-3": 0.06138699469290621
+      },
+      "primary_id": "atom-2"
+    },
+    {
+      "query_id": "query-1",
+      "variant": "baseline",
+      "recall": 1,
+      "labeled_positive_precision": 0.4,
+      "returned_count": 5,
+      "returned_ids": [
+        "atom-1",
+        "atom-0",
+        "atom-2",
+        "atom-4",
+        "atom-10"
+      ],
+      "negative_hits": [
+        "atom-4",
+        "atom-10"
+      ],
+      "semantic_scores": {
+        "atom-1": 0.4045289673448604,
+        "atom-0": 0.2172886751266353,
+        "atom-2": 0.15765593585474716,
+        "atom-4": 0.06801442355400432,
+        "atom-10": 0
+      },
+      "primary_id": "atom-1"
+    },
+    {
+      "query_id": "query-1",
+      "variant": "truncate_3",
+      "recall": 1,
+      "labeled_positive_precision": 0.6666666666666666,
+      "returned_count": 3,
+      "returned_ids": [
+        "atom-1",
+        "atom-0",
+        "atom-2"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-1": 0.4045289673448604,
+        "atom-0": 0.2172886751266353,
+        "atom-2": 0.15765593585474716,
+        "atom-4": 0.06801442355400432,
+        "atom-10": 0
+      },
+      "primary_id": "atom-1"
+    },
+    {
+      "query_id": "query-1",
+      "variant": "positive_similarity",
+      "recall": 1,
+      "labeled_positive_precision": 0.5,
+      "returned_count": 4,
+      "returned_ids": [
+        "atom-1",
+        "atom-0",
+        "atom-2",
+        "atom-4"
+      ],
+      "negative_hits": [
+        "atom-4"
+      ],
+      "semantic_scores": {
+        "atom-1": 0.4045289673448604,
+        "atom-0": 0.2172886751266353,
+        "atom-2": 0.15765593585474716,
+        "atom-4": 0.06801442355400432,
+        "atom-10": 0
+      },
+      "primary_id": "atom-1"
+    },
+    {
+      "query_id": "query-1",
+      "variant": "primary_causal_1hop",
+      "recall": 1,
+      "labeled_positive_precision": 0.6666666666666666,
+      "returned_count": 3,
+      "returned_ids": [
+        "atom-1",
+        "atom-0",
+        "atom-2"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-1": 0.4045289673448604,
+        "atom-0": 0.2172886751266353,
+        "atom-2": 0.15765593585474716,
+        "atom-4": 0.06801442355400432,
+        "atom-10": 0
+      },
+      "primary_id": "atom-1"
+    },
+    {
+      "query_id": "query-1",
+      "variant": "primary_causal_2hop",
+      "recall": 1,
+      "labeled_positive_precision": 0.6666666666666666,
+      "returned_count": 3,
+      "returned_ids": [
+        "atom-1",
+        "atom-0",
+        "atom-2"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-1": 0.4045289673448604,
+        "atom-0": 0.2172886751266353,
+        "atom-2": 0.15765593585474716,
+        "atom-4": 0.06801442355400432,
+        "atom-10": 0
+      },
+      "primary_id": "atom-1"
+    },
+    {
+      "query_id": "query-2",
+      "variant": "baseline",
+      "recall": 1,
+      "labeled_positive_precision": 0.4,
+      "returned_count": 5,
+      "returned_ids": [
+        "atom-3",
+        "atom-5",
+        "atom-4",
+        "atom-1",
+        "atom-9"
+      ],
+      "negative_hits": [
+        "atom-1"
+      ],
+      "semantic_scores": {
+        "atom-3": 0.6040779038322929,
+        "atom-5": 0.19668745973919696,
+        "atom-4": 0.17899266288538823,
+        "atom-1": 0.1037744625728487,
+        "atom-9": 0.07991605523119055
+      },
+      "primary_id": "atom-3"
+    },
+    {
+      "query_id": "query-2",
+      "variant": "truncate_3",
+      "recall": 1,
+      "labeled_positive_precision": 0.6666666666666666,
+      "returned_count": 3,
+      "returned_ids": [
+        "atom-3",
+        "atom-5",
+        "atom-4"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-3": 0.6040779038322929,
+        "atom-5": 0.19668745973919696,
+        "atom-4": 0.17899266288538823,
+        "atom-1": 0.1037744625728487,
+        "atom-9": 0.07991605523119055
+      },
+      "primary_id": "atom-3"
+    },
+    {
+      "query_id": "query-2",
+      "variant": "positive_similarity",
+      "recall": 1,
+      "labeled_positive_precision": 0.4,
+      "returned_count": 5,
+      "returned_ids": [
+        "atom-3",
+        "atom-5",
+        "atom-4",
+        "atom-1",
+        "atom-9"
+      ],
+      "negative_hits": [
+        "atom-1"
+      ],
+      "semantic_scores": {
+        "atom-3": 0.6040779038322929,
+        "atom-5": 0.19668745973919696,
+        "atom-4": 0.17899266288538823,
+        "atom-1": 0.1037744625728487,
+        "atom-9": 0.07991605523119055
+      },
+      "primary_id": "atom-3"
+    },
+    {
+      "query_id": "query-2",
+      "variant": "primary_causal_1hop",
+      "recall": 0.5,
+      "labeled_positive_precision": 0.5,
+      "returned_count": 2,
+      "returned_ids": [
+        "atom-3",
+        "atom-4"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-3": 0.6040779038322929,
+        "atom-5": 0.19668745973919696,
+        "atom-4": 0.17899266288538823,
+        "atom-1": 0.1037744625728487,
+        "atom-9": 0.07991605523119055
+      },
+      "primary_id": "atom-3"
+    },
+    {
+      "query_id": "query-2",
+      "variant": "primary_causal_2hop",
+      "recall": 1,
+      "labeled_positive_precision": 0.6666666666666666,
+      "returned_count": 3,
+      "returned_ids": [
+        "atom-3",
+        "atom-5",
+        "atom-4"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-3": 0.6040779038322929,
+        "atom-5": 0.19668745973919696,
+        "atom-4": 0.17899266288538823,
+        "atom-1": 0.1037744625728487,
+        "atom-9": 0.07991605523119055
+      },
+      "primary_id": "atom-3"
+    },
+    {
+      "query_id": "query-3",
+      "variant": "baseline",
+      "recall": 1,
+      "labeled_positive_precision": 0.4,
+      "returned_count": 5,
+      "returned_ids": [
+        "atom-4",
+        "atom-3",
+        "atom-2",
+        "atom-5",
+        "atom-1"
+      ],
+      "negative_hits": [
+        "atom-1"
+      ],
+      "semantic_scores": {
+        "atom-4": 0.45389753242698705,
+        "atom-3": 0.24515549873229875,
+        "atom-2": 0.0728623697952025,
+        "atom-5": 0.06888851523565273,
+        "atom-1": 0
+      },
+      "primary_id": "atom-4"
+    },
+    {
+      "query_id": "query-3",
+      "variant": "truncate_3",
+      "recall": 0.5,
+      "labeled_positive_precision": 0.3333333333333333,
+      "returned_count": 3,
+      "returned_ids": [
+        "atom-4",
+        "atom-3",
+        "atom-2"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-4": 0.45389753242698705,
+        "atom-3": 0.24515549873229875,
+        "atom-2": 0.0728623697952025,
+        "atom-5": 0.06888851523565273,
+        "atom-1": 0
+      },
+      "primary_id": "atom-4"
+    },
+    {
+      "query_id": "query-3",
+      "variant": "positive_similarity",
+      "recall": 1,
+      "labeled_positive_precision": 0.5,
+      "returned_count": 4,
+      "returned_ids": [
+        "atom-4",
+        "atom-3",
+        "atom-2",
+        "atom-5"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-4": 0.45389753242698705,
+        "atom-3": 0.24515549873229875,
+        "atom-2": 0.0728623697952025,
+        "atom-5": 0.06888851523565273,
+        "atom-1": 0
+      },
+      "primary_id": "atom-4"
+    },
+    {
+      "query_id": "query-3",
+      "variant": "primary_causal_1hop",
+      "recall": 1,
+      "labeled_positive_precision": 0.6666666666666666,
+      "returned_count": 3,
+      "returned_ids": [
+        "atom-4",
+        "atom-3",
+        "atom-5"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-4": 0.45389753242698705,
+        "atom-3": 0.24515549873229875,
+        "atom-2": 0.0728623697952025,
+        "atom-5": 0.06888851523565273,
+        "atom-1": 0
+      },
+      "primary_id": "atom-4"
+    },
+    {
+      "query_id": "query-3",
+      "variant": "primary_causal_2hop",
+      "recall": 1,
+      "labeled_positive_precision": 0.6666666666666666,
+      "returned_count": 3,
+      "returned_ids": [
+        "atom-4",
+        "atom-3",
+        "atom-5"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-4": 0.45389753242698705,
+        "atom-3": 0.24515549873229875,
+        "atom-2": 0.0728623697952025,
+        "atom-5": 0.06888851523565273,
+        "atom-1": 0
+      },
+      "primary_id": "atom-4"
+    },
+    {
+      "query_id": "query-4",
+      "variant": "baseline",
+      "recall": 1,
+      "labeled_positive_precision": 0.4,
+      "returned_count": 5,
+      "returned_ids": [
+        "atom-6",
+        "atom-8",
+        "atom-7",
+        "atom-1",
+        "atom-0"
+      ],
+      "negative_hits": [
+        "atom-1"
+      ],
+      "semantic_scores": {
+        "atom-6": 0.5319359172259409,
+        "atom-8": 0.09107211952273557,
+        "atom-7": 0.041247527702789964,
+        "atom-1": 0,
+        "atom-0": 0
+      },
+      "primary_id": "atom-6"
+    },
+    {
+      "query_id": "query-4",
+      "variant": "truncate_3",
+      "recall": 1,
+      "labeled_positive_precision": 0.6666666666666666,
+      "returned_count": 3,
+      "returned_ids": [
+        "atom-6",
+        "atom-8",
+        "atom-7"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-6": 0.5319359172259409,
+        "atom-8": 0.09107211952273557,
+        "atom-7": 0.041247527702789964,
+        "atom-1": 0,
+        "atom-0": 0
+      },
+      "primary_id": "atom-6"
+    },
+    {
+      "query_id": "query-4",
+      "variant": "positive_similarity",
+      "recall": 1,
+      "labeled_positive_precision": 0.6666666666666666,
+      "returned_count": 3,
+      "returned_ids": [
+        "atom-6",
+        "atom-8",
+        "atom-7"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-6": 0.5319359172259409,
+        "atom-8": 0.09107211952273557,
+        "atom-7": 0.041247527702789964,
+        "atom-1": 0,
+        "atom-0": 0
+      },
+      "primary_id": "atom-6"
+    },
+    {
+      "query_id": "query-4",
+      "variant": "primary_causal_1hop",
+      "recall": 0.5,
+      "labeled_positive_precision": 0.5,
+      "returned_count": 2,
+      "returned_ids": [
+        "atom-6",
+        "atom-7"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-6": 0.5319359172259409,
+        "atom-8": 0.09107211952273557,
+        "atom-7": 0.041247527702789964,
+        "atom-1": 0,
+        "atom-0": 0
+      },
+      "primary_id": "atom-6"
+    },
+    {
+      "query_id": "query-4",
+      "variant": "primary_causal_2hop",
+      "recall": 1,
+      "labeled_positive_precision": 0.6666666666666666,
+      "returned_count": 3,
+      "returned_ids": [
+        "atom-6",
+        "atom-8",
+        "atom-7"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-6": 0.5319359172259409,
+        "atom-8": 0.09107211952273557,
+        "atom-7": 0.041247527702789964,
+        "atom-1": 0,
+        "atom-0": 0
+      },
+      "primary_id": "atom-6"
+    },
+    {
+      "query_id": "query-5",
+      "variant": "baseline",
+      "recall": 1,
+      "labeled_positive_precision": 0.4,
+      "returned_count": 5,
+      "returned_ids": [
+        "atom-7",
+        "atom-8",
+        "atom-6",
+        "atom-1",
+        "atom-0"
+      ],
+      "negative_hits": [
+        "atom-1"
+      ],
+      "semantic_scores": {
+        "atom-7": 0.439708461438822,
+        "atom-8": 0.21601561266082744,
+        "atom-6": 0.1271962783325712,
+        "atom-1": 0,
+        "atom-0": 0
+      },
+      "primary_id": "atom-7"
+    },
+    {
+      "query_id": "query-5",
+      "variant": "truncate_3",
+      "recall": 1,
+      "labeled_positive_precision": 0.6666666666666666,
+      "returned_count": 3,
+      "returned_ids": [
+        "atom-7",
+        "atom-8",
+        "atom-6"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-7": 0.439708461438822,
+        "atom-8": 0.21601561266082744,
+        "atom-6": 0.1271962783325712,
+        "atom-1": 0,
+        "atom-0": 0
+      },
+      "primary_id": "atom-7"
+    },
+    {
+      "query_id": "query-5",
+      "variant": "positive_similarity",
+      "recall": 1,
+      "labeled_positive_precision": 0.6666666666666666,
+      "returned_count": 3,
+      "returned_ids": [
+        "atom-7",
+        "atom-8",
+        "atom-6"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-7": 0.439708461438822,
+        "atom-8": 0.21601561266082744,
+        "atom-6": 0.1271962783325712,
+        "atom-1": 0,
+        "atom-0": 0
+      },
+      "primary_id": "atom-7"
+    },
+    {
+      "query_id": "query-5",
+      "variant": "primary_causal_1hop",
+      "recall": 1,
+      "labeled_positive_precision": 0.6666666666666666,
+      "returned_count": 3,
+      "returned_ids": [
+        "atom-7",
+        "atom-8",
+        "atom-6"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-7": 0.439708461438822,
+        "atom-8": 0.21601561266082744,
+        "atom-6": 0.1271962783325712,
+        "atom-1": 0,
+        "atom-0": 0
+      },
+      "primary_id": "atom-7"
+    },
+    {
+      "query_id": "query-5",
+      "variant": "primary_causal_2hop",
+      "recall": 1,
+      "labeled_positive_precision": 0.6666666666666666,
+      "returned_count": 3,
+      "returned_ids": [
+        "atom-7",
+        "atom-8",
+        "atom-6"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-7": 0.439708461438822,
+        "atom-8": 0.21601561266082744,
+        "atom-6": 0.1271962783325712,
+        "atom-1": 0,
+        "atom-0": 0
+      },
+      "primary_id": "atom-7"
+    },
+    {
+      "query_id": "query-6",
+      "variant": "baseline",
+      "recall": 1,
+      "labeled_positive_precision": 0.4,
+      "returned_count": 5,
+      "returned_ids": [
+        "atom-9",
+        "atom-11",
+        "atom-10",
+        "atom-8",
+        "atom-6"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-9": 0.6463521598585952,
+        "atom-11": 0.22727559168427142,
+        "atom-10": 0.13597795950767336,
+        "atom-8": 0.033853360255590374,
+        "atom-6": 0.03550328124982293
+      },
+      "primary_id": "atom-9"
+    },
+    {
+      "query_id": "query-6",
+      "variant": "truncate_3",
+      "recall": 1,
+      "labeled_positive_precision": 0.6666666666666666,
+      "returned_count": 3,
+      "returned_ids": [
+        "atom-9",
+        "atom-11",
+        "atom-10"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-9": 0.6463521598585952,
+        "atom-11": 0.22727559168427142,
+        "atom-10": 0.13597795950767336,
+        "atom-8": 0.033853360255590374,
+        "atom-6": 0.03550328124982293
+      },
+      "primary_id": "atom-9"
+    },
+    {
+      "query_id": "query-6",
+      "variant": "positive_similarity",
+      "recall": 1,
+      "labeled_positive_precision": 0.4,
+      "returned_count": 5,
+      "returned_ids": [
+        "atom-9",
+        "atom-11",
+        "atom-10",
+        "atom-8",
+        "atom-6"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-9": 0.6463521598585952,
+        "atom-11": 0.22727559168427142,
+        "atom-10": 0.13597795950767336,
+        "atom-8": 0.033853360255590374,
+        "atom-6": 0.03550328124982293
+      },
+      "primary_id": "atom-9"
+    },
+    {
+      "query_id": "query-6",
+      "variant": "primary_causal_1hop",
+      "recall": 0.5,
+      "labeled_positive_precision": 0.5,
+      "returned_count": 2,
+      "returned_ids": [
+        "atom-9",
+        "atom-10"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-9": 0.6463521598585952,
+        "atom-11": 0.22727559168427142,
+        "atom-10": 0.13597795950767336,
+        "atom-8": 0.033853360255590374,
+        "atom-6": 0.03550328124982293
+      },
+      "primary_id": "atom-9"
+    },
+    {
+      "query_id": "query-6",
+      "variant": "primary_causal_2hop",
+      "recall": 1,
+      "labeled_positive_precision": 0.6666666666666666,
+      "returned_count": 3,
+      "returned_ids": [
+        "atom-9",
+        "atom-11",
+        "atom-10"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-9": 0.6463521598585952,
+        "atom-11": 0.22727559168427142,
+        "atom-10": 0.13597795950767336,
+        "atom-8": 0.033853360255590374,
+        "atom-6": 0.03550328124982293
+      },
+      "primary_id": "atom-9"
+    },
+    {
+      "query_id": "query-7",
+      "variant": "baseline",
+      "recall": 1,
+      "labeled_positive_precision": 0.4,
+      "returned_count": 5,
+      "returned_ids": [
+        "atom-11",
+        "atom-9",
+        "atom-10",
+        "atom-8",
+        "atom-6"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-11": 0.3300290408584528,
+        "atom-9": 0.23601892694439414,
+        "atom-10": 0.21345223128564136,
+        "atom-8": 0.03780108493114239,
+        "atom-6": 0.03964340732282758
+      },
+      "primary_id": "atom-11"
+    },
+    {
+      "query_id": "query-7",
+      "variant": "truncate_3",
+      "recall": 1,
+      "labeled_positive_precision": 0.6666666666666666,
+      "returned_count": 3,
+      "returned_ids": [
+        "atom-11",
+        "atom-9",
+        "atom-10"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-11": 0.3300290408584528,
+        "atom-9": 0.23601892694439414,
+        "atom-10": 0.21345223128564136,
+        "atom-8": 0.03780108493114239,
+        "atom-6": 0.03964340732282758
+      },
+      "primary_id": "atom-11"
+    },
+    {
+      "query_id": "query-7",
+      "variant": "positive_similarity",
+      "recall": 1,
+      "labeled_positive_precision": 0.4,
+      "returned_count": 5,
+      "returned_ids": [
+        "atom-11",
+        "atom-9",
+        "atom-10",
+        "atom-8",
+        "atom-6"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-11": 0.3300290408584528,
+        "atom-9": 0.23601892694439414,
+        "atom-10": 0.21345223128564136,
+        "atom-8": 0.03780108493114239,
+        "atom-6": 0.03964340732282758
+      },
+      "primary_id": "atom-11"
+    },
+    {
+      "query_id": "query-7",
+      "variant": "primary_causal_1hop",
+      "recall": 1,
+      "labeled_positive_precision": 1,
+      "returned_count": 2,
+      "returned_ids": [
+        "atom-11",
+        "atom-10"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-11": 0.3300290408584528,
+        "atom-9": 0.23601892694439414,
+        "atom-10": 0.21345223128564136,
+        "atom-8": 0.03780108493114239,
+        "atom-6": 0.03964340732282758
+      },
+      "primary_id": "atom-11"
+    },
+    {
+      "query_id": "query-7",
+      "variant": "primary_causal_2hop",
+      "recall": 1,
+      "labeled_positive_precision": 0.6666666666666666,
+      "returned_count": 3,
+      "returned_ids": [
+        "atom-11",
+        "atom-9",
+        "atom-10"
+      ],
+      "negative_hits": [],
+      "semantic_scores": {
+        "atom-11": 0.3300290408584528,
+        "atom-9": 0.23601892694439414,
+        "atom-10": 0.21345223128564136,
+        "atom-8": 0.03780108493114239,
+        "atom-6": 0.03964340732282758
+      },
+      "primary_id": "atom-11"
+    }
+  ],
+  "corpus_sha256": "b2dc206820f6d16efef80ef67981688c4bd681b16c6448b6ae8dafe52e7c27da"
+}
