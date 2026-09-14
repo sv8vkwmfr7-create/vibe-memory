@@ -13,7 +13,7 @@ from vibe_memory.models.memory_atom import EdgeLabel
 from experiments.mcp_maintenance_smoke import summary
 
 
-def replay(data, enabled, seed_path=None):
+def replay(data, enabled, seed_path=None, server_module='vibe_memory.mcp_server'):
     root = Path(tempfile.mkdtemp(prefix="vibe-mcp-session-"))
     path = root / "memory.db"
     # Both variants use WAL, so the flag does not change the journal-mode baseline.
@@ -24,7 +24,7 @@ def replay(data, enabled, seed_path=None):
             source.backup(storage.conn)
     storage.conn.close()
     process = subprocess.Popen(
-        [sys.executable, "-m", "vibe_memory.mcp_server", "--db-path", str(path),
+        [sys.executable, "-m", server_module, "--db-path", str(path),
          "--vibe-dir", str(root), "--agent-id", "local-replay"]
         + (["--wal-maintenance"] if enabled else []),
         stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
