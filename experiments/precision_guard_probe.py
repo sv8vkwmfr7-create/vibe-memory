@@ -31,6 +31,18 @@ def causal_neighborhood(storage, agent_id, tenant_id, primary, hops):
     return reached
 
 
+def guarded_causal_ids(storage, agent_id, tenant_id, baseline, semantic_ids, scores):
+    """Experimental fallback gate; consensus does not prove correct anchors."""
+    if len(semantic_ids) < 2 or any(scores.get(aid, 0) <= 0 for aid in semantic_ids[:2]):
+        return list(baseline), 'insufficient_anchors'
+    allowed = causal_neighborhood(storage, agent_id, tenant_id, semantic_ids[0], 2)
+    if len(allowed) < 2:
+        return list(baseline), 'no_causal_support'
+    if semantic_ids[1] not in allowed:
+        return list(baseline), 'anchor_disagreement'
+    return [aid for aid in baseline if aid in allowed], 'filtered'
+
+
 def evaluate(data):
     store = VibeStorage(':memory:')
     anonymous = {a['id']: f'atom-{i}' for i, a in enumerate(data['atoms'])}
@@ -58,6 +70,9 @@ def evaluate(data):
             for hops in (1, 2):
                 allowed = causal_neighborhood(store, 'probe', store.tenant_id, primary, hops)
                 variants[f'primary_causal_{hops}hop'] = [aid for aid in baseline if aid in allowed]
+            guarded, decision = guarded_causal_ids(store, 'probe', store.tenant_id, baseline,
+                [atoms[index].id for index in indices], scores)
+            variants['guarded_causal_2hop'] = guarded
             positive, negative = set(q['relevant_ids']), set(q.get('negative_ids', []))
             for name, ids in variants.items():
                 rows.append({'query_id': f'query-{i}', 'variant': name,
@@ -67,6 +82,8 @@ def evaluate(data):
                     'negative_hits': [anonymous[x] for x in ids if x in negative],
                     'semantic_scores': {anonymous[x]: scores.get(x, 0) for x in baseline},
                     'primary_id': anonymous[primary]})
+                if name == 'guarded_causal_2hop':
+                    rows[-1]['guard_decision'] = decision
         aggregates = {}
         for name in variants:
             selected = [r for r in rows if r['variant'] == name]
@@ -75,7 +92,7 @@ def evaluate(data):
                 'macro_labeled_positive_precision': sum(r['labeled_positive_precision'] for r in selected) / len(selected),
                 'mean_returned_count': sum(r['returned_count'] for r in selected) / len(selected),
                 'queries_with_negative_hits': sum(bool(r['negative_hits']) for r in selected)}
-        return {'conditions': 'Offline post-filter of production core precision Top-5. Assistant labels/manual edges. Primary TF-IDF anchor, causal neighborhood ignores direction; no backfill or candidate expansion. Truncate-3 is post-truncation, not recall(top_k=3). Unlabeled items not assumed irrelevant. Consumed holdout is now diagnostic/development data, not fresh generalization evidence. Not SDK/MCP implementation or production latency proof.',
+        return {'conditions': 'Offline post-filter of production core precision Top-5. Assistant labels/manual edges. Primary TF-IDF anchor, causal neighborhood ignores direction; no backfill or candidate expansion. Guard requires two positive TF-IDF anchors in the primary two-hop causal neighborhood, otherwise preserves baseline. Anchor agreement is not correctness proof; jointly wrong anchors remain unsafe. Truncate-3 is post-truncation, not recall(top_k=3). Unlabeled items not assumed irrelevant. Consumed holdout is now diagnostic/development data, not fresh generalization evidence. Not SDK/MCP implementation or production latency proof.',
             'aggregates': aggregates, 'rows': rows}
     finally:
         store.conn.close()
