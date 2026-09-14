@@ -6,6 +6,17 @@ Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK
 
 ## Verified Baseline
 
+### Reconstructed incident corpus: MCP session and idle-boundary replay
+
+`python experiments/mcp_session_replay.py /path/to/private-corpus.json` replays the local corpus through actual MCP subprocess store/link/session-start/recall calls into two fresh WAL files, off then on. Report `results/mcp_session_replay.json` contains only ordinal IDs and metrics; private corpus text is not committed. The local corpus has 15 memories, 10 assistant-authored questions and manual causal edges reconstructed from five incident summaries: **not raw dialogue, independent labels or held-out evaluation**. Original timestamps, tenant scope and lifecycle are not reconstructed: all supplied atoms are treated as currently available to one test agent. This is not equivalent to the earlier cutoff-aware two-hop retrieval evaluation.
+
+| Mode | Off / on macro Recall@5 | Off / on macro precision | Off / on recall round-trip p95 ms |
+|---|---|---|---|
+| precision | 0.85 / 0.85 | 0.34 / 0.34 | 3.516 / 3.577 |
+| default budget | 0.80 / 0.80 | 0.32 / 0.32 | 4.422 / 4.803 |
+
+**10/10** maintenance calls after the previous response and before new session start truncated and observed WAL zero; maintenance stage **4.783–9.135ms**, round trip **4.922–9.294ms**. Boundary-to-session response (including maintenance when on) was **4.891–7.911ms off**, **10.154–17.394ms on**. These are single-run tiny-corpus measurements, not statistically stable timing or user perception. Session-start recalled ten memories but injection relevance/LLM answers were not scored. Neither macro recall changed under maintenance, but budget **query-0 returned zero relevant memories**, and three precision questions retrieved only half the labels. This step records that quality gap; it does not fix it, retune weights or claim reliable answer quality. Full regression **316 passed in 13.06s**. Default remains off, private corpus/existing DBs/raw/client configuration untouched; temporary DBs retained. Next: diagnose the zero-hit query using frozen labels and verify any general fix separately, before claiming real-chat improvements.
+
 ### 100k MCP maintenance on/off comparison
 
 Replay `python experiments/mcp_maintenance_comparison.py`; full events in `results/mcp_maintenance_comparison.json`. One dense Chinese 100k seed was cloned via SQLite backup into four fresh WAL DBs, off/on/on/off order, default auto-checkpoint in all. One warm-up and one MCP store before each of 30 rounds; off pipelines ping then budget recall (top_k=5), on pipelines checkpoint then the same recall. No concurrent writer, external locks, held snapshots, graph or concurrent formal tests. Seeding/initialization/warm-up excluded from pair timing. A preliminary script used a nonexistent FTS table name and failed its post-run check; after correction all four reported runs restarted from fresh clones of the read-only generated seed.

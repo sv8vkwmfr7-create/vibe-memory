@@ -1,0 +1,801 @@
+{
+  "dataset": "local-corpus-mcp-replay-v1",
+  "atoms": 15,
+  "queries": 10,
+  "runs": [
+    {
+      "maintenance_enabled": false,
+      "rows": [
+        {
+          "query_id": "query-0",
+          "mode": "precision",
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-12",
+            "atom-2",
+            "atom-13"
+          ],
+          "precision": 0.2,
+          "recall": 0.5,
+          "round_trip_ms": 2.156,
+          "session_start_ms": 7.911,
+          "boundary_to_session_ms": 7.911,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-0",
+          "mode": "budget",
+          "returned_ids": [
+            "atom-12",
+            "atom-13",
+            "atom-0",
+            "atom-3",
+            "atom-14"
+          ],
+          "precision": 0,
+          "recall": 0,
+          "round_trip_ms": 3.896,
+          "session_start_ms": 7.911,
+          "boundary_to_session_ms": 7.911,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ],
+          "precision": 0.2,
+          "recall": 0.5,
+          "round_trip_ms": 1.202,
+          "session_start_ms": 4.891,
+          "boundary_to_session_ms": 4.891,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-11",
+            "atom-2",
+            "atom-5"
+          ],
+          "precision": 0.2,
+          "recall": 0.5,
+          "round_trip_ms": 2.675,
+          "session_start_ms": 4.891,
+          "boundary_to_session_ms": 4.891,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-2",
+          "mode": "precision",
+          "returned_ids": [
+            "atom-3",
+            "atom-0",
+            "atom-5",
+            "atom-13",
+            "atom-14"
+          ],
+          "precision": 0.2,
+          "recall": 0.5,
+          "round_trip_ms": 1.887,
+          "session_start_ms": 5.048,
+          "boundary_to_session_ms": 5.048,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-2",
+          "mode": "budget",
+          "returned_ids": [
+            "atom-3",
+            "atom-0",
+            "atom-5",
+            "atom-14",
+            "atom-13"
+          ],
+          "precision": 0.2,
+          "recall": 0.5,
+          "round_trip_ms": 2.48,
+          "session_start_ms": 5.048,
+          "boundary_to_session_ms": 5.048,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-3",
+          "mode": "precision",
+          "returned_ids": [
+            "atom-3",
+            "atom-4",
+            "atom-5",
+            "atom-14",
+            "atom-13"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 3.22,
+          "session_start_ms": 6.156,
+          "boundary_to_session_ms": 6.156,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-3",
+          "mode": "budget",
+          "returned_ids": [
+            "atom-3",
+            "atom-4",
+            "atom-5",
+            "atom-14",
+            "atom-13"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 3.243,
+          "session_start_ms": 6.156,
+          "boundary_to_session_ms": 6.156,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-4",
+          "mode": "precision",
+          "returned_ids": [
+            "atom-6",
+            "atom-9",
+            "atom-7",
+            "atom-8",
+            "atom-10"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 3.759,
+          "session_start_ms": 5.28,
+          "boundary_to_session_ms": 5.28,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-4",
+          "mode": "budget",
+          "returned_ids": [
+            "atom-6",
+            "atom-9",
+            "atom-8",
+            "atom-7",
+            "atom-10"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 4.149,
+          "session_start_ms": 5.28,
+          "boundary_to_session_ms": 5.28,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-5",
+          "mode": "precision",
+          "returned_ids": [
+            "atom-6",
+            "atom-8",
+            "atom-5",
+            "atom-7",
+            "atom-0"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 2.616,
+          "session_start_ms": 5.696,
+          "boundary_to_session_ms": 5.697,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-5",
+          "mode": "budget",
+          "returned_ids": [
+            "atom-6",
+            "atom-8",
+            "atom-7",
+            "atom-14",
+            "atom-13"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 3.701,
+          "session_start_ms": 5.696,
+          "boundary_to_session_ms": 5.697,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-6",
+          "mode": "precision",
+          "returned_ids": [
+            "atom-9",
+            "atom-10",
+            "atom-11",
+            "atom-6",
+            "atom-8"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 2.994,
+          "session_start_ms": 5.555,
+          "boundary_to_session_ms": 5.556,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-6",
+          "mode": "budget",
+          "returned_ids": [
+            "atom-9",
+            "atom-10",
+            "atom-11",
+            "atom-14",
+            "atom-13"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 4.398,
+          "session_start_ms": 5.555,
+          "boundary_to_session_ms": 5.556,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-7",
+          "mode": "precision",
+          "returned_ids": [
+            "atom-10",
+            "atom-11",
+            "atom-5",
+            "atom-0",
+            "atom-2"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 1.884,
+          "session_start_ms": 4.911,
+          "boundary_to_session_ms": 4.912,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-7",
+          "mode": "budget",
+          "returned_ids": [
+            "atom-10",
+            "atom-11",
+            "atom-14",
+            "atom-13",
+            "atom-12"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 3.573,
+          "session_start_ms": 4.911,
+          "boundary_to_session_ms": 4.912,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-8",
+          "mode": "precision",
+          "returned_ids": [
+            "atom-12",
+            "atom-0",
+            "atom-14",
+            "atom-13",
+            "atom-1"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 2.551,
+          "session_start_ms": 5.378,
+          "boundary_to_session_ms": 5.379,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-8",
+          "mode": "budget",
+          "returned_ids": [
+            "atom-12",
+            "atom-13",
+            "atom-14",
+            "atom-11",
+            "atom-10"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 3.211,
+          "session_start_ms": 5.378,
+          "boundary_to_session_ms": 5.379,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-9",
+          "mode": "precision",
+          "returned_ids": [
+            "atom-12",
+            "atom-14",
+            "atom-13",
+            "atom-11",
+            "atom-10"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 2.948,
+          "session_start_ms": 5.87,
+          "boundary_to_session_ms": 5.871,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-9",
+          "mode": "budget",
+          "returned_ids": [
+            "atom-12",
+            "atom-13",
+            "atom-14",
+            "atom-11",
+            "atom-10"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 4.441,
+          "session_start_ms": 5.87,
+          "boundary_to_session_ms": 5.871,
+          "session_memories_count": 10
+        }
+      ],
+      "aggregates": {
+        "precision": {
+          "mean_precision": 0.34,
+          "mean_recall": 0.85,
+          "round_trip_ms": {
+            "p50": 2.583,
+            "p95": 3.516,
+            "p99": 3.71
+          }
+        },
+        "budget": {
+          "mean_precision": 0.32,
+          "mean_recall": 0.8,
+          "round_trip_ms": {
+            "p50": 3.637,
+            "p95": 4.422,
+            "p99": 4.437
+          }
+        }
+      },
+      "maintenance": []
+    },
+    {
+      "maintenance_enabled": true,
+      "rows": [
+        {
+          "query_id": "query-0",
+          "mode": "precision",
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-12",
+            "atom-2",
+            "atom-13"
+          ],
+          "precision": 0.2,
+          "recall": 0.5,
+          "round_trip_ms": 2.219,
+          "session_start_ms": 7.748,
+          "boundary_to_session_ms": 17.046,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-0",
+          "mode": "budget",
+          "returned_ids": [
+            "atom-13",
+            "atom-12",
+            "atom-0",
+            "atom-3",
+            "atom-14"
+          ],
+          "precision": 0,
+          "recall": 0,
+          "round_trip_ms": 4.51,
+          "session_start_ms": 7.748,
+          "boundary_to_session_ms": 17.046,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-1",
+          "mode": "precision",
+          "returned_ids": [
+            "atom-0",
+            "atom-3",
+            "atom-2",
+            "atom-11",
+            "atom-5"
+          ],
+          "precision": 0.2,
+          "recall": 0.5,
+          "round_trip_ms": 1.637,
+          "session_start_ms": 5.347,
+          "boundary_to_session_ms": 11.718,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-1",
+          "mode": "budget",
+          "returned_ids": [
+            "atom-3",
+            "atom-0",
+            "atom-11",
+            "atom-2",
+            "atom-5"
+          ],
+          "precision": 0.2,
+          "recall": 0.5,
+          "round_trip_ms": 2.847,
+          "session_start_ms": 5.347,
+          "boundary_to_session_ms": 11.718,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-2",
+          "mode": "precision",
+          "returned_ids": [
+            "atom-3",
+            "atom-0",
+            "atom-5",
+            "atom-13",
+            "atom-14"
+          ],
+          "precision": 0.2,
+          "recall": 0.5,
+          "round_trip_ms": 2.049,
+          "session_start_ms": 4.895,
+          "boundary_to_session_ms": 10.154,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-2",
+          "mode": "budget",
+          "returned_ids": [
+            "atom-3",
+            "atom-0",
+            "atom-5",
+            "atom-14",
+            "atom-13"
+          ],
+          "precision": 0.2,
+          "recall": 0.5,
+          "round_trip_ms": 3.525,
+          "session_start_ms": 4.895,
+          "boundary_to_session_ms": 10.154,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-3",
+          "mode": "precision",
+          "returned_ids": [
+            "atom-3",
+            "atom-4",
+            "atom-5",
+            "atom-13",
+            "atom-14"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 3.579,
+          "session_start_ms": 6.55,
+          "boundary_to_session_ms": 11.476,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-3",
+          "mode": "budget",
+          "returned_ids": [
+            "atom-3",
+            "atom-4",
+            "atom-5",
+            "atom-14",
+            "atom-13"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 3.752,
+          "session_start_ms": 6.55,
+          "boundary_to_session_ms": 11.476,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-4",
+          "mode": "precision",
+          "returned_ids": [
+            "atom-6",
+            "atom-9",
+            "atom-7",
+            "atom-8",
+            "atom-10"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 3.21,
+          "session_start_ms": 11.337,
+          "boundary_to_session_ms": 17.394,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-4",
+          "mode": "budget",
+          "returned_ids": [
+            "atom-6",
+            "atom-7",
+            "atom-9",
+            "atom-10",
+            "atom-8"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 5.043,
+          "session_start_ms": 11.337,
+          "boundary_to_session_ms": 17.394,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-5",
+          "mode": "precision",
+          "returned_ids": [
+            "atom-6",
+            "atom-8",
+            "atom-5",
+            "atom-7",
+            "atom-0"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 2.86,
+          "session_start_ms": 6.336,
+          "boundary_to_session_ms": 13.334,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-5",
+          "mode": "budget",
+          "returned_ids": [
+            "atom-6",
+            "atom-8",
+            "atom-7",
+            "atom-14",
+            "atom-13"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 3.716,
+          "session_start_ms": 6.336,
+          "boundary_to_session_ms": 13.334,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-6",
+          "mode": "precision",
+          "returned_ids": [
+            "atom-9",
+            "atom-10",
+            "atom-11",
+            "atom-6",
+            "atom-8"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 2.382,
+          "session_start_ms": 6.601,
+          "boundary_to_session_ms": 12.863,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-6",
+          "mode": "budget",
+          "returned_ids": [
+            "atom-9",
+            "atom-10",
+            "atom-11",
+            "atom-14",
+            "atom-13"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 3.52,
+          "session_start_ms": 6.601,
+          "boundary_to_session_ms": 12.863,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-7",
+          "mode": "precision",
+          "returned_ids": [
+            "atom-10",
+            "atom-11",
+            "atom-5",
+            "atom-0",
+            "atom-2"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 2.007,
+          "session_start_ms": 5.411,
+          "boundary_to_session_ms": 11.942,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-7",
+          "mode": "budget",
+          "returned_ids": [
+            "atom-10",
+            "atom-11",
+            "atom-14",
+            "atom-13",
+            "atom-12"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 3.167,
+          "session_start_ms": 5.411,
+          "boundary_to_session_ms": 11.942,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-8",
+          "mode": "precision",
+          "returned_ids": [
+            "atom-12",
+            "atom-0",
+            "atom-14",
+            "atom-13",
+            "atom-1"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 2.665,
+          "session_start_ms": 6.501,
+          "boundary_to_session_ms": 11.722,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-8",
+          "mode": "budget",
+          "returned_ids": [
+            "atom-13",
+            "atom-12",
+            "atom-14",
+            "atom-11",
+            "atom-10"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 3.37,
+          "session_start_ms": 6.501,
+          "boundary_to_session_ms": 11.722,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-9",
+          "mode": "precision",
+          "returned_ids": [
+            "atom-12",
+            "atom-14",
+            "atom-13",
+            "atom-11",
+            "atom-10"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 3.575,
+          "session_start_ms": 6.911,
+          "boundary_to_session_ms": 12.78,
+          "session_memories_count": 10
+        },
+        {
+          "query_id": "query-9",
+          "mode": "budget",
+          "returned_ids": [
+            "atom-12",
+            "atom-13",
+            "atom-14",
+            "atom-11",
+            "atom-10"
+          ],
+          "precision": 0.4,
+          "recall": 1,
+          "round_trip_ms": 4.475,
+          "session_start_ms": 6.911,
+          "boundary_to_session_ms": 12.78,
+          "session_memories_count": 10
+        }
+      ],
+      "aggregates": {
+        "precision": {
+          "mean_precision": 0.34,
+          "mean_recall": 0.85,
+          "round_trip_ms": {
+            "p50": 2.524,
+            "p95": 3.577,
+            "p99": 3.579
+          }
+        },
+        "budget": {
+          "mean_precision": 0.32,
+          "mean_recall": 0.8,
+          "round_trip_ms": {
+            "p50": 3.62,
+            "p95": 4.803,
+            "p99": 4.995
+          }
+        }
+      },
+      "maintenance": [
+        {
+          "status": "truncated",
+          "elapsed_ms": 9.135,
+          "round_trip_ms": 9.294,
+          "wal_bytes_after": 0
+        },
+        {
+          "status": "truncated",
+          "elapsed_ms": 6.176,
+          "round_trip_ms": 6.366,
+          "wal_bytes_after": 0
+        },
+        {
+          "status": "truncated",
+          "elapsed_ms": 5.11,
+          "round_trip_ms": 5.255,
+          "wal_bytes_after": 0
+        },
+        {
+          "status": "truncated",
+          "elapsed_ms": 4.783,
+          "round_trip_ms": 4.922,
+          "wal_bytes_after": 0
+        },
+        {
+          "status": "truncated",
+          "elapsed_ms": 5.894,
+          "round_trip_ms": 6.052,
+          "wal_bytes_after": 0
+        },
+        {
+          "status": "truncated",
+          "elapsed_ms": 6.785,
+          "round_trip_ms": 6.993,
+          "wal_bytes_after": 0
+        },
+        {
+          "status": "truncated",
+          "elapsed_ms": 6.097,
+          "round_trip_ms": 6.259,
+          "wal_bytes_after": 0
+        },
+        {
+          "status": "truncated",
+          "elapsed_ms": 6.344,
+          "round_trip_ms": 6.527,
+          "wal_bytes_after": 0
+        },
+        {
+          "status": "truncated",
+          "elapsed_ms": 5.06,
+          "round_trip_ms": 5.218,
+          "wal_bytes_after": 0
+        },
+        {
+          "status": "truncated",
+          "elapsed_ms": 5.705,
+          "round_trip_ms": 5.866,
+          "wal_bytes_after": 0
+        }
+      ]
+    }
+  ],
+  "notes": "Private corpus text not reported; fresh WAL DBs; sequential MCP store/link/session-start/recall. Idle maintenance only after previous response and before session start; default precision and budget (not explicit two-hop). Corpus timestamps/tenant scope/lifecycle not replayed: all provided memories treated as currently available to one test agent. Synthetic reconstruction/labels require independent human review. No LLM/UI, raw-dialogue, temporal-cutoff, concurrency, stable timing or user-perception proof. Temporary DBs retained; existing data/configuration untouched."
+}
