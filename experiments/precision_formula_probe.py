@@ -26,7 +26,7 @@ def compare(store, agent, queries, anonymous, variants=('raw', 'max_normalized')
         for variant in variants:
             supported = set()
             def capture_fusion(ranked_lists, *args, **kwargs):
-                if variant == 'causal_bridge' and len(ranked_lists) >= 2:
+                if variant in ('causal_bridge', 'primary_bridge') and len(ranked_lists) >= 2:
                     # Require agreement of both lexical routes and two distinct
                     # anchors; a single cause edge or SIMILAR edge is insufficient.
                     anchors = {key for key, _ in ranked_lists[0]} & {
@@ -39,15 +39,18 @@ def compare(store, agent, queries, anonymous, variants=('raw', 'max_normalized')
                                              (edge.to_atom_id, edge.from_atom_id)):
                             if anchor in anchors and node not in anchors:
                                 neighbors.setdefault(node, set()).add(anchor)
-                    supported.update(node for node, links in neighbors.items() if len(links) >= 2)
+                    primary = ranked_lists[0][0][0] if ranked_lists[0] else None
+                    supported.update(node for node, links in neighbors.items()
+                                     if len(links) >= 2 and
+                                     (variant != 'primary_bridge' or primary in links))
                 return original_fusion(ranked_lists, *args, **kwargs)
             def rerank(query_vec, candidates, doc_vectors, candidate_indices, top_k=20):
                 scale = max((score for _, score in candidates), default=0)
                 if variant == 'max_normalized' and scale > 0:
                     candidates = [(key, score / scale) for key, score in candidates]
                 ranked = original(query_vec, candidates, doc_vectors, candidate_indices,
-                                  len(candidates) if variant == 'causal_bridge' else top_k)
-                if variant == 'causal_bridge':
+                                  len(candidates) if variant in ('causal_bridge', 'primary_bridge') else top_k)
+                if variant in ('causal_bridge', 'primary_bridge'):
                     ranked.sort(key=lambda item: item[0] not in supported)
                 return ranked[:top_k]
             with patch.object(fusion, 'rerank_by_similarity', rerank), patch.object(
@@ -58,11 +61,13 @@ def compare(store, agent, queries, anonymous, variants=('raw', 'max_normalized')
             outcomes[variant] = {'recall': hits / len(expected),
                                  'precision_at_5': hits / 5,
                                  'returned_ids': [anonymous[x] for x in ids]}
-        if 'causal_bridge' in outcomes:
+        for bridge in ('causal_bridge', 'primary_bridge'):
+            if bridge not in outcomes:
+                continue
             baseline = set(outcomes['raw']['returned_ids'])
             labeled = {anonymous[x] for x in expected}
-            outcomes['causal_bridge']['new_unlabeled_ids'] = [
-                key for key in outcomes['causal_bridge']['returned_ids']
+            outcomes[bridge]['new_unlabeled_ids'] = [
+                key for key in outcomes[bridge]['returned_ids']
                 if key not in baseline and key not in labeled]
         rows.append({'query_id': f'query-{ordinal}', **outcomes})
     return {'queries': len(rows), 'macro': {
@@ -100,11 +105,14 @@ def run(corpus=None, variants=('raw', 'max_normalized')):
         'Max normalization divides each fused score by the maximum before the existing reranker. '
         'Default production formula unchanged. Synthetic labels and local debug labels '
         'are not independent human quality evidence. Private text is never reported.')
-    if 'causal_bridge' in variants:
+    if any(bridge in variants for bridge in ('causal_bridge', 'primary_bridge')):
         result['conditions'] += (' Experimental causal bridge promotes fused non-anchor nodes '
             'connected by qualifying CAUSAL edges to two distinct semantic/BM25 agreed anchors. '
             'Direction is ignored; no claim of cause-only relevance. Newly promoted unlabeled '
             'nodes are reported as review risks, not proven irrelevant without complete labels.')
+    if 'primary_bridge' in variants:
+        result['conditions'] += (' Primary bridge additionally requires the highest semantic '
+            'anchor among the qualifying neighbors; no session filter is used.')
     return result
 
 
@@ -113,6 +121,10 @@ if __name__ == '__main__':
     parser.add_argument('--corpus', type=Path)
     parser.add_argument('--causal-bridge', action='store_true',
                         help='Experiment only: promote fused nodes joining two lexical anchors by causal edges')
+    parser.add_argument('--primary-bridge', action='store_true',
+                        help='Experiment only: require the highest semantic anchor in each causal bridge')
     args = parser.parse_args()
     variants = ('raw', 'causal_bridge') if args.causal_bridge else ('raw', 'max_normalized')
+    if args.primary_bridge:
+        variants = ('raw', 'causal_bridge', 'primary_bridge')
     print(json.dumps(run(args.corpus, variants), indent=2))
