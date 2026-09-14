@@ -1,0 +1,95 @@
+{
+  "entry": "MCP stdio",
+  "events": [
+    {
+      "method": "initialize",
+      "tool": null,
+      "ms": 278.786,
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "protocolVersion": "2024-11-05",
+          "capabilities": {
+            "tools": {}
+          },
+          "serverInfo": {
+            "name": "vibe-memory",
+            "version": "0.3.0"
+          }
+        }
+      }
+    },
+    {
+      "method": "tools/call",
+      "tool": "vibe_session_start",
+      "ms": 0.913,
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"session_id\":\"1cf4a1e6\",\"memories_recalled\":0,\"injection_length\":64,\"inject_file\":\"<fresh-temp-dir>/inject.md\",\"message\":\"Session started. 0 memories recalled from previous sessions.\"}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "tools/call",
+      "tool": "vibe_session_end",
+      "ms": 7.527,
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 3,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"session_id\":\"1cf4a1e6\",\"stored\":2,\"items\":[{\"id\":\"d6e005f9\",\"type\":\"summary\"},{\"id\":\"ba4f5338\",\"type\":\"highlight\"}],\"message\":\"Session ended. 2 memories stored.\"}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "tools/call",
+      "tool": "vibe_session_start",
+      "ms": 6.263,
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 4,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"session_id\":\"25c2076b\",\"memories_recalled\":2,\"injection_length\":264,\"inject_file\":\"<fresh-temp-dir>/inject.md\",\"message\":\"Session started. 2 memories recalled from previous sessions.\"}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "method": "tools/call",
+      "tool": "vibe_recall",
+      "ms": 2.177,
+      "response": {
+        "jsonrpc": "2.0",
+        "id": 5,
+        "result": {
+          "content": [
+            {
+              "type": "text",
+              "text": "{\"count\":2,\"mode\":\"precision\",\"memories\":[{\"id\":\"d6e005f9\",\"summary\":\"API timeout was fixed by increasing request timeout to 60 seconds.\",\"content\":\"API timeout was fixed by increasing request timeout to 60 seconds.\",\"session_id\":\"1cf4a1e6\",\"tags\":[\"session-summary\"]},{\"id\":\"ba4f5338\",\"summary\":\"API timeout: keep connection pool size at 20.\",\"content\":\"API timeout: keep connection pool size at 20.\",\"session_id\":\"1cf4a1e6\",\"tags\":[\"session-highlight\"]}],\"relationships\":[]}"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "cross_session_anchor": true,
+  "maintenance_enabled": false,
+  "notes": "Fresh temporary DB; real local protocol round trips, not LLM chat or enabled-maintenance experience."
+}

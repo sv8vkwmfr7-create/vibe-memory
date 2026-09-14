@@ -6,6 +6,14 @@ Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK
 
 ## Verified Baseline
 
+### Application-entry inventory and cross-session smoke
+
+Local MCP stdio subprocess verification (`results/mcp_interaction_smoke.json`) initialized the server, started a session, stored a summary plus highlight at session end, started another session and recalled the exact 60-second API timeout answer. Two memories were recalled; measured end/start/recall round trips were **7.527/6.263/2.177ms**, with cold initialization **278.786ms**. These are individual tiny-corpus calls, not latency percentiles or an LLM-chat result. MCP/session-manager regressions: **54 passed in 6.43s**; replay with `python -m pytest tests/test_mcp.py tests/test_session_manager.py -q`. The 312-test total above belongs to the preceding endurance verification, not a new full-suite run here.
+
+Application inventory: MCP `run_server`, HTTP `VibeHTTPServer.__init__`, and CLI `SessionManager.__init__` construct SDK instances without a maintenance controller or maintenance trigger. Thus the default entries do **not** expose enabled-maintenance behavior. MCP also resolves short IDs using direct storage reads in `vibe_link` and the `vibe_forget` fallback; any future coordination must cover those reads together with the complete tool operation. HTTP dispatches multiple request threads through one class-level SDK/session state; controller integration alone would not establish safe per-thread connections or session isolation. HTTP was inspected, not runtime-verified in this step.
+
+Next implementation seam: explicit opt-in MCP maintenance wiring and an explicit trigger, keeping default tool behavior/default-off unchanged and coordinating whole tool operations including direct storage reads. Then measure protocol round trips with maintenance enabled. Do not simulate that feature by monkeypatching the entry or describe SDK-only load as actual chat. Real model/UI interaction still needs a selected client workflow and remains unverified. No existing memory database or client configuration was changed.
+
 ### 30-minute SDK maintenance endurance check
 
 `results/disk_soak_sdk_maintenance_30min.json` records a fresh synthetic 100k WAL database running for 1800.464 seconds (seeding excluded), two independent SDK readers and one explicitly coordinated raw CRUD writer holding a write lock for 50ms per cycle. Replay: `python experiments/disk_soak_benchmark.py --scale 100000 --seconds 1800 --checkpoint-strategy sdk-coordinated`. Full regression before load: **312 passed in 12.56s**; no formal tests or benchmarks ran concurrently during load. Only benchmark instrumentation changed: checkpoint events now retain pre-maintenance WAL size.
