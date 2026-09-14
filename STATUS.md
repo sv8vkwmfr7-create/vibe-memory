@@ -6,6 +6,21 @@ Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK
 
 ## Verified Baseline
 
+### 100k MCP maintenance on/off comparison
+
+Replay `python experiments/mcp_maintenance_comparison.py`; full events in `results/mcp_maintenance_comparison.json`. One dense Chinese 100k seed was cloned via SQLite backup into four fresh WAL DBs, off/on/on/off order, default auto-checkpoint in all. One warm-up and one MCP store before each of 30 rounds; off pipelines ping then budget recall (top_k=5), on pipelines checkpoint then the same recall. No concurrent writer, external locks, held snapshots, graph or concurrent formal tests. Seeding/initialization/warm-up excluded from pair timing. A preliminary script used a nonexistent FTS table name and failed its post-run check; after correction all four reported runs restarted from fresh clones of the read-only generated seed.
+
+| Order | Manual maintenance | Anchor hits | Queued pair p95/p99 ms | Sampled WAL peak bytes |
+|---|---|---:|---|---:|
+| 1 | off | 30/30 | 359.687 / 387.883 | 4194192 |
+| 2 | on | 30/30 | 365.629 / 372.770 | 251352 |
+| 3 | on | 30/30 | 420.447 / 428.038 | 251352 |
+| 4 | off | 30/30 | 327.047 / 329.046 | 4218912 |
+
+**120/120** anchor hits, **60/60** maintenance success with reported WAL zero; all four SQLite and both external-content FTS integrity checks passed. Checkpoint stage ranges: **6.055–10.611 / 5.836–9.413ms**; checkpoint response p95 **8.711/8.705ms**. After load: **316 passed in 12.75s**. No product policy changed.
+
+Pair timing includes the first request plus queued recall, not isolated recall. The sampled WAL reduction (~4.2MB to 0.25MB) is specific to this sequential small-write workload; off also lacked the earlier concurrent soak's cumulative growth. On pair p95 was ~366–420ms versus off ~327–360ms. Two short runs/configuration do not establish stable causal timing or zero user-visible impact; the full difference cannot be attributed solely to checkpoint duration. Sampling is not a hard WAL maximum. No LLM/UI, user perception, multi-process or long-duration MCP claim; default remains off, test DBs retained and existing data/client configuration untouched. Next: realistic cross-session relevance/whole-call cases and idle-boundary maintenance evaluation.
+
 ### Explicit opt-in MCP maintenance
 
 MCP `--wal-maintenance` explicitly enables WAL for the selected file and exposes a ninth tool, `vibe_checkpoint`, with optional finite non-negative `drain_timeout` (default 1 second). Without the flag the original eight tools remain, checkpoint calls are unknown-tool errors, and the current journal mode is untouched. No scheduler, background thread or client configuration change is added. Ordinary tools enter one controller operation, including direct storage short-ID reads; nested SDK calls reuse admission. Checkpoint executes outside that operation to avoid self-draining. This sequential stdio server cannot process another request during maintenance: later requests wait in its input stream. External connections/processes remain uncoordinated and may produce busy. The drain budget is not a total pause/I/O deadline.

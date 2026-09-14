@@ -1,0 +1,1600 @@
+{
+  "dataset": "mcp-maintenance-comparison-v1",
+  "scale": 100000,
+  "sqlite_version": "3.53.1",
+  "runs": [
+    {
+      "enabled": false,
+      "rounds": 30,
+      "anchor_hits": 30,
+      "initialization_ms": 164.085,
+      "first_response_ms": {
+        "p50": 0.054,
+        "p95": 0.1,
+        "p99": 0.112
+      },
+      "queued_pair_ms": {
+        "p50": 332.417,
+        "p95": 359.687,
+        "p99": 387.883
+      },
+      "maintenance_statuses": {},
+      "sampled_wal_peak_bytes": 4194192,
+      "sqlite_integrity": "ok",
+      "fts_integrity": "ok",
+      "events": [
+        {
+          "round": 0,
+          "wal_bytes_before": 144232,
+          "wal_bytes_after_pair": 152472,
+          "first_response_ms": 0.048,
+          "queued_pair_ms": 321.342,
+          "maintenance": null
+        },
+        {
+          "round": 1,
+          "wal_bytes_before": 263712,
+          "wal_bytes_after_pair": 271952,
+          "first_response_ms": 0.066,
+          "queued_pair_ms": 367.746,
+          "maintenance": null
+        },
+        {
+          "round": 2,
+          "wal_bytes_before": 428512,
+          "wal_bytes_after_pair": 440872,
+          "first_response_ms": 0.087,
+          "queued_pair_ms": 329.922,
+          "maintenance": null
+        },
+        {
+          "round": 3,
+          "wal_bytes_before": 609792,
+          "wal_bytes_after_pair": 622152,
+          "first_response_ms": 0.048,
+          "queued_pair_ms": 318.957,
+          "maintenance": null
+        },
+        {
+          "round": 4,
+          "wal_bytes_before": 803432,
+          "wal_bytes_after_pair": 815792,
+          "first_response_ms": 0.112,
+          "queued_pair_ms": 346.606,
+          "maintenance": null
+        },
+        {
+          "round": 5,
+          "wal_bytes_before": 972352,
+          "wal_bytes_after_pair": 980592,
+          "first_response_ms": 0.044,
+          "queued_pair_ms": 333.806,
+          "maintenance": null
+        },
+        {
+          "round": 6,
+          "wal_bytes_before": 1190712,
+          "wal_bytes_after_pair": 1198952,
+          "first_response_ms": 0.048,
+          "queued_pair_ms": 316.748,
+          "maintenance": null
+        },
+        {
+          "round": 7,
+          "wal_bytes_before": 1417312,
+          "wal_bytes_after_pair": 1425552,
+          "first_response_ms": 0.068,
+          "queued_pair_ms": 320.971,
+          "maintenance": null
+        },
+        {
+          "round": 8,
+          "wal_bytes_before": 1623312,
+          "wal_bytes_after_pair": 1635672,
+          "first_response_ms": 0.05,
+          "queued_pair_ms": 349.838,
+          "maintenance": null
+        },
+        {
+          "round": 9,
+          "wal_bytes_before": 1792232,
+          "wal_bytes_after_pair": 1804592,
+          "first_response_ms": 0.045,
+          "queued_pair_ms": 332.11,
+          "maintenance": null
+        },
+        {
+          "round": 10,
+          "wal_bytes_before": 1961152,
+          "wal_bytes_after_pair": 1973512,
+          "first_response_ms": 0.042,
+          "queued_pair_ms": 332.273,
+          "maintenance": null
+        },
+        {
+          "round": 11,
+          "wal_bytes_before": 2130072,
+          "wal_bytes_after_pair": 2138312,
+          "first_response_ms": 0.053,
+          "queued_pair_ms": 336.445,
+          "maintenance": null
+        },
+        {
+          "round": 12,
+          "wal_bytes_before": 2331952,
+          "wal_bytes_after_pair": 2340192,
+          "first_response_ms": 0.064,
+          "queued_pair_ms": 337.205,
+          "maintenance": null
+        },
+        {
+          "round": 13,
+          "wal_bytes_before": 2542072,
+          "wal_bytes_after_pair": 2550312,
+          "first_response_ms": 0.047,
+          "queued_pair_ms": 322.973,
+          "maintenance": null
+        },
+        {
+          "round": 14,
+          "wal_bytes_before": 2719232,
+          "wal_bytes_after_pair": 2731592,
+          "first_response_ms": 0.044,
+          "queued_pair_ms": 333.748,
+          "maintenance": null
+        },
+        {
+          "round": 15,
+          "wal_bytes_before": 2970552,
+          "wal_bytes_after_pair": 2982912,
+          "first_response_ms": 0.087,
+          "queued_pair_ms": 327.416,
+          "maintenance": null
+        },
+        {
+          "round": 16,
+          "wal_bytes_before": 3164192,
+          "wal_bytes_after_pair": 3176552,
+          "first_response_ms": 0.067,
+          "queued_pair_ms": 342.52,
+          "maintenance": null
+        },
+        {
+          "round": 17,
+          "wal_bytes_before": 3308392,
+          "wal_bytes_after_pair": 3316632,
+          "first_response_ms": 0.046,
+          "queued_pair_ms": 320.329,
+          "maintenance": null
+        },
+        {
+          "round": 18,
+          "wal_bytes_before": 3502032,
+          "wal_bytes_after_pair": 3510272,
+          "first_response_ms": 0.055,
+          "queued_pair_ms": 332.412,
+          "maintenance": null
+        },
+        {
+          "round": 19,
+          "wal_bytes_before": 3691552,
+          "wal_bytes_after_pair": 3699792,
+          "first_response_ms": 0.065,
+          "queued_pair_ms": 338.252,
+          "maintenance": null
+        },
+        {
+          "round": 20,
+          "wal_bytes_before": 3872832,
+          "wal_bytes_after_pair": 3885192,
+          "first_response_ms": 0.083,
+          "queued_pair_ms": 326.532,
+          "maintenance": null
+        },
+        {
+          "round": 21,
+          "wal_bytes_before": 4066472,
+          "wal_bytes_after_pair": 4078832,
+          "first_response_ms": 0.065,
+          "queued_pair_ms": 335.854,
+          "maintenance": null
+        },
+        {
+          "round": 22,
+          "wal_bytes_before": 4194192,
+          "wal_bytes_after_pair": 4194192,
+          "first_response_ms": 0.047,
+          "queued_pair_ms": 336.442,
+          "maintenance": null
+        },
+        {
+          "round": 23,
+          "wal_bytes_before": 4194192,
+          "wal_bytes_after_pair": 4194192,
+          "first_response_ms": 0.051,
+          "queued_pair_ms": 328.372,
+          "maintenance": null
+        },
+        {
+          "round": 24,
+          "wal_bytes_before": 4194192,
+          "wal_bytes_after_pair": 4194192,
+          "first_response_ms": 0.054,
+          "queued_pair_ms": 323.821,
+          "maintenance": null
+        },
+        {
+          "round": 25,
+          "wal_bytes_before": 4194192,
+          "wal_bytes_after_pair": 4194192,
+          "first_response_ms": 0.111,
+          "queued_pair_ms": 332.421,
+          "maintenance": null
+        },
+        {
+          "round": 26,
+          "wal_bytes_before": 4194192,
+          "wal_bytes_after_pair": 4194192,
+          "first_response_ms": 0.053,
+          "queued_pair_ms": 396.108,
+          "maintenance": null
+        },
+        {
+          "round": 27,
+          "wal_bytes_before": 4194192,
+          "wal_bytes_after_pair": 4194192,
+          "first_response_ms": 0.085,
+          "queued_pair_ms": 332.529,
+          "maintenance": null
+        },
+        {
+          "round": 28,
+          "wal_bytes_before": 4194192,
+          "wal_bytes_after_pair": 4194192,
+          "first_response_ms": 0.084,
+          "queued_pair_ms": 342.711,
+          "maintenance": null
+        },
+        {
+          "round": 29,
+          "wal_bytes_before": 4194192,
+          "wal_bytes_after_pair": 4194192,
+          "first_response_ms": 0.045,
+          "queued_pair_ms": 329.213,
+          "maintenance": null
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "rounds": 30,
+      "anchor_hits": 30,
+      "initialization_ms": 209.388,
+      "first_response_ms": {
+        "p50": 7.336,
+        "p95": 8.711,
+        "p99": 10.244
+      },
+      "queued_pair_ms": {
+        "p50": 344.04,
+        "p95": 365.629,
+        "p99": 372.77
+      },
+      "maintenance_statuses": {
+        "truncated": 30
+      },
+      "sampled_wal_peak_bytes": 251352,
+      "sqlite_integrity": "ok",
+      "fts_integrity": "ok",
+      "events": [
+        {
+          "round": 0,
+          "wal_bytes_before": 144232,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 6.969,
+          "queued_pair_ms": 348.847,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.719
+          }
+        },
+        {
+          "round": 1,
+          "wal_bytes_before": 119512,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 6.834,
+          "queued_pair_ms": 334.768,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.503
+          }
+        },
+        {
+          "round": 2,
+          "wal_bytes_before": 164832,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 10.861,
+          "queued_pair_ms": 345.923,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 10.611
+          }
+        },
+        {
+          "round": 3,
+          "wal_bytes_before": 181312,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 6.322,
+          "queued_pair_ms": 332.751,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.055
+          }
+        },
+        {
+          "round": 4,
+          "wal_bytes_before": 193672,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 8.115,
+          "queued_pair_ms": 342.078,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 7.862
+          }
+        },
+        {
+          "round": 5,
+          "wal_bytes_before": 168952,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 7.374,
+          "queued_pair_ms": 359.923,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 7.136
+          }
+        },
+        {
+          "round": 6,
+          "wal_bytes_before": 218392,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 7.367,
+          "queued_pair_ms": 347.19,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 7.139
+          }
+        },
+        {
+          "round": 7,
+          "wal_bytes_before": 226632,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 7.47,
+          "queued_pair_ms": 374.539,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 7.241
+          }
+        },
+        {
+          "round": 8,
+          "wal_bytes_before": 206032,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 7.534,
+          "queued_pair_ms": 338.021,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 7.318
+          }
+        },
+        {
+          "round": 9,
+          "wal_bytes_before": 168952,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 6.738,
+          "queued_pair_ms": 342.158,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.554
+          }
+        },
+        {
+          "round": 10,
+          "wal_bytes_before": 168952,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 7.486,
+          "queued_pair_ms": 336.814,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 7.261
+          }
+        },
+        {
+          "round": 11,
+          "wal_bytes_before": 181312,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 7.787,
+          "queued_pair_ms": 325.338,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 7.564
+          }
+        },
+        {
+          "round": 12,
+          "wal_bytes_before": 189552,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 7.701,
+          "queued_pair_ms": 339.435,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 7.421
+          }
+        },
+        {
+          "round": 13,
+          "wal_bytes_before": 210152,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 6.519,
+          "queued_pair_ms": 346.851,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.278
+          }
+        },
+        {
+          "round": 14,
+          "wal_bytes_before": 189552,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 7.25,
+          "queued_pair_ms": 330.099,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.967
+          }
+        },
+        {
+          "round": 15,
+          "wal_bytes_before": 251352,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 7.829,
+          "queued_pair_ms": 362.196,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 7.616
+          }
+        },
+        {
+          "round": 16,
+          "wal_bytes_before": 193672,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 6.389,
+          "queued_pair_ms": 357.995,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.209
+          }
+        },
+        {
+          "round": 17,
+          "wal_bytes_before": 144232,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 7.225,
+          "queued_pair_ms": 360.563,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 7.059
+          }
+        },
+        {
+          "round": 18,
+          "wal_bytes_before": 193672,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 6.434,
+          "queued_pair_ms": 351.112,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.246
+          }
+        },
+        {
+          "round": 19,
+          "wal_bytes_before": 201912,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 7.979,
+          "queued_pair_ms": 336.148,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 7.797
+          }
+        },
+        {
+          "round": 20,
+          "wal_bytes_before": 193672,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 7.652,
+          "queued_pair_ms": 340.388,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 7.386
+          }
+        },
+        {
+          "round": 21,
+          "wal_bytes_before": 193672,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 6.866,
+          "queued_pair_ms": 326.231,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.63
+          }
+        },
+        {
+          "round": 22,
+          "wal_bytes_before": 218392,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 7.282,
+          "queued_pair_ms": 368.438,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 7.043
+          }
+        },
+        {
+          "round": 23,
+          "wal_bytes_before": 234872,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 8.731,
+          "queued_pair_ms": 355.828,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 8.445
+          }
+        },
+        {
+          "round": 24,
+          "wal_bytes_before": 177192,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 6.642,
+          "queued_pair_ms": 322.806,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.439
+          }
+        },
+        {
+          "round": 25,
+          "wal_bytes_before": 152472,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 8.686,
+          "queued_pair_ms": 322.179,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 8.466
+          }
+        },
+        {
+          "round": 26,
+          "wal_bytes_before": 201912,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 7.169,
+          "queued_pair_ms": 355.232,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.991
+          }
+        },
+        {
+          "round": 27,
+          "wal_bytes_before": 206032,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 7.121,
+          "queued_pair_ms": 340.893,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.851
+          }
+        },
+        {
+          "round": 28,
+          "wal_bytes_before": 210152,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 7.446,
+          "queued_pair_ms": 359.912,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 7.209
+          }
+        },
+        {
+          "round": 29,
+          "wal_bytes_before": 181312,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 7.304,
+          "queued_pair_ms": 349.719,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 7.105
+          }
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "rounds": 30,
+      "anchor_hits": 30,
+      "initialization_ms": 163.149,
+      "first_response_ms": {
+        "p50": 7.073,
+        "p95": 8.705,
+        "p99": 9.454
+      },
+      "queued_pair_ms": {
+        "p50": 367.601,
+        "p95": 420.447,
+        "p99": 428.038
+      },
+      "maintenance_statuses": {
+        "truncated": 30
+      },
+      "sampled_wal_peak_bytes": 251352,
+      "sqlite_integrity": "ok",
+      "fts_integrity": "ok",
+      "events": [
+        {
+          "round": 0,
+          "wal_bytes_before": 144232,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 7.038,
+          "queued_pair_ms": 429.329,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.856
+          }
+        },
+        {
+          "round": 1,
+          "wal_bytes_before": 119512,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 6.048,
+          "queued_pair_ms": 348.185,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 5.836
+          }
+        },
+        {
+          "round": 2,
+          "wal_bytes_before": 164832,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 7.279,
+          "queued_pair_ms": 326.811,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 7.081
+          }
+        },
+        {
+          "round": 3,
+          "wal_bytes_before": 181312,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 6.991,
+          "queued_pair_ms": 335.431,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.768
+          }
+        },
+        {
+          "round": 4,
+          "wal_bytes_before": 193672,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 7.108,
+          "queued_pair_ms": 348.687,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.883
+          }
+        },
+        {
+          "round": 5,
+          "wal_bytes_before": 168952,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 7.214,
+          "queued_pair_ms": 331.089,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.973
+          }
+        },
+        {
+          "round": 6,
+          "wal_bytes_before": 218392,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 6.777,
+          "queued_pair_ms": 375.96,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.545
+          }
+        },
+        {
+          "round": 7,
+          "wal_bytes_before": 226632,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 6.883,
+          "queued_pair_ms": 356.007,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.697
+          }
+        },
+        {
+          "round": 8,
+          "wal_bytes_before": 206032,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 7.646,
+          "queued_pair_ms": 336.718,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 7.428
+          }
+        },
+        {
+          "round": 9,
+          "wal_bytes_before": 168952,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 8.727,
+          "queued_pair_ms": 411.416,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 8.539
+          }
+        },
+        {
+          "round": 10,
+          "wal_bytes_before": 168952,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 7.432,
+          "queued_pair_ms": 328.192,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 7.243
+          }
+        },
+        {
+          "round": 11,
+          "wal_bytes_before": 181312,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 6.285,
+          "queued_pair_ms": 325.088,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.099
+          }
+        },
+        {
+          "round": 12,
+          "wal_bytes_before": 189552,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 6.728,
+          "queued_pair_ms": 415.032,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.4
+          }
+        },
+        {
+          "round": 13,
+          "wal_bytes_before": 210152,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 9.751,
+          "queued_pair_ms": 424.878,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 9.413
+          }
+        },
+        {
+          "round": 14,
+          "wal_bytes_before": 189552,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 6.836,
+          "queued_pair_ms": 365.986,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.665
+          }
+        },
+        {
+          "round": 15,
+          "wal_bytes_before": 251352,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 7.375,
+          "queued_pair_ms": 371.181,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 7.189
+          }
+        },
+        {
+          "round": 16,
+          "wal_bytes_before": 181312,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 6.753,
+          "queued_pair_ms": 399.614,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.523
+          }
+        },
+        {
+          "round": 17,
+          "wal_bytes_before": 156592,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 8.679,
+          "queued_pair_ms": 371.327,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 8.426
+          }
+        },
+        {
+          "round": 18,
+          "wal_bytes_before": 181312,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 6.808,
+          "queued_pair_ms": 355.808,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.523
+          }
+        },
+        {
+          "round": 19,
+          "wal_bytes_before": 189552,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 6.388,
+          "queued_pair_ms": 377.406,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.164
+          }
+        },
+        {
+          "round": 20,
+          "wal_bytes_before": 193672,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 7.145,
+          "queued_pair_ms": 376.802,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.933
+          }
+        },
+        {
+          "round": 21,
+          "wal_bytes_before": 193672,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 6.261,
+          "queued_pair_ms": 362.522,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.066
+          }
+        },
+        {
+          "round": 22,
+          "wal_bytes_before": 218392,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 6.426,
+          "queued_pair_ms": 352.185,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.201
+          }
+        },
+        {
+          "round": 23,
+          "wal_bytes_before": 230752,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 7.401,
+          "queued_pair_ms": 384.605,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 7.1
+          }
+        },
+        {
+          "round": 24,
+          "wal_bytes_before": 189552,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 6.747,
+          "queued_pair_ms": 389.565,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.485
+          }
+        },
+        {
+          "round": 25,
+          "wal_bytes_before": 177192,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 7.419,
+          "queued_pair_ms": 366.764,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 7.213
+          }
+        },
+        {
+          "round": 26,
+          "wal_bytes_before": 201912,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 6.734,
+          "queued_pair_ms": 368.438,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 6.476
+          }
+        },
+        {
+          "round": 27,
+          "wal_bytes_before": 206032,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 7.495,
+          "queued_pair_ms": 327.836,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 7.264
+          }
+        },
+        {
+          "round": 28,
+          "wal_bytes_before": 210152,
+          "wal_bytes_after_pair": 12392,
+          "first_response_ms": 7.252,
+          "queued_pair_ms": 408.866,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 7.044
+          }
+        },
+        {
+          "round": 29,
+          "wal_bytes_before": 181312,
+          "wal_bytes_after_pair": 8272,
+          "first_response_ms": 8.243,
+          "queued_pair_ms": 379.994,
+          "maintenance": {
+            "status": "truncated",
+            "checkpoint": [
+              0,
+              0,
+              0
+            ],
+            "wal_bytes_after": 0,
+            "elapsed_ms": 8.006
+          }
+        }
+      ]
+    },
+    {
+      "enabled": false,
+      "rounds": 30,
+      "anchor_hits": 30,
+      "initialization_ms": 166.609,
+      "first_response_ms": {
+        "p50": 0.08,
+        "p95": 0.123,
+        "p99": 0.141
+      },
+      "queued_pair_ms": {
+        "p50": 320.345,
+        "p95": 327.047,
+        "p99": 329.046
+      },
+      "maintenance_statuses": {},
+      "sampled_wal_peak_bytes": 4218912,
+      "sqlite_integrity": "ok",
+      "fts_integrity": "ok",
+      "events": [
+        {
+          "round": 0,
+          "wal_bytes_before": 144232,
+          "wal_bytes_after_pair": 152472,
+          "first_response_ms": 0.107,
+          "queued_pair_ms": 317.871,
+          "maintenance": null
+        },
+        {
+          "round": 1,
+          "wal_bytes_before": 263712,
+          "wal_bytes_after_pair": 271952,
+          "first_response_ms": 0.048,
+          "queued_pair_ms": 329.625,
+          "maintenance": null
+        },
+        {
+          "round": 2,
+          "wal_bytes_before": 428512,
+          "wal_bytes_after_pair": 440872,
+          "first_response_ms": 0.069,
+          "queued_pair_ms": 326.338,
+          "maintenance": null
+        },
+        {
+          "round": 3,
+          "wal_bytes_before": 609792,
+          "wal_bytes_after_pair": 622152,
+          "first_response_ms": 0.096,
+          "queued_pair_ms": 318.688,
+          "maintenance": null
+        },
+        {
+          "round": 4,
+          "wal_bytes_before": 803432,
+          "wal_bytes_after_pair": 815792,
+          "first_response_ms": 0.082,
+          "queued_pair_ms": 316.481,
+          "maintenance": null
+        },
+        {
+          "round": 5,
+          "wal_bytes_before": 972352,
+          "wal_bytes_after_pair": 980592,
+          "first_response_ms": 0.132,
+          "queued_pair_ms": 316.129,
+          "maintenance": null
+        },
+        {
+          "round": 6,
+          "wal_bytes_before": 1190712,
+          "wal_bytes_after_pair": 1198952,
+          "first_response_ms": 0.08,
+          "queued_pair_ms": 321.486,
+          "maintenance": null
+        },
+        {
+          "round": 7,
+          "wal_bytes_before": 1417312,
+          "wal_bytes_after_pair": 1425552,
+          "first_response_ms": 0.052,
+          "queued_pair_ms": 319.543,
+          "maintenance": null
+        },
+        {
+          "round": 8,
+          "wal_bytes_before": 1623312,
+          "wal_bytes_after_pair": 1635672,
+          "first_response_ms": 0.112,
+          "queued_pair_ms": 313.875,
+          "maintenance": null
+        },
+        {
+          "round": 9,
+          "wal_bytes_before": 1792232,
+          "wal_bytes_after_pair": 1804592,
+          "first_response_ms": 0.046,
+          "queued_pair_ms": 318.391,
+          "maintenance": null
+        },
+        {
+          "round": 10,
+          "wal_bytes_before": 1961152,
+          "wal_bytes_after_pair": 1973512,
+          "first_response_ms": 0.07,
+          "queued_pair_ms": 321.677,
+          "maintenance": null
+        },
+        {
+          "round": 11,
+          "wal_bytes_before": 2142432,
+          "wal_bytes_after_pair": 2150672,
+          "first_response_ms": 0.145,
+          "queued_pair_ms": 320.588,
+          "maintenance": null
+        },
+        {
+          "round": 12,
+          "wal_bytes_before": 2331952,
+          "wal_bytes_after_pair": 2340192,
+          "first_response_ms": 0.097,
+          "queued_pair_ms": 322.147,
+          "maintenance": null
+        },
+        {
+          "round": 13,
+          "wal_bytes_before": 2542072,
+          "wal_bytes_after_pair": 2550312,
+          "first_response_ms": 0.046,
+          "queued_pair_ms": 323.954,
+          "maintenance": null
+        },
+        {
+          "round": 14,
+          "wal_bytes_before": 2719232,
+          "wal_bytes_after_pair": 2731592,
+          "first_response_ms": 0.051,
+          "queued_pair_ms": 327.627,
+          "maintenance": null
+        },
+        {
+          "round": 15,
+          "wal_bytes_before": 2982912,
+          "wal_bytes_after_pair": 2995272,
+          "first_response_ms": 0.079,
+          "queued_pair_ms": 322.151,
+          "maintenance": null
+        },
+        {
+          "round": 16,
+          "wal_bytes_before": 3164192,
+          "wal_bytes_after_pair": 3176552,
+          "first_response_ms": 0.046,
+          "queued_pair_ms": 322.287,
+          "maintenance": null
+        },
+        {
+          "round": 17,
+          "wal_bytes_before": 3320752,
+          "wal_bytes_after_pair": 3328992,
+          "first_response_ms": 0.087,
+          "queued_pair_ms": 318.444,
+          "maintenance": null
+        },
+        {
+          "round": 18,
+          "wal_bytes_before": 3502032,
+          "wal_bytes_after_pair": 3510272,
+          "first_response_ms": 0.081,
+          "queued_pair_ms": 323.985,
+          "maintenance": null
+        },
+        {
+          "round": 19,
+          "wal_bytes_before": 3703912,
+          "wal_bytes_after_pair": 3712152,
+          "first_response_ms": 0.065,
+          "queued_pair_ms": 322.214,
+          "maintenance": null
+        },
+        {
+          "round": 20,
+          "wal_bytes_before": 3897552,
+          "wal_bytes_after_pair": 3909912,
+          "first_response_ms": 0.064,
+          "queued_pair_ms": 322.492,
+          "maintenance": null
+        },
+        {
+          "round": 21,
+          "wal_bytes_before": 4091192,
+          "wal_bytes_after_pair": 4103552,
+          "first_response_ms": 0.044,
+          "queued_pair_ms": 320.438,
+          "maintenance": null
+        },
+        {
+          "round": 22,
+          "wal_bytes_before": 4218912,
+          "wal_bytes_after_pair": 4218912,
+          "first_response_ms": 0.055,
+          "queued_pair_ms": 321.365,
+          "maintenance": null
+        },
+        {
+          "round": 23,
+          "wal_bytes_before": 4218912,
+          "wal_bytes_after_pair": 4218912,
+          "first_response_ms": 0.083,
+          "queued_pair_ms": 319.849,
+          "maintenance": null
+        },
+        {
+          "round": 24,
+          "wal_bytes_before": 4218912,
+          "wal_bytes_after_pair": 4218912,
+          "first_response_ms": 0.089,
+          "queued_pair_ms": 318.168,
+          "maintenance": null
+        },
+        {
+          "round": 25,
+          "wal_bytes_before": 4218912,
+          "wal_bytes_after_pair": 4218912,
+          "first_response_ms": 0.062,
+          "queued_pair_ms": 318.154,
+          "maintenance": null
+        },
+        {
+          "round": 26,
+          "wal_bytes_before": 4218912,
+          "wal_bytes_after_pair": 4218912,
+          "first_response_ms": 0.108,
+          "queued_pair_ms": 318.189,
+          "maintenance": null
+        },
+        {
+          "round": 27,
+          "wal_bytes_before": 4218912,
+          "wal_bytes_after_pair": 4218912,
+          "first_response_ms": 0.048,
+          "queued_pair_ms": 320.253,
+          "maintenance": null
+        },
+        {
+          "round": 28,
+          "wal_bytes_before": 4218912,
+          "wal_bytes_after_pair": 4218912,
+          "first_response_ms": 0.081,
+          "queued_pair_ms": 319.38,
+          "maintenance": null
+        },
+        {
+          "round": 29,
+          "wal_bytes_before": 4218912,
+          "wal_bytes_after_pair": 4218912,
+          "first_response_ms": 0.102,
+          "queued_pair_ms": 318.156,
+          "maintenance": null
+        }
+      ]
+    }
+  ],
+  "notes": "Same generated dense Chinese seed cloned via SQLite backup into four fresh DBs; off/on/on/off. Seed reused read-only after a preliminary script used the wrong FTS check table name; all reported runs restarted with correct checks. All use WAL/default auto-checkpoint; off sends ping then recall, on checkpoint then recall. One warm-up and one store per round; no concurrent writer, external locks, held snapshots or graph; seeding/initialization/warm-up excluded from pair timings. Pair includes first request plus queued recall, not isolated recall. Event WAL is sampled, not hard peak; observer retains no transaction during load. No formal tests concurrent. No LLM/UI/user perception or stable causal timing claim. Fresh temp DBs retained."
+}
