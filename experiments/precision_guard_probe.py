@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-from vibe_memory.embedding import TfidfProvider
+from vibe_memory.embedding import TfidfProvider, index_flat
 from vibe_memory.models.memory_atom import MemoryAtom, Edge, EdgeLabel
 from vibe_memory.retrieval.ppr import recall
 from vibe_memory.storage.sqlite_store import VibeStorage
@@ -43,7 +43,7 @@ def guarded_causal_ids(storage, agent_id, tenant_id, baseline, semantic_ids, sco
     return [aid for aid in baseline if aid in allowed], 'filtered'
 
 
-def evaluate(data):
+def evaluate(data, embedding_provider=None):
     store = VibeStorage(':memory:')
     anonymous = {a['id']: f'atom-{i}' for i, a in enumerate(data['atoms'])}
     try:
@@ -57,14 +57,23 @@ def evaluate(data):
             store.insert_edge(Edge(id=f'edge-{i}', from_atom_id=source,
                 to_atom_id=target, label=label))
         atoms = store.get_atoms_by_agent('probe')
-        provider = TfidfProvider()
-        provider.fit([a.content for a in atoms])
+        provider = embedding_provider or TfidfProvider()
+        documents = [a.content for a in atoms]
+        if isinstance(provider, TfidfProvider):
+            provider.fit(documents)
+            def rank(query):
+                return provider.search(query, top_k=len(atoms))
+        else:
+            vectors = provider.encode(documents)
+            def rank(query):
+                return index_flat(vectors, provider.encode_query(query), top_k=len(atoms))
         rows = []
         for i, q in enumerate(data['queries']):
-            indices, similarities = provider.search(q['text'], top_k=len(atoms))
+            indices, similarities = rank(q['text'])
             scores = {atoms[index].id: float(score) for index, score in zip(indices, similarities)}
             primary = atoms[indices[0]].id
-            baseline = [a.id for a in recall(q['text'], 'probe', store, top_k=5)['atoms']]
+            baseline = [a.id for a in recall(q['text'], 'probe', store, top_k=5,
+                embedding_provider=provider)['atoms']]
             variants = {'baseline': baseline, 'truncate_3': baseline[:3],
                 'positive_similarity': [aid for aid in baseline if scores.get(aid, 0) > 0]}
             for hops in (1, 2):
@@ -94,7 +103,8 @@ def evaluate(data):
                 'macro_labeled_positive_precision': sum(r['labeled_positive_precision'] for r in selected) / len(selected),
                 'mean_returned_count': sum(r['returned_count'] for r in selected) / len(selected),
                 'queries_with_negative_hits': sum(bool(r['negative_hits']) for r in selected)}
-        return {'conditions': 'Offline post-filter of production core precision Top-5. Assistant labels/manual edges. Primary TF-IDF anchor, causal neighborhood ignores direction; no backfill or candidate expansion. Guard requires two positive TF-IDF anchors in the primary two-hop causal neighborhood, otherwise preserves baseline. Evidence-preserving variant additionally retains every original candidate with positive TF-IDF similarity; this is lexical support, not semantic correctness. Zero-overlap relevant candidates can still be lost if outside the causal neighborhood. Anchor agreement is not correctness proof; jointly wrong anchors remain unsafe. Truncate-3 is post-truncation, not recall(top_k=3). Unlabeled items not assumed irrelevant. Consumed holdout is now diagnostic/development data, not fresh generalization evidence. Not SDK/MCP implementation or production latency proof.',
+        provider_kind = 'TF-IDF' if isinstance(provider, TfidfProvider) else provider.name
+        return {'conditions': f'Offline post-filter of production core precision Top-5. Assistant labels/manual edges. Primary {provider_kind} anchor, causal neighborhood ignores direction; no backfill or candidate expansion. Guard requires two positive {provider_kind} anchors in the primary two-hop causal neighborhood, otherwise preserves baseline. Evidence-preserving variant additionally retains every original candidate with positive {provider_kind} similarity; this is lexical/vector support, not semantic correctness. Zero-overlap relevant candidates can still be lost if outside the causal neighborhood. Anchor agreement is not correctness proof; jointly wrong anchors remain unsafe. Truncate-3 is post-truncation, not recall(top_k=3). Unlabeled items not assumed irrelevant. Consumed holdout is now diagnostic/development data, not fresh generalization evidence. Not SDK/MCP implementation or production latency proof.',
             'aggregates': aggregates, 'rows': rows}
     finally:
         store.conn.close()

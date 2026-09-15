@@ -118,6 +118,21 @@ pip install -e .
 pip install vibe-memory[semantic]
 ```
 
+如需离线中文语义向量，可将已下载的 `BAAI/bge-small-zh-v1.5` 指定给 SDK；模型目录属于本地文件，已由 `.gitignore` 排除，不会随提交上传：
+
+```python
+from vibe_memory import VibeMemory
+
+mem = VibeMemory(
+    agent_id="my-agent",
+    db_path="memory.db",
+    embedding_backend="st",
+    embedding_model="models/bge-small-zh-v1.5",
+)
+```
+
+`embedding_model` 也可以填写绝对路径。当前默认值和生产 SDK/MCP 行为不变；启用前请用自己的标注集比较召回、精度、内存和启动成本。
+
 ### Python SDK
 
 ```python

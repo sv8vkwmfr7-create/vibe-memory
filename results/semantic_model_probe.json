@@ -1,0 +1,345 @@
+{
+  "model": "BAAI/bge-small-zh-v1.5",
+  "model_dir": "models\\bge-small-zh-v1.5",
+  "provider": "st-models\\bge-small-zh-v1.5",
+  "device": "cpu",
+  "conditions": "Local model only; no SDK/MCP, no production configuration or defaults changed. Assistant-authored labels/manual edges; not independent evaluation. Setup/model loading excluded from per-query result because this probe reports retrieval behavior only.",
+  "datasets": [
+    {
+      "name": "relevance_diagnostic_cases.json",
+      "sha256": "674c8962e1a436c53a09a37213f93b3d35befb57841ddff0cf4c4581c7b80f19",
+      "cases": [
+        {
+          "case_id": "wrong-service",
+          "aggregates": {
+            "baseline": {
+              "macro_recall": 1.0,
+              "macro_labeled_positive_precision": 0.3333333333333333,
+              "mean_returned_count": 3.0,
+              "queries_with_negative_hits": 1
+            },
+            "truncate_3": {
+              "macro_recall": 1.0,
+              "macro_labeled_positive_precision": 0.3333333333333333,
+              "mean_returned_count": 3.0,
+              "queries_with_negative_hits": 1
+            },
+            "positive_similarity": {
+              "macro_recall": 1.0,
+              "macro_labeled_positive_precision": 0.3333333333333333,
+              "mean_returned_count": 3.0,
+              "queries_with_negative_hits": 1
+            },
+            "primary_causal_1hop": {
+              "macro_recall": 0.0,
+              "macro_labeled_positive_precision": 0.0,
+              "mean_returned_count": 2.0,
+              "queries_with_negative_hits": 1
+            },
+            "primary_causal_2hop": {
+              "macro_recall": 0.0,
+              "macro_labeled_positive_precision": 0.0,
+              "mean_returned_count": 2.0,
+              "queries_with_negative_hits": 1
+            },
+            "guarded_causal_2hop": {
+              "macro_recall": 0.0,
+              "macro_labeled_positive_precision": 0.0,
+              "mean_returned_count": 2.0,
+              "queries_with_negative_hits": 1
+            },
+            "evidence_preserving_causal_2hop": {
+              "macro_recall": 1.0,
+              "macro_labeled_positive_precision": 0.3333333333333333,
+              "mean_returned_count": 3.0,
+              "queries_with_negative_hits": 1
+            }
+          }
+        },
+        {
+          "case_id": "wrong-environment",
+          "aggregates": {
+            "baseline": {
+              "macro_recall": 1.0,
+              "macro_labeled_positive_precision": 0.3333333333333333,
+              "mean_returned_count": 3.0,
+              "queries_with_negative_hits": 1
+            },
+            "truncate_3": {
+              "macro_recall": 1.0,
+              "macro_labeled_positive_precision": 0.3333333333333333,
+              "mean_returned_count": 3.0,
+              "queries_with_negative_hits": 1
+            },
+            "positive_similarity": {
+              "macro_recall": 1.0,
+              "macro_labeled_positive_precision": 0.3333333333333333,
+              "mean_returned_count": 3.0,
+              "queries_with_negative_hits": 1
+            },
+            "primary_causal_1hop": {
+              "macro_recall": 0.0,
+              "macro_labeled_positive_precision": 0.0,
+              "mean_returned_count": 2.0,
+              "queries_with_negative_hits": 1
+            },
+            "primary_causal_2hop": {
+              "macro_recall": 0.0,
+              "macro_labeled_positive_precision": 0.0,
+              "mean_returned_count": 2.0,
+              "queries_with_negative_hits": 1
+            },
+            "guarded_causal_2hop": {
+              "macro_recall": 0.0,
+              "macro_labeled_positive_precision": 0.0,
+              "mean_returned_count": 2.0,
+              "queries_with_negative_hits": 1
+            },
+            "evidence_preserving_causal_2hop": {
+              "macro_recall": 1.0,
+              "macro_labeled_positive_precision": 0.3333333333333333,
+              "mean_returned_count": 3.0,
+              "queries_with_negative_hits": 1
+            }
+          }
+        },
+        {
+          "case_id": "wrong-operation",
+          "aggregates": {
+            "baseline": {
+              "macro_recall": 1.0,
+              "macro_labeled_positive_precision": 0.3333333333333333,
+              "mean_returned_count": 3.0,
+              "queries_with_negative_hits": 1
+            },
+            "truncate_3": {
+              "macro_recall": 1.0,
+              "macro_labeled_positive_precision": 0.3333333333333333,
+              "mean_returned_count": 3.0,
+              "queries_with_negative_hits": 1
+            },
+            "positive_similarity": {
+              "macro_recall": 1.0,
+              "macro_labeled_positive_precision": 0.3333333333333333,
+              "mean_returned_count": 3.0,
+              "queries_with_negative_hits": 1
+            },
+            "primary_causal_1hop": {
+              "macro_recall": 0.0,
+              "macro_labeled_positive_precision": 0.0,
+              "mean_returned_count": 2.0,
+              "queries_with_negative_hits": 1
+            },
+            "primary_causal_2hop": {
+              "macro_recall": 0.0,
+              "macro_labeled_positive_precision": 0.0,
+              "mean_returned_count": 2.0,
+              "queries_with_negative_hits": 1
+            },
+            "guarded_causal_2hop": {
+              "macro_recall": 0.0,
+              "macro_labeled_positive_precision": 0.0,
+              "mean_returned_count": 2.0,
+              "queries_with_negative_hits": 1
+            },
+            "evidence_preserving_causal_2hop": {
+              "macro_recall": 1.0,
+              "macro_labeled_positive_precision": 0.3333333333333333,
+              "mean_returned_count": 3.0,
+              "queries_with_negative_hits": 1
+            }
+          }
+        },
+        {
+          "case_id": "chinese-paraphrase",
+          "aggregates": {
+            "baseline": {
+              "macro_recall": 1.0,
+              "macro_labeled_positive_precision": 0.3333333333333333,
+              "mean_returned_count": 3.0,
+              "queries_with_negative_hits": 1
+            },
+            "truncate_3": {
+              "macro_recall": 1.0,
+              "macro_labeled_positive_precision": 0.3333333333333333,
+              "mean_returned_count": 3.0,
+              "queries_with_negative_hits": 1
+            },
+            "positive_similarity": {
+              "macro_recall": 1.0,
+              "macro_labeled_positive_precision": 0.3333333333333333,
+              "mean_returned_count": 3.0,
+              "queries_with_negative_hits": 1
+            },
+            "primary_causal_1hop": {
+              "macro_recall": 0.0,
+              "macro_labeled_positive_precision": 0.0,
+              "mean_returned_count": 2.0,
+              "queries_with_negative_hits": 1
+            },
+            "primary_causal_2hop": {
+              "macro_recall": 0.0,
+              "macro_labeled_positive_precision": 0.0,
+              "mean_returned_count": 2.0,
+              "queries_with_negative_hits": 1
+            },
+            "guarded_causal_2hop": {
+              "macro_recall": 0.0,
+              "macro_labeled_positive_precision": 0.0,
+              "mean_returned_count": 2.0,
+              "queries_with_negative_hits": 1
+            },
+            "evidence_preserving_causal_2hop": {
+              "macro_recall": 1.0,
+              "macro_labeled_positive_precision": 0.3333333333333333,
+              "mean_returned_count": 3.0,
+              "queries_with_negative_hits": 1
+            }
+          }
+        },
+        {
+          "case_id": "synonym-candidate-omission",
+          "aggregates": {
+            "baseline": {
+              "macro_recall": 0.0,
+              "macro_labeled_positive_precision": 0.0,
+              "mean_returned_count": 5.0,
+              "queries_with_negative_hits": 1
+            },
+            "truncate_3": {
+              "macro_recall": 0.0,
+              "macro_labeled_positive_precision": 0.0,
+              "mean_returned_count": 3.0,
+              "queries_with_negative_hits": 1
+            },
+            "positive_similarity": {
+              "macro_recall": 0.0,
+              "macro_labeled_positive_precision": 0.0,
+              "mean_returned_count": 5.0,
+              "queries_with_negative_hits": 1
+            },
+            "primary_causal_1hop": {
+              "macro_recall": 0.0,
+              "macro_labeled_positive_precision": 0.0,
+              "mean_returned_count": 1.0,
+              "queries_with_negative_hits": 1
+            },
+            "primary_causal_2hop": {
+              "macro_recall": 0.0,
+              "macro_labeled_positive_precision": 0.0,
+              "mean_returned_count": 1.0,
+              "queries_with_negative_hits": 1
+            },
+            "guarded_causal_2hop": {
+              "macro_recall": 0.0,
+              "macro_labeled_positive_precision": 0.0,
+              "mean_returned_count": 5.0,
+              "queries_with_negative_hits": 1
+            },
+            "evidence_preserving_causal_2hop": {
+              "macro_recall": 0.0,
+              "macro_labeled_positive_precision": 0.0,
+              "mean_returned_count": 5.0,
+              "queries_with_negative_hits": 1
+            }
+          }
+        },
+        {
+          "case_id": "positive-control",
+          "aggregates": {
+            "baseline": {
+              "macro_recall": 1.0,
+              "macro_labeled_positive_precision": 0.6666666666666666,
+              "mean_returned_count": 3.0,
+              "queries_with_negative_hits": 0
+            },
+            "truncate_3": {
+              "macro_recall": 1.0,
+              "macro_labeled_positive_precision": 0.6666666666666666,
+              "mean_returned_count": 3.0,
+              "queries_with_negative_hits": 0
+            },
+            "positive_similarity": {
+              "macro_recall": 1.0,
+              "macro_labeled_positive_precision": 0.6666666666666666,
+              "mean_returned_count": 3.0,
+              "queries_with_negative_hits": 0
+            },
+            "primary_causal_1hop": {
+              "macro_recall": 0.5,
+              "macro_labeled_positive_precision": 0.5,
+              "mean_returned_count": 2.0,
+              "queries_with_negative_hits": 0
+            },
+            "primary_causal_2hop": {
+              "macro_recall": 1.0,
+              "macro_labeled_positive_precision": 0.6666666666666666,
+              "mean_returned_count": 3.0,
+              "queries_with_negative_hits": 0
+            },
+            "guarded_causal_2hop": {
+              "macro_recall": 1.0,
+              "macro_labeled_positive_precision": 0.6666666666666666,
+              "mean_returned_count": 3.0,
+              "queries_with_negative_hits": 0
+            },
+            "evidence_preserving_causal_2hop": {
+              "macro_recall": 1.0,
+              "macro_labeled_positive_precision": 0.6666666666666666,
+              "mean_returned_count": 3.0,
+              "queries_with_negative_hits": 0
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "vibe-source-holdout.json",
+      "sha256": "b2dc206820f6d16efef80ef67981688c4bd681b16c6448b6ae8dafe52e7c27da",
+      "aggregates": {
+        "baseline": {
+          "macro_recall": 0.9375,
+          "macro_labeled_positive_precision": 0.375,
+          "mean_returned_count": 5.0,
+          "queries_with_negative_hits": 5
+        },
+        "truncate_3": {
+          "macro_recall": 0.9375,
+          "macro_labeled_positive_precision": 0.625,
+          "mean_returned_count": 3.0,
+          "queries_with_negative_hits": 0
+        },
+        "positive_similarity": {
+          "macro_recall": 0.9375,
+          "macro_labeled_positive_precision": 0.375,
+          "mean_returned_count": 5.0,
+          "queries_with_negative_hits": 5
+        },
+        "primary_causal_1hop": {
+          "macro_recall": 0.6875,
+          "macro_labeled_positive_precision": 0.5625,
+          "mean_returned_count": 2.25,
+          "queries_with_negative_hits": 0
+        },
+        "primary_causal_2hop": {
+          "macro_recall": 0.9375,
+          "macro_labeled_positive_precision": 0.6458333333333333,
+          "mean_returned_count": 2.875,
+          "queries_with_negative_hits": 0
+        },
+        "guarded_causal_2hop": {
+          "macro_recall": 0.9375,
+          "macro_labeled_positive_precision": 0.575,
+          "mean_returned_count": 3.5,
+          "queries_with_negative_hits": 2
+        },
+        "evidence_preserving_causal_2hop": {
+          "macro_recall": 0.9375,
+          "macro_labeled_positive_precision": 0.375,
+          "mean_returned_count": 5.0,
+          "queries_with_negative_hits": 5
+        }
+      }
+    }
+  ]
+}\n

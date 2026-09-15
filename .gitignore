@@ -23,6 +23,9 @@ Thumbs.db
 *.sqlite
 .vibe/
 
+# Local embedding model weights
+models/
+
 # Environment
 .env
 .env.local

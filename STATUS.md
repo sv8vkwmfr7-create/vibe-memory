@@ -1,8 +1,14 @@
 # Project Status
 
-> Last verified: 2026-09-14
+> Last verified: 2026-09-15
 
 Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK, SQLite storage, TF-IDF retrieval, CLI/session manager, and MCP stdio interface are covered by the current local test suite. Public benchmark and production-scale claims remain unverified.
+
+### Local BGE semantic model probe (2026-09-15)
+
+The optional `sentence-transformers` dependency and `BAAI/bge-small-zh-v1.5` were installed locally for an experiment-only comparison. The model is stored under `models/bge-small-zh-v1.5` (ignored by Git), loads offline on CPU and returns 512-dimensional vectors. `experiments/semantic_model_probe.py` writes the anonymized comparison to `results/semantic_model_probe.json`; it does not change SDK/MCP defaults or upload model weights/private text.
+
+On the assistant-authored eight-question holdout, BGE baseline Recall@5 was **0.9375** with labeled-positive precision **0.375** and negative hits on **5/8** questions; the guarded variant kept Recall **0.9375**, precision **0.575**, and negative hits **2/8**. This is not independent evaluation and did not fix the public wrong-anchor or synonym-candidate diagnostics. The code default remains `all-MiniLM-L6-v2`; use BGE only by explicitly selecting `embedding_backend="st"` and a local model path until an independently labeled benchmark and startup/memory/latency measurements exist.
 
 ## Verified Baseline
 
