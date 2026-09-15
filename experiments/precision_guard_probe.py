@@ -2,6 +2,7 @@
 import argparse
 import hashlib
 import json
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -43,7 +44,7 @@ def guarded_causal_ids(storage, agent_id, tenant_id, baseline, semantic_ids, sco
     return [aid for aid in baseline if aid in allowed], 'filtered'
 
 
-def evaluate(data, embedding_provider=None):
+def evaluate(data, embedding_provider=None, include_timing=False):
     store = VibeStorage(':memory:')
     anonymous = {a['id']: f'atom-{i}' for i, a in enumerate(data['atoms'])}
     try:
@@ -72,8 +73,11 @@ def evaluate(data, embedding_provider=None):
             indices, similarities = rank(q['text'])
             scores = {atoms[index].id: float(score) for index, score in zip(indices, similarities)}
             primary = atoms[indices[0]].id
+            started = time.perf_counter() if include_timing else None
             baseline = [a.id for a in recall(q['text'], 'probe', store, top_k=5,
                 embedding_provider=provider)['atoms']]
+            recall_ms = ((time.perf_counter() - started) * 1000
+                if started is not None else None)
             variants = {'baseline': baseline, 'truncate_3': baseline[:3],
                 'positive_similarity': [aid for aid in baseline if scores.get(aid, 0) > 0]}
             for hops in (1, 2):
@@ -93,18 +97,26 @@ def evaluate(data, embedding_provider=None):
                     'negative_hits': [anonymous[x] for x in ids if x in negative],
                     'semantic_scores': {anonymous[x]: scores.get(x, 0) for x in baseline},
                     'primary_id': anonymous[primary]})
+                if include_timing:
+                    rows[-1]['recall_ms'] = recall_ms
                 if name == 'guarded_causal_2hop':
                     rows[-1]['guard_decision'] = decision
         aggregates = {}
         for name in variants:
             selected = [r for r in rows if r['variant'] == name]
-            aggregates[name] = {
+            aggregate = {
                 'macro_recall': sum(r['recall'] for r in selected) / len(selected),
                 'macro_labeled_positive_precision': sum(r['labeled_positive_precision'] for r in selected) / len(selected),
                 'mean_returned_count': sum(r['returned_count'] for r in selected) / len(selected),
                 'queries_with_negative_hits': sum(bool(r['negative_hits']) for r in selected)}
+            if include_timing:
+                aggregate['p95_recall_ms'] = sorted(r['recall_ms'] for r in selected)[
+                    max(0, (95 * len(selected) + 99) // 100 - 1)]
+            aggregates[name] = aggregate
         provider_kind = 'TF-IDF' if isinstance(provider, TfidfProvider) else provider.name
-        return {'conditions': f'Offline post-filter of production core precision Top-5. Assistant labels/manual edges. Primary {provider_kind} anchor, causal neighborhood ignores direction; no backfill or candidate expansion. Guard requires two positive {provider_kind} anchors in the primary two-hop causal neighborhood, otherwise preserves baseline. Evidence-preserving variant additionally retains every original candidate with positive {provider_kind} similarity; this is lexical/vector support, not semantic correctness. Zero-overlap relevant candidates can still be lost if outside the causal neighborhood. Anchor agreement is not correctness proof; jointly wrong anchors remain unsafe. Truncate-3 is post-truncation, not recall(top_k=3). Unlabeled items not assumed irrelevant. Consumed holdout is now diagnostic/development data, not fresh generalization evidence. Not SDK/MCP implementation or production latency proof.',
+        timing_note = (' Recall timing covers the shared production core call, so post-filter '
+            'variants report the same per-query time.' if include_timing else '')
+        return {'conditions': f'Offline post-filter of production core precision Top-5. Assistant labels/manual edges. Primary {provider_kind} anchor, causal neighborhood ignores direction; no backfill or candidate expansion. Guard requires two positive {provider_kind} anchors in the primary two-hop causal neighborhood, otherwise preserves baseline. Evidence-preserving variant additionally retains every original candidate with positive {provider_kind} similarity; this is lexical/vector support, not semantic correctness. Zero-overlap relevant candidates can still be lost if outside the causal neighborhood. Anchor agreement is not correctness proof; jointly wrong anchors remain unsafe. Truncate-3 is post-truncation, not recall(top_k=3).{timing_note} Unlabeled items not assumed irrelevant. Consumed holdout is now diagnostic/development data, not fresh generalization evidence. Not SDK/MCP implementation or production latency proof.',
             'aggregates': aggregates, 'rows': rows}
     finally:
         store.conn.close()

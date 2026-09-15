@@ -4,11 +4,25 @@
 
 Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK, SQLite storage, TF-IDF retrieval, CLI/session manager, and MCP stdio interface are covered by the current local test suite. Public benchmark and production-scale claims remain unverified.
 
+### Fixed 50/50 TF-IDF + BGE probe (2026-09-15)
+
+`experiments/hybrid_embedding_probe.py` combines normalized TF-IDF and BGE vectors with a predeclared 0.5/0.5 cosine weight; it is experiment-only and does not add an SDK/MCP backend. The anonymized report is `results/hybrid_embedding_probe.json`. On the assistant-authored eight-question holdout:
+
+| Method | Baseline Recall | Baseline labeled precision | Guarded Recall | Guarded labeled precision | Guarded negative-hit questions | Warm core recall p95 |
+|---|---:|---:|---:|---:|---:|---:|
+| TF-IDF | 1.00 | 0.40 | 1.00 | 0.667 | 0/8 | 2.93 ms |
+| BGE | 0.9375 | 0.375 | 0.9375 | 0.575 | 2/8 | 40.79 ms |
+| 50/50 hybrid | 1.00 | 0.40 | 1.00 | 0.667 | 0/8 | 41.81 ms |
+
+The hybrid restored the TF-IDF result but produced no quality gain. Across the six public diagnostics it exactly retained the existing outcomes: four wrong-anchor guards still drop recall from 1.00 to 0, synonym candidate omission remains 0, and the positive control remains 1.00. One Windows CPU process measured first model load/encode at **4.59s**, working-set growth about **485.1 MiB**, and model files **183.3 MiB**. These are one-run small-corpus measurements, not a latency or memory SLA.
+
+Decision: do not promote `hybrid` to the product interface. The minimum no-regression gate passed, but there was no measured relevance gain for roughly 14x warm latency plus model startup/memory cost. Three public hybrid-provider tests were developed red-to-green; the full baseline-compatible suite passed **356 tests in 15.44s** with optional semantic import isolated, while the real local BGE probe ran separately. Independent labels or a stronger reranker are required before another semantic promotion decision.
+
 ### Local BGE semantic model probe (2026-09-15)
 
 The optional `sentence-transformers` dependency and `BAAI/bge-small-zh-v1.5` were installed locally for an experiment-only comparison. The model is stored under `models/bge-small-zh-v1.5` (ignored by Git), loads offline on CPU and returns 512-dimensional vectors. `experiments/semantic_model_probe.py` writes the anonymized comparison to `results/semantic_model_probe.json`; it does not change SDK/MCP defaults or upload model weights/private text.
 
-On the assistant-authored eight-question holdout, BGE baseline Recall@5 was **0.9375** with labeled-positive precision **0.375** and negative hits on **5/8** questions; the guarded variant kept Recall **0.9375**, precision **0.575**, and negative hits **2/8**. This is not independent evaluation and did not fix the public wrong-anchor or synonym-candidate diagnostics. The code default remains `all-MiniLM-L6-v2`; use BGE only by explicitly selecting `embedding_backend="st"` and a local model path until an independently labeled benchmark and startup/memory/latency measurements exist.
+On the assistant-authored eight-question holdout, BGE baseline Recall@5 was **0.9375** with labeled-positive precision **0.375** and negative hits on **5/8** questions; the guarded variant kept Recall **0.9375**, precision **0.575**, and negative hits **2/8**. This is not independent evaluation and did not fix the public wrong-anchor or synonym-candidate diagnostics. The code default remains `all-MiniLM-L6-v2`; use BGE only by explicitly selecting `embedding_backend="st"` and a local model path. The fixed hybrid comparison above also found no quality gain, so the next evidence step is independent labels or a stronger reranker rather than another default switch.
 
 ## Verified Baseline
 
