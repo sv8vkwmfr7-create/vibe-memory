@@ -1,0 +1,386 @@
+{
+  "datasets": [
+    {
+      "name": "relevance_diagnostic_cases.json",
+      "sha256": "674c8962e1a436c53a09a37213f93b3d35befb57841ddff0cf4c4581c7b80f19",
+      "cases": [
+        {
+          "case_id": "wrong-service",
+          "conditions": {
+            "candidate_set": "Unchanged production core baseline Top-5.",
+            "rule": "Stable boost by rare query tokens present in at most 25% of corpus documents.",
+            "top_k": 5,
+            "labels": "Assistant-authored development labels; not independent evaluation.",
+            "production_default_changed": false
+          },
+          "aggregates": {
+            "baseline_top1_recall": 0.0,
+            "scope_top1_recall": 1.0,
+            "baseline_top1_negative_queries": 1,
+            "scope_top1_negative_queries": 0,
+            "scope_macro_top_k_recall": 1.0,
+            "queries_with_scope_signal": 1,
+            "queries_with_ranking_change": 1
+          },
+          "rows": [
+            {
+              "query_id": "query-0",
+              "scope_token_count": 1,
+              "baseline_top1_hit": false,
+              "scope_top1_hit": true,
+              "baseline_top1_negative": true,
+              "scope_top1_negative": false,
+              "scope_top_k_recall": 1.0,
+              "ranking_changed": true,
+              "returned_ids": [
+                "atom-2",
+                "atom-0",
+                "atom-1"
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "wrong-environment",
+          "conditions": {
+            "candidate_set": "Unchanged production core baseline Top-5.",
+            "rule": "Stable boost by rare query tokens present in at most 25% of corpus documents.",
+            "top_k": 5,
+            "labels": "Assistant-authored development labels; not independent evaluation.",
+            "production_default_changed": false
+          },
+          "aggregates": {
+            "baseline_top1_recall": 0.0,
+            "scope_top1_recall": 1.0,
+            "baseline_top1_negative_queries": 1,
+            "scope_top1_negative_queries": 0,
+            "scope_macro_top_k_recall": 1.0,
+            "queries_with_scope_signal": 1,
+            "queries_with_ranking_change": 1
+          },
+          "rows": [
+            {
+              "query_id": "query-0",
+              "scope_token_count": 1,
+              "baseline_top1_hit": false,
+              "scope_top1_hit": true,
+              "baseline_top1_negative": true,
+              "scope_top1_negative": false,
+              "scope_top_k_recall": 1.0,
+              "ranking_changed": true,
+              "returned_ids": [
+                "atom-2",
+                "atom-0",
+                "atom-1"
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "wrong-operation",
+          "conditions": {
+            "candidate_set": "Unchanged production core baseline Top-5.",
+            "rule": "Stable boost by rare query tokens present in at most 25% of corpus documents.",
+            "top_k": 5,
+            "labels": "Assistant-authored development labels; not independent evaluation.",
+            "production_default_changed": false
+          },
+          "aggregates": {
+            "baseline_top1_recall": 0.0,
+            "scope_top1_recall": 1.0,
+            "baseline_top1_negative_queries": 1,
+            "scope_top1_negative_queries": 0,
+            "scope_macro_top_k_recall": 1.0,
+            "queries_with_scope_signal": 1,
+            "queries_with_ranking_change": 1
+          },
+          "rows": [
+            {
+              "query_id": "query-0",
+              "scope_token_count": 1,
+              "baseline_top1_hit": false,
+              "scope_top1_hit": true,
+              "baseline_top1_negative": true,
+              "scope_top1_negative": false,
+              "scope_top_k_recall": 1.0,
+              "ranking_changed": true,
+              "returned_ids": [
+                "atom-2",
+                "atom-0",
+                "atom-1"
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "chinese-paraphrase",
+          "conditions": {
+            "candidate_set": "Unchanged production core baseline Top-5.",
+            "rule": "Stable boost by rare query tokens present in at most 25% of corpus documents.",
+            "top_k": 5,
+            "labels": "Assistant-authored development labels; not independent evaluation.",
+            "production_default_changed": false
+          },
+          "aggregates": {
+            "baseline_top1_recall": 0.0,
+            "scope_top1_recall": 1.0,
+            "baseline_top1_negative_queries": 1,
+            "scope_top1_negative_queries": 0,
+            "scope_macro_top_k_recall": 1.0,
+            "queries_with_scope_signal": 1,
+            "queries_with_ranking_change": 1
+          },
+          "rows": [
+            {
+              "query_id": "query-0",
+              "scope_token_count": 1,
+              "baseline_top1_hit": false,
+              "scope_top1_hit": true,
+              "baseline_top1_negative": true,
+              "scope_top1_negative": false,
+              "scope_top_k_recall": 1.0,
+              "ranking_changed": true,
+              "returned_ids": [
+                "atom-2",
+                "atom-0",
+                "atom-1"
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "synonym-candidate-omission",
+          "conditions": {
+            "candidate_set": "Unchanged production core baseline Top-5.",
+            "rule": "Stable boost by rare query tokens present in at most 25% of corpus documents.",
+            "top_k": 5,
+            "labels": "Assistant-authored development labels; not independent evaluation.",
+            "production_default_changed": false
+          },
+          "aggregates": {
+            "baseline_top1_recall": 0.0,
+            "scope_top1_recall": 0.0,
+            "baseline_top1_negative_queries": 1,
+            "scope_top1_negative_queries": 1,
+            "scope_macro_top_k_recall": 0.0,
+            "queries_with_scope_signal": 0,
+            "queries_with_ranking_change": 0
+          },
+          "rows": [
+            {
+              "query_id": "query-0",
+              "scope_token_count": 0,
+              "baseline_top1_hit": false,
+              "scope_top1_hit": false,
+              "baseline_top1_negative": true,
+              "scope_top1_negative": true,
+              "scope_top_k_recall": 0.0,
+              "ranking_changed": false,
+              "returned_ids": [
+                "atom-0",
+                "atom-4",
+                "atom-6",
+                "atom-1",
+                "atom-2"
+              ]
+            }
+          ]
+        },
+        {
+          "case_id": "positive-control",
+          "conditions": {
+            "candidate_set": "Unchanged production core baseline Top-5.",
+            "rule": "Stable boost by rare query tokens present in at most 25% of corpus documents.",
+            "top_k": 5,
+            "labels": "Assistant-authored development labels; not independent evaluation.",
+            "production_default_changed": false
+          },
+          "aggregates": {
+            "baseline_top1_recall": 0.0,
+            "scope_top1_recall": 0.0,
+            "baseline_top1_negative_queries": 0,
+            "scope_top1_negative_queries": 0,
+            "scope_macro_top_k_recall": 1.0,
+            "queries_with_scope_signal": 0,
+            "queries_with_ranking_change": 0
+          },
+          "rows": [
+            {
+              "query_id": "query-0",
+              "scope_token_count": 0,
+              "baseline_top1_hit": false,
+              "scope_top1_hit": false,
+              "baseline_top1_negative": false,
+              "scope_top1_negative": false,
+              "scope_top_k_recall": 1.0,
+              "ranking_changed": false,
+              "returned_ids": [
+                "atom-0",
+                "atom-1",
+                "atom-2"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "vibe-source-holdout.json",
+      "sha256": "b2dc206820f6d16efef80ef67981688c4bd681b16c6448b6ae8dafe52e7c27da",
+      "conditions": {
+        "candidate_set": "Unchanged production core baseline Top-5.",
+        "rule": "Stable boost by rare query tokens present in at most 25% of corpus documents.",
+        "top_k": 5,
+        "labels": "Assistant-authored development labels; not independent evaluation.",
+        "production_default_changed": false
+      },
+      "aggregates": {
+        "baseline_top1_recall": 0.625,
+        "scope_top1_recall": 0.625,
+        "baseline_top1_negative_queries": 0,
+        "scope_top1_negative_queries": 0,
+        "scope_macro_top_k_recall": 1.0,
+        "queries_with_scope_signal": 8,
+        "queries_with_ranking_change": 1
+      },
+      "rows": [
+        {
+          "query_id": "query-0",
+          "scope_token_count": 8,
+          "baseline_top1_hit": true,
+          "scope_top1_hit": true,
+          "baseline_top1_negative": false,
+          "scope_top1_negative": false,
+          "scope_top_k_recall": 1.0,
+          "ranking_changed": false,
+          "returned_ids": [
+            "atom-2",
+            "atom-0",
+            "atom-5",
+            "atom-1",
+            "atom-3"
+          ]
+        },
+        {
+          "query_id": "query-1",
+          "scope_token_count": 9,
+          "baseline_top1_hit": true,
+          "scope_top1_hit": true,
+          "baseline_top1_negative": false,
+          "scope_top1_negative": false,
+          "scope_top_k_recall": 1.0,
+          "ranking_changed": false,
+          "returned_ids": [
+            "atom-1",
+            "atom-0",
+            "atom-2",
+            "atom-4",
+            "atom-10"
+          ]
+        },
+        {
+          "query_id": "query-2",
+          "scope_token_count": 8,
+          "baseline_top1_hit": false,
+          "scope_top1_hit": false,
+          "baseline_top1_negative": false,
+          "scope_top1_negative": false,
+          "scope_top_k_recall": 1.0,
+          "ranking_changed": false,
+          "returned_ids": [
+            "atom-3",
+            "atom-5",
+            "atom-4",
+            "atom-1",
+            "atom-9"
+          ]
+        },
+        {
+          "query_id": "query-3",
+          "scope_token_count": 9,
+          "baseline_top1_hit": true,
+          "scope_top1_hit": true,
+          "baseline_top1_negative": false,
+          "scope_top1_negative": false,
+          "scope_top_k_recall": 1.0,
+          "ranking_changed": false,
+          "returned_ids": [
+            "atom-4",
+            "atom-3",
+            "atom-2",
+            "atom-5",
+            "atom-1"
+          ]
+        },
+        {
+          "query_id": "query-4",
+          "scope_token_count": 7,
+          "baseline_top1_hit": false,
+          "scope_top1_hit": false,
+          "baseline_top1_negative": false,
+          "scope_top1_negative": false,
+          "scope_top_k_recall": 1.0,
+          "ranking_changed": false,
+          "returned_ids": [
+            "atom-6",
+            "atom-8",
+            "atom-7",
+            "atom-1",
+            "atom-0"
+          ]
+        },
+        {
+          "query_id": "query-5",
+          "scope_token_count": 9,
+          "baseline_top1_hit": true,
+          "scope_top1_hit": true,
+          "baseline_top1_negative": false,
+          "scope_top1_negative": false,
+          "scope_top_k_recall": 1.0,
+          "ranking_changed": false,
+          "returned_ids": [
+            "atom-7",
+            "atom-8",
+            "atom-6",
+            "atom-1",
+            "atom-0"
+          ]
+        },
+        {
+          "query_id": "query-6",
+          "scope_token_count": 11,
+          "baseline_top1_hit": false,
+          "scope_top1_hit": false,
+          "baseline_top1_negative": false,
+          "scope_top1_negative": false,
+          "scope_top_k_recall": 1.0,
+          "ranking_changed": false,
+          "returned_ids": [
+            "atom-9",
+            "atom-11",
+            "atom-10",
+            "atom-8",
+            "atom-6"
+          ]
+        },
+        {
+          "query_id": "query-7",
+          "scope_token_count": 9,
+          "baseline_top1_hit": true,
+          "scope_top1_hit": true,
+          "baseline_top1_negative": false,
+          "scope_top1_negative": false,
+          "scope_top_k_recall": 1.0,
+          "ranking_changed": true,
+          "returned_ids": [
+            "atom-11",
+            "atom-10",
+            "atom-9",
+            "atom-8",
+            "atom-6"
+          ]
+        }
+      ]
+    }
+  ]
+}
