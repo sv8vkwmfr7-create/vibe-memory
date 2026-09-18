@@ -1,5 +1,32 @@
 # Vibe Memory
 
+> 让 AI Agent 在不同会话之间记住事实、决策、修复方案和用户偏好。
+
+## 第一次使用
+
+如果你是第一次接触 Vibe Memory，请从 **[中文零基础指南](docs/GETTING_STARTED.zh-CN.md)** 开始。它包含环境准备、第一次存储与召回、结果验证、MCP 接入、常见问题和下一步选择。
+
+最短体验（无需模型或 API Key）：
+
+```bash
+git clone https://github.com/sv8vkwmfr7-create/vibe-memory.git
+cd vibe-memory
+python -m venv .venv
+
+# Windows PowerShell
+.venv\Scripts\python -m pip install -e .
+.venv\Scripts\python examples/quickstart.py
+
+# macOS / Linux
+.venv/bin/python -m pip install -e .
+.venv/bin/python examples/quickstart.py
+```
+
+看到 `VibeMemory quickstart succeeded.` 就表示存储、持久化和召回链路已经工作。示例只使用本地 SQLite 与内置 TF-IDF，不联网、不需要大模型。
+
+> [!NOTE]
+> 当前推荐从 GitHub 源码安装。`pip install vibe-memory` 是否可从 PyPI 获取取决于发布状态，零基础指南不依赖该前提。
+
 MCP支持显式可选维护：`python -m vibe_memory.mcp_server --db-path /path/to/test.db --vibe-dir /path/to/test-state --wal-maintenance`。此参数明确启用WAL并额外暴露手动工具 `vibe_checkpoint`（可传 `drain_timeout`）；不加参数仍为8个工具、保留原数据库模式，没有定时维护。完整工具操作含短ID解析参与协调，检查点在操作范围外执行。316项测试通过；30轮两条记忆MCP协议冒烟全部维护及召回成功，不代表大库或真实聊天体验。复跑：`python experiments/mcp_maintenance_smoke.py`，见 [结果](results/mcp_maintenance_smoke.json)。
 
 最新验证：10万条临时WAL库持续30分钟，8974/8974旧答案命中、174次运行中维护全部截断成功，WAL采样峰值约58MB；SQLite/FTS/CRUD一致性通过，312项测试通过。维护最长约501ms、强化仍96.2%调用跳过；默认关闭，不代表真实聊天、硬容量/暂停上限或生产保证。复跑条件与完整结果见 [STATUS.md](STATUS.md) 和 [30分钟JSON](results/disk_soak_sdk_maintenance_30min.json)。
