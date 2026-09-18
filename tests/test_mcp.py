@@ -148,9 +148,20 @@ def test_store_scope_metadata_is_public_and_returned(client):
     scope_schema = schema["properties"]["scope"]
     assert scope_schema["type"] == "object"
     assert scope_schema["additionalProperties"] is False
+    recall_schema = next(tool["inputSchema"] for tool in tools
+                         if tool["name"] == "vibe_recall")
+    recall_scope_schema = recall_schema["properties"]["scope"]
+    assert recall_scope_schema["type"] == "object"
+    assert recall_scope_schema["properties"] == scope_schema["properties"]
+    assert recall_scope_schema["additionalProperties"] is False
+
+    client.call_tool("vibe_store", {
+        "content": "request hangs request hangs Catalog",
+        "scope": {"service": "catalog"},
+    })
 
     response = client.call_tool("vibe_store", {
-        "content": "Orders production export failed",
+        "content": "request hangs Orders pool exhausted",
         "scope": {"service": "orders", "environment": "production",
                   "operation": "export"},
     })
@@ -161,9 +172,17 @@ def test_store_scope_metadata_is_public_and_returned(client):
                               "operation": "export"}
 
     recalled = client.get_text(client.call_tool("vibe_recall", {
-        "query": "Orders production export",
+        "query": "request hangs",
+        "scope": {"service": "orders"},
     }))
     assert recalled["memories"][0]["scope"] == data["scope"]
+    assert recalled["scope_boosted"] is True
+    invalid = client.call_tool("vibe_recall", {
+        "query": "request hangs",
+        "scope": {"servcie": "orders"},
+    })
+    assert "error" in invalid
+    assert "scope" in invalid["error"]["message"]
 
 
 # ── vibe_recall ──

@@ -58,6 +58,19 @@ from vibe_memory.reflect import Reflector
 from vibe_memory.maintenance import WALMaintenance, coordinated
 
 
+def _validated_scope(scope: Optional[dict[str, str]]) -> dict[str, str]:
+    if scope is None:
+        return {}
+    allowed = {"service", "environment", "operation"}
+    if (not isinstance(scope, dict)
+            or any(not isinstance(key, str) or key not in allowed
+                   or not isinstance(value, str)
+                   for key, value in scope.items())):
+        raise ValueError(
+            "scope must map service/environment/operation to strings")
+    return dict(scope)
+
+
 class VibeMemory:
     """
     VibeMemory SDK — 嵌入式记忆系统。
@@ -194,14 +207,7 @@ class VibeMemory:
         from vibe_memory.chunking.chunker import _generate_tags
 
         sid = session_id or str(uuid.uuid4())
-        if scope is not None:
-            allowed_scope = {"service", "environment", "operation"}
-            if (not isinstance(scope, dict)
-                    or any(key not in allowed_scope or not isinstance(key, str)
-                           or not isinstance(value, str)
-                           for key, value in scope.items())):
-                raise ValueError(
-                    "scope must map service/environment/operation to strings")
+        validated_scope = _validated_scope(scope)
 
         # 隐私扫描：默认脱敏模式
         content, violations, blocked = scan_before_store(content, self.defense)
@@ -217,7 +223,7 @@ class VibeMemory:
             tenant_id=self.tenant_id,
             type=partition,
             tags=tags or _generate_tags(content),
-            scope=dict(scope or {}),
+            scope=validated_scope,
             lifecycle=Lifecycle.ACTIVE,
             weight=1.0,
             created_at=datetime.now(),
@@ -305,6 +311,7 @@ class VibeMemory:
         top_k: int = 20,
         *,
         causal_bridge: bool = False,
+        scope: Optional[dict[str, str]] = None,
     ) -> dict:
         """
         检索记忆。
@@ -314,11 +321,13 @@ class VibeMemory:
             mode: "precision" | "recall" | "budget"
             top_k: 向量预筛 Top-K
             causal_bridge: 可选主锚点因果桥保留，仅 precision，默认关闭
+            scope: 可选显式作用域匹配提升，不过滤候选
 
         Returns:
             {atoms: [MemoryAtom], trace: [...], mode: str, total_walked: int,
              reinforcement_skipped: bool}（是否跳过部分/全部非关键强化）
         """
+        validated_scope = _validated_scope(scope)
         result = _recall(
             query=query,
             agent_id=self.agent_id,
@@ -337,6 +346,20 @@ class VibeMemory:
 
         # 冷启动增强：结果不足时用种子记忆补充
         result = self.cold_start.augment_recall(query, result)
+        result["scope_boosted"] = False
+        if validated_scope:
+            atoms = result.get("atoms", [])
+            original_ids = [atom.id for atom in atoms]
+            result["atoms"] = sorted(
+                atoms,
+                key=lambda atom: -sum(
+                    atom.scope.get(key, "").strip().casefold()
+                    == value.strip().casefold()
+                    for key, value in validated_scope.items()
+                ),
+            )
+            result["scope_boosted"] = (
+                [atom.id for atom in result["atoms"]] != original_ids)
 
         # 非关键强化不等待写锁，也不提交/回滚调用方已有事务。
         conn = self.storage.conn
@@ -557,6 +580,8 @@ class VibeMemory:
         if atom is None or atom.tenant_id != self.tenant_id:
             return None
 
+        if "scope" in fields:
+            fields["scope"] = _validated_scope(fields["scope"])
         for key, value in fields.items():
             if hasattr(atom, key):
                 setattr(atom, key, value)

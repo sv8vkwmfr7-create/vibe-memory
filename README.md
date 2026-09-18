@@ -151,6 +151,19 @@ for atom in result["atoms"]:
     print(atom.summary)
 ```
 
+需要显式作用域时可选择稳定提升匹配项；它不删除候选，默认关闭：
+
+```python
+result = mem.recall(
+    "request hangs",
+    mode="precision",
+    scope={"service": "orders", "environment": "production"},
+)
+print(result["scope_boosted"])
+```
+
+MCP `vibe_recall` 接受同样的 `scope` 对象。当前只支持精确匹配提升，不支持过滤。
+
 ### 可选因果桥保留
 
 默认排序保持不变。排障时可显式开启：
@@ -213,7 +226,7 @@ mem.reflect("What patterns in recent bugs?")  # → 生成跨记忆洞察
 |------|------|
 | `store(content, session_id, scope)` | 写入分片；可选显式 `service/environment/operation` 作用域元数据（当前只持久化，不参与排序） |
 | `store_batch(messages)` | 批量写入（自动切分+入库+同会话建边） |
-| `recall(query, mode)` | 多策略检索（BM25+语义+图+时序，RRF 融合） |
+| `recall(query, mode, scope)` | 多策略检索；可选显式scope稳定提升匹配项，不过滤候选 |
 | `inject(query, mode)` | 检索 + 注入一步完成 |
 | `reflect(prompt)` | 跨记忆推理（需 reflector） |
 | `link(from_id, to_id, label)` | 手动建边 |

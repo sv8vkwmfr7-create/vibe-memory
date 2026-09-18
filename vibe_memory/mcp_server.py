@@ -110,6 +110,16 @@ def run_server(db_path: str, agent_id: str, vibe_dir: str, wal_maintenance: bool
                     "mode": {"type": "string", "enum": ["precision", "recall", "budget"], "description": "Retrieval mode: precision (no noise, top-5), recall (comprehensive, top-15), budget (fast, top-3)"},
                     "top_k": {"type": "integer", "description": "Max seeds for vector pre-screening"},
                     "causal_bridge": {"type": "boolean", "default": False, "description": "Opt into primary-anchor causal bridge retention; precision only"},
+                    "scope": {
+                        "type": "object",
+                        "description": "Optional exact scope boost; reorders without filtering",
+                        "properties": {
+                            "service": {"type": "string"},
+                            "environment": {"type": "string"},
+                            "operation": {"type": "string"},
+                        },
+                        "additionalProperties": False,
+                    },
                 },
                 "required": ["query"],
             },
@@ -219,7 +229,8 @@ def run_server(db_path: str, agent_id: str, vibe_dir: str, wal_maintenance: bool
             mode = arguments.get("mode", "precision")
             top_k = arguments.get("top_k", 20)
             result = mem.recall(query=query, mode=mode, top_k=top_k,
-                                causal_bridge=arguments.get("causal_bridge", False))
+                                causal_bridge=arguments.get("causal_bridge", False),
+                                scope=arguments.get("scope"))
 
             atoms = result.get("atoms", [])
             trace = result.get("trace", [])
@@ -239,6 +250,7 @@ def run_server(db_path: str, agent_id: str, vibe_dir: str, wal_maintenance: bool
                 "content": [{"type": "text", "text": json.dumps({
                     "count": len(atoms),
                     "mode": result.get("mode"),
+                    "scope_boosted": result.get("scope_boosted", False),
                     "memories": formatted,
                     "relationships": trace[:5],
                 }, ensure_ascii=False)}],

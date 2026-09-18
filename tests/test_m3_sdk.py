@@ -99,6 +99,22 @@ def test_store_rejects_invalid_scope_metadata(scope):
         mem.store("Invalid scope", scope=scope)
 
 
+def test_update_scope_uses_same_validation_contract():
+    mem = VibeMemory(agent_id="scope-agent", db_path=":memory:",
+                     embedding_backend="tfidf")
+    atom = mem.store(
+        "Scoped memory", scope={"service": "orders"},
+        auto_build_edges=False, auto_episode=False,
+    )
+
+    updated = mem.update(atom.id, scope={"service": "billing"})
+
+    assert updated.scope == {"service": "billing"}
+    assert mem.storage.get_atom(atom.id).scope == {"service": "billing"}
+    with pytest.raises(ValueError, match="scope"):
+        mem.update(atom.id, scope={"servcie": "billing"})
+
+
 def test_existing_database_adds_scope_column_on_open(tmp_path):
     db_path = str(tmp_path / "legacy.db")
     current = VibeMemory(agent_id="scope-agent", db_path=db_path,
@@ -171,6 +187,36 @@ def test_recall():
     assert result_b["mode"] == "budget"
 
     print("[PASS] recall test")
+
+
+def test_recall_scope_boost_reorders_without_filtering_or_changing_default():
+    mem = VibeMemory(agent_id="scope-agent", db_path=":memory:",
+                     embedding_backend="tfidf")
+    catalog = mem.store(
+        "request hangs request hangs Catalog",
+        scope={"service": "catalog"},
+        auto_build_edges=False,
+        auto_episode=False,
+    )
+    orders = mem.store(
+        "request hangs Orders pool exhausted",
+        scope={"service": "orders"},
+        auto_build_edges=False,
+        auto_episode=False,
+    )
+
+    baseline = mem.recall("request hangs", mode="precision", top_k=5)
+    scoped = mem.recall(
+        "request hangs", mode="precision", top_k=5,
+        scope={"service": "orders"},
+    )
+
+    assert [atom.id for atom in baseline["atoms"]] == [catalog.id, orders.id]
+    assert [atom.id for atom in scoped["atoms"]] == [orders.id, catalog.id]
+    assert {atom.id for atom in scoped["atoms"]} == {
+        atom.id for atom in baseline["atoms"]
+    }
+    assert scoped["scope_boosted"] is True
 
 
 def test_budget_recall_uses_bounded_storage_candidates(monkeypatch):
