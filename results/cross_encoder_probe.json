@@ -1,0 +1,327 @@
+{
+  "model": "BAAI/bge-reranker-base",
+  "model_dir": "models\\bge-reranker-base",
+  "device": "cpu",
+  "model_load_seconds": 2.1356463000001895,
+  "datasets": [
+    {
+      "name": "relevance_diagnostic_cases.json",
+      "sha256": "674c8962e1a436c53a09a37213f93b3d35befb57841ddff0cf4c4581c7b80f19",
+      "cases": [
+        {
+          "case_id": "wrong-service",
+          "conditions": {
+            "candidate_source": "TF-IDF",
+            "candidate_pool_size": 20,
+            "top_k": 5,
+            "labels": "Assistant-authored development labels; not independent evaluation.",
+            "production_default_changed": false
+          },
+          "aggregates": {
+            "macro_recall": 1.0,
+            "macro_labeled_positive_precision": 0.3333333333333333,
+            "queries_with_negative_hits": 1,
+            "p95_rerank_ms": 44.563299999936135
+          },
+          "rows": [
+            {
+              "query_id": "query-0",
+              "recall": 1.0,
+              "labeled_positive_precision": 0.3333333333333333,
+              "negative_hits": 2,
+              "returned_ids": [
+                "atom-0",
+                "atom-1",
+                "atom-2"
+              ],
+              "rerank_ms": 44.563299999936135
+            }
+          ]
+        },
+        {
+          "case_id": "wrong-environment",
+          "conditions": {
+            "candidate_source": "TF-IDF",
+            "candidate_pool_size": 20,
+            "top_k": 5,
+            "labels": "Assistant-authored development labels; not independent evaluation.",
+            "production_default_changed": false
+          },
+          "aggregates": {
+            "macro_recall": 1.0,
+            "macro_labeled_positive_precision": 0.3333333333333333,
+            "queries_with_negative_hits": 1,
+            "p95_rerank_ms": 36.51609999997163
+          },
+          "rows": [
+            {
+              "query_id": "query-0",
+              "recall": 1.0,
+              "labeled_positive_precision": 0.3333333333333333,
+              "negative_hits": 2,
+              "returned_ids": [
+                "atom-0",
+                "atom-1",
+                "atom-2"
+              ],
+              "rerank_ms": 36.51609999997163
+            }
+          ]
+        },
+        {
+          "case_id": "wrong-operation",
+          "conditions": {
+            "candidate_source": "TF-IDF",
+            "candidate_pool_size": 20,
+            "top_k": 5,
+            "labels": "Assistant-authored development labels; not independent evaluation.",
+            "production_default_changed": false
+          },
+          "aggregates": {
+            "macro_recall": 1.0,
+            "macro_labeled_positive_precision": 0.3333333333333333,
+            "queries_with_negative_hits": 1,
+            "p95_rerank_ms": 35.07850000005419
+          },
+          "rows": [
+            {
+              "query_id": "query-0",
+              "recall": 1.0,
+              "labeled_positive_precision": 0.3333333333333333,
+              "negative_hits": 2,
+              "returned_ids": [
+                "atom-0",
+                "atom-1",
+                "atom-2"
+              ],
+              "rerank_ms": 35.07850000005419
+            }
+          ]
+        },
+        {
+          "case_id": "chinese-paraphrase",
+          "conditions": {
+            "candidate_source": "TF-IDF",
+            "candidate_pool_size": 20,
+            "top_k": 5,
+            "labels": "Assistant-authored development labels; not independent evaluation.",
+            "production_default_changed": false
+          },
+          "aggregates": {
+            "macro_recall": 1.0,
+            "macro_labeled_positive_precision": 0.3333333333333333,
+            "queries_with_negative_hits": 1,
+            "p95_rerank_ms": 41.05750000007902
+          },
+          "rows": [
+            {
+              "query_id": "query-0",
+              "recall": 1.0,
+              "labeled_positive_precision": 0.3333333333333333,
+              "negative_hits": 2,
+              "returned_ids": [
+                "atom-0",
+                "atom-2",
+                "atom-1"
+              ],
+              "rerank_ms": 41.05750000007902
+            }
+          ]
+        },
+        {
+          "case_id": "synonym-candidate-omission",
+          "conditions": {
+            "candidate_source": "TF-IDF",
+            "candidate_pool_size": 20,
+            "top_k": 5,
+            "labels": "Assistant-authored development labels; not independent evaluation.",
+            "production_default_changed": false
+          },
+          "aggregates": {
+            "macro_recall": 0.0,
+            "macro_labeled_positive_precision": 0.0,
+            "queries_with_negative_hits": 1,
+            "p95_rerank_ms": 60.479100000065955
+          },
+          "rows": [
+            {
+              "query_id": "query-0",
+              "recall": 0.0,
+              "labeled_positive_precision": 0.0,
+              "negative_hits": 5,
+              "returned_ids": [
+                "atom-0",
+                "atom-5",
+                "atom-4",
+                "atom-3",
+                "atom-1"
+              ],
+              "rerank_ms": 60.479100000065955
+            }
+          ]
+        },
+        {
+          "case_id": "positive-control",
+          "conditions": {
+            "candidate_source": "TF-IDF",
+            "candidate_pool_size": 20,
+            "top_k": 5,
+            "labels": "Assistant-authored development labels; not independent evaluation.",
+            "production_default_changed": false
+          },
+          "aggregates": {
+            "macro_recall": 1.0,
+            "macro_labeled_positive_precision": 0.6666666666666666,
+            "queries_with_negative_hits": 0,
+            "p95_rerank_ms": 34.54829999964204
+          },
+          "rows": [
+            {
+              "query_id": "query-0",
+              "recall": 1.0,
+              "labeled_positive_precision": 0.6666666666666666,
+              "negative_hits": 0,
+              "returned_ids": [
+                "atom-0",
+                "atom-1",
+                "atom-2"
+              ],
+              "rerank_ms": 34.54829999964204
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "vibe-source-holdout.json",
+      "sha256": "b2dc206820f6d16efef80ef67981688c4bd681b16c6448b6ae8dafe52e7c27da",
+      "conditions": {
+        "candidate_source": "TF-IDF",
+        "candidate_pool_size": 20,
+        "top_k": 5,
+        "labels": "Assistant-authored development labels; not independent evaluation.",
+        "production_default_changed": false
+      },
+      "aggregates": {
+        "macro_recall": 0.9375,
+        "macro_labeled_positive_precision": 0.375,
+        "queries_with_negative_hits": 6,
+        "p95_rerank_ms": 172.76349999974627
+      },
+      "rows": [
+        {
+          "query_id": "query-0",
+          "recall": 0.5,
+          "labeled_positive_precision": 0.2,
+          "negative_hits": 1,
+          "returned_ids": [
+            "atom-0",
+            "atom-5",
+            "atom-2",
+            "atom-4",
+            "atom-9"
+          ],
+          "rerank_ms": 167.49960000015562
+        },
+        {
+          "query_id": "query-1",
+          "recall": 1.0,
+          "labeled_positive_precision": 0.4,
+          "negative_hits": 1,
+          "returned_ids": [
+            "atom-1",
+            "atom-0",
+            "atom-2",
+            "atom-4",
+            "atom-6"
+          ],
+          "rerank_ms": 168.83110000026136
+        },
+        {
+          "query_id": "query-2",
+          "recall": 1.0,
+          "labeled_positive_precision": 0.4,
+          "negative_hits": 1,
+          "returned_ids": [
+            "atom-3",
+            "atom-4",
+            "atom-5",
+            "atom-2",
+            "atom-1"
+          ],
+          "rerank_ms": 151.58590000010008
+        },
+        {
+          "query_id": "query-3",
+          "recall": 1.0,
+          "labeled_positive_precision": 0.4,
+          "negative_hits": 0,
+          "returned_ids": [
+            "atom-4",
+            "atom-5",
+            "atom-3",
+            "atom-2",
+            "atom-6"
+          ],
+          "rerank_ms": 151.9162999998116
+        },
+        {
+          "query_id": "query-4",
+          "recall": 1.0,
+          "labeled_positive_precision": 0.4,
+          "negative_hits": 1,
+          "returned_ids": [
+            "atom-6",
+            "atom-4",
+            "atom-7",
+            "atom-8",
+            "atom-9"
+          ],
+          "rerank_ms": 152.76429999994434
+        },
+        {
+          "query_id": "query-5",
+          "recall": 1.0,
+          "labeled_positive_precision": 0.4,
+          "negative_hits": 0,
+          "returned_ids": [
+            "atom-7",
+            "atom-8",
+            "atom-6",
+            "atom-0",
+            "atom-3"
+          ],
+          "rerank_ms": 165.16219999994064
+        },
+        {
+          "query_id": "query-6",
+          "recall": 1.0,
+          "labeled_positive_precision": 0.4,
+          "negative_hits": 1,
+          "returned_ids": [
+            "atom-9",
+            "atom-11",
+            "atom-10",
+            "atom-6",
+            "atom-4"
+          ],
+          "rerank_ms": 172.76349999974627
+        },
+        {
+          "query_id": "query-7",
+          "recall": 1.0,
+          "labeled_positive_precision": 0.4,
+          "negative_hits": 1,
+          "returned_ids": [
+            "atom-11",
+            "atom-10",
+            "atom-9",
+            "atom-6",
+            "atom-4"
+          ],
+          "rerank_ms": 162.08670000014536
+        }
+      ]
+    }
+  ]
+}
