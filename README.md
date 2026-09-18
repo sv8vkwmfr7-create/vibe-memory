@@ -139,7 +139,13 @@ mem = VibeMemory(
 from vibe_memory import VibeMemory
 
 mem = VibeMemory(agent_id="my-agent", db_path="memory.db")
-mem.store("Fixed API timeout error, changed from 30s to 60s", session_id="chat-1", tags=["error", "config"])
+mem.store(
+    "Fixed API timeout error, changed from 30s to 60s",
+    session_id="chat-1",
+    tags=["error", "config"],
+    scope={"service": "orders", "environment": "production",
+           "operation": "export"},
+)
 result = mem.recall("API timeout", mode="precision")
 for atom in result["atoms"]:
     print(atom.summary)
@@ -205,7 +211,7 @@ mem.reflect("What patterns in recent bugs?")  # → 生成跨记忆洞察
 
 | 方法 | 说明 |
 |------|------|
-| `store(content, session_id)` | 写入分片（自动建边 + embedding 缓存 + 隐私扫描） |
+| `store(content, session_id, scope)` | 写入分片；可选显式 `service/environment/operation` 作用域元数据（当前只持久化，不参与排序） |
 | `store_batch(messages)` | 批量写入（自动切分+入库+同会话建边） |
 | `recall(query, mode)` | 多策略检索（BM25+语义+图+时序，RRF 融合） |
 | `inject(query, mode)` | 检索 + 注入一步完成 |

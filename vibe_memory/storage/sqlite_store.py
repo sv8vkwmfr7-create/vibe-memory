@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS atoms (
     summary TEXT DEFAULT '',
     type TEXT DEFAULT 'session',
     tags TEXT DEFAULT '[]',
+    scope TEXT DEFAULT '{}',
     lifecycle TEXT DEFAULT 'active',
     weight REAL DEFAULT 1.0,
     decay_rate REAL DEFAULT 0.95,
@@ -152,6 +153,9 @@ class VibeStorage:
                 raise
         self.conn.row_factory = sqlite3.Row
         self.conn.executescript(SCHEMA)
+        columns = {row[1] for row in self.conn.execute("PRAGMA table_info(atoms)")}
+        if "scope" not in columns:
+            self.conn.execute("ALTER TABLE atoms ADD COLUMN scope TEXT DEFAULT '{}'")
         self.conn.commit()
         self._fts_enabled = self._initialize_fts()
         self._trigram_enabled = self._initialize_trigram()
@@ -193,16 +197,16 @@ class VibeStorage:
     def insert_atom(self, atom: MemoryAtom) -> None:
         self.conn.execute(
             """INSERT INTO atoms (
-                id, agent_id, session_id, tenant_id, content, summary, type, tags,
+                id, agent_id, session_id, tenant_id, content, summary, type, tags, scope,
                 lifecycle, weight, decay_rate, access_count, last_accessed,
                 adopted_count, ignored_count, created_at, source, confidence,
                 context_before, context_after, episode_id, episode_position,
                 version, previous_version_id
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 atom.id, atom.agent_id, atom.session_id, atom.tenant_id,
                 atom.content, atom.summary,
-                atom.type.value, json.dumps(atom.tags), atom.lifecycle.value,
+                atom.type.value, json.dumps(atom.tags), json.dumps(atom.scope), atom.lifecycle.value,
                 atom.weight, atom.decay_rate, atom.access_count,
                 atom.last_accessed.isoformat() if atom.last_accessed else None,
                 atom.adopted_count, atom.ignored_count,
@@ -486,14 +490,14 @@ class VibeStorage:
     def update_atom(self, atom: MemoryAtom) -> None:
         self.conn.execute(
             """UPDATE atoms SET
-                content=?, summary=?, type=?, tags=?, weight=?, decay_rate=?,
+                content=?, summary=?, type=?, tags=?, scope=?, weight=?, decay_rate=?,
                 lifecycle=?, access_count=?, last_accessed=?, adopted_count=?,
                 ignored_count=?, confidence=?, episode_id=?, episode_position=?,
                 version=?
             WHERE id=?""",
             (
                 atom.content, atom.summary, atom.type.value,
-                json.dumps(atom.tags), atom.weight, atom.decay_rate,
+                json.dumps(atom.tags), json.dumps(atom.scope), atom.weight, atom.decay_rate,
                 atom.lifecycle.value, atom.access_count,
                 atom.last_accessed.isoformat() if atom.last_accessed else None,
                 atom.adopted_count, atom.ignored_count,
@@ -657,6 +661,7 @@ class VibeStorage:
             summary=row["summary"],
             type=GraphPartition(row["type"]),
             tags=json.loads(row["tags"]),
+            scope=json.loads(row["scope"]) if "scope" in row.keys() else {},
             lifecycle=Lifecycle(row["lifecycle"]),
             weight=row["weight"],
             decay_rate=row["decay_rate"],

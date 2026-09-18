@@ -79,6 +79,22 @@ def test_storage_tenant_scope():
     print("[PASS] storage tenant scope test")
 
 
+def test_scope_metadata_remains_tenant_isolated():
+    store = VibeStorage(":memory:", tenant_id="tenant-a")
+    first = _make_atom("a1", "tenant-a", "agent-1", "s1")
+    second = _make_atom("a2", "tenant-b", "agent-1", "s1")
+    first.scope = {"service": "orders"}
+    second.scope = {"service": "billing"}
+    store.insert_atom(first)
+    store.insert_atom(second)
+
+    assert [atom.scope for atom in store.get_atoms_by_agent("agent-1")] == [
+        {"service": "orders"}
+    ]
+    assert [atom.scope for atom in store.get_atoms_by_agent(
+        "agent-1", tenant_id="tenant-b")] == [{"service": "billing"}]
+
+
 def test_recall_candidates_are_scoped_active_and_bounded():
     """Recall candidates rank term matches without crossing tenant/lifecycle bounds."""
     store = VibeStorage(":memory:", tenant_id="tenant-a")

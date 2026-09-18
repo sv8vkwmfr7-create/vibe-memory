@@ -85,6 +85,7 @@ class MemoryAtom:
     # 类型与分区
     type: GraphPartition = GraphPartition.SESSION
     tags: list[str] = field(default_factory=list)
+    scope: dict[str, str] = field(default_factory=dict)
 
     # 生命周期（连续衰减谱）
     lifecycle: Lifecycle = Lifecycle.ACTIVE
@@ -152,6 +153,7 @@ class MemoryAtom:
             "summary": self.summary,
             "type": self.type.value,
             "tags": self.tags,
+            "scope": self.scope,
             "lifecycle": self.lifecycle.value,
             "weight": self.weight,
             "decay_rate": self.decay_rate,

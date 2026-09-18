@@ -13,7 +13,9 @@ Tests for VibeMemory unified entry class:
 """
 
 import uuid
+import sqlite3
 from datetime import datetime
+import pytest
 
 from vibe_memory.sdk import VibeMemory
 from vibe_memory.models.memory_atom import (
@@ -49,6 +51,72 @@ def test_store_single():
     assert retrieved.content == atom.content
 
     print("[PASS] store single test")
+
+
+def test_store_scope_metadata_survives_restart_without_changing_tags(tmp_path):
+    db_path = str(tmp_path / "scope.db")
+    first = VibeMemory(agent_id="scope-agent", db_path=db_path,
+                       embedding_backend="tfidf")
+    atom = first.store(
+        "Orders production export failed",
+        tags=["incident"],
+        scope={"service": "orders", "environment": "production",
+               "operation": "export"},
+        auto_build_edges=False,
+        auto_episode=False,
+    )
+    first.storage.conn.close()
+
+    reopened = VibeMemory(agent_id="scope-agent", db_path=db_path,
+                          embedding_backend="tfidf")
+    restored = reopened.storage.get_atom(atom.id)
+    legacy = reopened.store(
+        "Legacy call without scope",
+        tags=["legacy"],
+        auto_build_edges=False,
+        auto_episode=False,
+    )
+
+    assert restored.scope == {
+        "service": "orders",
+        "environment": "production",
+        "operation": "export",
+    }
+    assert restored.tags == ["incident"]
+    assert restored.to_dict()["scope"] == restored.scope
+    assert legacy.scope == {}
+
+
+@pytest.mark.parametrize("scope", [
+    {"servcie": "orders"},
+    {"service": 7},
+])
+def test_store_rejects_invalid_scope_metadata(scope):
+    mem = VibeMemory(agent_id="scope-agent", db_path=":memory:",
+                     embedding_backend="tfidf")
+
+    with pytest.raises(ValueError, match="scope"):
+        mem.store("Invalid scope", scope=scope)
+
+
+def test_existing_database_adds_scope_column_on_open(tmp_path):
+    db_path = str(tmp_path / "legacy.db")
+    current = VibeMemory(agent_id="scope-agent", db_path=db_path,
+                         embedding_backend="tfidf")
+    current.storage.conn.close()
+    with sqlite3.connect(db_path) as connection:
+        connection.execute("ALTER TABLE atoms DROP COLUMN scope")
+
+    reopened = VibeMemory(agent_id="scope-agent", db_path=db_path,
+                          embedding_backend="tfidf")
+    atom = reopened.store(
+        "Legacy database accepts scope",
+        scope={"service": "orders"},
+        auto_build_edges=False,
+        auto_episode=False,
+    )
+
+    assert reopened.storage.get_atom(atom.id).scope == {"service": "orders"}
 
 
 def test_store_batch():

@@ -141,6 +141,31 @@ def test_store_with_summary(client):
     assert "API timeout" in data["summary"]
 
 
+def test_store_scope_metadata_is_public_and_returned(client):
+    tools = client.send("tools/list", {})["result"]["tools"]
+    schema = next(tool["inputSchema"] for tool in tools
+                  if tool["name"] == "vibe_store")
+    scope_schema = schema["properties"]["scope"]
+    assert scope_schema["type"] == "object"
+    assert scope_schema["additionalProperties"] is False
+
+    response = client.call_tool("vibe_store", {
+        "content": "Orders production export failed",
+        "scope": {"service": "orders", "environment": "production",
+                  "operation": "export"},
+    })
+    data = client.get_text(response)
+
+    assert data["scope"] == {"service": "orders",
+                              "environment": "production",
+                              "operation": "export"}
+
+    recalled = client.get_text(client.call_tool("vibe_recall", {
+        "query": "Orders production export",
+    }))
+    assert recalled["memories"][0]["scope"] == data["scope"]
+
+
 # ── vibe_recall ──
 
 def test_recall_basic(client):

@@ -85,6 +85,16 @@ def run_server(db_path: str, agent_id: str, vibe_dir: str, wal_maintenance: bool
                 "properties": {
                     "content": {"type": "string", "description": "The memory content to store"},
                     "tags": {"type": "array", "items": {"type": "string"}, "description": "Tags for categorization (e.g. ['bug', 'api', 'fix'])"},
+                    "scope": {
+                        "type": "object",
+                        "description": "Explicit retrieval scope metadata",
+                        "properties": {
+                            "service": {"type": "string"},
+                            "environment": {"type": "string"},
+                            "operation": {"type": "string"},
+                        },
+                        "additionalProperties": False,
+                    },
                     "summary": {"type": "string", "description": "Short summary (auto-generated from content if omitted)"},
                     "session_id": {"type": "string", "description": "Session ID (auto-generated if omitted)"},
                 },
@@ -182,11 +192,13 @@ def run_server(db_path: str, agent_id: str, vibe_dir: str, wal_maintenance: bool
         if tool_name == "vibe_store":
             content = arguments["content"]
             tags = arguments.get("tags", [])
+            scope = arguments.get("scope")
             summary = arguments.get("summary")
             sid = arguments.get("session_id") or session_id
             atom = mem.store(
                 content=content,
                 tags=tags,
+                scope=scope,
                 summary=summary,
                 session_id=sid,
                 auto_build_edges=False,  # Let client control when to build edges
@@ -196,6 +208,7 @@ def run_server(db_path: str, agent_id: str, vibe_dir: str, wal_maintenance: bool
                     "id": atom.id,
                     "summary": atom.summary[:120],
                     "tags": atom.tags,
+                    "scope": atom.scope,
                     "session_id": atom.session_id[:8],
                     "message": "Memory stored successfully",
                 }, ensure_ascii=False)}],
@@ -219,6 +232,7 @@ def run_server(db_path: str, agent_id: str, vibe_dir: str, wal_maintenance: bool
                     "content": atom.content[:300],
                     "session_id": atom.session_id[:8],
                     "tags": atom.tags,
+                    "scope": atom.scope,
                 })
 
             return {

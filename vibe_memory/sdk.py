@@ -163,6 +163,7 @@ class VibeMemory:
         content: str,
         session_id: Optional[str] = None,
         tags: Optional[list[str]] = None,
+        scope: Optional[dict[str, str]] = None,
         summary: Optional[str] = None,
         context_before: str = "",
         context_after: str = "",
@@ -178,6 +179,7 @@ class VibeMemory:
             content: 分片内容
             session_id: 会话 ID（None 则自动生成）
             tags: 手动标签（None 则自动生成）
+            scope: 显式作用域元数据（service/environment/operation）
             summary: 摘要（None 则截取 content 前 200 字符）
             context_before: 上文
             context_after: 下文
@@ -192,6 +194,14 @@ class VibeMemory:
         from vibe_memory.chunking.chunker import _generate_tags
 
         sid = session_id or str(uuid.uuid4())
+        if scope is not None:
+            allowed_scope = {"service", "environment", "operation"}
+            if (not isinstance(scope, dict)
+                    or any(key not in allowed_scope or not isinstance(key, str)
+                           or not isinstance(value, str)
+                           for key, value in scope.items())):
+                raise ValueError(
+                    "scope must map service/environment/operation to strings")
 
         # 隐私扫描：默认脱敏模式
         content, violations, blocked = scan_before_store(content, self.defense)
@@ -207,6 +217,7 @@ class VibeMemory:
             tenant_id=self.tenant_id,
             type=partition,
             tags=tags or _generate_tags(content),
+            scope=dict(scope or {}),
             lifecycle=Lifecycle.ACTIVE,
             weight=1.0,
             created_at=datetime.now(),
