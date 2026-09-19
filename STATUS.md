@@ -4,6 +4,12 @@
 
 Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK, SQLite storage, TF-IDF retrieval, CLI/session manager, and MCP stdio interface are covered by the current local test suite. Public benchmark and production-scale claims remain unverified.
 
+### Directional causal-chain rerank probe (2026-09-19)
+
+`python -m experiments.safe_relation_rerank_probe --json results/safe_relation_rerank_probe.json` compares the existing undirected causal bridge with an experiment-only rule requiring `primary anchor -> candidate -> second anchor`. Both recover all three fixed half-hit targets, while the directional rule avoids the current bridge's two negative Top-1 promotions in convergence and reversed-direction guards; a graph-free guard preserves baseline order. The dataset SHA256 is `ce51f0ad0aabfa866d3fa7d744c7a949b4dd1d65940cd106b153c0aafe04ea3c`.
+
+These are assistant-authored deterministic synthetic cases, not independent labels or a public benchmark. The synthetic guards pass, but the rule is not eligible for a default change and remains outside SDK/MCP production code. Three new tests bring the full suite to **378 passed in 15.18s**.
+
 ### Precision stage diagnostics (2026-09-19)
 
 `python experiments/precision_stage_diagnostics.py --json results/precision_stage_diagnostics.json` runs five fixed assistant-authored synthetic cases through the production precision path while observing semantic, BM25, graph, RRF fusion, and final rerank stages. In all three causal half-hit cases the target is absent from semantic/BM25, ranks first in graph, ranks fifth after RRF, and is removed by the final similarity rerank. Explicit `causal_bridge` restores all three targets, but a jointly-wrong-anchor guard promotes a labeled negative to Top-1; a graph-free guard preserves baseline order. Therefore the bridge remains opt-in and production defaults are unchanged. The cases are development diagnostics, not independent labels or a public benchmark. Three new tests bring the full suite to 375 passed.

@@ -1,0 +1,189 @@
+{
+  "dataset_id": "safe-relation-rerank-v1",
+  "dataset_sha256": "ce51f0ad0aabfa866d3fa7d744c7a949b4dd1d65940cd106b153c0aafe04ea3c",
+  "evaluation_is_independent": false,
+  "evidence_boundary": "Assistant-authored deterministic synthetic cases fixed during the TDD red phase. They test a directional causal-chain hypothesis and its guards; they are not independent labels or a public benchmark. Passing these synthetic guards is insufficient to change production defaults.",
+  "conditions": {
+    "mode": "precision",
+    "top_k": 5,
+    "embedding": "tfidf",
+    "production_defaults_changed": false
+  },
+  "rows": [
+    {
+      "case_id": "orders-directional-chain",
+      "role": "half_hit",
+      "target_id": "cause",
+      "baseline_ids": [
+        "anchor-1",
+        "anchor-0",
+        "noise-1",
+        "noise-2",
+        "noise-0"
+      ],
+      "causal_bridge_ids": [
+        "cause",
+        "anchor-1",
+        "anchor-0",
+        "noise-1",
+        "noise-2"
+      ],
+      "directional_ids": [
+        "cause",
+        "anchor-1",
+        "anchor-0",
+        "noise-1",
+        "noise-2"
+      ],
+      "causal_bridge_negative_top1": false,
+      "directional_negative_top1": false
+    },
+    {
+      "case_id": "login-directional-chain",
+      "role": "half_hit",
+      "target_id": "cause",
+      "baseline_ids": [
+        "anchor-1",
+        "anchor-0",
+        "noise-1",
+        "noise-2",
+        "noise-0"
+      ],
+      "causal_bridge_ids": [
+        "cause",
+        "anchor-1",
+        "anchor-0",
+        "noise-1",
+        "noise-2"
+      ],
+      "directional_ids": [
+        "cause",
+        "anchor-1",
+        "anchor-0",
+        "noise-1",
+        "noise-2"
+      ],
+      "causal_bridge_negative_top1": false,
+      "directional_negative_top1": false
+    },
+    {
+      "case_id": "export-directional-chain",
+      "role": "half_hit",
+      "target_id": "cause",
+      "baseline_ids": [
+        "anchor-1",
+        "anchor-0",
+        "noise-1",
+        "noise-2",
+        "noise-0"
+      ],
+      "causal_bridge_ids": [
+        "cause",
+        "anchor-1",
+        "anchor-0",
+        "noise-1",
+        "noise-2"
+      ],
+      "directional_ids": [
+        "cause",
+        "anchor-1",
+        "anchor-0",
+        "noise-1",
+        "noise-2"
+      ],
+      "causal_bridge_negative_top1": false,
+      "directional_negative_top1": false
+    },
+    {
+      "case_id": "no-causal-edge",
+      "role": "guard",
+      "target_id": "anchor-0",
+      "baseline_ids": [
+        "anchor-1",
+        "noise-0",
+        "anchor-0",
+        "noise-1"
+      ],
+      "causal_bridge_ids": [
+        "anchor-1",
+        "noise-0",
+        "anchor-0",
+        "noise-1"
+      ],
+      "directional_ids": [
+        "anchor-1",
+        "noise-0",
+        "anchor-0",
+        "noise-1"
+      ],
+      "causal_bridge_negative_top1": false,
+      "directional_negative_top1": false
+    },
+    {
+      "case_id": "jointly-wrong-convergence",
+      "role": "guard",
+      "target_id": "answer",
+      "baseline_ids": [
+        "anchor-0",
+        "anchor-1",
+        "noise-0",
+        "noise-1",
+        "negative-bridge"
+      ],
+      "causal_bridge_ids": [
+        "negative-bridge",
+        "anchor-0",
+        "anchor-1",
+        "noise-0",
+        "noise-1"
+      ],
+      "directional_ids": [
+        "anchor-0",
+        "anchor-1",
+        "noise-0",
+        "noise-1",
+        "negative-bridge"
+      ],
+      "causal_bridge_negative_top1": true,
+      "directional_negative_top1": false
+    },
+    {
+      "case_id": "reversed-direction",
+      "role": "guard",
+      "target_id": "anchor-0",
+      "baseline_ids": [
+        "anchor-0",
+        "anchor-1",
+        "noise-0",
+        "noise-1",
+        "negative-bridge"
+      ],
+      "causal_bridge_ids": [
+        "negative-bridge",
+        "anchor-0",
+        "anchor-1",
+        "noise-0",
+        "noise-1"
+      ],
+      "directional_ids": [
+        "anchor-0",
+        "anchor-1",
+        "noise-0",
+        "noise-1",
+        "negative-bridge"
+      ],
+      "causal_bridge_negative_top1": true,
+      "directional_negative_top1": false
+    }
+  ],
+  "summary": {
+    "half_hit_cases": 3,
+    "baseline_target_recall_at_5": 0.0,
+    "causal_bridge_target_recall_at_5": 1.0,
+    "directional_chain_target_recall_at_5": 1.0,
+    "causal_bridge_negative_top1_cases": 2,
+    "directional_negative_top1_cases": 0,
+    "synthetic_guards_passed": true,
+    "eligible_for_default": false
+  }
+}
