@@ -33,6 +33,10 @@ def test_report_compares_three_strategies_without_private_identifiers_or_text():
     assert report["aggregates"]["directional_chain"]["macro_recall"] == 1.0
     assert report["conditions"]["production_defaults_changed"] is False
     assert report["evaluation_is_independent"] is False
+    diagnostic = report["rows"][0]["directional_diagnostic"]
+    assert diagnostic["common_anchor_count"] >= 2
+    assert diagnostic["supported_candidate_count"] == 1
+    assert diagnostic["outcome"] == "triggered"
     rendered = str(report)
     assert "database connection pool exhausted" not in rendered
     assert "anchor-0" not in rendered
@@ -45,3 +49,4 @@ def test_report_is_repeatable_and_exposes_ranking_changes():
     assert first == second
     assert first["rows"][0]["query_id"] == "query-0"
     assert first["rows"][0]["directional_chain"]["ranking_changed"] is True
+    assert first["directional_diagnostics"]["outcome_counts"] == {"triggered": 1}

@@ -8,6 +8,8 @@ Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK
 
 `python -m experiments.directional_holdout_probe /path/to/private-corpus.json --json results/directional_holdout_probe.json` replays the frozen twelve-memory, eight-query Wiki-source holdout through baseline precision, the existing causal bridge, and the experiment-only directional chain. All three produced identical rankings on all eight queries: macro Recall@5 **1.00**, labeled precision@5 **0.40**, and labeled negative hits on **5/8** queries. The report contains only anonymous IDs and aggregate metrics; private text remains local.
 
+Coverage diagnostics explain the zero ranking changes: every query had **3–5** common semantic/BM25 anchors, but all **8/8** primary semantic anchors had zero outgoing causal edges to a non-anchor candidate (`no_primary_outgoing_candidate`). The blocker is therefore relation orientation at the primary anchor, not too few common anchors or loss after fusion. This does not justify reversing the rule: the current holdout already retrieves every labeled answer and still lacks independent labels.
+
 This result shows no regression and no benefit on the holdout. It does not validate a product integration: the labels and edges are assistant-authored, timing is intentionally excluded from the deterministic report, and the paused 96-row human review remains untouched. Production defaults remain unchanged. Two report-interface tests bring the full suite to **380 passed in 16.67s**.
 
 ### Directional causal-chain rerank probe (2026-09-19)

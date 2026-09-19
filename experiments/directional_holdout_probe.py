@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import statistics
+from collections import Counter
 from datetime import datetime
 from pathlib import Path
 
@@ -64,6 +65,63 @@ def _rank(data: dict, query: str, strategy: str) -> list[str]:
         store.conn.close()
 
 
+def _directional_rank_and_diagnostic(
+    data: dict, query: str, anonymous: dict[str, str]
+) -> tuple[list[str], dict]:
+    store = _store(data)
+    try:
+        baseline_ids, stages = _baseline_with_stages(store, query)
+        directional_ids = _directional_ids(store, stages)
+        semantic = stages.get("semantic", [])
+        bm25 = stages.get("bm25", [])
+        anchors = {atom_id for atom_id, _ in semantic} & {
+            atom_id for atom_id, score in bm25 if score > 0
+        }
+        primary = semantic[0][0] if semantic else None
+        primary_candidates: set[str] = set()
+        supported: set[str] = set()
+        outgoing_to_anchors: dict[str, set[str]] = {}
+        for edge in store.get_retrieval_edges(
+            "safe-relation-probe", atom_ids=list(anchors)
+        ):
+            if edge.label != EdgeLabel.CAUSAL or edge.weight * edge.confidence < 0.05:
+                continue
+            if edge.from_atom_id == primary and edge.to_atom_id not in anchors:
+                primary_candidates.add(edge.to_atom_id)
+            if edge.from_atom_id not in anchors and edge.to_atom_id in anchors:
+                outgoing_to_anchors.setdefault(edge.from_atom_id, set()).add(
+                    edge.to_atom_id
+                )
+        for candidate in primary_candidates:
+            if outgoing_to_anchors.get(candidate, set()) - {primary}:
+                supported.add(candidate)
+
+        reranked_ids = [atom_id for atom_id, _ in stages.get("full_reranked", [])]
+        eligible_supported = supported & set(reranked_ids)
+        if len(anchors) < 2 or primary is None:
+            outcome = "insufficient_common_anchors"
+        elif not primary_candidates:
+            outcome = "no_primary_outgoing_candidate"
+        elif not supported:
+            outcome = "no_candidate_to_second_anchor"
+        elif not eligible_supported:
+            outcome = "supported_candidate_outside_fused"
+        elif directional_ids != baseline_ids:
+            outcome = "triggered"
+        else:
+            outcome = "supported_candidate_already_ranked"
+        diagnostic = {
+            "primary_anchor_id": anonymous.get(primary) if primary else None,
+            "common_anchor_count": len(anchors),
+            "primary_outgoing_candidate_count": len(primary_candidates),
+            "supported_candidate_count": len(eligible_supported),
+            "outcome": outcome,
+        }
+        return directional_ids, diagnostic
+    finally:
+        store.conn.close()
+
+
 def evaluate(data: dict) -> dict:
     atom_ids = [atom["id"] for atom in data["atoms"]]
     anonymous = {atom_id: f"atom-{index}" for index, atom_id in enumerate(atom_ids)}
@@ -76,10 +134,18 @@ def evaluate(data: dict) -> dict:
         if not positives or positives & negatives or not positives | negatives <= set(atom_ids):
             raise ValueError("Invalid labels")
 
+        directional_ids, directional_diagnostic = _directional_rank_and_diagnostic(
+            data, query["text"], anonymous
+        )
         rankings = {
-            strategy: _rank(data, query["text"], strategy) for strategy in strategies
+            "baseline": _rank(data, query["text"], "baseline"),
+            "causal_bridge": _rank(data, query["text"], "causal_bridge"),
+            "directional_chain": directional_ids,
         }
-        row = {"query_id": f"query-{index}"}
+        row = {
+            "query_id": f"query-{index}",
+            "directional_diagnostic": directional_diagnostic,
+        }
         for strategy in strategies:
             ids = rankings[strategy]
             row[strategy] = {
@@ -122,6 +188,15 @@ def evaluate(data: dict) -> dict:
             "queries": len(data["queries"]),
             "timing_included": False,
             "production_defaults_changed": False,
+        },
+        "directional_diagnostics": {
+            "outcome_counts": dict(
+                sorted(
+                    Counter(
+                        row["directional_diagnostic"]["outcome"] for row in rows
+                    ).items()
+                )
+            )
         },
         "aggregates": aggregates,
         "rows": rows,

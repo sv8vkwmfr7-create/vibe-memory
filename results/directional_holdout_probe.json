@@ -11,6 +11,11 @@
     "timing_included": false,
     "production_defaults_changed": false
   },
+  "directional_diagnostics": {
+    "outcome_counts": {
+      "no_primary_outgoing_candidate": 8
+    }
+  },
   "aggregates": {
     "baseline": {
       "macro_recall": 1.0,
@@ -34,6 +39,13 @@
   "rows": [
     {
       "query_id": "query-0",
+      "directional_diagnostic": {
+        "primary_anchor_id": "atom-2",
+        "common_anchor_count": 5,
+        "primary_outgoing_candidate_count": 0,
+        "supported_candidate_count": 0,
+        "outcome": "no_primary_outgoing_candidate"
+      },
       "baseline": {
         "recall": 1.0,
         "precision_at_5": 0.4,
@@ -76,6 +88,13 @@
     },
     {
       "query_id": "query-1",
+      "directional_diagnostic": {
+        "primary_anchor_id": "atom-1",
+        "common_anchor_count": 4,
+        "primary_outgoing_candidate_count": 0,
+        "supported_candidate_count": 0,
+        "outcome": "no_primary_outgoing_candidate"
+      },
       "baseline": {
         "recall": 1.0,
         "precision_at_5": 0.4,
@@ -118,6 +137,13 @@
     },
     {
       "query_id": "query-2",
+      "directional_diagnostic": {
+        "primary_anchor_id": "atom-3",
+        "common_anchor_count": 5,
+        "primary_outgoing_candidate_count": 0,
+        "supported_candidate_count": 0,
+        "outcome": "no_primary_outgoing_candidate"
+      },
       "baseline": {
         "recall": 1.0,
         "precision_at_5": 0.4,
@@ -160,6 +186,13 @@
     },
     {
       "query_id": "query-3",
+      "directional_diagnostic": {
+        "primary_anchor_id": "atom-4",
+        "common_anchor_count": 4,
+        "primary_outgoing_candidate_count": 0,
+        "supported_candidate_count": 0,
+        "outcome": "no_primary_outgoing_candidate"
+      },
       "baseline": {
         "recall": 1.0,
         "precision_at_5": 0.4,
@@ -202,6 +235,13 @@
     },
     {
       "query_id": "query-4",
+      "directional_diagnostic": {
+        "primary_anchor_id": "atom-6",
+        "common_anchor_count": 3,
+        "primary_outgoing_candidate_count": 0,
+        "supported_candidate_count": 0,
+        "outcome": "no_primary_outgoing_candidate"
+      },
       "baseline": {
         "recall": 1.0,
         "precision_at_5": 0.4,
@@ -244,6 +284,13 @@
     },
     {
       "query_id": "query-5",
+      "directional_diagnostic": {
+        "primary_anchor_id": "atom-7",
+        "common_anchor_count": 3,
+        "primary_outgoing_candidate_count": 0,
+        "supported_candidate_count": 0,
+        "outcome": "no_primary_outgoing_candidate"
+      },
       "baseline": {
         "recall": 1.0,
         "precision_at_5": 0.4,
@@ -286,6 +333,13 @@
     },
     {
       "query_id": "query-6",
+      "directional_diagnostic": {
+        "primary_anchor_id": "atom-9",
+        "common_anchor_count": 5,
+        "primary_outgoing_candidate_count": 0,
+        "supported_candidate_count": 0,
+        "outcome": "no_primary_outgoing_candidate"
+      },
       "baseline": {
         "recall": 1.0,
         "precision_at_5": 0.4,
@@ -328,6 +382,13 @@
     },
     {
       "query_id": "query-7",
+      "directional_diagnostic": {
+        "primary_anchor_id": "atom-11",
+        "common_anchor_count": 5,
+        "primary_outgoing_candidate_count": 0,
+        "supported_candidate_count": 0,
+        "outcome": "no_primary_outgoing_candidate"
+      },
       "baseline": {
         "recall": 1.0,
         "precision_at_5": 0.4,
