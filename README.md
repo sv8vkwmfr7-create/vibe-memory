@@ -24,6 +24,14 @@ python -m venv .venv
 
 看到 `VibeMemory quickstart succeeded.` 就表示存储、持久化和召回链路已经工作。示例只使用本地 SQLite 与内置 TF-IDF，不联网、不需要大模型。
 
+安装后可进一步验证真实MCP子进程、重启持久化、跨会话召回、scope和清理：
+
+```bash
+vibe-doctor --db-path .vibe/memory.db --agent-id my-agent
+```
+
+如果MCP配置使用另一个Python解释器，请将同一路径传给 `--python`。全部步骤显示 `[PASS]` 且最后输出 `VibeMemory MCP end-to-end check succeeded.` 才表示端到端验证成功；工具可见或配置文件存在只是中间证据。诊断器会写入带唯一标识的两条测试记忆，并在结束前通过MCP删除。
+
 > [!NOTE]
 > 当前推荐从 GitHub 源码安装。`pip install vibe-memory` 是否可从 PyPI 获取取决于发布状态，零基础指南不依赖该前提。
 
@@ -222,6 +230,7 @@ vibe-init --dry-run    # 预览不改动
 | LangChain | LangChain/LangGraph | `from vibe_memory.langchain import VibeMemoryLC` |
 | OpenAI SDK | OpenAI Agents | `from vibe_memory.openai_agents import create_vibe_tools` |
 | CLI | 脚本/手动 | `vibe-session start/end` |
+| MCP诊断 | 安装与跨会话验证 | `vibe-doctor` |
 
 ### LLM 建边（可选）
 

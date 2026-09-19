@@ -179,6 +179,43 @@ vibe-init
 
 只有跨会话召回到了刚才的信息，才算 MCP 端到端接入成功。配置文件写入成功或工具列表可见，都只是中间证据。
 
+### 自动执行MCP端到端检查
+
+完成安装后运行：
+
+```bash
+vibe-doctor --db-path .vibe/memory.db --agent-id my-agent
+```
+
+如果客户端配置中写的是特定Python路径，应使用同一个解释器：
+
+```bash
+vibe-doctor --python /path/to/python --db-path .vibe/memory.db --agent-id my-agent
+```
+
+Windows示例：
+
+```powershell
+vibe-doctor --python .venv\Scripts\python.exe --db-path .vibe\memory.db --agent-id my-agent
+```
+
+检查器通过真实MCP stdio协议完成初始化、工具发现、写入、关闭进程、重新启动、召回、scope改序和清理。成功输出：
+
+```text
+[PASS] Environment
+[PASS] MCP startup
+[PASS] Tool discovery
+[PASS] Store
+[PASS] Process restart
+[PASS] Cross-session recall
+[PASS] Scope
+[PASS] Cleanup
+
+VibeMemory MCP end-to-end check succeeded.
+```
+
+任何 `[FAIL]` 都表示端到端链路尚未完成，应先按错误信息检查Python解释器、数据库目录、MCP启动或召回配置。
+
 ## 8. scope 怎么用
 
 `scope` 是调用方明确提供的上下文，目前支持三个字符串字段：

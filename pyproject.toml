@@ -46,6 +46,7 @@ vibe-session = "vibe_memory.cli.main:main"
 vibe-mcp = "vibe_memory.mcp_server:main"
 vibe-http = "vibe_memory.http_server:main"
 vibe-init = "vibe_memory.init:main"
+vibe-doctor = "vibe_memory.doctor:main"
 
 [tool.setuptools.packages.find]
 include = ["vibe_memory*"]
