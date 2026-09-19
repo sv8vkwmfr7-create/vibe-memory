@@ -4,6 +4,12 @@
 
 Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK, SQLite storage, TF-IDF retrieval, CLI/session manager, and MCP stdio interface are covered by the current local test suite. Public benchmark and production-scale claims remain unverified.
 
+### Directional rerank private holdout replay (2026-09-19)
+
+`python -m experiments.directional_holdout_probe /path/to/private-corpus.json --json results/directional_holdout_probe.json` replays the frozen twelve-memory, eight-query Wiki-source holdout through baseline precision, the existing causal bridge, and the experiment-only directional chain. All three produced identical rankings on all eight queries: macro Recall@5 **1.00**, labeled precision@5 **0.40**, and labeled negative hits on **5/8** queries. The report contains only anonymous IDs and aggregate metrics; private text remains local.
+
+This result shows no regression and no benefit on the holdout. It does not validate a product integration: the labels and edges are assistant-authored, timing is intentionally excluded from the deterministic report, and the paused 96-row human review remains untouched. Production defaults remain unchanged. Two report-interface tests bring the full suite to **380 passed in 16.67s**.
+
 ### Directional causal-chain rerank probe (2026-09-19)
 
 `python -m experiments.safe_relation_rerank_probe --json results/safe_relation_rerank_probe.json` compares the existing undirected causal bridge with an experiment-only rule requiring `primary anchor -> candidate -> second anchor`. Both recover all three fixed half-hit targets, while the directional rule avoids the current bridge's two negative Top-1 promotions in convergence and reversed-direction guards; a graph-free guard preserves baseline order. The dataset SHA256 is `ce51f0ad0aabfa866d3fa7d744c7a949b4dd1d65940cd106b153c0aafe04ea3c`.
