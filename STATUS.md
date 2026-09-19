@@ -1,8 +1,12 @@
 # Project Status
 
-> Last verified: 2026-09-15
+> Last verified: 2026-09-19
 
 Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK, SQLite storage, TF-IDF retrieval, CLI/session manager, and MCP stdio interface are covered by the current local test suite. Public benchmark and production-scale claims remain unverified.
+
+### Precision stage diagnostics (2026-09-19)
+
+`python experiments/precision_stage_diagnostics.py --json results/precision_stage_diagnostics.json` runs five fixed assistant-authored synthetic cases through the production precision path while observing semantic, BM25, graph, RRF fusion, and final rerank stages. In all three causal half-hit cases the target is absent from semantic/BM25, ranks first in graph, ranks fifth after RRF, and is removed by the final similarity rerank. Explicit `causal_bridge` restores all three targets, but a jointly-wrong-anchor guard promotes a labeled negative to Top-1; a graph-free guard preserves baseline order. Therefore the bridge remains opt-in and production defaults are unchanged. The cases are development diagnostics, not independent labels or a public benchmark. Three new tests bring the full suite to 375 passed.
 
 ### Fixed 50/50 TF-IDF + BGE probe (2026-09-15)
 

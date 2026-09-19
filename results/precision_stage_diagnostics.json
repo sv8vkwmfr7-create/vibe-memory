@@ -1,0 +1,164 @@
+{
+  "dataset_id": "precision-stage-diagnostics-v1",
+  "dataset_sha256": "e6fd38ba85783ffc98fb8b7e867c0e6ff319b12118058fb4e2d04d24d5d9a1a1",
+  "evaluation_is_independent": false,
+  "evidence_boundary": "Assistant-authored deterministic synthetic diagnostics fixed during the TDD red phase before accepting expected outcomes. Labels are not independent or a public benchmark. The three half-hit cases model a causal reason with little query overlap; two guards characterize no-edge preservation and jointly-wrong anchor risk. This is not independent quality evidence and does not justify a default change.",
+  "conditions": {
+    "mode": "precision",
+    "top_k": 5,
+    "embedding": "tfidf",
+    "production_defaults_changed": false
+  },
+  "rows": [
+    {
+      "case_id": "orders-pool-cause",
+      "role": "half_hit",
+      "target_id": "cause",
+      "target_ranks": {
+        "semantic": null,
+        "bm25": null,
+        "graph": 1,
+        "fused": 5,
+        "final": null
+      },
+      "baseline_failure_stage": "final_rerank",
+      "baseline_ids": [
+        "anchor-0",
+        "anchor-1",
+        "noise-1",
+        "noise-2",
+        "noise-0"
+      ],
+      "bridge_ids": [
+        "cause",
+        "anchor-0",
+        "anchor-1",
+        "noise-1",
+        "noise-2"
+      ],
+      "baseline_negative_top1": false,
+      "bridge_negative_top1": false
+    },
+    {
+      "case_id": "login-certificate-cause",
+      "role": "half_hit",
+      "target_id": "cause",
+      "target_ranks": {
+        "semantic": null,
+        "bm25": null,
+        "graph": 1,
+        "fused": 5,
+        "final": null
+      },
+      "baseline_failure_stage": "final_rerank",
+      "baseline_ids": [
+        "anchor-0",
+        "anchor-1",
+        "noise-1",
+        "noise-2",
+        "noise-0"
+      ],
+      "bridge_ids": [
+        "cause",
+        "anchor-0",
+        "anchor-1",
+        "noise-1",
+        "noise-2"
+      ],
+      "baseline_negative_top1": false,
+      "bridge_negative_top1": false
+    },
+    {
+      "case_id": "export-font-cause",
+      "role": "half_hit",
+      "target_id": "cause",
+      "target_ranks": {
+        "semantic": null,
+        "bm25": null,
+        "graph": 1,
+        "fused": 5,
+        "final": null
+      },
+      "baseline_failure_stage": "final_rerank",
+      "baseline_ids": [
+        "anchor-0",
+        "anchor-1",
+        "noise-1",
+        "noise-2",
+        "noise-0"
+      ],
+      "bridge_ids": [
+        "cause",
+        "anchor-0",
+        "anchor-1",
+        "noise-1",
+        "noise-2"
+      ],
+      "baseline_negative_top1": false,
+      "bridge_negative_top1": false
+    },
+    {
+      "case_id": "no-causal-edge",
+      "role": "guard",
+      "target_id": "anchor-0",
+      "target_ranks": {
+        "semantic": 3,
+        "bm25": 3,
+        "graph": 3,
+        "fused": 3,
+        "final": 3
+      },
+      "baseline_failure_stage": "retained",
+      "baseline_ids": [
+        "anchor-1",
+        "noise-0",
+        "anchor-0",
+        "noise-1"
+      ],
+      "bridge_ids": [
+        "anchor-1",
+        "noise-0",
+        "anchor-0",
+        "noise-1"
+      ],
+      "baseline_negative_top1": false,
+      "bridge_negative_top1": false
+    },
+    {
+      "case_id": "jointly-wrong-bridge",
+      "role": "guard",
+      "target_id": "answer",
+      "target_ranks": {
+        "semantic": 5,
+        "bm25": null,
+        "graph": null,
+        "fused": 6,
+        "final": null
+      },
+      "baseline_failure_stage": "final_rerank",
+      "baseline_ids": [
+        "anchor-0",
+        "anchor-1",
+        "noise-0",
+        "noise-1",
+        "negative-bridge"
+      ],
+      "bridge_ids": [
+        "negative-bridge",
+        "anchor-0",
+        "anchor-1",
+        "noise-0",
+        "noise-1"
+      ],
+      "baseline_negative_top1": false,
+      "bridge_negative_top1": true
+    }
+  ],
+  "summary": {
+    "half_hit_cases": 3,
+    "baseline_target_recall_at_5": 0.0,
+    "causal_bridge_target_recall_at_5": 1.0,
+    "bridge_negative_top1_cases": 1,
+    "safe_to_enable_bridge_by_default": false
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "dataset_id": "precision-stage-diagnostics-v1",
+  "provenance": "Assistant-authored deterministic synthetic diagnostics fixed during the TDD red phase before accepting expected outcomes. Labels are not independent or a public benchmark. The three half-hit cases model a causal reason with little query overlap; two guards characterize no-edge preservation and jointly-wrong anchor risk.",
+  "cases": [
+    {
+      "case_id": "orders-pool-cause",
+      "role": "half_hit",
+      "query": "orders export request hangs timeout",
+      "target_id": "cause",
+      "atoms": [
+        {"id": "anchor-0", "content": "orders orders export export request hangs timeout incident"},
+        {"id": "anchor-1", "content": "orders export request request hangs hangs timeout retry"},
+        {"id": "noise-0", "content": "orders export request hangs timeout dashboard"},
+        {"id": "noise-1", "content": "orders export request hangs timeout archive"},
+        {"id": "noise-2", "content": "orders export request hangs timeout staging"},
+        {"id": "noise-3", "content": "orders export request hangs timeout benchmark"},
+        {"id": "cause", "content": "database connection pool exhausted; increase capacity"}
+      ],
+      "edges": [["anchor-0", "cause"], ["anchor-1", "cause"]],
+      "negative_ids": ["noise-0", "noise-1", "noise-2", "noise-3"]
+    },
+    {
+      "case_id": "login-certificate-cause",
+      "role": "half_hit",
+      "query": "production login fails authentication",
+      "target_id": "cause",
+      "atoms": [
+        {"id": "anchor-0", "content": "production production login login fails authentication incident"},
+        {"id": "anchor-1", "content": "production login fails fails authentication authentication retry"},
+        {"id": "noise-0", "content": "production login fails authentication dashboard"},
+        {"id": "noise-1", "content": "production login fails authentication cache"},
+        {"id": "noise-2", "content": "production login fails authentication staging"},
+        {"id": "noise-3", "content": "production login fails authentication benchmark"},
+        {"id": "cause", "content": "signing certificate expired; rotate the certificate"}
+      ],
+      "edges": [["anchor-0", "cause"], ["anchor-1", "cause"]],
+      "negative_ids": ["noise-0", "noise-1", "noise-2", "noise-3"]
+    },
+    {
+      "case_id": "export-font-cause",
+      "role": "half_hit",
+      "query": "document export operation fails renderer",
+      "target_id": "cause",
+      "atoms": [
+        {"id": "anchor-0", "content": "document document export export operation fails renderer incident"},
+        {"id": "anchor-1", "content": "document export operation operation fails fails renderer retry"},
+        {"id": "noise-0", "content": "document export operation fails renderer dashboard"},
+        {"id": "noise-1", "content": "document export operation fails renderer archive"},
+        {"id": "noise-2", "content": "document export operation fails renderer staging"},
+        {"id": "noise-3", "content": "document export operation fails renderer benchmark"},
+        {"id": "cause", "content": "embedded typeface missing; bundle the font resource"}
+      ],
+      "edges": [["anchor-0", "cause"], ["anchor-1", "cause"]],
+      "negative_ids": ["noise-0", "noise-1", "noise-2", "noise-3"]
+    },
+    {
+      "case_id": "no-causal-edge",
+      "role": "guard",
+      "query": "cache refresh stalls",
+      "target_id": "anchor-0",
+      "atoms": [
+        {"id": "anchor-0", "content": "cache refresh stalls in production"},
+        {"id": "anchor-1", "content": "cache refresh stalls retry"},
+        {"id": "noise-0", "content": "cache refresh stalls dashboard"},
+        {"id": "noise-1", "content": "unrelated archive task"}
+      ],
+      "edges": [],
+      "negative_ids": ["noise-0", "noise-1"]
+    },
+    {
+      "case_id": "jointly-wrong-bridge",
+      "role": "guard",
+      "query": "billing cache timeout incident",
+      "target_id": "answer",
+      "atoms": [
+        {"id": "anchor-0", "content": "billing billing cache cache timeout incident"},
+        {"id": "anchor-1", "content": "billing cache timeout timeout incident incident restart"},
+        {"id": "negative-bridge", "content": "restart the unrelated worker process"},
+        {"id": "answer", "content": "checkout database connections exhausted; increase pool capacity"},
+        {"id": "noise-0", "content": "billing cache timeout dashboard"},
+        {"id": "noise-1", "content": "billing cache timeout benchmark"}
+      ],
+      "edges": [["anchor-0", "negative-bridge"], ["anchor-1", "negative-bridge"]],
+      "negative_ids": ["negative-bridge"]
+    }
+  ]
+}
