@@ -1,0 +1,167 @@
+{
+  "dataset_id": "new-source-holdout-v1",
+  "evaluation_is_independent": false,
+  "evidence_boundary": "Intent and answer-subset annotations are assistant-authored hypotheses, not independent labels or proof of query intent. Graph positions describe manually supplied directed edges, not causal truth.",
+  "conditions": {
+    "queries": 8,
+    "atoms": 12,
+    "ranking_comparison": true,
+    "production_defaults_changed": false
+  },
+  "by_intent": {
+    "reason": {
+      "queries": 3,
+      "answer_positions": {
+        "middle": 3
+      },
+      "macro_answer_recall_at_5": {
+        "baseline": 1.0,
+        "causal_bridge": 1.0,
+        "directional_chain": 1.0
+      }
+    },
+    "solution": {
+      "queries": 5,
+      "answer_positions": {
+        "terminal": 5
+      },
+      "macro_answer_recall_at_5": {
+        "baseline": 1.0,
+        "causal_bridge": 1.0,
+        "directional_chain": 1.0
+      }
+    }
+  },
+  "rows": [
+    {
+      "query_id": "query-0",
+      "intent": "solution",
+      "answer_positions": {
+        "terminal": 1
+      },
+      "all_relevant_positions": {
+        "middle": 1,
+        "terminal": 1
+      },
+      "answer_recall_at_5": {
+        "baseline": 1.0,
+        "causal_bridge": 1.0,
+        "directional_chain": 1.0
+      }
+    },
+    {
+      "query_id": "query-1",
+      "intent": "reason",
+      "answer_positions": {
+        "middle": 1
+      },
+      "all_relevant_positions": {
+        "middle": 1,
+        "terminal": 1
+      },
+      "answer_recall_at_5": {
+        "baseline": 1.0,
+        "causal_bridge": 1.0,
+        "directional_chain": 1.0
+      }
+    },
+    {
+      "query_id": "query-2",
+      "intent": "solution",
+      "answer_positions": {
+        "terminal": 1
+      },
+      "all_relevant_positions": {
+        "middle": 1,
+        "terminal": 1
+      },
+      "answer_recall_at_5": {
+        "baseline": 1.0,
+        "causal_bridge": 1.0,
+        "directional_chain": 1.0
+      }
+    },
+    {
+      "query_id": "query-3",
+      "intent": "reason",
+      "answer_positions": {
+        "middle": 1
+      },
+      "all_relevant_positions": {
+        "middle": 1,
+        "terminal": 1
+      },
+      "answer_recall_at_5": {
+        "baseline": 1.0,
+        "causal_bridge": 1.0,
+        "directional_chain": 1.0
+      }
+    },
+    {
+      "query_id": "query-4",
+      "intent": "reason",
+      "answer_positions": {
+        "middle": 1
+      },
+      "all_relevant_positions": {
+        "middle": 1,
+        "terminal": 1
+      },
+      "answer_recall_at_5": {
+        "baseline": 1.0,
+        "causal_bridge": 1.0,
+        "directional_chain": 1.0
+      }
+    },
+    {
+      "query_id": "query-5",
+      "intent": "solution",
+      "answer_positions": {
+        "terminal": 1
+      },
+      "all_relevant_positions": {
+        "middle": 1,
+        "terminal": 1
+      },
+      "answer_recall_at_5": {
+        "baseline": 1.0,
+        "causal_bridge": 1.0,
+        "directional_chain": 1.0
+      }
+    },
+    {
+      "query_id": "query-6",
+      "intent": "solution",
+      "answer_positions": {
+        "terminal": 1
+      },
+      "all_relevant_positions": {
+        "middle": 1,
+        "terminal": 1
+      },
+      "answer_recall_at_5": {
+        "baseline": 1.0,
+        "causal_bridge": 1.0,
+        "directional_chain": 1.0
+      }
+    },
+    {
+      "query_id": "query-7",
+      "intent": "solution",
+      "answer_positions": {
+        "terminal": 1
+      },
+      "all_relevant_positions": {
+        "middle": 1,
+        "terminal": 1
+      },
+      "answer_recall_at_5": {
+        "baseline": 1.0,
+        "causal_bridge": 1.0,
+        "directional_chain": 1.0
+      }
+    }
+  ],
+  "corpus_sha256": "b2dc206820f6d16efef80ef67981688c4bd681b16c6448b6ae8dafe52e7c27da",
+  "annotations_sha256": "e19725b9a276e39f13bdd4daacaab4cf933f5086ddb5ac425f130dc1ed49e695"
+}

@@ -1,8 +1,12 @@
 # Project Status
 
-> Last verified: 2026-09-19
+> Last verified: 2026-09-21
 
 Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK, SQLite storage, TF-IDF retrieval, CLI/session manager, and MCP stdio interface are covered by the current local test suite. Public benchmark and production-scale claims remain unverified.
+
+### Causal position and intent diagnostic (2026-09-21)
+
+`python -m experiments.causal_intent_probe /path/to/private-corpus.json /path/to/private-annotations.json --rankings results/directional_holdout_probe.json --json results/causal_intent_probe.json` reports graph positions and intent-specific answer recall without exporting private text or original atom IDs. On the frozen twelve-memory/eight-query holdout, assistant-labeled reason questions are **3/8**, each targeting a middle node; solution questions are **5/8**, each targeting a terminal node. Baseline, current bridge, and experimental directional chain each retrieve the annotated answer in **all 8/8** queries at Top-5. The intent/answer subset is a new assistant hypothesis, not independent ground truth. No automatic intent routing or production default changed. Full regression: **382 passed in 16.59s**.
 
 ### Directional rerank private holdout replay (2026-09-19)
 
