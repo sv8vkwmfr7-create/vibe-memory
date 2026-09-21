@@ -23,12 +23,22 @@ def _positions(atom_ids: set[str], edges: list[list[str]]) -> dict[str, str]:
     }
 
 
-def evaluate(corpus: dict, annotations: list[dict], rankings: dict | None = None) -> dict:
+def evaluate(
+    corpus: dict,
+    annotations: list[dict],
+    rankings: dict | None = None,
+    *,
+    corpus_sha256: str | None = None,
+) -> dict:
     atom_ids = {atom["id"] for atom in corpus["atoms"]}
     positions = _positions(atom_ids, corpus["edges"])
     if len(annotations) != len(corpus["queries"]):
         raise ValueError("Expected one annotation per query")
     ranking_rows = rankings["rows"] if rankings else None
+    if ranking_rows is not None and (
+        not corpus_sha256 or rankings.get("corpus_sha256") != corpus_sha256
+    ):
+        raise ValueError("Ranking corpus SHA256 differs from input corpus")
     if ranking_rows is not None and len(ranking_rows) != len(annotations):
         raise ValueError("Ranking query count differs")
     rows = []
@@ -152,6 +162,7 @@ def main() -> None:
         json.loads(corpus_raw.decode("utf-8-sig")),
         json.loads(annotations_raw.decode("utf-8-sig"))["annotations"],
         rankings,
+        corpus_sha256=hashlib.sha256(corpus_raw).hexdigest(),
     )
     report["corpus_sha256"] = hashlib.sha256(corpus_raw).hexdigest()
     report["annotations_sha256"] = hashlib.sha256(annotations_raw).hexdigest()
