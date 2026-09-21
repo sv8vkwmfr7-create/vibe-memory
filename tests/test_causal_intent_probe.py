@@ -40,12 +40,34 @@ def test_intent_specific_recall_uses_existing_anonymous_rankings():
         "queries": [{"text": "private question", "relevant_ids": ["reason", "fix"]}],
     }
     annotations = [{"query_id": "query-0", "intent": "solution", "answer_ids": ["fix"]}]
-    rankings = {"rows": [{"query_id": "query-0", "baseline": {"returned_ids": ["atom-1"]},
+    rankings = {"rows": [{"query_id": "query-0", "baseline": {"returned_ids": ["atom-1", "atom-2"]},
                            "causal_bridge": {"returned_ids": ["atom-1", "atom-2"]},
                            "directional_chain": {"returned_ids": ["atom-2"]}}]}
 
     report = evaluate(corpus, annotations, rankings)
 
     assert report["by_intent"]["solution"]["macro_answer_recall_at_5"] == {
-        "baseline": 0.0, "causal_bridge": 1.0, "directional_chain": 1.0
+        "baseline": 1.0, "causal_bridge": 1.0, "directional_chain": 1.0
     }
+    assert report["by_intent"]["solution"]["top1_hit_rate"] == {
+        "baseline": 0.0, "causal_bridge": 0.0, "directional_chain": 1.0
+    }
+    assert report["by_intent"]["solution"]["position_oracle_top1_hit_rate"] == 1.0
+
+
+def test_position_only_rerank_can_promote_wrong_terminal_from_other_issue():
+    corpus = {
+        "atoms": [{"id": "wrong_fix"}, {"id": "symptom"}, {"id": "right_fix"}, {"id": "wrong_cause"}],
+        "edges": [["wrong_cause", "wrong_fix"], ["symptom", "right_fix"]],
+        "queries": [{"text": "issue", "relevant_ids": ["right_fix"], "negative_ids": ["wrong_fix"]}],
+    }
+    annotations = [{"query_id": "query-0", "intent": "solution", "answer_ids": ["right_fix"]}]
+    rankings = {"rows": [{"query_id": "query-0", **{
+        strategy: {"returned_ids": ["atom-1", "atom-0", "atom-2"]}
+        for strategy in ("baseline", "causal_bridge", "directional_chain")
+    }}]}
+
+    report = evaluate(corpus, annotations, rankings)
+
+    assert report["rows"][0]["position_oracle_top1_hit"] is False
+    assert report["rows"][0]["position_oracle_negative_top1"] is True

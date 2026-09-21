@@ -60,6 +60,24 @@ def evaluate(corpus: dict, annotations: list[dict], rankings: dict | None = None
                 strategy: len(answer_aliases & set(rank_row[strategy]["returned_ids"])) / len(answers)
                 for strategy in ("baseline", "causal_bridge", "directional_chain")
             }
+            row["top1_hit"] = {
+                strategy: bool(rank_row[strategy]["returned_ids"] and
+                               rank_row[strategy]["returned_ids"][0] in answer_aliases)
+                for strategy in ("baseline", "causal_bridge", "directional_chain")
+            }
+            preferred_position = "middle" if annotation["intent"] == "reason" else "terminal"
+            aliases_by_position = {
+                f"atom-{i}" for i, atom in enumerate(corpus["atoms"])
+                if positions[atom["id"]] == preferred_position
+            }
+            baseline_ids = rank_row["baseline"]["returned_ids"]
+            oracle_ids = sorted(baseline_ids, key=lambda aid: aid not in aliases_by_position)
+            row["position_oracle_top1_hit"] = bool(oracle_ids and oracle_ids[0] in answer_aliases)
+            negative_aliases = {
+                f"atom-{i}" for i, atom in enumerate(corpus["atoms"])
+                if atom["id"] in query.get("negative_ids", [])
+            }
+            row["position_oracle_negative_top1"] = bool(oracle_ids and oracle_ids[0] in negative_aliases)
         rows.append(row)
     by_intent = {}
     for intent in ("reason", "solution"):
@@ -75,6 +93,16 @@ def evaluate(corpus: dict, annotations: list[dict], rankings: dict | None = None
                 strategy: sum(row["answer_recall_at_5"][strategy] for row in selected) / len(selected)
                 for strategy in ("baseline", "causal_bridge", "directional_chain")
             }
+            by_intent[intent]["top1_hit_rate"] = {
+                strategy: sum(row["top1_hit"][strategy] for row in selected) / len(selected)
+                for strategy in ("baseline", "causal_bridge", "directional_chain")
+            }
+            by_intent[intent]["position_oracle_top1_hit_rate"] = sum(
+                row["position_oracle_top1_hit"] for row in selected
+            ) / len(selected)
+            by_intent[intent]["position_oracle_negative_top1_cases"] = sum(
+                row["position_oracle_negative_top1"] for row in selected
+            )
     return {
         "dataset_id": corpus.get("dataset_id", "corpus"),
         "evaluation_is_independent": False,

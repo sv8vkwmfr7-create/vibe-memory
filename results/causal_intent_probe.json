@@ -18,7 +18,14 @@
         "baseline": 1.0,
         "causal_bridge": 1.0,
         "directional_chain": 1.0
-      }
+      },
+      "top1_hit_rate": {
+        "baseline": 0.6666666666666666,
+        "causal_bridge": 0.6666666666666666,
+        "directional_chain": 0.6666666666666666
+      },
+      "position_oracle_top1_hit_rate": 1.0,
+      "position_oracle_negative_top1_cases": 0
     },
     "solution": {
       "queries": 5,
@@ -29,7 +36,14 @@
         "baseline": 1.0,
         "causal_bridge": 1.0,
         "directional_chain": 1.0
-      }
+      },
+      "top1_hit_rate": {
+        "baseline": 0.4,
+        "causal_bridge": 0.4,
+        "directional_chain": 0.4
+      },
+      "position_oracle_top1_hit_rate": 1.0,
+      "position_oracle_negative_top1_cases": 0
     }
   },
   "rows": [
@@ -47,7 +61,14 @@
         "baseline": 1.0,
         "causal_bridge": 1.0,
         "directional_chain": 1.0
-      }
+      },
+      "top1_hit": {
+        "baseline": true,
+        "causal_bridge": true,
+        "directional_chain": true
+      },
+      "position_oracle_top1_hit": true,
+      "position_oracle_negative_top1": false
     },
     {
       "query_id": "query-1",
@@ -63,7 +84,14 @@
         "baseline": 1.0,
         "causal_bridge": 1.0,
         "directional_chain": 1.0
-      }
+      },
+      "top1_hit": {
+        "baseline": true,
+        "causal_bridge": true,
+        "directional_chain": true
+      },
+      "position_oracle_top1_hit": true,
+      "position_oracle_negative_top1": false
     },
     {
       "query_id": "query-2",
@@ -79,7 +107,14 @@
         "baseline": 1.0,
         "causal_bridge": 1.0,
         "directional_chain": 1.0
-      }
+      },
+      "top1_hit": {
+        "baseline": false,
+        "causal_bridge": false,
+        "directional_chain": false
+      },
+      "position_oracle_top1_hit": true,
+      "position_oracle_negative_top1": false
     },
     {
       "query_id": "query-3",
@@ -95,7 +130,14 @@
         "baseline": 1.0,
         "causal_bridge": 1.0,
         "directional_chain": 1.0
-      }
+      },
+      "top1_hit": {
+        "baseline": true,
+        "causal_bridge": true,
+        "directional_chain": true
+      },
+      "position_oracle_top1_hit": true,
+      "position_oracle_negative_top1": false
     },
     {
       "query_id": "query-4",
@@ -111,7 +153,14 @@
         "baseline": 1.0,
         "causal_bridge": 1.0,
         "directional_chain": 1.0
-      }
+      },
+      "top1_hit": {
+        "baseline": false,
+        "causal_bridge": false,
+        "directional_chain": false
+      },
+      "position_oracle_top1_hit": true,
+      "position_oracle_negative_top1": false
     },
     {
       "query_id": "query-5",
@@ -127,7 +176,14 @@
         "baseline": 1.0,
         "causal_bridge": 1.0,
         "directional_chain": 1.0
-      }
+      },
+      "top1_hit": {
+        "baseline": false,
+        "causal_bridge": false,
+        "directional_chain": false
+      },
+      "position_oracle_top1_hit": true,
+      "position_oracle_negative_top1": false
     },
     {
       "query_id": "query-6",
@@ -143,7 +199,14 @@
         "baseline": 1.0,
         "causal_bridge": 1.0,
         "directional_chain": 1.0
-      }
+      },
+      "top1_hit": {
+        "baseline": false,
+        "causal_bridge": false,
+        "directional_chain": false
+      },
+      "position_oracle_top1_hit": true,
+      "position_oracle_negative_top1": false
     },
     {
       "query_id": "query-7",
@@ -159,7 +222,14 @@
         "baseline": 1.0,
         "causal_bridge": 1.0,
         "directional_chain": 1.0
-      }
+      },
+      "top1_hit": {
+        "baseline": true,
+        "causal_bridge": true,
+        "directional_chain": true
+      },
+      "position_oracle_top1_hit": true,
+      "position_oracle_negative_top1": false
     }
   ],
   "corpus_sha256": "b2dc206820f6d16efef80ef67981688c4bd681b16c6448b6ae8dafe52e7c27da",
