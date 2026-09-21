@@ -57,7 +57,10 @@ def test_intent_specific_recall_uses_existing_anonymous_rankings():
 
 def test_position_only_rerank_can_promote_wrong_terminal_from_other_issue():
     corpus = {
-        "atoms": [{"id": "wrong_fix"}, {"id": "symptom"}, {"id": "right_fix"}, {"id": "wrong_cause"}],
+        "atoms": [{"id": "wrong_fix", "session_id": "other"},
+                  {"id": "symptom", "session_id": "current"},
+                  {"id": "right_fix", "session_id": "current"},
+                  {"id": "wrong_cause", "session_id": "other"}],
         "edges": [["wrong_cause", "wrong_fix"], ["symptom", "right_fix"]],
         "queries": [{"text": "issue", "relevant_ids": ["right_fix"], "negative_ids": ["wrong_fix"]}],
     }
@@ -71,3 +74,27 @@ def test_position_only_rerank_can_promote_wrong_terminal_from_other_issue():
 
     assert report["rows"][0]["position_oracle_top1_hit"] is False
     assert report["rows"][0]["position_oracle_negative_top1"] is True
+    assert report["rows"][0]["session_proxy_top1_hit"] is True
+    assert report["rows"][0]["session_proxy_negative_top1"] is False
+
+
+def test_session_proxy_fails_when_first_anchor_belongs_to_wrong_issue():
+    corpus = {
+        "atoms": [{"id": "wrong_start", "session_id": "other"},
+                  {"id": "wrong_fix", "session_id": "other"},
+                  {"id": "right_fix", "session_id": "current"},
+                  {"id": "right_start", "session_id": "current"}],
+        "edges": [["wrong_start", "wrong_fix"], ["right_start", "right_fix"]],
+        "queries": [{"text": "issue", "relevant_ids": ["right_fix"], "negative_ids": ["wrong_fix"]}],
+    }
+    annotations = [{"query_id": "query-0", "intent": "solution", "answer_ids": ["right_fix"]}]
+    rankings = {"rows": [{"query_id": "query-0", **{
+        strategy: {"returned_ids": ["atom-0", "atom-1", "atom-2"]}
+        for strategy in ("baseline", "causal_bridge", "directional_chain")
+    }}]}
+
+    report = evaluate(corpus, annotations, rankings)
+
+    assert report["rows"][0]["session_proxy_anchor_matches_answer"] is False
+    assert report["rows"][0]["session_proxy_top1_hit"] is False
+    assert report["rows"][0]["session_proxy_negative_top1"] is True

@@ -25,7 +25,10 @@
         "directional_chain": 0.6666666666666666
       },
       "position_oracle_top1_hit_rate": 1.0,
-      "position_oracle_negative_top1_cases": 0
+      "position_oracle_negative_top1_cases": 0,
+      "session_proxy_top1_hit_rate": 1.0,
+      "session_proxy_negative_top1_cases": 0,
+      "session_proxy_anchor_matches_answer_cases": 3
     },
     "solution": {
       "queries": 5,
@@ -43,7 +46,10 @@
         "directional_chain": 0.4
       },
       "position_oracle_top1_hit_rate": 1.0,
-      "position_oracle_negative_top1_cases": 0
+      "position_oracle_negative_top1_cases": 0,
+      "session_proxy_top1_hit_rate": 1.0,
+      "session_proxy_negative_top1_cases": 0,
+      "session_proxy_anchor_matches_answer_cases": 5
     }
   },
   "rows": [
@@ -68,7 +74,10 @@
         "directional_chain": true
       },
       "position_oracle_top1_hit": true,
-      "position_oracle_negative_top1": false
+      "position_oracle_negative_top1": false,
+      "session_proxy_top1_hit": true,
+      "session_proxy_negative_top1": false,
+      "session_proxy_anchor_matches_answer": true
     },
     {
       "query_id": "query-1",
@@ -91,7 +100,10 @@
         "directional_chain": true
       },
       "position_oracle_top1_hit": true,
-      "position_oracle_negative_top1": false
+      "position_oracle_negative_top1": false,
+      "session_proxy_top1_hit": true,
+      "session_proxy_negative_top1": false,
+      "session_proxy_anchor_matches_answer": true
     },
     {
       "query_id": "query-2",
@@ -114,7 +126,10 @@
         "directional_chain": false
       },
       "position_oracle_top1_hit": true,
-      "position_oracle_negative_top1": false
+      "position_oracle_negative_top1": false,
+      "session_proxy_top1_hit": true,
+      "session_proxy_negative_top1": false,
+      "session_proxy_anchor_matches_answer": true
     },
     {
       "query_id": "query-3",
@@ -137,7 +152,10 @@
         "directional_chain": true
       },
       "position_oracle_top1_hit": true,
-      "position_oracle_negative_top1": false
+      "position_oracle_negative_top1": false,
+      "session_proxy_top1_hit": true,
+      "session_proxy_negative_top1": false,
+      "session_proxy_anchor_matches_answer": true
     },
     {
       "query_id": "query-4",
@@ -160,7 +178,10 @@
         "directional_chain": false
       },
       "position_oracle_top1_hit": true,
-      "position_oracle_negative_top1": false
+      "position_oracle_negative_top1": false,
+      "session_proxy_top1_hit": true,
+      "session_proxy_negative_top1": false,
+      "session_proxy_anchor_matches_answer": true
     },
     {
       "query_id": "query-5",
@@ -183,7 +204,10 @@
         "directional_chain": false
       },
       "position_oracle_top1_hit": true,
-      "position_oracle_negative_top1": false
+      "position_oracle_negative_top1": false,
+      "session_proxy_top1_hit": true,
+      "session_proxy_negative_top1": false,
+      "session_proxy_anchor_matches_answer": true
     },
     {
       "query_id": "query-6",
@@ -206,7 +230,10 @@
         "directional_chain": false
       },
       "position_oracle_top1_hit": true,
-      "position_oracle_negative_top1": false
+      "position_oracle_negative_top1": false,
+      "session_proxy_top1_hit": true,
+      "session_proxy_negative_top1": false,
+      "session_proxy_anchor_matches_answer": true
     },
     {
       "query_id": "query-7",
@@ -229,7 +256,10 @@
         "directional_chain": true
       },
       "position_oracle_top1_hit": true,
-      "position_oracle_negative_top1": false
+      "position_oracle_negative_top1": false,
+      "session_proxy_top1_hit": true,
+      "session_proxy_negative_top1": false,
+      "session_proxy_anchor_matches_answer": true
     }
   ],
   "corpus_sha256": "b2dc206820f6d16efef80ef67981688c4bd681b16c6448b6ae8dafe52e7c27da",

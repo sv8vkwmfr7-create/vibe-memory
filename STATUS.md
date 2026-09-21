@@ -10,6 +10,8 @@ Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK
 
 The stricter Top-1 check exposes a ranking gap: **2/3** reason questions and **2/5** solution questions place the annotated answer first, identically across all three strategies. An oracle supplied with the assistant intent label can stably prioritize middle/terminal nodes and reaches **8/8** on this holdout, but a public cross-issue counterexample promotes a labeled wrong terminal to Top-1. Position alone is therefore unsafe as a production reranker; the oracle is a diagnostic upper bound, not a deployable solution. Full regression: **383 passed in 15.75s**.
 
+An experiment-only session proxy now restricts position promotion to the first baseline result's `session_id`. It restores **8/8** annotated Top-1 on the holdout and avoids the cross-session wrong-terminal guard, but a second public guard with a wrong first-session anchor still promotes a labeled negative. `session_id` is not an issue-family label, and both intent and holdout labels are assistant-authored. No production routing or default changed; **384 passed in 15.47s**.
+
 ### Directional rerank private holdout replay (2026-09-19)
 
 `python -m experiments.directional_holdout_probe /path/to/private-corpus.json --json results/directional_holdout_probe.json` replays the frozen twelve-memory, eight-query Wiki-source holdout through baseline precision, the existing causal bridge, and the experiment-only directional chain. All three produced identical rankings on all eight queries: macro Recall@5 **1.00**, labeled precision@5 **0.40**, and labeled negative hits on **5/8** queries. The report contains only anonymous IDs and aggregate metrics; private text remains local.

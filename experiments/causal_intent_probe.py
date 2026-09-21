@@ -78,6 +78,22 @@ def evaluate(corpus: dict, annotations: list[dict], rankings: dict | None = None
                 if atom["id"] in query.get("negative_ids", [])
             }
             row["position_oracle_negative_top1"] = bool(oracle_ids and oracle_ids[0] in negative_aliases)
+            session_by_alias = {
+                f"atom-{i}": atom.get("session_id")
+                for i, atom in enumerate(corpus["atoms"])
+            }
+            anchor_session = session_by_alias.get(baseline_ids[0]) if baseline_ids else None
+            same_session_position = {
+                aid for aid in aliases_by_position
+                if anchor_session is not None and session_by_alias[aid] == anchor_session
+            }
+            scoped_ids = sorted(baseline_ids, key=lambda aid: aid not in same_session_position)
+            row["session_proxy_top1_hit"] = bool(scoped_ids and scoped_ids[0] in answer_aliases)
+            row["session_proxy_negative_top1"] = bool(scoped_ids and scoped_ids[0] in negative_aliases)
+            row["session_proxy_anchor_matches_answer"] = bool(
+                anchor_session is not None and
+                any(session_by_alias[aid] == anchor_session for aid in answer_aliases)
+            )
         rows.append(row)
     by_intent = {}
     for intent in ("reason", "solution"):
@@ -102,6 +118,15 @@ def evaluate(corpus: dict, annotations: list[dict], rankings: dict | None = None
             ) / len(selected)
             by_intent[intent]["position_oracle_negative_top1_cases"] = sum(
                 row["position_oracle_negative_top1"] for row in selected
+            )
+            by_intent[intent]["session_proxy_top1_hit_rate"] = sum(
+                row["session_proxy_top1_hit"] for row in selected
+            ) / len(selected)
+            by_intent[intent]["session_proxy_negative_top1_cases"] = sum(
+                row["session_proxy_negative_top1"] for row in selected
+            )
+            by_intent[intent]["session_proxy_anchor_matches_answer_cases"] = sum(
+                row["session_proxy_anchor_matches_answer"] for row in selected
             )
     return {
         "dataset_id": corpus.get("dataset_id", "corpus"),
