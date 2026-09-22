@@ -34,5 +34,12 @@
       "any_evidence_hit_rate": 0.19083969465648856,
       "all_evidence_hit_rate": 0.16030534351145037
     }
+  },
+  "budget_candidate_diagnostic": {
+    "candidate_limit": 100,
+    "evidence_any_in_pool": 36,
+    "bm25_hit_budget_miss": 43,
+    "of_those_absent_from_pool": 42,
+    "of_those_present_but_unranked": 1
   }
 }

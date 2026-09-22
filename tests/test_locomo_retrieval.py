@@ -1,6 +1,9 @@
 """LoCoMo dialogue-evidence adapter boundaries."""
 
-from experiments.locomo_retrieval import build_corpus
+from datetime import datetime, timedelta
+
+from experiments.locomo_retrieval import build_corpus, diagnose_budget_candidate_pool
+from experiments.session_evaluation import evaluate
 
 
 def test_build_corpus_uses_only_existing_text_evidence_and_session_times():
@@ -32,3 +35,29 @@ def test_build_corpus_uses_only_existing_text_evidence_and_session_times():
         "relevant_ids": ["D1:1"],
     }]
     assert excluded == {"missing_evidence": 1, "image_evidence": 1, "no_evidence": 1}
+
+
+def test_budget_candidate_diagnostic_exposes_gold_lost_before_ranking():
+    start = datetime(2023, 5, 8)
+    common = {"agent_id": "a", "tenant_id": "locomo", "session_id": "s"}
+    atoms = [{**common, "id": "gold", "content": "Caroline joined the LGBTQ support group on May 7",
+              "summary": "Caroline joined the LGBTQ support group on May 7",
+              "created_at": start.isoformat()}]
+    atoms += [{**common, "id": f"noise-{i}", "content": "Caroline plans a group outing",
+               "summary": "Caroline plans a group outing",
+               "created_at": (start + timedelta(minutes=i + 1)).isoformat()}
+              for i in range(100)]
+    corpus = {"dataset_id": "synthetic-candidate-cap", "atoms": atoms, "edges": [],
+              "queries": [{"id": "q", "text": "When did Caroline join the LGBTQ support group?",
+                           "agent_id": "a", "tenant_id": "locomo",
+                           "cutoff": (start + timedelta(days=1)).isoformat(),
+                           "relevant_ids": ["gold"]}]}
+
+    rows = evaluate(corpus)["rows"]
+    assert next(row for row in rows if row["method"] == "keyword")["recall"] == 1
+    assert next(row for row in rows if row["method"] == "budget")["recall"] == 0
+    assert diagnose_budget_candidate_pool(corpus, rows, 5) == {
+        "candidate_limit": 100, "evidence_any_in_pool": 0,
+        "bm25_hit_budget_miss": 1, "of_those_absent_from_pool": 1,
+        "of_those_present_but_unranked": 0,
+    }

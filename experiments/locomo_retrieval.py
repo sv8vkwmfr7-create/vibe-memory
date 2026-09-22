@@ -8,6 +8,8 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 from experiments.session_evaluation import evaluate
+from vibe_memory.models.memory_atom import MemoryAtom
+from vibe_memory.storage.sqlite_store import VibeStorage
 
 
 def build_corpus(sample: dict) -> tuple[dict, dict[str, int]]:
@@ -59,6 +61,40 @@ def build_corpus(sample: dict) -> tuple[dict, dict[str, int]]:
     }, excluded
 
 
+def diagnose_budget_candidate_pool(corpus: dict, rows: list[dict], top_k: int) -> dict:
+    """Count evidence lost before budget ranking; this is experiment-only."""
+    limit = max(100, top_k * 20)
+    store = VibeStorage(":memory:", tenant_id=corpus["queries"][0]["tenant_id"])
+    try:
+        for row in corpus["atoms"]:
+            store.insert_atom(MemoryAtom(**{
+                **row, "created_at": datetime.fromisoformat(row["created_at"])
+            }))
+        results = {(row["query_id"], row["method"]): row for row in rows}
+        counts = {"candidate_limit": limit, "evidence_any_in_pool": 0,
+                  "bm25_hit_budget_miss": 0, "of_those_absent_from_pool": 0,
+                  "of_those_present_but_unranked": 0}
+        for query in corpus["queries"]:
+            gold = set(query["relevant_ids"])
+            candidates = store.get_recall_candidates(
+                query["agent_id"], query["text"], limit=limit,
+                tenant_id=query["tenant_id"], graph_seed_limit=top_k,
+                graph_neighbor_limit=int(limit * 0.2), graph_hops=2,
+            )
+            present = bool(gold & {atom.id for atom in candidates})
+            counts["evidence_any_in_pool"] += present
+            bm25_hit = results[(query["id"], "keyword")]["recall"] > 0
+            budget_hit = results[(query["id"], "budget")]["recall"] > 0
+            if bm25_hit and not budget_hit:
+                counts["bm25_hit_budget_miss"] += 1
+                key = ("of_those_present_but_unranked" if present
+                       else "of_those_absent_from_pool")
+                counts[key] += 1
+        return counts
+    finally:
+        store.conn.close()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("dataset", type=Path, help="Official local locomo10.json")
@@ -79,6 +115,7 @@ def main() -> None:
     if args.max_queries:
         corpus["queries"] = corpus["queries"][:args.max_queries]
     result = evaluate(corpus, top_k=args.top_k)
+    candidate_diagnostic = diagnose_budget_candidate_pool(corpus, result["rows"], args.top_k)
     methods = {}
     for method in ("no_memory", "keyword", "tfidf", "budget"):
         rows = [row for row in result["rows"] if row["method"] == method]
@@ -97,7 +134,7 @@ def main() -> None:
         "excluded": excluded, "top_k": args.top_k,
         "unit": "dialogue turn; official evidence IDs",
         "limits": "text-only evidence retrieval, no image/QA answer scoring; graph has no edges",
-        "methods": methods,
+        "methods": methods, "budget_candidate_diagnostic": candidate_diagnostic,
     }
     output = json.dumps(report, ensure_ascii=False, indent=2)
     if args.json:
