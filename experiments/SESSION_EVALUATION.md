@@ -16,3 +16,17 @@
 对比无记忆、BM25、TF-IDF 和二跳 budget。计时包含首次检索索引构建，不含数据导入；各方法没有跨问题缓存。输出逐问题 Precision/Recall 和延迟，无记忆是空检索基线，不是 LLM 回答质量基线。
 
 建议先选脱敏故障、配置修改和历史决策。按完整会话划分调试集和独立测试集，标注者核对原始证据；不要用独立测试集反复调参。当前尚未提供真实语料，不宣称真实会话效果已验证。
+
+## LoCoMo 公开文本证据试跑（2026-09-22）
+
+从 [LoCoMo 官方数据](https://github.com/snap-research/locomo/blob/main/data/locomo10.json)下载 `locomo10.json` 到仓库外，运行：
+
+```text
+python -m experiments.locomo_retrieval /absolute/path/locomo10.json --sample-index 0 --top-k 5 --json results/locomo_text_dialogue_pilot.json
+```
+
+适配器复用本页评测器：一条文本对话轮次对应一个 Atom，官方 `dia_id` 是证据 ID，会话时间保留为 `created_at`，不生成摘要或图边。只纳入证据 ID 存在、非图片证据的题；缺失证据、图片证据、无证据分别计数。问题取官方顺序，不按答案挑选。对所有会话 `--sample-index` 分别运行前，不应称为完整 LoCoMo 评测。`--max-queries N` 仅用于固定顺序的试跑，默认 0 代表该样本全部合格问题。
+
+首次试跑锁定原始文件 SHA-256 `79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4`。`conv-26` 的 199 题中，131 题合格，排除缺失证据 1、图片证据 65、无证据 2；Top-5 的宏证据召回：BM25 **0.445**、TF-IDF **0.368**、现有 budget **0.176**，无记忆 **0**。budget 在无图边输入上明显弱于两个单路基线；这里仅记录现象，未定位为哪一级候选或排序造成，也未调参。
+
+这些数值是**官方证据对话 ID 的检索试跑**，不是官方 LoCoMo 最终问答分数、跨产品比较、全数据集成绩或生产效果。官方 evidence 不保证列出所有相关对话，所以不把未标注返回项算作可靠的 Precision。图片题被系统性排除，样本仅一个会话；首次结果也不能作为未触碰的调参后测试集。完整原始数据不入库，报告只存哈希、计数和聚合，不存原文。

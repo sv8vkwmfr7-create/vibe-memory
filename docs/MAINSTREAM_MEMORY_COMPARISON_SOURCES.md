@@ -1,0 +1,16 @@
+# 主流 Agent 记忆系统：官方资料摘录
+
+核对日期：2026-09-22。本文只记录 Zep/Graphiti、Mem0、Letta 官方文档或官方仓库可直接支持的事实，供后续对比使用；未测试这些产品，也未评价 VibeMemory。
+
+| 产品与定位 | 记忆组织和检索 | 接入、运行边界 |
+| --- | --- | --- |
+| **Graphiti / Zep** | Graphiti 是开源时序知识图谱框架：摄取 episode，抽取实体和事实边，保留来源及事实有效期；检索结合向量、全文/BM25、图，并可按节点距离重排。Zep 则在其上提供托管的 Context Lake、跨范围上下文组装和治理能力。[Graphiti README](https://github.com/getzep/graphiti)、[官方区别说明](https://help.getzep.com/zep-vs-graphiti)、[Zep 搜索文档](https://help.getzep.com/searching-the-graph) | Graphiti 可自托管，通常需要图数据库和 LLM/embedding 服务；官方提供 Python 库、MCP 服务及 REST 服务。Zep 是云/BYOK/BYOC 托管产品，不能把其治理、吞吐或延迟能力直接算作 Graphiti 开源版能力。[Graphiti 快速入门](https://help.getzep.com/graphiti/getting-started/quick-start)、[Graphiti README](https://github.com/getzep/graphiti)、[官方区别说明](https://help.getzep.com/zep-vs-graphiti) |
+| **Mem0** | 以 `add`、`search` 等 API 管理事实记忆。**当前 Platform** 的原生 Graph Memory 抽取实体并连接共享实体的记忆，实体匹配会参与搜索排名，与语义和 BM25 分数组合；它不保存有类型的实体关系边。**当前 OSS v3** 不含该图能力，不能混为一谈。[Mem0 Platform Graph Memory](https://github.com/mem0ai/mem0/blob/main/docs/platform/features/graph-memory.mdx)、[OSS 配置](https://github.com/mem0ai/mem0/blob/main/docs/open-source/configuration.mdx)、[OSS v2→v3 迁移](https://github.com/mem0ai/mem0/blob/main/docs/migration/oss-v2-to-v3.mdx) | 提供托管 API 和开源 SDK；官方基准库能运行托管版或 OSS，并公开 LoCoMo、LongMemEval、BEAM 的评估流程。托管平台成绩不能外推到 OSS，更不能和其他项目的 Recall@K 直接相比。[Mem0 README](https://github.com/mem0ai/mem0)、[官方基准库](https://github.com/mem0ai/memory-benchmarks) |
+| **Letta** | 核心是**有状态 Agent 运行时**，不是单独的图检索库：memory blocks 附着时常驻上下文；新文档还有 git-backed Markdown 的 MemFS，其中 `system/` 常驻，其他文件按需发现。检索与上下文自管理属于 Agent 工作流，不等同于一次 `search`。[memory block 教程](https://docs.letta.com/tutorials/attaching-detaching-blocks/)、[MemFS 文档](https://github.com/letta-ai/letta-docs-md/blob/main/concepts/memfs/index.md) | 官方提供 Agent SDK、托管 Letta Cloud 和可自行运行的 Letta App Server。其 Agent 运行时与 VibeMemory 这种记忆检索库是不同产品层级。[Letta 文档首页](https://docs.letta.com/)、[Letta 仓库](https://github.com/letta-ai/letta) |
+
+## 比较时必须保留的限制
+
+1. **不能混用产品层级。** Graphiti 与 Zep、Mem0 OSS 与 Mem0 Platform 各自分层；托管版的专有模型、治理和性能不是开源版的默认能力。[Zep 区别说明](https://help.getzep.com/zep-vs-graphiti)、[Mem0 README 的基准说明](https://github.com/mem0ai/mem0)
+2. **不要横比厂商基准分数。** Zep/Graphiti 官方给出 LoCoMo、LongMemEval 指标，Mem0 官方也给出相应指标，但模型、检索预算、评测流程和被测产品层级须逐项对齐后才能比较；目前这里只将它们视为厂商报告，不视为独立复现。[Graphiti 官方概览](https://help.getzep.com/v2/graphiti/getting-started/overview)、[Mem0 README](https://github.com/mem0ai/mem0)、[Mem0 基准方法](https://github.com/mem0ai/memory-benchmarks)
+3. **Mem0 Graph Memory 存在新旧文档口径差异。** [旧的 OSS 页面](https://docs.mem0.ai/open-source/features/graph-memory)仍展示外部图数据库与 `relations` 样例；但当前 [Platform 图记忆页](https://github.com/mem0ai/mem0/blob/main/docs/platform/features/graph-memory.mdx)明确新图记忆参与排名，且 [OSS v2→v3 迁移页](https://github.com/mem0ai/mem0/blob/main/docs/migration/oss-v2-to-v3.mdx)说明此能力转为 Platform-only。本文按当前仓库主线文档比较；具体历史版本仍需锁版本验证。
+4. **搜索结果不是最终回答质量。** Letta 的 memory blocks 是常驻上下文，Graphiti/Zep 与 Mem0 可以提供检索结果；比较时应分开报告写入质量、检索 Recall/Precision、最终问答、延迟/成本、隔离与来源审计，而非把某一指标当成“记忆系统总体能力”。这个拆分是由三方公开的不同产品接口作出的比较方法推论，不是厂商实测结论。[Letta SDK](https://docs.letta.com/api/typescript)、[Zep 搜索文档](https://help.getzep.com/searching-the-graph)、[Mem0 基准方法](https://github.com/mem0ai/memory-benchmarks)

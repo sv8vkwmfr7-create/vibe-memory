@@ -1,0 +1,38 @@
+{
+  "source": "https://github.com/snap-research/locomo/blob/main/data/locomo10.json",
+  "source_sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+  "sample_id": "conv-26",
+  "question_selection": "first eligible questions in official order",
+  "eligible_questions": 131,
+  "evaluated_questions": 131,
+  "excluded": {
+    "missing_evidence": 1,
+    "image_evidence": 65,
+    "no_evidence": 2
+  },
+  "top_k": 5,
+  "unit": "dialogue turn; official evidence IDs",
+  "limits": "text-only evidence retrieval, no image/QA answer scoring; graph has no edges",
+  "methods": {
+    "no_memory": {
+      "macro_evidence_recall": 0.0,
+      "any_evidence_hit_rate": 0.0,
+      "all_evidence_hit_rate": 0.0
+    },
+    "keyword": {
+      "macro_evidence_recall": 0.4446564885496183,
+      "any_evidence_hit_rate": 0.46564885496183206,
+      "all_evidence_hit_rate": 0.42748091603053434
+    },
+    "tfidf": {
+      "macro_evidence_recall": 0.3683206106870229,
+      "any_evidence_hit_rate": 0.3893129770992366,
+      "all_evidence_hit_rate": 0.3511450381679389
+    },
+    "budget": {
+      "macro_evidence_recall": 0.17557251908396945,
+      "any_evidence_hit_rate": 0.19083969465648856,
+      "all_evidence_hit_rate": 0.16030534351145037
+    }
+  }
+}
