@@ -44,3 +44,12 @@ def test_source_traced_directional_replay_reports_no_directional_gain():
     assert all(row["directional_chain"]["negative_hits"] >= 1 for row in report["rows"])
     assert "console-cause" not in str(report)
     assert "plugin grandchildren" not in str(report)
+
+
+def test_report_exposes_wrong_top1_separately_from_candidate_hits():
+    data = json.loads(CASES.read_text(encoding="utf-8"))
+
+    report = evaluate(data)
+
+    assert report["aggregates"]["baseline"]["queries_with_negative_top1"] == 0
+    assert all(row["baseline"]["negative_top1"] is False for row in report["rows"])

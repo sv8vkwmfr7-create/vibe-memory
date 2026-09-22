@@ -43,4 +43,18 @@ All three directional diagnostics are `no_primary_outgoing_candidate`. The bridg
 
 ## Decision boundary
 
+### Deliberately false-edge contamination
+
+`experiments/causal_wrong_anchor_probe.py` replays the same frozen source-paraphrased 12-atom/3-query fixture, one query at a time. Each variant adds exactly two **deliberately false** cross-case `CAUSAL` edges from a cause labeled negative for that query to its two symptom atoms. The original source edges, atom texts, queries, and labels are unchanged. These false edges are adversarial test input, **not claims about the archived cases or observed production graph errors**.
+
+Run `python -m experiments.causal_wrong_anchor_probe experiments/causal_source_cases.json --json results/causal_wrong_anchor_probe.json`. It records source SHA256 `88124e526f8d653884332f549b3ef9fbff324b6bf50965b87ded3a744c482fbd`, anonymous aliases, TF-IDF precision Top-5, and no timing. `directional_holdout_probe` now reports `negative_top1` separately from any negative appearing in the returned Top-5.
+
+| Variant | Existing undirected bridge before → after | Experimental directional chain |
+| --- | --- | --- |
+| Console question, false proxy cause fork | Labeled negative Top-1: no → **yes** | No Top-1 change |
+| Proxy question, false poller cause fork | No change in this case | No change |
+| Poller question, false console cause fork | Target-cause Recall@5: **1 → 0** | Remains 0 |
+
+The clean baseline already returns labeled negatives below Top-1, and the directional chain's lack of harm here is not evidence of benefit: it still cannot recover the missed poller cause in the unpoisoned fixture. This is a small, assistant-constructed sensitivity check, not an estimated real-world failure rate. The two harmed variants show why graph agreement alone is not sufficient to trust a causal anchor or make the bridge default-on.
+
 Do not reverse existing stored edges, rename all old `CAUSAL` edges, or enable directional reranking by default based on these cases. A follow-up design must specify how cause → effect, diagnostic association, and resolution are represented and how edge provenance is verified. It then needs independent direction review and stronger incorrect-anchor guards; the paused 96-row relevance review remains unfilled and cannot substitute for causal-direction labels.

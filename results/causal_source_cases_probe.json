@@ -21,18 +21,21 @@
       "macro_recall": 0.6666666666666666,
       "macro_precision_at_5": 0.13333333333333333,
       "queries_with_negative_hits": 3,
+      "queries_with_negative_top1": 0,
       "queries_with_ranking_changes": 0
     },
     "causal_bridge": {
       "macro_recall": 1.0,
       "macro_precision_at_5": 0.2,
       "queries_with_negative_hits": 3,
+      "queries_with_negative_top1": 0,
       "queries_with_ranking_changes": 1
     },
     "directional_chain": {
       "macro_recall": 0.6666666666666666,
       "macro_precision_at_5": 0.13333333333333333,
       "queries_with_negative_hits": 3,
+      "queries_with_negative_top1": 0,
       "queries_with_ranking_changes": 0
     }
   },
@@ -50,6 +53,7 @@
         "recall": 1.0,
         "precision_at_5": 0.2,
         "negative_hits": 1,
+        "negative_top1": false,
         "returned_ids": [
           "atom-1",
           "atom-2",
@@ -63,6 +67,7 @@
         "recall": 1.0,
         "precision_at_5": 0.2,
         "negative_hits": 1,
+        "negative_top1": false,
         "returned_ids": [
           "atom-1",
           "atom-2",
@@ -76,6 +81,7 @@
         "recall": 1.0,
         "precision_at_5": 0.2,
         "negative_hits": 1,
+        "negative_top1": false,
         "returned_ids": [
           "atom-1",
           "atom-2",
@@ -99,6 +105,7 @@
         "recall": 1.0,
         "precision_at_5": 0.2,
         "negative_hits": 2,
+        "negative_top1": false,
         "returned_ids": [
           "atom-5",
           "atom-7",
@@ -112,6 +119,7 @@
         "recall": 1.0,
         "precision_at_5": 0.2,
         "negative_hits": 2,
+        "negative_top1": false,
         "returned_ids": [
           "atom-5",
           "atom-7",
@@ -125,6 +133,7 @@
         "recall": 1.0,
         "precision_at_5": 0.2,
         "negative_hits": 2,
+        "negative_top1": false,
         "returned_ids": [
           "atom-5",
           "atom-7",
@@ -148,6 +157,7 @@
         "recall": 0.0,
         "precision_at_5": 0.0,
         "negative_hits": 1,
+        "negative_top1": false,
         "returned_ids": [
           "atom-9",
           "atom-0",
@@ -161,6 +171,7 @@
         "recall": 1.0,
         "precision_at_5": 0.2,
         "negative_hits": 1,
+        "negative_top1": false,
         "returned_ids": [
           "atom-8",
           "atom-9",
@@ -174,6 +185,7 @@
         "recall": 0.0,
         "precision_at_5": 0.0,
         "negative_hits": 1,
+        "negative_top1": false,
         "returned_ids": [
           "atom-9",
           "atom-0",

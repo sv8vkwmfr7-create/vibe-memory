@@ -152,6 +152,7 @@ def evaluate(data: dict) -> dict:
                 "recall": len(set(ids) & positives) / len(positives),
                 "precision_at_5": len(set(ids) & positives) / 5,
                 "negative_hits": sum(atom_id in negatives for atom_id in ids),
+                "negative_top1": bool(ids and ids[0] in negatives),
                 "returned_ids": [anonymous[atom_id] for atom_id in ids],
                 "ranking_changed": ids != rankings["baseline"],
             }
@@ -167,6 +168,9 @@ def evaluate(data: dict) -> dict:
             ),
             "queries_with_negative_hits": sum(
                 bool(value["negative_hits"]) for value in values
+            ),
+            "queries_with_negative_top1": sum(
+                value["negative_top1"] for value in values
             ),
             "queries_with_ranking_changes": sum(
                 value["ranking_changed"] for value in values
