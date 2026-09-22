@@ -19,3 +19,11 @@ _Avoid_: causal relation
 **Resolution relation**:
 An action addresses a problem or symptom. It is distinct from the condition that caused the problem.
 _Avoid_: causal relation
+
+**Edge provenance**:
+The origin of a proposed relation, such as an automatic rule, model judgment, or explicit caller assertion. Provenance alone does not establish that the relation or its direction is true.
+_Avoid_: causal verification
+
+**Causal direction verification**:
+An independent check against the underlying account that the named source condition produced the named target outcome. A confidence score or edge provenance is not this check.
+_Avoid_: edge confidence, edge provenance

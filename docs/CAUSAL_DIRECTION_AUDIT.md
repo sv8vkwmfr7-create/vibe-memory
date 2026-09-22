@@ -16,6 +16,8 @@ The intended meaning of `CAUSAL: A → B` is that A causes B (`vibe_memory/model
 
 These are code-path findings, not a count or quality estimate for existing user data. Historical `CAUSAL` labels cannot be reinterpreted or reversed safely without auditing their provenance and content.
 
+A separate [provenance audit](CAUSAL_PROVENANCE_AUDIT.md) confirms that persisted `source` and `confidence` cannot serve as a direction-verification gate: automatic rule edges, explicit SDK links, and LLM-fallback edges are not distinguishable reliably by `source` alone.
+
 ## Controlled public replay
 
 `tests/test_causal_direction_contract.py` uses the fixed public `safe_relation_rerank_cases.json`. For the three positive cases it preserves every query, atom text, answer label, and negative label, changing only the edges to `cause → anchor-0` and `cause → anchor-1`. The test calls the existing `safe_relation_rerank_probe.run()` report interface with TF-IDF, precision mode, and Top-5.
