@@ -1,8 +1,12 @@
 # Project Status
 
-> Last verified: 2026-09-21
+> Last verified: 2026-09-22
 
 Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK, SQLite storage, TF-IDF retrieval, CLI/session manager, and MCP stdio interface are covered by the current local test suite. Public benchmark and production-scale claims remain unverified.
+
+### Causal edge direction audit (2026-09-22)
+
+The [domain glossary](CONTEXT.md) separates cause → effect, chronological adjacency, diagnostic association, and resolution. [The audit](docs/CAUSAL_DIRECTION_AUDIT.md) identifies producers that assign `CAUSAL` without establishing that direction; no stored edges were migrated. In a controlled public replay of the existing three synthetic half-hit cases, only the edges changed from `symptom → cause → symptom` to `cause → two symptoms`. Baseline target Recall@5 remained **0/3** and the existing undirected bridge remained **3/3**, while the experimental directional chain fell from **3/3 to 0/3**. A wrong-cause fork guard was not promoted by the current directional rule. These are assistant-authored diagnostics, not independent causal labels or evidence to reverse the rule. The frozen private replay completed, production defaults remain unchanged, and the 96-row human relevance review is still unfilled. Full regression with optional semantic import isolated: **387 passed in 16.17s**.
 
 ### Causal position and intent diagnostic (2026-09-21)
 
