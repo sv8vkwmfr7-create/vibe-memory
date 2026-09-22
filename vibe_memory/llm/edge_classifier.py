@@ -19,7 +19,7 @@ import re
 from typing import Optional, Callable
 from datetime import datetime
 
-from vibe_memory.models.memory_atom import MemoryAtom, EdgeLabel
+from vibe_memory.models.memory_atom import MemoryAtom, EdgeLabel, EdgeSource
 from vibe_memory.llm.provider import LLMProvider, LLMError
 
 
@@ -220,6 +220,15 @@ class LLMEdgeClassifier:
         Returns:
             (EdgeLabel, confidence)
         """
+        label, confidence, _ = self.classify_with_source(atom_a, atom_b)
+        return label, confidence
+
+    def classify_with_source(
+        self,
+        atom_a: MemoryAtom,
+        atom_b: MemoryAtom,
+    ) -> tuple[EdgeLabel, float, EdgeSource]:
+        """Classify and report whether the model or fallback made the decision."""
         self._classify_calls += 1
         t0 = datetime.now()
 
@@ -238,14 +247,14 @@ class LLMEdgeClassifier:
                     # LLM returned "none" — very low confidence, edge won't be created
                     self._classify_success += 1
                     self._total_latency_ms += (datetime.now() - t0).total_seconds() * 1000
-                    return EdgeLabel.SIMILAR, 0.01
+                    return EdgeLabel.SIMILAR, 0.01, EdgeSource.LLM
 
                 # Clamp confidence to [0.0, 1.0]
                 confidence = max(0.0, min(1.0, confidence))
 
                 self._classify_success += 1
                 self._total_latency_ms += (datetime.now() - t0).total_seconds() * 1000
-                return label, confidence
+                return label, confidence, EdgeSource.LLM
 
             except (LLMError, ValueError, KeyError) as e:
                 if attempt < self.max_retries:
@@ -258,7 +267,8 @@ class LLMEdgeClassifier:
         # Fallback: rule-based
         self._classify_fallback += 1
         self._total_latency_ms += (datetime.now() - t0).total_seconds() * 1000
-        return self._fallback_classify(atom_a, atom_b)
+        label, confidence = self._fallback_classify(atom_a, atom_b)
+        return label, confidence, EdgeSource.RULE
 
     # --- Merge Decision ---
 
@@ -366,9 +376,15 @@ class LLMEdgeClassifier:
 
 def create_llm_classify_callback(
     classifier: LLMEdgeClassifier,
-) -> Callable[[MemoryAtom, MemoryAtom], tuple[EdgeLabel, float]]:
+    include_source: bool = False,
+) -> Callable[
+    [MemoryAtom, MemoryAtom],
+    tuple[EdgeLabel, float] | tuple[EdgeLabel, float, EdgeSource],
+]:
     """
     Create llm_classify callback compatible with IncrementalIndexer.
+    include_source=True returns per-decision provenance; the default preserves
+    the legacy two-value callback.
 
     Usage:
         classifier = LLMEdgeClassifier(provider)
@@ -377,4 +393,4 @@ def create_llm_classify_callback(
             llm_classify=create_llm_classify_callback(classifier),
         )
     """
-    return classifier.classify
+    return classifier.classify_with_source if include_source else classifier.classify

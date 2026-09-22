@@ -151,7 +151,7 @@ class VibeMemory:
 
             # LLM 分类器
             self.llm_classifier = llm_classifier
-            llm_callback = create_llm_classify_callback(llm_classifier) if llm_classifier else None
+            llm_callback = create_llm_classify_callback(llm_classifier, include_source=True) if llm_classifier else None
 
             # 增量索引
             self.indexer = IncrementalIndexer(

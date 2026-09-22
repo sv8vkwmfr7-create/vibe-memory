@@ -219,11 +219,16 @@ class IncrementalIndexer:
             self._queue.pop(candidate.pair_key, None)
 
             try:
-                label, conf = classify_cross_session_edge(
+                decision = classify_cross_session_edge(
                     candidate.new_atom,
                     candidate.existing_atom,
                     llm_classify=self.llm_classify,
                 )
+                if len(decision) == 3:
+                    label, conf, source = decision
+                else:
+                    label, conf = decision
+                    source = EdgeSource.LLM if self.llm_classify else EdgeSource.RULE
 
                 if conf >= 0.3:
                     edge = Edge(
@@ -233,7 +238,7 @@ class IncrementalIndexer:
                         tenant_id=self.tenant_id,
                         label=label,
                         confidence=conf,
-                        source=EdgeSource.LLM if self.llm_classify else EdgeSource.RULE,
+                        source=source,
                         created_at=datetime.now(),
                         status=EdgeStatus.ACTIVE,
                     )

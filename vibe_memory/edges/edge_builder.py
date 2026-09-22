@@ -134,7 +134,7 @@ def classify_cross_session_edge(
     atom_a: MemoryAtom,
     atom_b: MemoryAtom,
     llm_classify=None,  # L1 原型：可选 LLM 回调
-) -> tuple[EdgeLabel, float]:
+) -> tuple[EdgeLabel, float] | tuple[EdgeLabel, float, EdgeSource]:
     """
     跨会话 LLM 四分类（Bug 1 + Bug 4 修复）。
 
@@ -147,7 +147,7 @@ def classify_cross_session_edge(
         llm_classify: LLM 分类回调（L1 为 None，用规则）
 
     Returns:
-        (EdgeLabel, confidence)
+        (EdgeLabel, confidence), or a source-aware callback result with EdgeSource
     """
     if llm_classify:
         return llm_classify(atom_a, atom_b)

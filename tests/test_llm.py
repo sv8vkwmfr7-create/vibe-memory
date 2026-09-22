@@ -612,6 +612,27 @@ def test_llm_classifier_edge_source():
     print("[PASS] llm_classifier_edge_source")
 
 
+def test_llm_fallback_edge_records_rule_source():
+    """A failed model call must not be credited for a rule-generated edge."""
+    classifier = LLMEdgeClassifier(MockProvider(raise_on=1), max_retries=0)
+    mem = VibeMemory(
+        agent_id="test-agent",
+        db_path=":memory:",
+        llm_classifier=classifier,
+        embedding_backend="tfidf",
+    )
+    old = mem.store("fix old issue", session_id="s1", auto_build_edges=False, auto_episode=False)
+    new = mem.store("fix new issue", session_id="s2", auto_build_edges=False, auto_episode=False)
+
+    mem.indexer.enqueue(new, old, 0.8)
+    assert mem.flush_index() == 1
+
+    edges = mem.storage.get_all_edges()
+    assert len(edges) == 1
+    assert edges[0].source == EdgeSource.RULE
+    assert classifier.stats()["classify_fallback"] == 1
+
+
 # ── 14. Default classifier values ──
 
 def test_classifier_default_values():

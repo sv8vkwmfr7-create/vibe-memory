@@ -1,6 +1,6 @@
 # Causal edge provenance audit
 
-Status: read-only code and in-memory runtime audit, 2026-09-22. No schema migration, historical edge rewrite, SDK/MCP default change, or new ranking rule. Terms are defined in [CONTEXT.md](../CONTEXT.md).
+Status: in-memory runtime audit and targeted new-edge attribution fix, 2026-09-22. No schema migration, historical edge rewrite, SDK/MCP ranking default change, or new ranking rule. Terms are defined in [CONTEXT.md](../CONTEXT.md).
 
 ## What persisted metadata can and cannot say
 
@@ -13,9 +13,9 @@ In-memory, offline probes against the public APIs produced:
 | `build_same_session_edges([symptom, remedy])`, with “update”/“fix” signal words | symptom → remedy, `CAUSAL`, `source=rule`, `confidence=0.9` | The arrow follows atom order. The later remedy addresses the symptom; it did not cause that earlier symptom. |
 | `IncrementalIndexer.enqueue(new, old, 0.9); flush()`, two cross-session atoms with “fix” | new → old, `CAUSAL`, `source=rule`, `confidence=0.7` | The indexer fixes direction by newness, not by causal roles. |
 | `VibeMemory.link(a, b, CAUSAL)` with default parameters | a → b, `source=rule`, `confidence=0.7` | This is a caller assertion, yet `source=rule` is also the default for automatically generated edges. |
-| `IncrementalIndexer` with an `LLMEdgeClassifier` whose provider always raises `LLMError`, `max_retries=0` | new → old, `CAUSAL`, `source=llm`, `confidence=0.4`; classifier `classify_fallback=1` | The label came from rule fallback, but the indexer assigns `source=llm` whenever a callback was configured. |
+| `IncrementalIndexer` with an `LLMEdgeClassifier` whose provider always raises `LLMError`, `max_retries=0` | Before fix: new → old, `CAUSAL`, `source=llm`, `confidence=0.4`; classifier `classify_fallback=1`. Standard SDK path after fix: `source=rule`. | The old value credited a failed model call. The fix records the per-decision source for new SDK-generated edges only. |
 
-The probes use an in-memory SQLite store and synthetic text; they neither inspect user memory databases nor estimate the frequency of misoriented edges. The last row confirms a provenance attribution defect, not an LLM-generated causal judgment. It also means a filter such as “trust `source=llm` and high confidence” would be unsound; the first row shows that even `confidence=0.9` can describe chronology or treatment rather than physical causation. See [CAUSAL_DIRECTION_AUDIT.md](CAUSAL_DIRECTION_AUDIT.md) for retrieval-level wrong-anchor sensitivity.
+The probes use an in-memory SQLite store and synthetic text; they neither inspect user memory databases nor estimate the frequency of misoriented edges. The standard SDK now passes a source-aware classifier result to the indexer: successful model classification persists `llm`, rule fallback persists `rule`. The legacy two-value callback remains supported and cannot communicate per-decision fallback; callers using that older callback may still have ambiguous source attribution. Existing stored edges are unchanged. Even after the fix, a filter such as “trust `source=llm` and high confidence” would be unsound: model success is not direction verification, and the first row shows that even `confidence=0.9` can describe chronology or treatment rather than physical causation. See [CAUSAL_DIRECTION_AUDIT.md](CAUSAL_DIRECTION_AUDIT.md) for retrieval-level wrong-anchor sensitivity.
 
 ## Verification contract before a directional ranker
 
