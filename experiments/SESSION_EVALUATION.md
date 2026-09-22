@@ -36,3 +36,11 @@ python -m experiments.locomo_retrieval /absolute/path/locomo10.json --sample-ind
 同一 `conv-26`、131题、Top-5、输入哈希下，报告新增 `budget_candidate_diagnostic`：100条候选上限内至少有一条官方证据的仅 **36/131**；BM25能命中而budget漏掉的 **43** 题中，**42** 题的证据在候选池已缺席，**1** 题入池后仍未进Top-5。该统计重放当前 `get_recall_candidates` 的上限、图邻居配额和两跳参数，不改变SDK/MCP。
 
 最小公开复现是官方首题 `conv-26-qa-0`：前100条对话时budget命中证据 `D1:3`，前110条时漏掉，而BM25仍命中。前110条中，FTS全部查询词的AND匹配为0、OR匹配为103；当前英文FTS候选按 `rowid DESC` 截前100，`D1:3` 位于第101。仅将这103条按FTS BM25分数查看时，它位于第1。这解释该题的损失阶段，不证明将存储排序改为BM25能改善所有题，也未测此改动的耗时、中文行为、图邻居预算或负例风险。下一步必须做同输入受控对照与回归后才能考虑生产变更。
+
+### 英文 FTS 候选排序受控对照
+
+`python -m experiments.locomo_candidate_order_probe /absolute/path/locomo10.json --all-samples --top-k 5 --json results/locomo_candidate_order_all_text.json`。实验仅在无图的英文LoCoMo路径，将FTS候选的 `ORDER BY rowid DESC` 改成 `ORDER BY bm25(atoms_fts), rowid DESC`；AND→OR→最近记录补齐的阶段、100条候选上限、下游budget召回与官方证据标签均保持相同。它没有改生产存储或SDK/MCP接口；中文查询被实验入口显式拒绝。原始输入SHA-256与各样本排除数写入报告，不上传对话原文。
+
+10个样本共 **1241** 道可用纯文本证据题（另排除图片证据732、无证据4、证据ID缺失9）。候选池至少含一条证据 **247→978** 题，最终Top-5至少命中一条证据 **170→645** 题，宏证据召回 **0.129→0.498**；逐题有 **504** 题由未命中变命中，也有 **29** 题由命中变未命中。首样本 `conv-26` 曾用于定位问题，其余9个样本在排序规则冻结后才运行；所有样本均有净收益，但不是无退步。官方evidence不穷尽相关对话，因此不能由此计算可信的误召率或Precision，也不能与厂商LoCoMo最终问答分数比较。
+
+可选 `--timing` 只在本机做一次暖库串行观察，计时不写入确定性报告。10个样本各自的核心召回中位数范围：原排序约 **5.22–5.99ms**，FTS BM25排序约 **6.24–7.12ms**；两种调用在题间交替先后。此单次、内存SQLite、无图/无模型服务的测量不构成延迟保证。既有中文与合成负例回归仍通过，但**没有**验证新排序在中文、有图、真实负例或长期负载下的效果；29题退步尤其阻止直接切换默认。
