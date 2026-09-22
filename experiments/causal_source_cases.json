@@ -1,0 +1,31 @@
+{
+  "dataset_id": "causal-source-cases-v1",
+  "provenance": "Assistant-paraphrased from three locally archived troubleshooting records. Source mapping and original text remain in the local Wiki. The causal labels are assistant interpretations, not independent human judgments or raw-session replay.",
+  "atoms": [
+    {"id": "console-cause", "session_id": "console", "content": "plugin grandchildren create new Windows consoles because hidden startup settings were not applied to spawned processes"},
+    {"id": "console-effect-0", "session_id": "console", "content": "desktop assistant shows visible terminal windows after plugins load"},
+    {"id": "console-effect-1", "session_id": "console", "content": "terminal windows flash when a shell plugin starts in the desktop app"},
+    {"id": "console-remedy", "session_id": "console", "content": "apply hidden startup information to spawned processes"},
+    {"id": "proxy-cause", "session_id": "proxy", "content": "proxy configuration was edited in an inactive nginx installation instead of the process listening on the public port"},
+    {"id": "proxy-effect-0", "session_id": "proxy", "content": "API route still returns 404 after a reported nginx reload"},
+    {"id": "proxy-effect-1", "session_id": "proxy", "content": "the expected reverse proxy route is absent from the active listener"},
+    {"id": "proxy-remedy", "session_id": "proxy", "content": "edit the active nginx configuration and reload its listener"},
+    {"id": "poller-cause", "session_id": "poller", "content": "result polling thread starts only after a publish endpoint call that never succeeds"},
+    {"id": "poller-effect-0", "session_id": "poller", "content": "completed crawler jobs produce no new database rows"},
+    {"id": "poller-effect-1", "session_id": "poller", "content": "service health checks stay green while crawler results are not ingested"},
+    {"id": "poller-remedy", "session_id": "poller", "content": "start the result polling worker during service startup"}
+  ],
+  "edges": [
+    ["console-cause", "console-effect-0"],
+    ["console-cause", "console-effect-1"],
+    ["proxy-cause", "proxy-effect-0"],
+    ["proxy-cause", "proxy-effect-1"],
+    ["poller-cause", "poller-effect-0"],
+    ["poller-cause", "poller-effect-1"]
+  ],
+  "queries": [
+    {"text": "why desktop plugins open terminal windows after startup", "relevant_ids": ["console-cause"], "negative_ids": ["proxy-cause", "poller-cause", "console-remedy"]},
+    {"text": "why API endpoint returns 404 after nginx reload", "relevant_ids": ["proxy-cause"], "negative_ids": ["console-cause", "poller-cause", "proxy-remedy"]},
+    {"text": "why completed crawler jobs create no new database rows", "relevant_ids": ["poller-cause"], "negative_ids": ["console-cause", "proxy-cause", "poller-remedy"]}
+  ]
+}

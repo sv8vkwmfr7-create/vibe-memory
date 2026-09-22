@@ -1,0 +1,189 @@
+{
+  "dataset_id": "causal-source-cases-v1",
+  "evaluation_is_independent": false,
+  "evidence_boundary": "Assistant-authored questions, labels, and manual edges; not independent human evaluation or raw-session replay. Private text and original atom IDs omitted.",
+  "conditions": {
+    "mode": "precision",
+    "top_k": 5,
+    "embedding": "tfidf",
+    "atoms": 12,
+    "queries": 3,
+    "timing_included": false,
+    "production_defaults_changed": false
+  },
+  "directional_diagnostics": {
+    "outcome_counts": {
+      "no_primary_outgoing_candidate": 3
+    }
+  },
+  "aggregates": {
+    "baseline": {
+      "macro_recall": 0.6666666666666666,
+      "macro_precision_at_5": 0.13333333333333333,
+      "queries_with_negative_hits": 3,
+      "queries_with_ranking_changes": 0
+    },
+    "causal_bridge": {
+      "macro_recall": 1.0,
+      "macro_precision_at_5": 0.2,
+      "queries_with_negative_hits": 3,
+      "queries_with_ranking_changes": 1
+    },
+    "directional_chain": {
+      "macro_recall": 0.6666666666666666,
+      "macro_precision_at_5": 0.13333333333333333,
+      "queries_with_negative_hits": 3,
+      "queries_with_ranking_changes": 0
+    }
+  },
+  "rows": [
+    {
+      "query_id": "query-0",
+      "directional_diagnostic": {
+        "primary_anchor_id": "atom-1",
+        "common_anchor_count": 5,
+        "primary_outgoing_candidate_count": 0,
+        "supported_candidate_count": 0,
+        "outcome": "no_primary_outgoing_candidate"
+      },
+      "baseline": {
+        "recall": 1.0,
+        "precision_at_5": 0.2,
+        "negative_hits": 1,
+        "returned_ids": [
+          "atom-1",
+          "atom-2",
+          "atom-0",
+          "atom-3",
+          "atom-11"
+        ],
+        "ranking_changed": false
+      },
+      "causal_bridge": {
+        "recall": 1.0,
+        "precision_at_5": 0.2,
+        "negative_hits": 1,
+        "returned_ids": [
+          "atom-1",
+          "atom-2",
+          "atom-0",
+          "atom-3",
+          "atom-11"
+        ],
+        "ranking_changed": false
+      },
+      "directional_chain": {
+        "recall": 1.0,
+        "precision_at_5": 0.2,
+        "negative_hits": 1,
+        "returned_ids": [
+          "atom-1",
+          "atom-2",
+          "atom-0",
+          "atom-3",
+          "atom-11"
+        ],
+        "ranking_changed": false
+      }
+    },
+    {
+      "query_id": "query-1",
+      "directional_diagnostic": {
+        "primary_anchor_id": "atom-5",
+        "common_anchor_count": 5,
+        "primary_outgoing_candidate_count": 0,
+        "supported_candidate_count": 0,
+        "outcome": "no_primary_outgoing_candidate"
+      },
+      "baseline": {
+        "recall": 1.0,
+        "precision_at_5": 0.2,
+        "negative_hits": 2,
+        "returned_ids": [
+          "atom-5",
+          "atom-7",
+          "atom-8",
+          "atom-1",
+          "atom-4"
+        ],
+        "ranking_changed": false
+      },
+      "causal_bridge": {
+        "recall": 1.0,
+        "precision_at_5": 0.2,
+        "negative_hits": 2,
+        "returned_ids": [
+          "atom-5",
+          "atom-7",
+          "atom-8",
+          "atom-1",
+          "atom-4"
+        ],
+        "ranking_changed": false
+      },
+      "directional_chain": {
+        "recall": 1.0,
+        "precision_at_5": 0.2,
+        "negative_hits": 2,
+        "returned_ids": [
+          "atom-5",
+          "atom-7",
+          "atom-8",
+          "atom-1",
+          "atom-4"
+        ],
+        "ranking_changed": false
+      }
+    },
+    {
+      "query_id": "query-2",
+      "directional_diagnostic": {
+        "primary_anchor_id": "atom-9",
+        "common_anchor_count": 3,
+        "primary_outgoing_candidate_count": 0,
+        "supported_candidate_count": 0,
+        "outcome": "no_primary_outgoing_candidate"
+      },
+      "baseline": {
+        "recall": 0.0,
+        "precision_at_5": 0.0,
+        "negative_hits": 1,
+        "returned_ids": [
+          "atom-9",
+          "atom-0",
+          "atom-10",
+          "atom-1",
+          "atom-2"
+        ],
+        "ranking_changed": false
+      },
+      "causal_bridge": {
+        "recall": 1.0,
+        "precision_at_5": 0.2,
+        "negative_hits": 1,
+        "returned_ids": [
+          "atom-8",
+          "atom-9",
+          "atom-0",
+          "atom-10",
+          "atom-1"
+        ],
+        "ranking_changed": true
+      },
+      "directional_chain": {
+        "recall": 0.0,
+        "precision_at_5": 0.0,
+        "negative_hits": 1,
+        "returned_ids": [
+          "atom-9",
+          "atom-0",
+          "atom-10",
+          "atom-1",
+          "atom-2"
+        ],
+        "ranking_changed": false
+      }
+    }
+  ],
+  "corpus_sha256": "88124e526f8d653884332f549b3ef9fbff324b6bf50965b87ded3a744c482fbd"
+}

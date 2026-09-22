@@ -27,6 +27,20 @@ These are code-path findings, not a count or quality estimate for existing user 
 
 The experimental rule requires `primary anchor → candidate → second anchor`; it does not promote a cause that points to both symptom anchors. A second guard changes the existing wrong-bridge example to a wrong candidate → two anchors and confirms the current directional rule does not promote that negative to Top-1. That guard does **not** prove a reversed rule would be safe: two anchors can support the same wrong cause. The examples and labels are assistant-authored synthetic diagnostics, not independent or real-session evidence. No timing is measured.
 
+## Source-traceable, paraphrased cases
+
+`experiments/causal_source_cases.json` freezes three separate cause → two symptoms examples, each with a separate unlinked remedy atom. The console-window, inactive-proxy-config, and stopped-poller stories are paraphrased from locally archived troubleshooting summaries; their exact page/heading mapping remains in the local Wiki, not in this public repository. This makes each proposed direction checkable against a source claim, **not** independently adjudicated causal truth. Questions, relevance/negative labels, and edge choices remain assistant-authored. No raw chat or private source text is included.
+
+Run `python -m experiments.directional_holdout_probe experiments/causal_source_cases.json --json results/causal_source_cases_probe.json`. The report contains anonymous atom aliases only and records corpus SHA256 `88124e526f8d653884332f549b3ef9fbff324b6bf50965b87ded3a744c482fbd`. Conditions: 12 atoms, 3 reason questions, TF-IDF, precision mode, Top-5, no timing or production change.
+
+| Strategy | Macro target Recall@5 | Questions with labeled negative hits | Ranking changes from baseline |
+| --- | ---: | ---: | ---: |
+| Baseline | 2/3 | 3/3 | 0/3 |
+| Existing undirected bridge | 3/3 | 3/3 | 1/3 |
+| Experimental directional chain | 2/3 | 3/3 | 0/3 |
+
+All three directional diagnostics are `no_primary_outgoing_candidate`. The bridge recovers one missed cause but also returns labeled negatives on every question; these are candidate-list hits, not necessarily Top-1 mistakes. The small, assistant-curated set cannot establish quality improvement or a safe direction policy. `tests/test_causal_source_cases_probe.py` fixes the source-paraphrased graph shape and report boundary.
+
 ## Decision boundary
 
-Do not reverse existing stored edges, rename all old `CAUSAL` edges, or enable directional reranking by default based on these cases. A follow-up design must specify how cause → effect, diagnostic association, and resolution are represented and how edge provenance is verified. It then needs a separate direction-labeled evaluation with incorrect-anchor guards; the paused 96-row relevance review remains unfilled and cannot substitute for causal-direction labels.
+Do not reverse existing stored edges, rename all old `CAUSAL` edges, or enable directional reranking by default based on these cases. A follow-up design must specify how cause → effect, diagnostic association, and resolution are represented and how edge provenance is verified. It then needs independent direction review and stronger incorrect-anchor guards; the paused 96-row relevance review remains unfilled and cannot substitute for causal-direction labels.
