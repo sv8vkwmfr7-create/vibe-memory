@@ -29,7 +29,16 @@ def test_bm25_candidate_order_rescues_old_evidence_at_the_100_atom_cap():
     assert report["top5_any_hit"] == {"recency": 0, "fts_bm25": 1}
     assert report["rescued_questions"] == 1
     assert report["lost_questions"] == 0
+    assert report["lost_question_stage"] == {
+        "evidence_absent_from_candidates": 0,
+        "evidence_present_but_not_top5": 0,
+    }
 
     corpus["queries"][0]["text"] = "何时加入支持小组"
     with pytest.raises(ValueError, match="English FTS only"):
+        compare(corpus, top_k=5)
+
+    corpus["queries"][0]["text"] = "When did Caroline join the LGBTQ support group?"
+    corpus["edges"] = [{"from_atom_id": "gold", "to_atom_id": "noise-0"}]
+    with pytest.raises(ValueError, match="graph-free"):
         compare(corpus, top_k=5)

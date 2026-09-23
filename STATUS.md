@@ -1,8 +1,12 @@
 # Project Status
 
-> Last verified: 2026-09-22
+> Last verified: 2026-09-23
 
 Vibe Memory 0.3.0 is a beta-stage local-first agent memory library. The core SDK, SQLite storage, TF-IDF retrieval, CLI/session manager, and MCP stdio interface are covered by the current local test suite. Public benchmark and production-scale claims remain unverified.
+
+### Candidate-order loss-stage follow-up (2026-09-23)
+
+Replaying the same SHA-256-pinned LoCoMo text-only comparison shows that **all 29** questions lost by the experimental English FTS order still have at least one official evidence turn in its 100-candidate pool; **0** lose all evidence at candidate selection. These are downstream Top-5 fusion/ranking losses, not candidate-cap exclusions. The [aggregate report](results/locomo_candidate_order_all_text.json) now includes per-sample and total loss-stage counts. Chinese and causal-graph production-path regressions passed (targeted **27 passed**, full optional-semantic-import-isolated **395 passed**), but the English-only graph-free alternative still has **no** Chinese/graph quality comparison. Production SDK/MCP defaults and the private human review remain unchanged.
 
 ### Experiment-only English FTS candidate-order ablation (2026-09-22)
 

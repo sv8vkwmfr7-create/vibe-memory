@@ -84,6 +84,8 @@ def compare(corpus: dict, top_k: int = 5, include_timing: bool = False) -> dict:
         recall_sums = {"recency": 0.0, "fts_bm25": 0.0}
         times = {"recency": [], "fts_bm25": []}
         rescued = lost = changed = 0
+        loss_stage = {"evidence_absent_from_candidates": 0,
+                      "evidence_present_but_not_top5": 0}
         for index, query in enumerate(corpus["queries"]):
             gold = set(query["relevant_ids"])
             if not gold:
@@ -116,12 +118,17 @@ def compare(corpus: dict, top_k: int = 5, include_timing: bool = False) -> dict:
             new_hit = bool(gold & set(ids_by_order["fts_bm25"]))
             rescued += new_hit and not old_hit
             lost += old_hit and not new_hit
+            if old_hit and not new_hit:
+                present = bool(gold & {atom.id for atom in pools["fts_bm25"]})
+                loss_stage["evidence_present_but_not_top5" if present
+                           else "evidence_absent_from_candidates"] += 1
             changed += ids_by_order["recency"] != ids_by_order["fts_bm25"]
         size = len(corpus["queries"])
         report = {"questions": size, "candidate_limit": limit,
                   **counts, "macro_evidence_recall": {
                       name: value / size for name, value in recall_sums.items()},
                   "rescued_questions": rescued, "lost_questions": lost,
+                  "lost_question_stage": loss_stage,
                   "changed_top5_rankings": changed,
                   "limits": "English text-only; graph-free; official evidence is not exhaustive relevance"}
         if include_timing:
@@ -175,7 +182,10 @@ def main() -> None:
                       for item in reports) / questions
                       for name in ("recency", "fts_bm25")},
                   "rescued_questions": sum(item["rescued_questions"] for item in reports),
-                  "lost_questions": sum(item["lost_questions"] for item in reports)}
+                  "lost_questions": sum(item["lost_questions"] for item in reports),
+                  "lost_question_stage": {name: sum(item["lost_question_stage"][name]
+                                                   for item in reports)
+                                          for name in reports[0]["lost_question_stage"]}}
     else:
         report = reports[0]
     report["source"] = "https://github.com/snap-research/locomo/blob/main/data/locomo10.json"

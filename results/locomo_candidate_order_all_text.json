@@ -18,6 +18,10 @@
       },
       "rescued_questions": 39,
       "lost_questions": 6,
+      "lost_question_stage": {
+        "evidence_absent_from_candidates": 0,
+        "evidence_present_but_not_top5": 6
+      },
       "changed_top5_rankings": 131,
       "limits": "English text-only; graph-free; official evidence is not exhaustive relevance",
       "sample_id": "conv-26",
@@ -44,6 +48,10 @@
       },
       "rescued_questions": 33,
       "lost_questions": 1,
+      "lost_question_stage": {
+        "evidence_absent_from_candidates": 0,
+        "evidence_present_but_not_top5": 1
+      },
       "changed_top5_rankings": 85,
       "limits": "English text-only; graph-free; official evidence is not exhaustive relevance",
       "sample_id": "conv-30",
@@ -70,6 +78,10 @@
       },
       "rescued_questions": 63,
       "lost_questions": 6,
+      "lost_question_stage": {
+        "evidence_absent_from_candidates": 0,
+        "evidence_present_but_not_top5": 6
+      },
       "changed_top5_rankings": 138,
       "limits": "English text-only; graph-free; official evidence is not exhaustive relevance",
       "sample_id": "conv-41",
@@ -96,6 +108,10 @@
       },
       "rescued_questions": 59,
       "lost_questions": 1,
+      "lost_question_stage": {
+        "evidence_absent_from_candidates": 0,
+        "evidence_present_but_not_top5": 1
+      },
       "changed_top5_rankings": 148,
       "limits": "English text-only; graph-free; official evidence is not exhaustive relevance",
       "sample_id": "conv-42",
@@ -122,6 +138,10 @@
       },
       "rescued_questions": 75,
       "lost_questions": 2,
+      "lost_question_stage": {
+        "evidence_absent_from_candidates": 0,
+        "evidence_present_but_not_top5": 2
+      },
       "changed_top5_rankings": 154,
       "limits": "English text-only; graph-free; official evidence is not exhaustive relevance",
       "sample_id": "conv-43",
@@ -148,6 +168,10 @@
       },
       "rescued_questions": 33,
       "lost_questions": 1,
+      "lost_question_stage": {
+        "evidence_absent_from_candidates": 0,
+        "evidence_present_but_not_top5": 1
+      },
       "changed_top5_rankings": 72,
       "limits": "English text-only; graph-free; official evidence is not exhaustive relevance",
       "sample_id": "conv-44",
@@ -174,6 +198,10 @@
       },
       "rescued_questions": 57,
       "lost_questions": 5,
+      "lost_question_stage": {
+        "evidence_absent_from_candidates": 0,
+        "evidence_present_but_not_top5": 5
+      },
       "changed_top5_rankings": 143,
       "limits": "English text-only; graph-free; official evidence is not exhaustive relevance",
       "sample_id": "conv-47",
@@ -200,6 +228,10 @@
       },
       "rescued_questions": 54,
       "lost_questions": 1,
+      "lost_question_stage": {
+        "evidence_absent_from_candidates": 0,
+        "evidence_present_but_not_top5": 1
+      },
       "changed_top5_rankings": 148,
       "limits": "English text-only; graph-free; official evidence is not exhaustive relevance",
       "sample_id": "conv-48",
@@ -226,6 +258,10 @@
       },
       "rescued_questions": 41,
       "lost_questions": 2,
+      "lost_question_stage": {
+        "evidence_absent_from_candidates": 0,
+        "evidence_present_but_not_top5": 2
+      },
       "changed_top5_rankings": 104,
       "limits": "English text-only; graph-free; official evidence is not exhaustive relevance",
       "sample_id": "conv-49",
@@ -252,6 +288,10 @@
       },
       "rescued_questions": 50,
       "lost_questions": 4,
+      "lost_question_stage": {
+        "evidence_absent_from_candidates": 0,
+        "evidence_present_but_not_top5": 4
+      },
       "changed_top5_rankings": 117,
       "limits": "English text-only; graph-free; official evidence is not exhaustive relevance",
       "sample_id": "conv-50",
@@ -276,6 +316,10 @@
   },
   "rescued_questions": 504,
   "lost_questions": 29,
+  "lost_question_stage": {
+    "evidence_absent_from_candidates": 0,
+    "evidence_present_but_not_top5": 29
+  },
   "source": "https://github.com/snap-research/locomo/blob/main/data/locomo10.json",
   "source_sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4"
 }
