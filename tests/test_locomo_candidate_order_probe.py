@@ -23,7 +23,7 @@ def test_bm25_candidate_order_rescues_old_evidence_at_the_100_atom_cap():
                            "cutoff": (start + timedelta(days=1)).isoformat(),
                            "relevant_ids": ["gold"]}]}
 
-    report = compare(corpus, top_k=5)
+    report = compare(corpus, top_k=5, diagnose_losses=True)
 
     assert report["candidate_any_hit"] == {"recency": 0, "fts_bm25": 1}
     assert report["top5_any_hit"] == {"recency": 0, "fts_bm25": 1}
@@ -33,6 +33,9 @@ def test_bm25_candidate_order_rescues_old_evidence_at_the_100_atom_cap():
         "evidence_absent_from_candidates": 0,
         "evidence_present_but_not_top5": 0,
     }
+    assert sum(report["lost_question_ranking_path"].values()) == report["lost_questions"]
+    assert set(report["lost_question_omit_one_strategy_hits"]) == {
+        "semantic", "bm25", "graph", "temporal"}
 
     corpus["queries"][0]["text"] = "何时加入支持小组"
     with pytest.raises(ValueError, match="English FTS only"):

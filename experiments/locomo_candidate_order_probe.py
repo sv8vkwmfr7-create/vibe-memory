@@ -9,6 +9,7 @@ import statistics
 import time
 from datetime import datetime
 from pathlib import Path
+from unittest.mock import patch
 
 from experiments.locomo_retrieval import build_corpus
 from vibe_memory.models.memory_atom import MemoryAtom
@@ -59,7 +60,8 @@ def _fts_bm25_candidates(store: VibeStorage, agent_id: str, query: str,
     return [store._row_to_atom(row) for row in rows]
 
 
-def compare(corpus: dict, top_k: int = 5, include_timing: bool = False) -> dict:
+def compare(corpus: dict, top_k: int = 5, include_timing: bool = False,
+            diagnose_losses: bool = False) -> dict:
     if top_k < 1 or not corpus["queries"] or corpus["edges"]:
         raise ValueError("Positive top_k, questions, and graph-free corpus required")
     first = corpus["queries"][0]
@@ -86,6 +88,11 @@ def compare(corpus: dict, top_k: int = 5, include_timing: bool = False) -> dict:
         rescued = lost = changed = 0
         loss_stage = {"evidence_absent_from_candidates": 0,
                       "evidence_present_but_not_top5": 0}
+        strategies = ("semantic", "bm25", "graph", "temporal")
+        ablation_hits = {name: 0 for name in strategies}
+        loss_path = {"absent_from_strategy_top5": 0,
+                     "strategy_top5_but_not_fused_top10": 0,
+                     "fused_rank_6_to_10": 0}
         for index, query in enumerate(corpus["queries"]):
             gold = set(query["relevant_ids"])
             if not gold:
@@ -122,6 +129,36 @@ def compare(corpus: dict, top_k: int = 5, include_timing: bool = False) -> dict:
                 present = bool(gold & {atom.id for atom in pools["fts_bm25"]})
                 loss_stage["evidence_present_but_not_top5" if present
                            else "evidence_absent_from_candidates"] += 1
+                if diagnose_losses:
+                    store.get_recall_candidates = ranked_get
+                    from vibe_memory.retrieval import fusion
+                    support = {}
+                    original_rrf = fusion.rrf_fusion
+
+                    def capture_rrf(ranked_lists, **kwargs):
+                        fused = original_rrf(ranked_lists, **kwargs)
+                        support["strategy"] = any(
+                            aid in gold for ranked in ranked_lists for aid, _ in ranked)
+                        support["fused"] = any(aid in gold for aid, _ in fused)
+                        return fused
+
+                    with patch.object(fusion, "rrf_fusion", side_effect=capture_rrf):
+                        replay = recall(query["text"], query["agent_id"], store,
+                                        mode="budget", top_k=top_k,
+                                        strategies=list(strategies),
+                                        budget_graph_hops=2)["atoms"]
+                    if gold & {atom.id for atom in replay} or not support:
+                        raise RuntimeError("Loss replay changed during diagnosis")
+                    stage = ("absent_from_strategy_top5" if not support["strategy"]
+                             else "strategy_top5_but_not_fused_top10"
+                             if not support["fused"] else "fused_rank_6_to_10")
+                    loss_path[stage] += 1
+                    for omitted in strategies:
+                        result = recall(query["text"], query["agent_id"], store,
+                                        mode="budget", top_k=top_k,
+                                        strategies=[name for name in strategies if name != omitted],
+                                        budget_graph_hops=2)["atoms"]
+                        ablation_hits[omitted] += bool(gold & {atom.id for atom in result})
             changed += ids_by_order["recency"] != ids_by_order["fts_bm25"]
         size = len(corpus["queries"])
         report = {"questions": size, "candidate_limit": limit,
@@ -137,6 +174,9 @@ def compare(corpus: dict, top_k: int = 5, include_timing: bool = False) -> dict:
                        "p95": sorted(values)[math.ceil(0.95 * len(values)) - 1]}
                 for name, values in times.items()
             }
+        if diagnose_losses:
+            report["lost_question_omit_one_strategy_hits"] = ablation_hits
+            report["lost_question_ranking_path"] = loss_path
         return report
     finally:
         store.conn.close()
@@ -150,6 +190,7 @@ def main() -> None:
     parser.add_argument("--max-queries", type=int, default=0)
     parser.add_argument("--top-k", type=int, default=5)
     parser.add_argument("--timing", action="store_true")
+    parser.add_argument("--diagnose-losses", action="store_true")
     parser.add_argument("--json", type=Path)
     args = parser.parse_args()
     if args.sample_index < 0 or args.max_queries < 0:
@@ -165,7 +206,7 @@ def main() -> None:
         corpus, excluded = build_corpus(samples[index])
         if args.max_queries:
             corpus["queries"] = corpus["queries"][:args.max_queries]
-        item = compare(corpus, args.top_k, args.timing)
+        item = compare(corpus, args.top_k, args.timing, args.diagnose_losses)
         item.update({"sample_id": samples[index]["sample_id"], "excluded": excluded})
         reports.append(item)
     if args.all_samples:
@@ -186,6 +227,17 @@ def main() -> None:
                   "lost_question_stage": {name: sum(item["lost_question_stage"][name]
                                                    for item in reports)
                                           for name in reports[0]["lost_question_stage"]}}
+        if args.diagnose_losses:
+            report["lost_question_omit_one_strategy_hits"] = {
+                name: sum(item["lost_question_omit_one_strategy_hits"][name]
+                          for item in reports)
+                for name in ("semantic", "bm25", "graph", "temporal")
+            }
+            report["lost_question_ranking_path"] = {
+                name: sum(item["lost_question_ranking_path"][name]
+                          for item in reports)
+                for name in reports[0]["lost_question_ranking_path"]
+            }
     else:
         report = reports[0]
     report["source"] = "https://github.com/snap-research/locomo/blob/main/data/locomo10.json"
