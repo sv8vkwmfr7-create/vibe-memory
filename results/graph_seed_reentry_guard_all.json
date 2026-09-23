@@ -1,0 +1,3216 @@
+{
+  "source": "https://github.com/snap-research/locomo/blob/main/data/locomo10.json",
+  "source_sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+  "locomo_aggregate": {
+    "questions": 1241,
+    "candidate_any_hit": 978,
+    "negative_labeled_questions": 0,
+    "variants": {
+      "baseline": {
+        "any_hit": 645,
+        "changed_rankings": 0,
+        "rescued": 0,
+        "lost": 0,
+        "macro_evidence_recall": 0.4980123556271824,
+        "negative_top1": null,
+        "negative_any": null
+      },
+      "candidate_pool_seeds": {
+        "any_hit": 679,
+        "changed_rankings": 1181,
+        "rescued": 47,
+        "lost": 13,
+        "macro_evidence_recall": 0.5228176201987644,
+        "negative_top1": null,
+        "negative_any": null
+      },
+      "candidate_pool_rejected_guard": {
+        "any_hit": 679,
+        "changed_rankings": 1181,
+        "rescued": 47,
+        "lost": 13,
+        "macro_evidence_recall": 0.5228176201987644,
+        "negative_top1": null,
+        "negative_any": null
+      },
+      "no_seed_filter": {
+        "any_hit": 645,
+        "changed_rankings": 0,
+        "rescued": 0,
+        "lost": 0,
+        "macro_evidence_recall": 0.4980123556271824,
+        "negative_top1": null,
+        "negative_any": null
+      }
+    }
+  },
+  "locomo": [
+    {
+      "questions": 131,
+      "candidate_order": "fts_bm25",
+      "candidate_limit": 100,
+      "candidate_any_hit": 101,
+      "negative_labeled_questions": 0,
+      "variants": {
+        "baseline": {
+          "any_hit": 58,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 0,
+          "rescued": 0,
+          "lost": 0,
+          "macro_evidence_recall": 0.4217557251908397
+        },
+        "candidate_pool_seeds": {
+          "any_hit": 68,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 122,
+          "rescued": 11,
+          "lost": 1,
+          "macro_evidence_recall": 0.49809160305343514
+        },
+        "candidate_pool_rejected_guard": {
+          "any_hit": 68,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 122,
+          "rescued": 11,
+          "lost": 1,
+          "macro_evidence_recall": 0.49809160305343514
+        },
+        "no_seed_filter": {
+          "any_hit": 58,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 0,
+          "rescued": 0,
+          "lost": 0,
+          "macro_evidence_recall": 0.4217557251908397
+        }
+      },
+      "warm_core_latency_ms": {
+        "baseline": {
+          "median": 5.836699998326367,
+          "p95": 8.717099999557831
+        },
+        "candidate_pool_seeds": {
+          "median": 5.662600000505336,
+          "p95": 11.394700000892044
+        },
+        "candidate_pool_rejected_guard": {
+          "median": 5.711899999369052,
+          "p95": 7.702199998675496
+        },
+        "no_seed_filter": {
+          "median": 5.624600000373903,
+          "p95": 9.398199999850476
+        }
+      },
+      "sample_id": "conv-26",
+      "excluded": {
+        "missing_evidence": 1,
+        "image_evidence": 65,
+        "no_evidence": 2
+      }
+    },
+    {
+      "questions": 86,
+      "candidate_order": "fts_bm25",
+      "candidate_limit": 100,
+      "candidate_any_hit": 70,
+      "negative_labeled_questions": 0,
+      "variants": {
+        "baseline": {
+          "any_hit": 48,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 0,
+          "rescued": 0,
+          "lost": 0,
+          "macro_evidence_recall": 0.5436046511627907
+        },
+        "candidate_pool_seeds": {
+          "any_hit": 48,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 81,
+          "rescued": 1,
+          "lost": 1,
+          "macro_evidence_recall": 0.5436046511627907
+        },
+        "candidate_pool_rejected_guard": {
+          "any_hit": 48,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 81,
+          "rescued": 1,
+          "lost": 1,
+          "macro_evidence_recall": 0.5436046511627907
+        },
+        "no_seed_filter": {
+          "any_hit": 48,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 0,
+          "rescued": 0,
+          "lost": 0,
+          "macro_evidence_recall": 0.5436046511627907
+        }
+      },
+      "warm_core_latency_ms": {
+        "baseline": {
+          "median": 5.685000000084983,
+          "p95": 7.791100000758888
+        },
+        "candidate_pool_seeds": {
+          "median": 5.517399999916961,
+          "p95": 9.169099999780883
+        },
+        "candidate_pool_rejected_guard": {
+          "median": 5.582450000474637,
+          "p95": 14.011799999934738
+        },
+        "no_seed_filter": {
+          "median": 5.544450000343204,
+          "p95": 7.607199999256409
+        }
+      },
+      "sample_id": "conv-30",
+      "excluded": {
+        "missing_evidence": 0,
+        "image_evidence": 19,
+        "no_evidence": 0
+      }
+    },
+    {
+      "questions": 138,
+      "candidate_order": "fts_bm25",
+      "candidate_limit": 100,
+      "candidate_any_hit": 109,
+      "negative_labeled_questions": 0,
+      "variants": {
+        "baseline": {
+          "any_hit": 72,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 0,
+          "rescued": 0,
+          "lost": 0,
+          "macro_evidence_recall": 0.4927536231884058
+        },
+        "candidate_pool_seeds": {
+          "any_hit": 81,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 133,
+          "rescued": 11,
+          "lost": 2,
+          "macro_evidence_recall": 0.5404589371980677
+        },
+        "candidate_pool_rejected_guard": {
+          "any_hit": 81,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 133,
+          "rescued": 11,
+          "lost": 2,
+          "macro_evidence_recall": 0.5404589371980677
+        },
+        "no_seed_filter": {
+          "any_hit": 72,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 0,
+          "rescued": 0,
+          "lost": 0,
+          "macro_evidence_recall": 0.4927536231884058
+        }
+      },
+      "warm_core_latency_ms": {
+        "baseline": {
+          "median": 5.920849998801714,
+          "p95": 10.257299998556846
+        },
+        "candidate_pool_seeds": {
+          "median": 5.728499999349879,
+          "p95": 8.61819999954605
+        },
+        "candidate_pool_rejected_guard": {
+          "median": 5.887950001124409,
+          "p95": 15.747499999633874
+        },
+        "no_seed_filter": {
+          "median": 5.817350000143051,
+          "p95": 8.220899999287212
+        }
+      },
+      "sample_id": "conv-41",
+      "excluded": {
+        "missing_evidence": 0,
+        "image_evidence": 55,
+        "no_evidence": 0
+      }
+    },
+    {
+      "questions": 148,
+      "candidate_order": "fts_bm25",
+      "candidate_limit": 100,
+      "candidate_any_hit": 109,
+      "negative_labeled_questions": 0,
+      "variants": {
+        "baseline": {
+          "any_hit": 75,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 0,
+          "rescued": 0,
+          "lost": 0,
+          "macro_evidence_recall": 0.4788288288288289
+        },
+        "candidate_pool_seeds": {
+          "any_hit": 75,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 139,
+          "rescued": 3,
+          "lost": 3,
+          "macro_evidence_recall": 0.48355855855855856
+        },
+        "candidate_pool_rejected_guard": {
+          "any_hit": 75,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 139,
+          "rescued": 3,
+          "lost": 3,
+          "macro_evidence_recall": 0.48355855855855856
+        },
+        "no_seed_filter": {
+          "any_hit": 75,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 0,
+          "rescued": 0,
+          "lost": 0,
+          "macro_evidence_recall": 0.4788288288288289
+        }
+      },
+      "warm_core_latency_ms": {
+        "baseline": {
+          "median": 5.333099999916158,
+          "p95": 8.414600000833161
+        },
+        "candidate_pool_seeds": {
+          "median": 5.217949999860139,
+          "p95": 7.621900000231108
+        },
+        "candidate_pool_rejected_guard": {
+          "median": 5.44140000056359,
+          "p95": 9.74789999963832
+        },
+        "no_seed_filter": {
+          "median": 5.121799999869836,
+          "p95": 7.7888000014354475
+        }
+      },
+      "sample_id": "conv-42",
+      "excluded": {
+        "missing_evidence": 2,
+        "image_evidence": 110,
+        "no_evidence": 0
+      }
+    },
+    {
+      "questions": 154,
+      "candidate_order": "fts_bm25",
+      "candidate_limit": 100,
+      "candidate_any_hit": 127,
+      "negative_labeled_questions": 0,
+      "variants": {
+        "baseline": {
+          "any_hit": 91,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 0,
+          "rescued": 0,
+          "lost": 0,
+          "macro_evidence_recall": 0.566017316017316
+        },
+        "candidate_pool_seeds": {
+          "any_hit": 93,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 145,
+          "rescued": 2,
+          "lost": 0,
+          "macro_evidence_recall": 0.5822510822510822
+        },
+        "candidate_pool_rejected_guard": {
+          "any_hit": 93,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 145,
+          "rescued": 2,
+          "lost": 0,
+          "macro_evidence_recall": 0.5822510822510822
+        },
+        "no_seed_filter": {
+          "any_hit": 91,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 0,
+          "rescued": 0,
+          "lost": 0,
+          "macro_evidence_recall": 0.566017316017316
+        }
+      },
+      "warm_core_latency_ms": {
+        "baseline": {
+          "median": 6.11644999935379,
+          "p95": 13.421499999822117
+        },
+        "candidate_pool_seeds": {
+          "median": 5.881950000912184,
+          "p95": 8.285199999590986
+        },
+        "candidate_pool_rejected_guard": {
+          "median": 6.108600000516162,
+          "p95": 8.412900000621448
+        },
+        "no_seed_filter": {
+          "median": 6.0219999995752005,
+          "p95": 12.149800000770483
+        }
+      },
+      "sample_id": "conv-43",
+      "excluded": {
+        "missing_evidence": 1,
+        "image_evidence": 87,
+        "no_evidence": 0
+      }
+    },
+    {
+      "questions": 72,
+      "candidate_order": "fts_bm25",
+      "candidate_limit": 100,
+      "candidate_any_hit": 58,
+      "negative_labeled_questions": 0,
+      "variants": {
+        "baseline": {
+          "any_hit": 42,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 0,
+          "rescued": 0,
+          "lost": 0,
+          "macro_evidence_recall": 0.5763888888888888
+        },
+        "candidate_pool_seeds": {
+          "any_hit": 44,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 67,
+          "rescued": 2,
+          "lost": 0,
+          "macro_evidence_recall": 0.6041666666666666
+        },
+        "candidate_pool_rejected_guard": {
+          "any_hit": 44,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 67,
+          "rescued": 2,
+          "lost": 0,
+          "macro_evidence_recall": 0.6041666666666666
+        },
+        "no_seed_filter": {
+          "any_hit": 42,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 0,
+          "rescued": 0,
+          "lost": 0,
+          "macro_evidence_recall": 0.5763888888888888
+        }
+      },
+      "warm_core_latency_ms": {
+        "baseline": {
+          "median": 5.638399999952526,
+          "p95": 8.498799999870243
+        },
+        "candidate_pool_seeds": {
+          "median": 5.718500000511995,
+          "p95": 7.735200000752229
+        },
+        "candidate_pool_rejected_guard": {
+          "median": 5.908649999582849,
+          "p95": 19.67549999972107
+        },
+        "no_seed_filter": {
+          "median": 5.704550000700692,
+          "p95": 7.908899999165442
+        }
+      },
+      "sample_id": "conv-44",
+      "excluded": {
+        "missing_evidence": 0,
+        "image_evidence": 86,
+        "no_evidence": 0
+      }
+    },
+    {
+      "questions": 143,
+      "candidate_order": "fts_bm25",
+      "candidate_limit": 100,
+      "candidate_any_hit": 112,
+      "negative_labeled_questions": 0,
+      "variants": {
+        "baseline": {
+          "any_hit": 71,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 0,
+          "rescued": 0,
+          "lost": 0,
+          "macro_evidence_recall": 0.4708624708624709
+        },
+        "candidate_pool_seeds": {
+          "any_hit": 73,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 139,
+          "rescued": 4,
+          "lost": 2,
+          "macro_evidence_recall": 0.4848484848484848
+        },
+        "candidate_pool_rejected_guard": {
+          "any_hit": 73,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 139,
+          "rescued": 4,
+          "lost": 2,
+          "macro_evidence_recall": 0.4848484848484848
+        },
+        "no_seed_filter": {
+          "any_hit": 71,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 0,
+          "rescued": 0,
+          "lost": 0,
+          "macro_evidence_recall": 0.4708624708624709
+        }
+      },
+      "warm_core_latency_ms": {
+        "baseline": {
+          "median": 5.415800000264426,
+          "p95": 8.271599999716273
+        },
+        "candidate_pool_seeds": {
+          "median": 5.641699999614502,
+          "p95": 8.340899999893736
+        },
+        "candidate_pool_rejected_guard": {
+          "median": 5.812299999888637,
+          "p95": 7.464500000423868
+        },
+        "no_seed_filter": {
+          "median": 5.359600001611398,
+          "p95": 10.89959999990242
+        }
+      },
+      "sample_id": "conv-47",
+      "excluded": {
+        "missing_evidence": 1,
+        "image_evidence": 46,
+        "no_evidence": 0
+      }
+    },
+    {
+      "questions": 148,
+      "candidate_order": "fts_bm25",
+      "candidate_limit": 100,
+      "candidate_any_hit": 110,
+      "negative_labeled_questions": 0,
+      "variants": {
+        "baseline": {
+          "any_hit": 70,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 0,
+          "rescued": 0,
+          "lost": 0,
+          "macro_evidence_recall": 0.4560810810810811
+        },
+        "candidate_pool_seeds": {
+          "any_hit": 74,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 147,
+          "rescued": 4,
+          "lost": 0,
+          "macro_evidence_recall": 0.47635135135135137
+        },
+        "candidate_pool_rejected_guard": {
+          "any_hit": 74,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 147,
+          "rescued": 4,
+          "lost": 0,
+          "macro_evidence_recall": 0.47635135135135137
+        },
+        "no_seed_filter": {
+          "any_hit": 70,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 0,
+          "rescued": 0,
+          "lost": 0,
+          "macro_evidence_recall": 0.4560810810810811
+        }
+      },
+      "warm_core_latency_ms": {
+        "baseline": {
+          "median": 5.3947500009599025,
+          "p95": 8.152500000505825
+        },
+        "candidate_pool_seeds": {
+          "median": 5.5373499999404885,
+          "p95": 13.567900001362432
+        },
+        "candidate_pool_rejected_guard": {
+          "median": 5.471100000249862,
+          "p95": 7.857200000216835
+        },
+        "no_seed_filter": {
+          "median": 5.330949999915902,
+          "p95": 8.263699999588425
+        }
+      },
+      "sample_id": "conv-48",
+      "excluded": {
+        "missing_evidence": 0,
+        "image_evidence": 91,
+        "no_evidence": 0
+      }
+    },
+    {
+      "questions": 104,
+      "candidate_order": "fts_bm25",
+      "candidate_limit": 100,
+      "candidate_any_hit": 89,
+      "negative_labeled_questions": 0,
+      "variants": {
+        "baseline": {
+          "any_hit": 61,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 0,
+          "rescued": 0,
+          "lost": 0,
+          "macro_evidence_recall": 0.5641025641025641
+        },
+        "candidate_pool_seeds": {
+          "any_hit": 61,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 99,
+          "rescued": 4,
+          "lost": 4,
+          "macro_evidence_recall": 0.5657051282051282
+        },
+        "candidate_pool_rejected_guard": {
+          "any_hit": 61,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 99,
+          "rescued": 4,
+          "lost": 4,
+          "macro_evidence_recall": 0.5657051282051282
+        },
+        "no_seed_filter": {
+          "any_hit": 61,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 0,
+          "rescued": 0,
+          "lost": 0,
+          "macro_evidence_recall": 0.5641025641025641
+        }
+      },
+      "warm_core_latency_ms": {
+        "baseline": {
+          "median": 5.849200000739074,
+          "p95": 8.413499999733176
+        },
+        "candidate_pool_seeds": {
+          "median": 6.078549999983807,
+          "p95": 11.762300000555115
+        },
+        "candidate_pool_rejected_guard": {
+          "median": 5.9815999993588775,
+          "p95": 8.535599999959231
+        },
+        "no_seed_filter": {
+          "median": 5.753150000600726,
+          "p95": 8.969800001068506
+        }
+      },
+      "sample_id": "conv-49",
+      "excluded": {
+        "missing_evidence": 3,
+        "image_evidence": 89,
+        "no_evidence": 0
+      }
+    },
+    {
+      "questions": 117,
+      "candidate_order": "fts_bm25",
+      "candidate_limit": 100,
+      "candidate_any_hit": 93,
+      "negative_labeled_questions": 0,
+      "variants": {
+        "baseline": {
+          "any_hit": 57,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 0,
+          "rescued": 0,
+          "lost": 0,
+          "macro_evidence_recall": 0.4700854700854701
+        },
+        "candidate_pool_seeds": {
+          "any_hit": 62,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 109,
+          "rescued": 5,
+          "lost": 0,
+          "macro_evidence_recall": 0.5028490028490029
+        },
+        "candidate_pool_rejected_guard": {
+          "any_hit": 62,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 109,
+          "rescued": 5,
+          "lost": 0,
+          "macro_evidence_recall": 0.5028490028490029
+        },
+        "no_seed_filter": {
+          "any_hit": 57,
+          "negative_top1": null,
+          "negative_any": null,
+          "changed_rankings": 0,
+          "rescued": 0,
+          "lost": 0,
+          "macro_evidence_recall": 0.4700854700854701
+        }
+      },
+      "warm_core_latency_ms": {
+        "baseline": {
+          "median": 6.781099998988793,
+          "p95": 16.625000000203727
+        },
+        "candidate_pool_seeds": {
+          "median": 6.507800000690622,
+          "p95": 13.018199999351054
+        },
+        "candidate_pool_rejected_guard": {
+          "median": 6.459000000177184,
+          "p95": 12.221000000863569
+        },
+        "no_seed_filter": {
+          "median": 6.401499998901272,
+          "p95": 9.64390000081039
+        }
+      },
+      "sample_id": "conv-50",
+      "excluded": {
+        "missing_evidence": 1,
+        "image_evidence": 84,
+        "no_evidence": 2
+      }
+    }
+  ],
+  "graph_fixtures": {
+    "source_sha256": {
+      "causal_source_cases.json": "88124e526f8d653884332f549b3ef9fbff324b6bf50965b87ded3a744c482fbd",
+      "relevance_diagnostic_cases.json": "674c8962e1a436c53a09a37213f93b3d35befb57841ddff0cf4c4581c7b80f19"
+    },
+    "aggregate": {
+      "questions": 9,
+      "candidate_any_hit": 9,
+      "negative_labeled_questions": 8,
+      "variants": {
+        "baseline": {
+          "any_hit": 4,
+          "changed_rankings": 0,
+          "rescued": 0,
+          "lost": 0,
+          "macro_evidence_recall": 0.4444444444444444,
+          "negative_top1": 5,
+          "negative_any": 5
+        },
+        "candidate_pool_seeds": {
+          "any_hit": 7,
+          "changed_rankings": 8,
+          "rescued": 4,
+          "lost": 1,
+          "macro_evidence_recall": 0.7777777777777778,
+          "negative_top1": 5,
+          "negative_any": 8
+        },
+        "candidate_pool_rejected_guard": {
+          "any_hit": 3,
+          "changed_rankings": 6,
+          "rescued": 0,
+          "lost": 1,
+          "macro_evidence_recall": 0.3333333333333333,
+          "negative_top1": 5,
+          "negative_any": 6
+        },
+        "no_seed_filter": {
+          "any_hit": 8,
+          "changed_rankings": 7,
+          "rescued": 4,
+          "lost": 0,
+          "macro_evidence_recall": 0.8888888888888888,
+          "negative_top1": 5,
+          "negative_any": 8
+        }
+      }
+    },
+    "cases": [
+      {
+        "case_id": "causal-source-cases-v1",
+        "questions": 3,
+        "candidate_order": "existing",
+        "candidate_limit": 100,
+        "candidate_any_hit": 3,
+        "negative_labeled_questions": 3,
+        "variants": {
+          "baseline": {
+            "any_hit": 3,
+            "negative_top1": 0,
+            "negative_any": 0,
+            "changed_rankings": 0,
+            "rescued": 0,
+            "lost": 0,
+            "macro_evidence_recall": 1.0
+          },
+          "candidate_pool_seeds": {
+            "any_hit": 2,
+            "negative_top1": 0,
+            "negative_any": 3,
+            "changed_rankings": 3,
+            "rescued": 0,
+            "lost": 1,
+            "macro_evidence_recall": 0.6666666666666666
+          },
+          "candidate_pool_rejected_guard": {
+            "any_hit": 2,
+            "negative_top1": 0,
+            "negative_any": 1,
+            "changed_rankings": 3,
+            "rescued": 0,
+            "lost": 1,
+            "macro_evidence_recall": 0.6666666666666666
+          },
+          "no_seed_filter": {
+            "any_hit": 3,
+            "negative_top1": 0,
+            "negative_any": 3,
+            "changed_rankings": 3,
+            "rescued": 0,
+            "lost": 0,
+            "macro_evidence_recall": 1.0
+          }
+        },
+        "warm_core_latency_ms": {
+          "baseline": {
+            "median": 0.7334000001719687,
+            "p95": 0.916299999516923
+          },
+          "candidate_pool_seeds": {
+            "median": 0.6685999996989267,
+            "p95": 1.1802999997598818
+          },
+          "candidate_pool_rejected_guard": {
+            "median": 1.022799999191193,
+            "p95": 1.0711000013543526
+          },
+          "no_seed_filter": {
+            "median": 0.8921999997255625,
+            "p95": 1.1608000004343921
+          }
+        },
+        "rows": [
+          {
+            "query_index": 0,
+            "positive_ids": [
+              "console-cause"
+            ],
+            "negative_ids": [
+              "console-remedy",
+              "poller-cause",
+              "proxy-cause"
+            ],
+            "candidate_seeds": [
+              "poller-remedy",
+              "poller-cause",
+              "proxy-effect-0",
+              "console-remedy",
+              "console-effect-1"
+            ],
+            "variants": {
+              "baseline": {
+                "semantic_seeds": [
+                  "console-effect-0",
+                  "console-effect-1",
+                  "console-cause",
+                  "console-remedy",
+                  "poller-remedy"
+                ],
+                "filtered_seeds": [
+                  "console-effect-0",
+                  "console-effect-1",
+                  "console-cause"
+                ],
+                "graph_seeds": [
+                  "console-effect-0",
+                  "console-effect-1",
+                  "console-cause"
+                ],
+                "graph_results": [
+                  "console-cause",
+                  "console-effect-0",
+                  "console-effect-1"
+                ],
+                "fusion_lists": [
+                  [
+                    "console-effect-0",
+                    "console-effect-1",
+                    "console-cause"
+                  ],
+                  [
+                    "console-effect-0",
+                    "console-effect-1",
+                    "console-cause"
+                  ],
+                  [
+                    "console-cause",
+                    "console-effect-0",
+                    "console-effect-1"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "console-effect-0",
+                  "console-cause",
+                  "console-effect-1"
+                ]
+              },
+              "candidate_pool_seeds": {
+                "semantic_seeds": [
+                  "console-effect-0",
+                  "console-effect-1",
+                  "console-cause",
+                  "console-remedy",
+                  "poller-remedy"
+                ],
+                "filtered_seeds": [
+                  "console-effect-0",
+                  "console-effect-1",
+                  "console-cause"
+                ],
+                "graph_seeds": [
+                  "poller-remedy",
+                  "poller-cause",
+                  "proxy-effect-0",
+                  "console-remedy",
+                  "console-effect-1"
+                ],
+                "graph_results": [
+                  "poller-cause",
+                  "proxy-effect-0",
+                  "console-effect-1",
+                  "poller-remedy",
+                  "console-remedy"
+                ],
+                "fusion_lists": [
+                  [
+                    "console-effect-0",
+                    "console-effect-1",
+                    "console-cause"
+                  ],
+                  [
+                    "console-effect-0",
+                    "console-effect-1",
+                    "console-cause"
+                  ],
+                  [
+                    "poller-cause",
+                    "proxy-effect-0",
+                    "console-effect-1",
+                    "poller-remedy",
+                    "console-remedy"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "console-effect-1",
+                  "console-effect-0",
+                  "poller-cause",
+                  "proxy-effect-0",
+                  "console-cause"
+                ]
+              },
+              "candidate_pool_rejected_guard": {
+                "semantic_seeds": [
+                  "console-effect-0",
+                  "console-effect-1",
+                  "console-cause",
+                  "console-remedy",
+                  "poller-remedy"
+                ],
+                "filtered_seeds": [
+                  "console-effect-0",
+                  "console-effect-1",
+                  "console-cause"
+                ],
+                "graph_seeds": [
+                  "poller-remedy",
+                  "poller-cause",
+                  "proxy-effect-0",
+                  "console-remedy",
+                  "console-effect-1"
+                ],
+                "graph_results": [
+                  "poller-cause",
+                  "proxy-effect-0",
+                  "console-effect-1"
+                ],
+                "fusion_lists": [
+                  [
+                    "console-effect-0",
+                    "console-effect-1",
+                    "console-cause"
+                  ],
+                  [
+                    "console-effect-0",
+                    "console-effect-1",
+                    "console-cause"
+                  ],
+                  [
+                    "poller-cause",
+                    "proxy-effect-0",
+                    "console-effect-1"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "console-effect-1",
+                  "console-effect-0",
+                  "poller-cause",
+                  "proxy-effect-0",
+                  "console-cause"
+                ]
+              },
+              "no_seed_filter": {
+                "graph_seeds": [
+                  "console-effect-0",
+                  "console-effect-1",
+                  "console-cause",
+                  "console-remedy",
+                  "poller-remedy"
+                ],
+                "graph_results": [
+                  "console-cause",
+                  "console-effect-0",
+                  "console-effect-1",
+                  "console-remedy",
+                  "poller-remedy"
+                ],
+                "fusion_lists": [
+                  [
+                    "console-effect-0",
+                    "console-effect-1",
+                    "console-cause",
+                    "console-remedy",
+                    "poller-remedy"
+                  ],
+                  [
+                    "console-effect-0",
+                    "console-effect-1",
+                    "console-cause",
+                    "console-remedy",
+                    "poller-remedy"
+                  ],
+                  [
+                    "console-cause",
+                    "console-effect-0",
+                    "console-effect-1",
+                    "console-remedy",
+                    "poller-remedy"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "console-effect-0",
+                  "console-cause",
+                  "console-effect-1",
+                  "console-remedy",
+                  "poller-remedy"
+                ]
+              }
+            }
+          },
+          {
+            "query_index": 1,
+            "positive_ids": [
+              "proxy-cause"
+            ],
+            "negative_ids": [
+              "console-cause",
+              "poller-cause",
+              "proxy-remedy"
+            ],
+            "candidate_seeds": [
+              "poller-cause",
+              "proxy-remedy",
+              "proxy-effect-0",
+              "proxy-cause",
+              "console-effect-0"
+            ],
+            "variants": {
+              "candidate_pool_seeds": {
+                "semantic_seeds": [
+                  "proxy-effect-0",
+                  "proxy-remedy",
+                  "poller-cause",
+                  "console-effect-0",
+                  "proxy-cause"
+                ],
+                "filtered_seeds": [
+                  "proxy-effect-0",
+                  "proxy-cause"
+                ],
+                "graph_seeds": [
+                  "poller-cause",
+                  "proxy-remedy",
+                  "proxy-effect-0",
+                  "proxy-cause",
+                  "console-effect-0"
+                ],
+                "graph_results": [
+                  "proxy-cause",
+                  "proxy-effect-0",
+                  "poller-cause",
+                  "console-effect-0",
+                  "proxy-remedy"
+                ],
+                "fusion_lists": [
+                  [
+                    "proxy-effect-0",
+                    "proxy-cause"
+                  ],
+                  [
+                    "proxy-effect-0",
+                    "proxy-cause"
+                  ],
+                  [
+                    "proxy-cause",
+                    "proxy-effect-0",
+                    "poller-cause",
+                    "console-effect-0",
+                    "proxy-remedy"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "proxy-effect-0",
+                  "proxy-cause",
+                  "poller-cause",
+                  "console-effect-0",
+                  "proxy-remedy"
+                ]
+              },
+              "candidate_pool_rejected_guard": {
+                "semantic_seeds": [
+                  "proxy-effect-0",
+                  "proxy-remedy",
+                  "poller-cause",
+                  "console-effect-0",
+                  "proxy-cause"
+                ],
+                "filtered_seeds": [
+                  "proxy-effect-0",
+                  "proxy-cause"
+                ],
+                "graph_seeds": [
+                  "poller-cause",
+                  "proxy-remedy",
+                  "proxy-effect-0",
+                  "proxy-cause",
+                  "console-effect-0"
+                ],
+                "graph_results": [
+                  "proxy-cause",
+                  "proxy-effect-0"
+                ],
+                "fusion_lists": [
+                  [
+                    "proxy-effect-0",
+                    "proxy-cause"
+                  ],
+                  [
+                    "proxy-effect-0",
+                    "proxy-cause"
+                  ],
+                  [
+                    "proxy-cause",
+                    "proxy-effect-0"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "proxy-effect-0",
+                  "proxy-cause"
+                ]
+              },
+              "no_seed_filter": {
+                "graph_seeds": [
+                  "proxy-effect-0",
+                  "proxy-remedy",
+                  "poller-cause",
+                  "console-effect-0",
+                  "proxy-cause"
+                ],
+                "graph_results": [
+                  "proxy-cause",
+                  "proxy-effect-0",
+                  "poller-cause",
+                  "console-effect-0",
+                  "proxy-remedy"
+                ],
+                "fusion_lists": [
+                  [
+                    "proxy-effect-0",
+                    "proxy-remedy",
+                    "poller-cause",
+                    "console-effect-0",
+                    "proxy-cause"
+                  ],
+                  [
+                    "proxy-effect-0",
+                    "poller-cause",
+                    "proxy-remedy",
+                    "console-effect-0",
+                    "proxy-cause"
+                  ],
+                  [
+                    "proxy-cause",
+                    "proxy-effect-0",
+                    "poller-cause",
+                    "console-effect-0",
+                    "proxy-remedy"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "proxy-effect-0",
+                  "proxy-cause",
+                  "poller-cause",
+                  "proxy-remedy",
+                  "console-effect-0"
+                ]
+              },
+              "baseline": {
+                "semantic_seeds": [
+                  "proxy-effect-0",
+                  "proxy-remedy",
+                  "poller-cause",
+                  "console-effect-0",
+                  "proxy-cause"
+                ],
+                "filtered_seeds": [
+                  "proxy-effect-0",
+                  "proxy-cause"
+                ],
+                "graph_seeds": [
+                  "proxy-effect-0",
+                  "proxy-cause"
+                ],
+                "graph_results": [
+                  "proxy-cause",
+                  "proxy-effect-0",
+                  "proxy-effect-1"
+                ],
+                "fusion_lists": [
+                  [
+                    "proxy-effect-0",
+                    "proxy-cause"
+                  ],
+                  [
+                    "proxy-effect-0",
+                    "proxy-cause"
+                  ],
+                  [
+                    "proxy-cause",
+                    "proxy-effect-0",
+                    "proxy-effect-1"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "proxy-effect-0",
+                  "proxy-cause",
+                  "proxy-effect-1"
+                ]
+              }
+            }
+          },
+          {
+            "query_index": 2,
+            "positive_ids": [
+              "poller-cause"
+            ],
+            "negative_ids": [
+              "console-cause",
+              "poller-remedy",
+              "proxy-cause"
+            ],
+            "candidate_seeds": [
+              "poller-effect-1",
+              "poller-effect-0",
+              "console-cause",
+              "console-effect-0",
+              "console-effect-1"
+            ],
+            "variants": {
+              "candidate_pool_rejected_guard": {
+                "semantic_seeds": [
+                  "poller-effect-0",
+                  "console-cause",
+                  "poller-effect-1"
+                ],
+                "filtered_seeds": [
+                  "poller-effect-0",
+                  "poller-effect-1"
+                ],
+                "graph_seeds": [
+                  "poller-effect-1",
+                  "poller-effect-0",
+                  "console-cause",
+                  "console-effect-0",
+                  "console-effect-1"
+                ],
+                "graph_results": [
+                  "console-effect-0",
+                  "console-effect-1",
+                  "poller-effect-1",
+                  "poller-effect-0"
+                ],
+                "fusion_lists": [
+                  [
+                    "poller-effect-0",
+                    "poller-effect-1"
+                  ],
+                  [
+                    "poller-effect-0",
+                    "poller-effect-1"
+                  ],
+                  [
+                    "console-effect-0",
+                    "console-effect-1",
+                    "poller-effect-1",
+                    "poller-effect-0"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "poller-effect-0",
+                  "poller-effect-1",
+                  "console-effect-0",
+                  "console-effect-1"
+                ]
+              },
+              "no_seed_filter": {
+                "graph_seeds": [
+                  "poller-effect-0",
+                  "console-cause",
+                  "poller-effect-1"
+                ],
+                "graph_results": [
+                  "poller-cause",
+                  "poller-effect-0",
+                  "console-cause",
+                  "poller-effect-1",
+                  "console-effect-0"
+                ],
+                "fusion_lists": [
+                  [
+                    "poller-effect-0",
+                    "console-cause",
+                    "poller-effect-1"
+                  ],
+                  [
+                    "poller-effect-0",
+                    "console-cause",
+                    "poller-effect-1"
+                  ],
+                  [
+                    "poller-cause",
+                    "poller-effect-0",
+                    "console-cause",
+                    "poller-effect-1",
+                    "console-effect-0"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "poller-effect-0",
+                  "console-cause",
+                  "poller-effect-1",
+                  "poller-cause",
+                  "console-effect-0"
+                ]
+              },
+              "baseline": {
+                "semantic_seeds": [
+                  "poller-effect-0",
+                  "console-cause",
+                  "poller-effect-1"
+                ],
+                "filtered_seeds": [
+                  "poller-effect-0",
+                  "poller-effect-1"
+                ],
+                "graph_seeds": [
+                  "poller-effect-0",
+                  "poller-effect-1"
+                ],
+                "graph_results": [
+                  "poller-cause",
+                  "poller-effect-0",
+                  "poller-effect-1"
+                ],
+                "fusion_lists": [
+                  [
+                    "poller-effect-0",
+                    "poller-effect-1"
+                  ],
+                  [
+                    "poller-effect-0",
+                    "poller-effect-1"
+                  ],
+                  [
+                    "poller-cause",
+                    "poller-effect-0",
+                    "poller-effect-1"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "poller-effect-0",
+                  "poller-effect-1",
+                  "poller-cause"
+                ]
+              },
+              "candidate_pool_seeds": {
+                "semantic_seeds": [
+                  "poller-effect-0",
+                  "console-cause",
+                  "poller-effect-1"
+                ],
+                "filtered_seeds": [
+                  "poller-effect-0",
+                  "poller-effect-1"
+                ],
+                "graph_seeds": [
+                  "poller-effect-1",
+                  "poller-effect-0",
+                  "console-cause",
+                  "console-effect-0",
+                  "console-effect-1"
+                ],
+                "graph_results": [
+                  "console-cause",
+                  "console-effect-0",
+                  "console-effect-1",
+                  "poller-effect-1",
+                  "poller-effect-0"
+                ],
+                "fusion_lists": [
+                  [
+                    "poller-effect-0",
+                    "poller-effect-1"
+                  ],
+                  [
+                    "poller-effect-0",
+                    "poller-effect-1"
+                  ],
+                  [
+                    "console-cause",
+                    "console-effect-0",
+                    "console-effect-1",
+                    "poller-effect-1",
+                    "poller-effect-0"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "poller-effect-0",
+                  "poller-effect-1",
+                  "console-cause",
+                  "console-effect-0",
+                  "console-effect-1"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "case_id": "wrong-service",
+        "questions": 1,
+        "candidate_order": "existing",
+        "candidate_limit": 100,
+        "candidate_any_hit": 1,
+        "negative_labeled_questions": 1,
+        "variants": {
+          "baseline": {
+            "any_hit": 0,
+            "negative_top1": 1,
+            "negative_any": 1,
+            "changed_rankings": 0,
+            "rescued": 0,
+            "lost": 0,
+            "macro_evidence_recall": 0.0
+          },
+          "candidate_pool_seeds": {
+            "any_hit": 1,
+            "negative_top1": 1,
+            "negative_any": 1,
+            "changed_rankings": 1,
+            "rescued": 1,
+            "lost": 0,
+            "macro_evidence_recall": 1.0
+          },
+          "candidate_pool_rejected_guard": {
+            "any_hit": 0,
+            "negative_top1": 1,
+            "negative_any": 1,
+            "changed_rankings": 1,
+            "rescued": 0,
+            "lost": 0,
+            "macro_evidence_recall": 0.0
+          },
+          "no_seed_filter": {
+            "any_hit": 1,
+            "negative_top1": 1,
+            "negative_any": 1,
+            "changed_rankings": 1,
+            "rescued": 1,
+            "lost": 0,
+            "macro_evidence_recall": 1.0
+          }
+        },
+        "warm_core_latency_ms": {
+          "baseline": {
+            "median": 0.43590000132098794,
+            "p95": 0.43590000132098794
+          },
+          "candidate_pool_seeds": {
+            "median": 0.3455000005487818,
+            "p95": 0.3455000005487818
+          },
+          "candidate_pool_rejected_guard": {
+            "median": 0.25129999994533136,
+            "p95": 0.25129999994533136
+          },
+          "no_seed_filter": {
+            "median": 0.18220000129076652,
+            "p95": 0.18220000129076652
+          }
+        },
+        "rows": [
+          {
+            "query_index": 0,
+            "positive_ids": [
+              "a0"
+            ],
+            "negative_ids": [
+              "n0",
+              "n1"
+            ],
+            "candidate_seeds": [
+              "a0",
+              "n1",
+              "n0"
+            ],
+            "variants": {
+              "baseline": {
+                "semantic_seeds": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ],
+                "filtered_seeds": [
+                  "n0",
+                  "n1"
+                ],
+                "graph_seeds": [
+                  "n0",
+                  "n1"
+                ],
+                "graph_results": [
+                  "n0",
+                  "n1"
+                ],
+                "fusion_lists": [
+                  [
+                    "n0",
+                    "n1"
+                  ],
+                  [
+                    "n1",
+                    "n0"
+                  ],
+                  [
+                    "n0",
+                    "n1"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "n0",
+                  "n1"
+                ]
+              },
+              "candidate_pool_seeds": {
+                "semantic_seeds": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ],
+                "filtered_seeds": [
+                  "n0",
+                  "n1"
+                ],
+                "graph_seeds": [
+                  "a0",
+                  "n1",
+                  "n0"
+                ],
+                "graph_results": [
+                  "n1",
+                  "n0",
+                  "a0"
+                ],
+                "fusion_lists": [
+                  [
+                    "n0",
+                    "n1"
+                  ],
+                  [
+                    "n1",
+                    "n0"
+                  ],
+                  [
+                    "n1",
+                    "n0",
+                    "a0"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "n1",
+                  "n0",
+                  "a0"
+                ]
+              },
+              "candidate_pool_rejected_guard": {
+                "semantic_seeds": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ],
+                "filtered_seeds": [
+                  "n0",
+                  "n1"
+                ],
+                "graph_seeds": [
+                  "a0",
+                  "n1",
+                  "n0"
+                ],
+                "graph_results": [
+                  "n1",
+                  "n0"
+                ],
+                "fusion_lists": [
+                  [
+                    "n0",
+                    "n1"
+                  ],
+                  [
+                    "n1",
+                    "n0"
+                  ],
+                  [
+                    "n1",
+                    "n0"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "n1",
+                  "n0"
+                ]
+              },
+              "no_seed_filter": {
+                "graph_seeds": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ],
+                "graph_results": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ],
+                "fusion_lists": [
+                  [
+                    "n0",
+                    "n1",
+                    "a0"
+                  ],
+                  [
+                    "n1",
+                    "n0",
+                    "a0"
+                  ],
+                  [
+                    "n0",
+                    "n1",
+                    "a0"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "case_id": "wrong-environment",
+        "questions": 1,
+        "candidate_order": "existing",
+        "candidate_limit": 100,
+        "candidate_any_hit": 1,
+        "negative_labeled_questions": 1,
+        "variants": {
+          "baseline": {
+            "any_hit": 0,
+            "negative_top1": 1,
+            "negative_any": 1,
+            "changed_rankings": 0,
+            "rescued": 0,
+            "lost": 0,
+            "macro_evidence_recall": 0.0
+          },
+          "candidate_pool_seeds": {
+            "any_hit": 1,
+            "negative_top1": 1,
+            "negative_any": 1,
+            "changed_rankings": 1,
+            "rescued": 1,
+            "lost": 0,
+            "macro_evidence_recall": 1.0
+          },
+          "candidate_pool_rejected_guard": {
+            "any_hit": 0,
+            "negative_top1": 1,
+            "negative_any": 1,
+            "changed_rankings": 1,
+            "rescued": 0,
+            "lost": 0,
+            "macro_evidence_recall": 0.0
+          },
+          "no_seed_filter": {
+            "any_hit": 1,
+            "negative_top1": 1,
+            "negative_any": 1,
+            "changed_rankings": 1,
+            "rescued": 1,
+            "lost": 0,
+            "macro_evidence_recall": 1.0
+          }
+        },
+        "warm_core_latency_ms": {
+          "baseline": {
+            "median": 0.4397000011522323,
+            "p95": 0.4397000011522323
+          },
+          "candidate_pool_seeds": {
+            "median": 0.2611999989312608,
+            "p95": 0.2611999989312608
+          },
+          "candidate_pool_rejected_guard": {
+            "median": 0.24589999884483404,
+            "p95": 0.24589999884483404
+          },
+          "no_seed_filter": {
+            "median": 0.6577000003744615,
+            "p95": 0.6577000003744615
+          }
+        },
+        "rows": [
+          {
+            "query_index": 0,
+            "positive_ids": [
+              "a0"
+            ],
+            "negative_ids": [
+              "n0",
+              "n1"
+            ],
+            "candidate_seeds": [
+              "a0",
+              "n1",
+              "n0"
+            ],
+            "variants": {
+              "baseline": {
+                "semantic_seeds": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ],
+                "filtered_seeds": [
+                  "n0",
+                  "n1"
+                ],
+                "graph_seeds": [
+                  "n0",
+                  "n1"
+                ],
+                "graph_results": [
+                  "n0",
+                  "n1"
+                ],
+                "fusion_lists": [
+                  [
+                    "n0",
+                    "n1"
+                  ],
+                  [
+                    "n1",
+                    "n0"
+                  ],
+                  [
+                    "n0",
+                    "n1"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "n0",
+                  "n1"
+                ]
+              },
+              "candidate_pool_seeds": {
+                "semantic_seeds": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ],
+                "filtered_seeds": [
+                  "n0",
+                  "n1"
+                ],
+                "graph_seeds": [
+                  "a0",
+                  "n1",
+                  "n0"
+                ],
+                "graph_results": [
+                  "n1",
+                  "n0",
+                  "a0"
+                ],
+                "fusion_lists": [
+                  [
+                    "n0",
+                    "n1"
+                  ],
+                  [
+                    "n1",
+                    "n0"
+                  ],
+                  [
+                    "n1",
+                    "n0",
+                    "a0"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "n1",
+                  "n0",
+                  "a0"
+                ]
+              },
+              "candidate_pool_rejected_guard": {
+                "semantic_seeds": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ],
+                "filtered_seeds": [
+                  "n0",
+                  "n1"
+                ],
+                "graph_seeds": [
+                  "a0",
+                  "n1",
+                  "n0"
+                ],
+                "graph_results": [
+                  "n1",
+                  "n0"
+                ],
+                "fusion_lists": [
+                  [
+                    "n0",
+                    "n1"
+                  ],
+                  [
+                    "n1",
+                    "n0"
+                  ],
+                  [
+                    "n1",
+                    "n0"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "n1",
+                  "n0"
+                ]
+              },
+              "no_seed_filter": {
+                "graph_seeds": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ],
+                "graph_results": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ],
+                "fusion_lists": [
+                  [
+                    "n0",
+                    "n1",
+                    "a0"
+                  ],
+                  [
+                    "n1",
+                    "n0",
+                    "a0"
+                  ],
+                  [
+                    "n0",
+                    "n1",
+                    "a0"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "case_id": "wrong-operation",
+        "questions": 1,
+        "candidate_order": "existing",
+        "candidate_limit": 100,
+        "candidate_any_hit": 1,
+        "negative_labeled_questions": 1,
+        "variants": {
+          "baseline": {
+            "any_hit": 0,
+            "negative_top1": 1,
+            "negative_any": 1,
+            "changed_rankings": 0,
+            "rescued": 0,
+            "lost": 0,
+            "macro_evidence_recall": 0.0
+          },
+          "candidate_pool_seeds": {
+            "any_hit": 1,
+            "negative_top1": 1,
+            "negative_any": 1,
+            "changed_rankings": 1,
+            "rescued": 1,
+            "lost": 0,
+            "macro_evidence_recall": 1.0
+          },
+          "candidate_pool_rejected_guard": {
+            "any_hit": 0,
+            "negative_top1": 1,
+            "negative_any": 1,
+            "changed_rankings": 0,
+            "rescued": 0,
+            "lost": 0,
+            "macro_evidence_recall": 0.0
+          },
+          "no_seed_filter": {
+            "any_hit": 1,
+            "negative_top1": 1,
+            "negative_any": 1,
+            "changed_rankings": 1,
+            "rescued": 1,
+            "lost": 0,
+            "macro_evidence_recall": 1.0
+          }
+        },
+        "warm_core_latency_ms": {
+          "baseline": {
+            "median": 0.7084000008035218,
+            "p95": 0.7084000008035218
+          },
+          "candidate_pool_seeds": {
+            "median": 0.3274000009696465,
+            "p95": 0.3274000009696465
+          },
+          "candidate_pool_rejected_guard": {
+            "median": 0.29940000058559235,
+            "p95": 0.29940000058559235
+          },
+          "no_seed_filter": {
+            "median": 0.2097000015055528,
+            "p95": 0.2097000015055528
+          }
+        },
+        "rows": [
+          {
+            "query_index": 0,
+            "positive_ids": [
+              "a0"
+            ],
+            "negative_ids": [
+              "n0",
+              "n1"
+            ],
+            "candidate_seeds": [
+              "a0",
+              "n1",
+              "n0"
+            ],
+            "variants": {
+              "baseline": {
+                "semantic_seeds": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ],
+                "filtered_seeds": [
+                  "n0",
+                  "n1"
+                ],
+                "graph_seeds": [
+                  "n0",
+                  "n1"
+                ],
+                "graph_results": [
+                  "n0",
+                  "n1"
+                ],
+                "fusion_lists": [
+                  [
+                    "n0",
+                    "n1"
+                  ],
+                  [
+                    "n0",
+                    "n1"
+                  ],
+                  [
+                    "n0",
+                    "n1"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "n0",
+                  "n1"
+                ]
+              },
+              "candidate_pool_seeds": {
+                "semantic_seeds": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ],
+                "filtered_seeds": [
+                  "n0",
+                  "n1"
+                ],
+                "graph_seeds": [
+                  "a0",
+                  "n1",
+                  "n0"
+                ],
+                "graph_results": [
+                  "n1",
+                  "n0",
+                  "a0"
+                ],
+                "fusion_lists": [
+                  [
+                    "n0",
+                    "n1"
+                  ],
+                  [
+                    "n0",
+                    "n1"
+                  ],
+                  [
+                    "n1",
+                    "n0",
+                    "a0"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ]
+              },
+              "candidate_pool_rejected_guard": {
+                "semantic_seeds": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ],
+                "filtered_seeds": [
+                  "n0",
+                  "n1"
+                ],
+                "graph_seeds": [
+                  "a0",
+                  "n1",
+                  "n0"
+                ],
+                "graph_results": [
+                  "n1",
+                  "n0"
+                ],
+                "fusion_lists": [
+                  [
+                    "n0",
+                    "n1"
+                  ],
+                  [
+                    "n0",
+                    "n1"
+                  ],
+                  [
+                    "n1",
+                    "n0"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "n0",
+                  "n1"
+                ]
+              },
+              "no_seed_filter": {
+                "graph_seeds": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ],
+                "graph_results": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ],
+                "fusion_lists": [
+                  [
+                    "n0",
+                    "n1",
+                    "a0"
+                  ],
+                  [
+                    "n0",
+                    "n1",
+                    "a0"
+                  ],
+                  [
+                    "n0",
+                    "n1",
+                    "a0"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "case_id": "chinese-paraphrase",
+        "questions": 1,
+        "candidate_order": "existing",
+        "candidate_limit": 100,
+        "candidate_any_hit": 1,
+        "negative_labeled_questions": 1,
+        "variants": {
+          "baseline": {
+            "any_hit": 0,
+            "negative_top1": 1,
+            "negative_any": 1,
+            "changed_rankings": 0,
+            "rescued": 0,
+            "lost": 0,
+            "macro_evidence_recall": 0.0
+          },
+          "candidate_pool_seeds": {
+            "any_hit": 1,
+            "negative_top1": 1,
+            "negative_any": 1,
+            "changed_rankings": 1,
+            "rescued": 1,
+            "lost": 0,
+            "macro_evidence_recall": 1.0
+          },
+          "candidate_pool_rejected_guard": {
+            "any_hit": 0,
+            "negative_top1": 1,
+            "negative_any": 1,
+            "changed_rankings": 0,
+            "rescued": 0,
+            "lost": 0,
+            "macro_evidence_recall": 0.0
+          },
+          "no_seed_filter": {
+            "any_hit": 1,
+            "negative_top1": 1,
+            "negative_any": 1,
+            "changed_rankings": 1,
+            "rescued": 1,
+            "lost": 0,
+            "macro_evidence_recall": 1.0
+          }
+        },
+        "warm_core_latency_ms": {
+          "baseline": {
+            "median": 1.0906999996223021,
+            "p95": 1.0906999996223021
+          },
+          "candidate_pool_seeds": {
+            "median": 0.353900000845897,
+            "p95": 0.353900000845897
+          },
+          "candidate_pool_rejected_guard": {
+            "median": 0.3296999984740978,
+            "p95": 0.3296999984740978
+          },
+          "no_seed_filter": {
+            "median": 0.23320000036619604,
+            "p95": 0.23320000036619604
+          }
+        },
+        "rows": [
+          {
+            "query_index": 0,
+            "positive_ids": [
+              "a0"
+            ],
+            "negative_ids": [
+              "n0",
+              "n1"
+            ],
+            "candidate_seeds": [
+              "n1",
+              "n0",
+              "a0"
+            ],
+            "variants": {
+              "baseline": {
+                "semantic_seeds": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ],
+                "filtered_seeds": [
+                  "n0",
+                  "n1"
+                ],
+                "graph_seeds": [
+                  "n0",
+                  "n1"
+                ],
+                "graph_results": [
+                  "n0",
+                  "n1"
+                ],
+                "fusion_lists": [
+                  [
+                    "n0",
+                    "n1"
+                  ],
+                  [
+                    "n0",
+                    "n1"
+                  ],
+                  [
+                    "n0",
+                    "n1"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "n0",
+                  "n1"
+                ]
+              },
+              "candidate_pool_seeds": {
+                "semantic_seeds": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ],
+                "filtered_seeds": [
+                  "n0",
+                  "n1"
+                ],
+                "graph_seeds": [
+                  "n1",
+                  "n0",
+                  "a0"
+                ],
+                "graph_results": [
+                  "n1",
+                  "n0",
+                  "a0"
+                ],
+                "fusion_lists": [
+                  [
+                    "n0",
+                    "n1"
+                  ],
+                  [
+                    "n0",
+                    "n1"
+                  ],
+                  [
+                    "n1",
+                    "n0",
+                    "a0"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ]
+              },
+              "candidate_pool_rejected_guard": {
+                "semantic_seeds": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ],
+                "filtered_seeds": [
+                  "n0",
+                  "n1"
+                ],
+                "graph_seeds": [
+                  "n1",
+                  "n0",
+                  "a0"
+                ],
+                "graph_results": [
+                  "n1",
+                  "n0"
+                ],
+                "fusion_lists": [
+                  [
+                    "n0",
+                    "n1"
+                  ],
+                  [
+                    "n0",
+                    "n1"
+                  ],
+                  [
+                    "n1",
+                    "n0"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "n0",
+                  "n1"
+                ]
+              },
+              "no_seed_filter": {
+                "graph_seeds": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ],
+                "graph_results": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ],
+                "fusion_lists": [
+                  [
+                    "n0",
+                    "n1",
+                    "a0"
+                  ],
+                  [
+                    "n0",
+                    "n1",
+                    "a0"
+                  ],
+                  [
+                    "n0",
+                    "n1",
+                    "a0"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "n0",
+                  "n1",
+                  "a0"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "case_id": "synonym-candidate-omission",
+        "questions": 1,
+        "candidate_order": "existing",
+        "candidate_limit": 100,
+        "candidate_any_hit": 1,
+        "negative_labeled_questions": 1,
+        "variants": {
+          "baseline": {
+            "any_hit": 0,
+            "negative_top1": 1,
+            "negative_any": 1,
+            "changed_rankings": 0,
+            "rescued": 0,
+            "lost": 0,
+            "macro_evidence_recall": 0.0
+          },
+          "candidate_pool_seeds": {
+            "any_hit": 0,
+            "negative_top1": 1,
+            "negative_any": 1,
+            "changed_rankings": 1,
+            "rescued": 0,
+            "lost": 0,
+            "macro_evidence_recall": 0.0
+          },
+          "candidate_pool_rejected_guard": {
+            "any_hit": 0,
+            "negative_top1": 1,
+            "negative_any": 1,
+            "changed_rankings": 1,
+            "rescued": 0,
+            "lost": 0,
+            "macro_evidence_recall": 0.0
+          },
+          "no_seed_filter": {
+            "any_hit": 0,
+            "negative_top1": 1,
+            "negative_any": 1,
+            "changed_rankings": 0,
+            "rescued": 0,
+            "lost": 0,
+            "macro_evidence_recall": 0.0
+          }
+        },
+        "warm_core_latency_ms": {
+          "baseline": {
+            "median": 0.5255999985820381,
+            "p95": 0.5255999985820381
+          },
+          "candidate_pool_seeds": {
+            "median": 0.29010000071139075,
+            "p95": 0.29010000071139075
+          },
+          "candidate_pool_rejected_guard": {
+            "median": 0.3050999985134695,
+            "p95": 0.3050999985134695
+          },
+          "no_seed_filter": {
+            "median": 0.24219999977503903,
+            "p95": 0.24219999977503903
+          }
+        },
+        "rows": [
+          {
+            "query_index": 0,
+            "positive_ids": [
+              "a0"
+            ],
+            "negative_ids": [
+              "n0",
+              "n1",
+              "n2",
+              "n3",
+              "n4",
+              "n5",
+              "n6"
+            ],
+            "candidate_seeds": [
+              "n6",
+              "n5",
+              "n4",
+              "n3",
+              "n2"
+            ],
+            "variants": {
+              "baseline": {
+                "semantic_seeds": [
+                  "n0",
+                  "n4",
+                  "n6",
+                  "n1",
+                  "n2"
+                ],
+                "filtered_seeds": [
+                  "n0",
+                  "n4",
+                  "n6",
+                  "n1",
+                  "n2"
+                ],
+                "graph_seeds": [
+                  "n0",
+                  "n4",
+                  "n6",
+                  "n1",
+                  "n2"
+                ],
+                "graph_results": [
+                  "n0",
+                  "n4",
+                  "n6",
+                  "n1",
+                  "n2"
+                ],
+                "fusion_lists": [
+                  [
+                    "n0",
+                    "n4",
+                    "n6",
+                    "n1",
+                    "n2"
+                  ],
+                  [
+                    "n6",
+                    "n4",
+                    "n1",
+                    "n0",
+                    "n5"
+                  ],
+                  [
+                    "n0",
+                    "n4",
+                    "n6",
+                    "n1",
+                    "n2"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "n0",
+                  "n4",
+                  "n6",
+                  "n1",
+                  "n2"
+                ]
+              },
+              "candidate_pool_seeds": {
+                "semantic_seeds": [
+                  "n0",
+                  "n4",
+                  "n6",
+                  "n1",
+                  "n2"
+                ],
+                "filtered_seeds": [
+                  "n0",
+                  "n4",
+                  "n6",
+                  "n1",
+                  "n2"
+                ],
+                "graph_seeds": [
+                  "n6",
+                  "n5",
+                  "n4",
+                  "n3",
+                  "n2"
+                ],
+                "graph_results": [
+                  "n6",
+                  "n5",
+                  "n4",
+                  "n3",
+                  "n2"
+                ],
+                "fusion_lists": [
+                  [
+                    "n0",
+                    "n4",
+                    "n6",
+                    "n1",
+                    "n2"
+                  ],
+                  [
+                    "n6",
+                    "n4",
+                    "n1",
+                    "n0",
+                    "n5"
+                  ],
+                  [
+                    "n6",
+                    "n5",
+                    "n4",
+                    "n3",
+                    "n2"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "n6",
+                  "n4",
+                  "n5",
+                  "n2",
+                  "n0"
+                ]
+              },
+              "candidate_pool_rejected_guard": {
+                "semantic_seeds": [
+                  "n0",
+                  "n4",
+                  "n6",
+                  "n1",
+                  "n2"
+                ],
+                "filtered_seeds": [
+                  "n0",
+                  "n4",
+                  "n6",
+                  "n1",
+                  "n2"
+                ],
+                "graph_seeds": [
+                  "n6",
+                  "n5",
+                  "n4",
+                  "n3",
+                  "n2"
+                ],
+                "graph_results": [
+                  "n6",
+                  "n5",
+                  "n4",
+                  "n3",
+                  "n2"
+                ],
+                "fusion_lists": [
+                  [
+                    "n0",
+                    "n4",
+                    "n6",
+                    "n1",
+                    "n2"
+                  ],
+                  [
+                    "n6",
+                    "n4",
+                    "n1",
+                    "n0",
+                    "n5"
+                  ],
+                  [
+                    "n6",
+                    "n5",
+                    "n4",
+                    "n3",
+                    "n2"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "n6",
+                  "n4",
+                  "n5",
+                  "n2",
+                  "n0"
+                ]
+              },
+              "no_seed_filter": {
+                "graph_seeds": [
+                  "n0",
+                  "n4",
+                  "n6",
+                  "n1",
+                  "n2"
+                ],
+                "graph_results": [
+                  "n0",
+                  "n4",
+                  "n6",
+                  "n1",
+                  "n2"
+                ],
+                "fusion_lists": [
+                  [
+                    "n0",
+                    "n4",
+                    "n6",
+                    "n1",
+                    "n2"
+                  ],
+                  [
+                    "n6",
+                    "n4",
+                    "n1",
+                    "n0",
+                    "n5"
+                  ],
+                  [
+                    "n0",
+                    "n4",
+                    "n6",
+                    "n1",
+                    "n2"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "n0",
+                  "n4",
+                  "n6",
+                  "n1",
+                  "n2"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "case_id": "positive-control",
+        "questions": 1,
+        "candidate_order": "existing",
+        "candidate_limit": 100,
+        "candidate_any_hit": 1,
+        "negative_labeled_questions": 0,
+        "variants": {
+          "baseline": {
+            "any_hit": 1,
+            "negative_top1": null,
+            "negative_any": null,
+            "changed_rankings": 0,
+            "rescued": 0,
+            "lost": 0,
+            "macro_evidence_recall": 1.0
+          },
+          "candidate_pool_seeds": {
+            "any_hit": 1,
+            "negative_top1": null,
+            "negative_any": null,
+            "changed_rankings": 0,
+            "rescued": 0,
+            "lost": 0,
+            "macro_evidence_recall": 1.0
+          },
+          "candidate_pool_rejected_guard": {
+            "any_hit": 1,
+            "negative_top1": null,
+            "negative_any": null,
+            "changed_rankings": 0,
+            "rescued": 0,
+            "lost": 0,
+            "macro_evidence_recall": 1.0
+          },
+          "no_seed_filter": {
+            "any_hit": 1,
+            "negative_top1": null,
+            "negative_any": null,
+            "changed_rankings": 0,
+            "rescued": 0,
+            "lost": 0,
+            "macro_evidence_recall": 1.0
+          }
+        },
+        "warm_core_latency_ms": {
+          "baseline": {
+            "median": 0.4656999990402255,
+            "p95": 0.4656999990402255
+          },
+          "candidate_pool_seeds": {
+            "median": 0.29739999990852084,
+            "p95": 0.29739999990852084
+          },
+          "candidate_pool_rejected_guard": {
+            "median": 0.29209999956947286,
+            "p95": 0.29209999956947286
+          },
+          "no_seed_filter": {
+            "median": 0.19780000002356246,
+            "p95": 0.19780000002356246
+          }
+        },
+        "rows": [
+          {
+            "query_index": 0,
+            "positive_ids": [
+              "a0",
+              "s1"
+            ],
+            "negative_ids": [],
+            "candidate_seeds": [
+              "s1",
+              "s0",
+              "a0"
+            ],
+            "variants": {
+              "baseline": {
+                "semantic_seeds": [
+                  "s0",
+                  "s1",
+                  "a0"
+                ],
+                "filtered_seeds": [
+                  "s0",
+                  "s1",
+                  "a0"
+                ],
+                "graph_seeds": [
+                  "s0",
+                  "s1",
+                  "a0"
+                ],
+                "graph_results": [
+                  "s1",
+                  "a0",
+                  "s0"
+                ],
+                "fusion_lists": [
+                  [
+                    "s0",
+                    "s1",
+                    "a0"
+                  ],
+                  [
+                    "s0",
+                    "s1",
+                    "a0"
+                  ],
+                  [
+                    "s1",
+                    "a0",
+                    "s0"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "s1",
+                  "s0",
+                  "a0"
+                ]
+              },
+              "candidate_pool_seeds": {
+                "semantic_seeds": [
+                  "s0",
+                  "s1",
+                  "a0"
+                ],
+                "filtered_seeds": [
+                  "s0",
+                  "s1",
+                  "a0"
+                ],
+                "graph_seeds": [
+                  "s1",
+                  "s0",
+                  "a0"
+                ],
+                "graph_results": [
+                  "s1",
+                  "a0",
+                  "s0"
+                ],
+                "fusion_lists": [
+                  [
+                    "s0",
+                    "s1",
+                    "a0"
+                  ],
+                  [
+                    "s0",
+                    "s1",
+                    "a0"
+                  ],
+                  [
+                    "s1",
+                    "a0",
+                    "s0"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "s1",
+                  "s0",
+                  "a0"
+                ]
+              },
+              "candidate_pool_rejected_guard": {
+                "semantic_seeds": [
+                  "s0",
+                  "s1",
+                  "a0"
+                ],
+                "filtered_seeds": [
+                  "s0",
+                  "s1",
+                  "a0"
+                ],
+                "graph_seeds": [
+                  "s1",
+                  "s0",
+                  "a0"
+                ],
+                "graph_results": [
+                  "s1",
+                  "a0",
+                  "s0"
+                ],
+                "fusion_lists": [
+                  [
+                    "s0",
+                    "s1",
+                    "a0"
+                  ],
+                  [
+                    "s0",
+                    "s1",
+                    "a0"
+                  ],
+                  [
+                    "s1",
+                    "a0",
+                    "s0"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "s1",
+                  "s0",
+                  "a0"
+                ]
+              },
+              "no_seed_filter": {
+                "graph_seeds": [
+                  "s0",
+                  "s1",
+                  "a0"
+                ],
+                "graph_results": [
+                  "s1",
+                  "a0",
+                  "s0"
+                ],
+                "fusion_lists": [
+                  [
+                    "s0",
+                    "s1",
+                    "a0"
+                  ],
+                  [
+                    "s0",
+                    "s1",
+                    "a0"
+                  ],
+                  [
+                    "s1",
+                    "a0",
+                    "s0"
+                  ],
+                  []
+                ],
+                "fusion_weights": [
+                  1.0,
+                  1.0,
+                  2.0,
+                  0.5
+                ],
+                "top_k": [
+                  "s1",
+                  "s0",
+                  "a0"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "limits": "Assistant-paraphrased/source-mapped and assistant-authored synthetic labels; not independent graph evidence"
+  }
+}

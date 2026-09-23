@@ -6,6 +6,7 @@ import json
 import math
 import statistics
 import time
+from contextlib import ExitStack
 from datetime import datetime
 from pathlib import Path
 from types import SimpleNamespace
@@ -15,15 +16,18 @@ from experiments.locomo_candidate_order_probe import _fts_bm25_candidates
 from experiments.locomo_retrieval import build_corpus
 from vibe_memory.models.memory_atom import Edge, EdgeLabel, MemoryAtom
 from vibe_memory.retrieval.ppr import recall
+from vibe_memory.retrieval.seed_filter import SeedFilter
 from vibe_memory.retrieval.strategies import GraphStrategy
+from vibe_memory.retrieval import fusion
 from vibe_memory.storage.sqlite_store import VibeStorage
 
 
-VARIANTS = ("baseline", "candidate_pool_seeds", "no_seed_filter")
+VARIANTS = ("baseline", "candidate_pool_seeds", "candidate_pool_rejected_guard",
+            "no_seed_filter")
 
 
 def compare(corpus: dict, candidate_order: str = "existing", top_k: int = 5,
-            include_timing: bool = False) -> dict:
+            include_timing: bool = False, include_rows: bool = False) -> dict:
     if top_k < 1 or candidate_order not in ("existing", "fts_bm25"):
         raise ValueError("Positive top_k and known candidate order required")
     if corpus["edges"] and candidate_order == "fts_bm25":
@@ -44,6 +48,8 @@ def compare(corpus: dict, candidate_order: str = "existing", top_k: int = 5,
                                    tenant_id=first["tenant_id"]))
         original_candidates = store.get_recall_candidates
         original_graph_search = GraphStrategy.search
+        original_filter = SeedFilter.filter
+        original_fusion = fusion.rrf_fusion
         limit = max(100, top_k * 20)
         totals = {name: {"any_hit": 0, "macro_recall_sum": 0.0,
                          "negative_top1": 0, "negative_any": 0,
@@ -51,6 +57,7 @@ def compare(corpus: dict, candidate_order: str = "existing", top_k: int = 5,
                   for name in VARIANTS}
         times = {name: [] for name in VARIANTS}
         candidate_hit = 0
+        rows = []
         for index, query in enumerate(corpus["queries"]):
             gold = set(query["relevant_ids"])
             negative = set(query.get("negative_ids", []))
@@ -65,25 +72,58 @@ def compare(corpus: dict, candidate_order: str = "existing", top_k: int = 5,
             candidate_hit += bool(gold & {atom.id for atom in pool})
             store.get_recall_candidates = lambda *_args, **_kwargs: pool
             rankings = {}
+            stages = {}
             for name in VARIANTS[index % len(VARIANTS):] + VARIANTS[:index % len(VARIANTS)]:
-                def candidate_search(self, _seeds, top_k=top_k):
-                    return original_graph_search(self, pool[:top_k], top_k=top_k)
+                stage = {}
+
+                def traced_filter(self, seeds, storage):
+                    kept = original_filter(self, seeds, storage)
+                    stage["semantic_seeds"] = [a.id for a in seeds]
+                    stage["filtered_seeds"] = [a.id for a in kept]
+                    return kept
+
+                def traced_graph(self, seeds, top_k=top_k):
+                    actual = pool[:top_k] if name.startswith("candidate_pool_") else seeds
+                    result = original_graph_search(self, actual, top_k=top_k)
+                    if name == "candidate_pool_rejected_guard":
+                        rejected = set(stage.get("semantic_seeds", [])) - set(
+                            stage.get("filtered_seeds", []))
+                        result = [(aid, score) for aid, score in result if aid not in rejected]
+                    stage["graph_seeds"] = [a.id for a in actual]
+                    stage["graph_results"] = [aid for aid, _ in result]
+                    return result
+
+                def traced_fusion(lists, top_k, weights=None, **kwargs):
+                    stage["fusion_lists"] = [[aid for aid, _ in ranked] for ranked in lists]
+                    stage["fusion_weights"] = weights
+                    return original_fusion(lists, top_k, weights=weights, **kwargs)
 
                 kwargs = {"seed_filter": SimpleNamespace(
                     filter=lambda seeds, _store: list(seeds))} if name == "no_seed_filter" else {}
                 start = time.perf_counter()
-                if name == "candidate_pool_seeds":
-                    with patch.object(GraphStrategy, "search", candidate_search):
-                        result = recall(query["text"], query["agent_id"], store,
-                                        mode="budget", top_k=top_k,
-                                        budget_graph_hops=2, **kwargs)["atoms"]
-                else:
+                with ExitStack() as stack:
+                    if include_rows or name == "candidate_pool_rejected_guard":
+                        stack.enter_context(patch.object(GraphStrategy, "search", traced_graph))
+                        if include_rows:
+                            stack.enter_context(patch.object(fusion, "rrf_fusion", traced_fusion))
+                        if name != "no_seed_filter":
+                            stack.enter_context(patch.object(SeedFilter, "filter", traced_filter))
+                    elif name == "candidate_pool_seeds":
+                        stack.enter_context(patch.object(GraphStrategy, "search", traced_graph))
                     result = recall(query["text"], query["agent_id"], store,
                                     mode="budget", top_k=top_k,
                                     budget_graph_hops=2, **kwargs)["atoms"]
                 if include_timing:
                     times[name].append((time.perf_counter() - start) * 1000)
                 rankings[name] = [atom.id for atom in result]
+                if include_rows:
+                    stage["top_k"] = rankings[name]
+                    stages[name] = stage
+            if include_rows:
+                rows.append({"query_index": index, "positive_ids": sorted(gold),
+                             "negative_ids": sorted(negative),
+                             "candidate_seeds": [a.id for a in pool[:top_k]],
+                             "variants": stages})
             baseline_hit = bool(gold & set(rankings["baseline"]))
             for name, ids in rankings.items():
                 item = totals[name]
@@ -113,6 +153,8 @@ def compare(corpus: dict, candidate_order: str = "existing", top_k: int = 5,
                 name: {"median": statistics.median(values),
                        "p95": sorted(values)[math.ceil(0.95 * len(values)) - 1]}
                 for name, values in times.items()}
+        if include_rows:
+            report["rows"] = rows
         return report
     finally:
         store.conn.close()
@@ -175,7 +217,8 @@ def main() -> None:
         cases = [(source["dataset_id"], source)] + [
             (case["case_id"], case) for case in diagnostic["cases"]]
         graph_reports = [{"case_id": name, **compare(_graph_corpus(case),
-                                                      include_timing=args.timing)}
+                                                      include_timing=args.timing,
+                                                      include_rows=True)}
                          for name, case in cases]
         report["graph_fixtures"] = {
             "source_sha256": {path.name: hashlib.sha256(path.read_bytes()).hexdigest()
