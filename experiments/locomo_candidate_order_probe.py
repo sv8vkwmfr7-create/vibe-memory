@@ -61,7 +61,7 @@ def _fts_bm25_candidates(store: VibeStorage, agent_id: str, query: str,
 
 
 def compare(corpus: dict, top_k: int = 5, include_timing: bool = False,
-            diagnose_losses: bool = False) -> dict:
+            diagnose_losses: bool = False, full_ablation: bool = False) -> dict:
     if top_k < 1 or not corpus["queries"] or corpus["edges"]:
         raise ValueError("Positive top_k, questions, and graph-free corpus required")
     first = corpus["queries"][0]
@@ -90,6 +90,13 @@ def compare(corpus: dict, top_k: int = 5, include_timing: bool = False,
                       "evidence_present_but_not_top5": 0}
         strategies = ("semantic", "bm25", "graph", "temporal")
         ablation_hits = {name: 0 for name in strategies}
+        variants = {f"omit_{name}": {"questions": 0, "any_hit": 0,
+                                     "macro_recall_sum": 0.0,
+                                     "rescued_vs_full": 0, "lost_vs_full": 0}
+                    for name in strategies}
+        variants["fusion_vote_omit_semantic"] = {
+            "questions": 0, "any_hit": 0, "macro_recall_sum": 0.0,
+            "rescued_vs_full": 0, "lost_vs_full": 0}
         loss_path = {"absent_from_strategy_top5": 0,
                      "strategy_top5_but_not_fused_top10": 0,
                      "fused_rank_6_to_10": 0}
@@ -106,14 +113,33 @@ def compare(corpus: dict, top_k: int = 5, include_timing: bool = False,
             for name, pool in pools.items():
                 counts["candidate_any_hit"][name] += bool(gold & {a.id for a in pool})
             ids_by_order = {}
+            vote_only_ids = None
             order = ("recency", "fts_bm25") if index % 2 == 0 else ("fts_bm25", "recency")
             for name in order:
                 store.get_recall_candidates = original if name == "recency" else ranked_get
                 start = time.perf_counter()
-                result = recall(query["text"], query["agent_id"], store,
-                                mode="budget", top_k=top_k,
-                                strategies=["semantic", "bm25", "graph", "temporal"],
-                                budget_graph_hops=2)["atoms"]
+                if full_ablation and name == "fts_bm25":
+                    from vibe_memory.retrieval import fusion
+                    original_rrf = fusion.rrf_fusion
+
+                    def capture_rrf(ranked_lists, **kwargs):
+                        nonlocal vote_only_ids
+                        weights = kwargs.get("weights")
+                        if len(ranked_lists) == 4 and weights == [1.0, 1.0, 2.0, 0.5]:
+                            vote_only_ids = [aid for aid, _ in original_rrf(
+                                ranked_lists[1:], top_k=top_k, weights=weights[1:])]
+                        return original_rrf(ranked_lists, **kwargs)
+
+                    with patch.object(fusion, "rrf_fusion", side_effect=capture_rrf):
+                        result = recall(query["text"], query["agent_id"], store,
+                                        mode="budget", top_k=top_k,
+                                        strategies=list(strategies),
+                                        budget_graph_hops=2)["atoms"]
+                else:
+                    result = recall(query["text"], query["agent_id"], store,
+                                    mode="budget", top_k=top_k,
+                                    strategies=list(strategies),
+                                    budget_graph_hops=2)["atoms"]
                 if include_timing:
                     times[name].append((time.perf_counter() - start) * 1000)
                 ids = [atom.id for atom in result]
@@ -123,6 +149,33 @@ def compare(corpus: dict, top_k: int = 5, include_timing: bool = False,
                 counts["top5_any_hit"][name] += hits > 0
             old_hit = bool(gold & set(ids_by_order["recency"]))
             new_hit = bool(gold & set(ids_by_order["fts_bm25"]))
+            if full_ablation:
+                store.get_recall_candidates = ranked_get
+                for omitted in strategies:
+                    variant = f"omit_{omitted}"
+                    start = time.perf_counter()
+                    result = recall(query["text"], query["agent_id"], store,
+                                    mode="budget", top_k=top_k,
+                                    strategies=[name for name in strategies if name != omitted],
+                                    budget_graph_hops=2)["atoms"]
+                    if include_timing:
+                        times.setdefault(variant, []).append((time.perf_counter() - start) * 1000)
+                    variant_ids = [atom.id for atom in result]
+                    item = variants[variant]
+                    hits = len(gold & set(variant_ids))
+                    item["questions"] += 1
+                    item["any_hit"] += hits > 0
+                    item["macro_recall_sum"] += hits / len(gold)
+                    item["rescued_vs_full"] += bool(hits) and not new_hit
+                    item["lost_vs_full"] += new_hit and not hits
+                if vote_only_ids is not None:
+                    item = variants["fusion_vote_omit_semantic"]
+                    hits = len(gold & set(vote_only_ids))
+                    item["questions"] += 1
+                    item["any_hit"] += hits > 0
+                    item["macro_recall_sum"] += hits / len(gold)
+                    item["rescued_vs_full"] += bool(hits) and not new_hit
+                    item["lost_vs_full"] += new_hit and not hits
             rescued += new_hit and not old_hit
             lost += old_hit and not new_hit
             if old_hit and not new_hit:
@@ -177,6 +230,14 @@ def compare(corpus: dict, top_k: int = 5, include_timing: bool = False,
         if diagnose_losses:
             report["lost_question_omit_one_strategy_hits"] = ablation_hits
             report["lost_question_ranking_path"] = loss_path
+        if full_ablation:
+            report["all_question_ablation"] = {
+                name: {**{key: value for key, value in item.items()
+                          if key != "macro_recall_sum"},
+                       "macro_evidence_recall": item["macro_recall_sum"] / item["questions"]
+                       if item["questions"] else None}
+                for name, item in variants.items()
+            }
         return report
     finally:
         store.conn.close()
@@ -191,6 +252,7 @@ def main() -> None:
     parser.add_argument("--top-k", type=int, default=5)
     parser.add_argument("--timing", action="store_true")
     parser.add_argument("--diagnose-losses", action="store_true")
+    parser.add_argument("--full-ablation", action="store_true")
     parser.add_argument("--json", type=Path)
     args = parser.parse_args()
     if args.sample_index < 0 or args.max_queries < 0:
@@ -206,7 +268,8 @@ def main() -> None:
         corpus, excluded = build_corpus(samples[index])
         if args.max_queries:
             corpus["queries"] = corpus["queries"][:args.max_queries]
-        item = compare(corpus, args.top_k, args.timing, args.diagnose_losses)
+        item = compare(corpus, args.top_k, args.timing,
+                       args.diagnose_losses, args.full_ablation)
         item.update({"sample_id": samples[index]["sample_id"], "excluded": excluded})
         reports.append(item)
     if args.all_samples:
@@ -238,6 +301,19 @@ def main() -> None:
                           for item in reports)
                 for name in reports[0]["lost_question_ranking_path"]
             }
+        if args.full_ablation:
+            report["all_question_ablation"] = {}
+            for name in reports[0]["all_question_ablation"]:
+                rows = [item["all_question_ablation"][name] for item in reports]
+                count = sum(row["questions"] for row in rows)
+                report["all_question_ablation"][name] = {
+                    key: sum(row[key] for row in rows)
+                    for key in ("questions", "any_hit", "rescued_vs_full", "lost_vs_full")
+                }
+                report["all_question_ablation"][name]["macro_evidence_recall"] = (
+                    sum(row["macro_evidence_recall"] * row["questions"]
+                        for row in rows if row["questions"])
+                    / count if count else None)
     else:
         report = reports[0]
     report["source"] = "https://github.com/snap-research/locomo/blob/main/data/locomo10.json"

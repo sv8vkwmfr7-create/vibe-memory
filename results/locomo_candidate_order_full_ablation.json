@@ -1,0 +1,992 @@
+{
+  "questions": 1241,
+  "samples": [
+    {
+      "questions": 131,
+      "candidate_limit": 100,
+      "candidate_any_hit": {
+        "recency": 36,
+        "fts_bm25": 101
+      },
+      "top5_any_hit": {
+        "recency": 25,
+        "fts_bm25": 58
+      },
+      "macro_evidence_recall": {
+        "recency": 0.17557251908396945,
+        "fts_bm25": 0.4217557251908397
+      },
+      "rescued_questions": 39,
+      "lost_questions": 6,
+      "lost_question_stage": {
+        "evidence_absent_from_candidates": 0,
+        "evidence_present_but_not_top5": 6
+      },
+      "changed_top5_rankings": 131,
+      "limits": "English text-only; graph-free; official evidence is not exhaustive relevance",
+      "warm_core_latency_ms": {
+        "recency": {
+          "median": 7.58260000111477,
+          "p95": 14.154799999232637
+        },
+        "fts_bm25": {
+          "median": 8.640799998829607,
+          "p95": 12.55469999887282
+        },
+        "omit_semantic": {
+          "median": 4.844499999308027,
+          "p95": 6.862299998829258
+        },
+        "omit_bm25": {
+          "median": 6.060600000637351,
+          "p95": 8.445999999821652
+        },
+        "omit_graph": {
+          "median": 8.127400000375928,
+          "p95": 14.101200000368408
+        },
+        "omit_temporal": {
+          "median": 8.159499999237596,
+          "p95": 11.578499999814085
+        }
+      },
+      "all_question_ablation": {
+        "omit_semantic": {
+          "questions": 131,
+          "any_hit": 69,
+          "rescued_vs_full": 12,
+          "lost_vs_full": 1,
+          "macro_evidence_recall": 0.5057251908396947
+        },
+        "omit_bm25": {
+          "questions": 131,
+          "any_hit": 58,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.4217557251908397
+        },
+        "omit_graph": {
+          "questions": 131,
+          "any_hit": 59,
+          "rescued_vs_full": 2,
+          "lost_vs_full": 1,
+          "macro_evidence_recall": 0.42938931297709926
+        },
+        "omit_temporal": {
+          "questions": 131,
+          "any_hit": 58,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.4217557251908397
+        },
+        "fusion_vote_omit_semantic": {
+          "questions": 131,
+          "any_hit": 58,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.4217557251908397
+        }
+      },
+      "sample_id": "conv-26",
+      "excluded": {
+        "missing_evidence": 1,
+        "image_evidence": 65,
+        "no_evidence": 2
+      }
+    },
+    {
+      "questions": 86,
+      "candidate_limit": 100,
+      "candidate_any_hit": {
+        "recency": 28,
+        "fts_bm25": 70
+      },
+      "top5_any_hit": {
+        "recency": 16,
+        "fts_bm25": 48
+      },
+      "macro_evidence_recall": {
+        "recency": 0.18023255813953487,
+        "fts_bm25": 0.5436046511627907
+      },
+      "rescued_questions": 33,
+      "lost_questions": 1,
+      "lost_question_stage": {
+        "evidence_absent_from_candidates": 0,
+        "evidence_present_but_not_top5": 1
+      },
+      "changed_top5_rankings": 85,
+      "limits": "English text-only; graph-free; official evidence is not exhaustive relevance",
+      "warm_core_latency_ms": {
+        "recency": {
+          "median": 6.987750000007509,
+          "p95": 9.62450000042736
+        },
+        "fts_bm25": {
+          "median": 8.646899999803281,
+          "p95": 11.00860000042303
+        },
+        "omit_semantic": {
+          "median": 4.7297000000980916,
+          "p95": 6.659899998339824
+        },
+        "omit_bm25": {
+          "median": 5.829949999679229,
+          "p95": 7.5360000009823125
+        },
+        "omit_graph": {
+          "median": 7.838850000553066,
+          "p95": 11.322199999995064
+        },
+        "omit_temporal": {
+          "median": 7.8936500003692345,
+          "p95": 12.435500000719912
+        }
+      },
+      "all_question_ablation": {
+        "omit_semantic": {
+          "questions": 86,
+          "any_hit": 49,
+          "rescued_vs_full": 2,
+          "lost_vs_full": 1,
+          "macro_evidence_recall": 0.5552325581395349
+        },
+        "omit_bm25": {
+          "questions": 86,
+          "any_hit": 48,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.5436046511627907
+        },
+        "omit_graph": {
+          "questions": 86,
+          "any_hit": 48,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.5436046511627907
+        },
+        "omit_temporal": {
+          "questions": 86,
+          "any_hit": 48,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.5436046511627907
+        },
+        "fusion_vote_omit_semantic": {
+          "questions": 86,
+          "any_hit": 48,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.5436046511627907
+        }
+      },
+      "sample_id": "conv-30",
+      "excluded": {
+        "missing_evidence": 0,
+        "image_evidence": 19,
+        "no_evidence": 0
+      }
+    },
+    {
+      "questions": 138,
+      "candidate_limit": 100,
+      "candidate_any_hit": {
+        "recency": 18,
+        "fts_bm25": 109
+      },
+      "top5_any_hit": {
+        "recency": 15,
+        "fts_bm25": 72
+      },
+      "macro_evidence_recall": {
+        "recency": 0.10869565217391304,
+        "fts_bm25": 0.4927536231884058
+      },
+      "rescued_questions": 63,
+      "lost_questions": 6,
+      "lost_question_stage": {
+        "evidence_absent_from_candidates": 0,
+        "evidence_present_but_not_top5": 6
+      },
+      "changed_top5_rankings": 138,
+      "limits": "English text-only; graph-free; official evidence is not exhaustive relevance",
+      "warm_core_latency_ms": {
+        "recency": {
+          "median": 7.792450000124518,
+          "p95": 10.066200000437675
+        },
+        "fts_bm25": {
+          "median": 9.490999999798078,
+          "p95": 18.32719999947585
+        },
+        "omit_semantic": {
+          "median": 5.228249999163381,
+          "p95": 7.192700000814511
+        },
+        "omit_bm25": {
+          "median": 6.520750001072884,
+          "p95": 8.391600000322796
+        },
+        "omit_graph": {
+          "median": 8.958750000601867,
+          "p95": 12.229699999807053
+        },
+        "omit_temporal": {
+          "median": 9.108850000302482,
+          "p95": 12.08050000059302
+        }
+      },
+      "all_question_ablation": {
+        "omit_semantic": {
+          "questions": 138,
+          "any_hit": 80,
+          "rescued_vs_full": 14,
+          "lost_vs_full": 6,
+          "macro_evidence_recall": 0.5320048309178743
+        },
+        "omit_bm25": {
+          "questions": 138,
+          "any_hit": 72,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.4927536231884058
+        },
+        "omit_graph": {
+          "questions": 138,
+          "any_hit": 79,
+          "rescued_vs_full": 7,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.535024154589372
+        },
+        "omit_temporal": {
+          "questions": 138,
+          "any_hit": 72,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.4927536231884058
+        },
+        "fusion_vote_omit_semantic": {
+          "questions": 138,
+          "any_hit": 72,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.4927536231884058
+        }
+      },
+      "sample_id": "conv-41",
+      "excluded": {
+        "missing_evidence": 0,
+        "image_evidence": 55,
+        "no_evidence": 0
+      }
+    },
+    {
+      "questions": 148,
+      "candidate_limit": 100,
+      "candidate_any_hit": {
+        "recency": 23,
+        "fts_bm25": 109
+      },
+      "top5_any_hit": {
+        "recency": 17,
+        "fts_bm25": 75
+      },
+      "macro_evidence_recall": {
+        "recency": 0.11486486486486487,
+        "fts_bm25": 0.4788288288288289
+      },
+      "rescued_questions": 59,
+      "lost_questions": 1,
+      "lost_question_stage": {
+        "evidence_absent_from_candidates": 0,
+        "evidence_present_but_not_top5": 1
+      },
+      "changed_top5_rankings": 148,
+      "limits": "English text-only; graph-free; official evidence is not exhaustive relevance",
+      "warm_core_latency_ms": {
+        "recency": {
+          "median": 7.296199999473174,
+          "p95": 9.559799998896779
+        },
+        "fts_bm25": {
+          "median": 8.878650000042398,
+          "p95": 12.046899999404559
+        },
+        "omit_semantic": {
+          "median": 4.793050000444055,
+          "p95": 6.47200000094017
+        },
+        "omit_bm25": {
+          "median": 6.157750000056694,
+          "p95": 8.957200001532328
+        },
+        "omit_graph": {
+          "median": 7.850549999602663,
+          "p95": 10.385699999460485
+        },
+        "omit_temporal": {
+          "median": 8.322150000822148,
+          "p95": 11.385199999494944
+        }
+      },
+      "all_question_ablation": {
+        "omit_semantic": {
+          "questions": 148,
+          "any_hit": 71,
+          "rescued_vs_full": 3,
+          "lost_vs_full": 7,
+          "macro_evidence_recall": 0.4599099099099099
+        },
+        "omit_bm25": {
+          "questions": 148,
+          "any_hit": 75,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.4788288288288289
+        },
+        "omit_graph": {
+          "questions": 148,
+          "any_hit": 76,
+          "rescued_vs_full": 1,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.4869369369369369
+        },
+        "omit_temporal": {
+          "questions": 148,
+          "any_hit": 75,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.4788288288288289
+        },
+        "fusion_vote_omit_semantic": {
+          "questions": 148,
+          "any_hit": 75,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.4788288288288289
+        }
+      },
+      "sample_id": "conv-42",
+      "excluded": {
+        "missing_evidence": 2,
+        "image_evidence": 110,
+        "no_evidence": 0
+      }
+    },
+    {
+      "questions": 154,
+      "candidate_limit": 100,
+      "candidate_any_hit": {
+        "recency": 27,
+        "fts_bm25": 127
+      },
+      "top5_any_hit": {
+        "recency": 18,
+        "fts_bm25": 91
+      },
+      "macro_evidence_recall": {
+        "recency": 0.11471861471861472,
+        "fts_bm25": 0.566017316017316
+      },
+      "rescued_questions": 75,
+      "lost_questions": 2,
+      "lost_question_stage": {
+        "evidence_absent_from_candidates": 0,
+        "evidence_present_but_not_top5": 2
+      },
+      "changed_top5_rankings": 154,
+      "limits": "English text-only; graph-free; official evidence is not exhaustive relevance",
+      "warm_core_latency_ms": {
+        "recency": {
+          "median": 7.012550000581541,
+          "p95": 10.14720000057423
+        },
+        "fts_bm25": {
+          "median": 9.446400000342692,
+          "p95": 18.69299999998475
+        },
+        "omit_semantic": {
+          "median": 5.307450000145764,
+          "p95": 7.509899998694891
+        },
+        "omit_bm25": {
+          "median": 6.422250000468921,
+          "p95": 8.733900000152062
+        },
+        "omit_graph": {
+          "median": 8.975949999694421,
+          "p95": 15.27669999995851
+        },
+        "omit_temporal": {
+          "median": 8.867000000464031,
+          "p95": 12.68780000100378
+        }
+      },
+      "all_question_ablation": {
+        "omit_semantic": {
+          "questions": 154,
+          "any_hit": 95,
+          "rescued_vs_full": 6,
+          "lost_vs_full": 2,
+          "macro_evidence_recall": 0.5963203463203464
+        },
+        "omit_bm25": {
+          "questions": 154,
+          "any_hit": 91,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.566017316017316
+        },
+        "omit_graph": {
+          "questions": 154,
+          "any_hit": 90,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 1,
+          "macro_evidence_recall": 0.5627705627705627
+        },
+        "omit_temporal": {
+          "questions": 154,
+          "any_hit": 91,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.566017316017316
+        },
+        "fusion_vote_omit_semantic": {
+          "questions": 154,
+          "any_hit": 91,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.566017316017316
+        }
+      },
+      "sample_id": "conv-43",
+      "excluded": {
+        "missing_evidence": 1,
+        "image_evidence": 87,
+        "no_evidence": 0
+      }
+    },
+    {
+      "questions": 72,
+      "candidate_limit": 100,
+      "candidate_any_hit": {
+        "recency": 16,
+        "fts_bm25": 58
+      },
+      "top5_any_hit": {
+        "recency": 10,
+        "fts_bm25": 42
+      },
+      "macro_evidence_recall": {
+        "recency": 0.13194444444444445,
+        "fts_bm25": 0.5763888888888888
+      },
+      "rescued_questions": 33,
+      "lost_questions": 1,
+      "lost_question_stage": {
+        "evidence_absent_from_candidates": 0,
+        "evidence_present_but_not_top5": 1
+      },
+      "changed_top5_rankings": 72,
+      "limits": "English text-only; graph-free; official evidence is not exhaustive relevance",
+      "warm_core_latency_ms": {
+        "recency": {
+          "median": 7.271450000189361,
+          "p95": 9.830500001044129
+        },
+        "fts_bm25": {
+          "median": 9.209399999235757,
+          "p95": 11.358100000506965
+        },
+        "omit_semantic": {
+          "median": 5.069550000371237,
+          "p95": 7.117400000424823
+        },
+        "omit_bm25": {
+          "median": 6.19505000031495,
+          "p95": 8.186600000044564
+        },
+        "omit_graph": {
+          "median": 8.73195000076521,
+          "p95": 19.915299999411218
+        },
+        "omit_temporal": {
+          "median": 8.747150000999682,
+          "p95": 12.234300000272924
+        }
+      },
+      "all_question_ablation": {
+        "omit_semantic": {
+          "questions": 72,
+          "any_hit": 43,
+          "rescued_vs_full": 2,
+          "lost_vs_full": 1,
+          "macro_evidence_recall": 0.5902777777777778
+        },
+        "omit_bm25": {
+          "questions": 72,
+          "any_hit": 42,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.5763888888888888
+        },
+        "omit_graph": {
+          "questions": 72,
+          "any_hit": 43,
+          "rescued_vs_full": 1,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.5902777777777778
+        },
+        "omit_temporal": {
+          "questions": 72,
+          "any_hit": 42,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.5763888888888888
+        },
+        "fusion_vote_omit_semantic": {
+          "questions": 72,
+          "any_hit": 42,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.5763888888888888
+        }
+      },
+      "sample_id": "conv-44",
+      "excluded": {
+        "missing_evidence": 0,
+        "image_evidence": 86,
+        "no_evidence": 0
+      }
+    },
+    {
+      "questions": 143,
+      "candidate_limit": 100,
+      "candidate_any_hit": {
+        "recency": 30,
+        "fts_bm25": 112
+      },
+      "top5_any_hit": {
+        "recency": 19,
+        "fts_bm25": 71
+      },
+      "macro_evidence_recall": {
+        "recency": 0.10606060606060606,
+        "fts_bm25": 0.4708624708624709
+      },
+      "rescued_questions": 57,
+      "lost_questions": 5,
+      "lost_question_stage": {
+        "evidence_absent_from_candidates": 0,
+        "evidence_present_but_not_top5": 5
+      },
+      "changed_top5_rankings": 143,
+      "limits": "English text-only; graph-free; official evidence is not exhaustive relevance",
+      "warm_core_latency_ms": {
+        "recency": {
+          "median": 7.052099999782513,
+          "p95": 14.064000000871602
+        },
+        "fts_bm25": {
+          "median": 8.885700000973884,
+          "p95": 11.975200000961195
+        },
+        "omit_semantic": {
+          "median": 4.899900000964408,
+          "p95": 6.655300001511932
+        },
+        "omit_bm25": {
+          "median": 6.180700000186334,
+          "p95": 7.945900000777328
+        },
+        "omit_graph": {
+          "median": 8.246499999586376,
+          "p95": 11.4780999992945
+        },
+        "omit_temporal": {
+          "median": 8.622299999842653,
+          "p95": 11.23859999825072
+        }
+      },
+      "all_question_ablation": {
+        "omit_semantic": {
+          "questions": 143,
+          "any_hit": 68,
+          "rescued_vs_full": 6,
+          "lost_vs_full": 9,
+          "macro_evidence_recall": 0.4481351981351982
+        },
+        "omit_bm25": {
+          "questions": 143,
+          "any_hit": 71,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.4708624708624709
+        },
+        "omit_graph": {
+          "questions": 143,
+          "any_hit": 72,
+          "rescued_vs_full": 3,
+          "lost_vs_full": 2,
+          "macro_evidence_recall": 0.47435897435897445
+        },
+        "omit_temporal": {
+          "questions": 143,
+          "any_hit": 71,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.4708624708624709
+        },
+        "fusion_vote_omit_semantic": {
+          "questions": 143,
+          "any_hit": 71,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.4708624708624709
+        }
+      },
+      "sample_id": "conv-47",
+      "excluded": {
+        "missing_evidence": 1,
+        "image_evidence": 46,
+        "no_evidence": 0
+      }
+    },
+    {
+      "questions": 148,
+      "candidate_limit": 100,
+      "candidate_any_hit": {
+        "recency": 25,
+        "fts_bm25": 110
+      },
+      "top5_any_hit": {
+        "recency": 17,
+        "fts_bm25": 70
+      },
+      "macro_evidence_recall": {
+        "recency": 0.10810810810810811,
+        "fts_bm25": 0.4560810810810811
+      },
+      "rescued_questions": 54,
+      "lost_questions": 1,
+      "lost_question_stage": {
+        "evidence_absent_from_candidates": 0,
+        "evidence_present_but_not_top5": 1
+      },
+      "changed_top5_rankings": 148,
+      "limits": "English text-only; graph-free; official evidence is not exhaustive relevance",
+      "warm_core_latency_ms": {
+        "recency": {
+          "median": 7.323249999899417,
+          "p95": 11.352999999871827
+        },
+        "fts_bm25": {
+          "median": 8.797750000667293,
+          "p95": 11.696300000039628
+        },
+        "omit_semantic": {
+          "median": 4.944449999129574,
+          "p95": 6.879799999296665
+        },
+        "omit_bm25": {
+          "median": 6.244499999411346,
+          "p95": 8.555900001738337
+        },
+        "omit_graph": {
+          "median": 8.348149999619636,
+          "p95": 11.621400000876747
+        },
+        "omit_temporal": {
+          "median": 8.44495000092138,
+          "p95": 12.186100000690203
+        }
+      },
+      "all_question_ablation": {
+        "omit_semantic": {
+          "questions": 148,
+          "any_hit": 75,
+          "rescued_vs_full": 6,
+          "lost_vs_full": 1,
+          "macro_evidence_recall": 0.4831081081081081
+        },
+        "omit_bm25": {
+          "questions": 148,
+          "any_hit": 70,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.4560810810810811
+        },
+        "omit_graph": {
+          "questions": 148,
+          "any_hit": 72,
+          "rescued_vs_full": 2,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.46283783783783783
+        },
+        "omit_temporal": {
+          "questions": 148,
+          "any_hit": 70,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.4560810810810811
+        },
+        "fusion_vote_omit_semantic": {
+          "questions": 148,
+          "any_hit": 70,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.4560810810810811
+        }
+      },
+      "sample_id": "conv-48",
+      "excluded": {
+        "missing_evidence": 0,
+        "image_evidence": 91,
+        "no_evidence": 0
+      }
+    },
+    {
+      "questions": 104,
+      "candidate_limit": 100,
+      "candidate_any_hit": {
+        "recency": 23,
+        "fts_bm25": 89
+      },
+      "top5_any_hit": {
+        "recency": 22,
+        "fts_bm25": 61
+      },
+      "macro_evidence_recall": {
+        "recency": 0.1971153846153846,
+        "fts_bm25": 0.5641025641025641
+      },
+      "rescued_questions": 41,
+      "lost_questions": 2,
+      "lost_question_stage": {
+        "evidence_absent_from_candidates": 0,
+        "evidence_present_but_not_top5": 2
+      },
+      "changed_top5_rankings": 104,
+      "limits": "English text-only; graph-free; official evidence is not exhaustive relevance",
+      "warm_core_latency_ms": {
+        "recency": {
+          "median": 7.5186999993093195,
+          "p95": 10.286199998517986
+        },
+        "fts_bm25": {
+          "median": 9.37549999980547,
+          "p95": 18.4876000002987
+        },
+        "omit_semantic": {
+          "median": 5.255750000287662,
+          "p95": 7.287700000233599
+        },
+        "omit_bm25": {
+          "median": 6.264849999752187,
+          "p95": 8.686799999850336
+        },
+        "omit_graph": {
+          "median": 8.777750001172535,
+          "p95": 12.111399999412242
+        },
+        "omit_temporal": {
+          "median": 8.739400000195019,
+          "p95": 11.572199999136501
+        }
+      },
+      "all_question_ablation": {
+        "omit_semantic": {
+          "questions": 104,
+          "any_hit": 60,
+          "rescued_vs_full": 7,
+          "lost_vs_full": 8,
+          "macro_evidence_recall": 0.5528846153846154
+        },
+        "omit_bm25": {
+          "questions": 104,
+          "any_hit": 61,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.5641025641025641
+        },
+        "omit_graph": {
+          "questions": 104,
+          "any_hit": 60,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 1,
+          "macro_evidence_recall": 0.5608974358974359
+        },
+        "omit_temporal": {
+          "questions": 104,
+          "any_hit": 61,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.5641025641025641
+        },
+        "fusion_vote_omit_semantic": {
+          "questions": 104,
+          "any_hit": 61,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.5641025641025641
+        }
+      },
+      "sample_id": "conv-49",
+      "excluded": {
+        "missing_evidence": 3,
+        "image_evidence": 89,
+        "no_evidence": 0
+      }
+    },
+    {
+      "questions": 117,
+      "candidate_limit": 100,
+      "candidate_any_hit": {
+        "recency": 21,
+        "fts_bm25": 93
+      },
+      "top5_any_hit": {
+        "recency": 11,
+        "fts_bm25": 57
+      },
+      "macro_evidence_recall": {
+        "recency": 0.08974358974358974,
+        "fts_bm25": 0.4700854700854701
+      },
+      "rescued_questions": 50,
+      "lost_questions": 4,
+      "lost_question_stage": {
+        "evidence_absent_from_candidates": 0,
+        "evidence_present_but_not_top5": 4
+      },
+      "changed_top5_rankings": 117,
+      "limits": "English text-only; graph-free; official evidence is not exhaustive relevance",
+      "warm_core_latency_ms": {
+        "recency": {
+          "median": 7.941500000015367,
+          "p95": 10.997800000041025
+        },
+        "fts_bm25": {
+          "median": 9.907199999361183,
+          "p95": 15.253800000209594
+        },
+        "omit_semantic": {
+          "median": 5.373199999667122,
+          "p95": 7.109000000127708
+        },
+        "omit_bm25": {
+          "median": 6.77689999974973,
+          "p95": 10.486900000614696
+        },
+        "omit_graph": {
+          "median": 9.318299998994917,
+          "p95": 20.355599999675178
+        },
+        "omit_temporal": {
+          "median": 9.3101000002207,
+          "p95": 14.182799999616691
+        }
+      },
+      "all_question_ablation": {
+        "omit_semantic": {
+          "questions": 117,
+          "any_hit": 62,
+          "rescued_vs_full": 7,
+          "lost_vs_full": 2,
+          "macro_evidence_recall": 0.5028490028490029
+        },
+        "omit_bm25": {
+          "questions": 117,
+          "any_hit": 57,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.4700854700854701
+        },
+        "omit_graph": {
+          "questions": 117,
+          "any_hit": 57,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.4700854700854701
+        },
+        "omit_temporal": {
+          "questions": 117,
+          "any_hit": 57,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.4700854700854701
+        },
+        "fusion_vote_omit_semantic": {
+          "questions": 117,
+          "any_hit": 57,
+          "rescued_vs_full": 0,
+          "lost_vs_full": 0,
+          "macro_evidence_recall": 0.4700854700854701
+        }
+      },
+      "sample_id": "conv-50",
+      "excluded": {
+        "missing_evidence": 1,
+        "image_evidence": 84,
+        "no_evidence": 2
+      }
+    }
+  ],
+  "candidate_any_hit": {
+    "recency": 247,
+    "fts_bm25": 978
+  },
+  "top5_any_hit": {
+    "recency": 170,
+    "fts_bm25": 645
+  },
+  "macro_evidence_recall": {
+    "recency": 0.12879398334676337,
+    "fts_bm25": 0.4980123556271824
+  },
+  "rescued_questions": 504,
+  "lost_questions": 29,
+  "lost_question_stage": {
+    "evidence_absent_from_candidates": 0,
+    "evidence_present_but_not_top5": 29
+  },
+  "all_question_ablation": {
+    "omit_semantic": {
+      "questions": 1241,
+      "any_hit": 672,
+      "rescued_vs_full": 65,
+      "lost_vs_full": 38,
+      "macro_evidence_recall": 0.5171098576416868
+    },
+    "omit_bm25": {
+      "questions": 1241,
+      "any_hit": 645,
+      "rescued_vs_full": 0,
+      "lost_vs_full": 0,
+      "macro_evidence_recall": 0.4980123556271824
+    },
+    "omit_graph": {
+      "questions": 1241,
+      "any_hit": 656,
+      "rescued_vs_full": 16,
+      "lost_vs_full": 5,
+      "macro_evidence_recall": 0.5058286328229922
+    },
+    "omit_temporal": {
+      "questions": 1241,
+      "any_hit": 645,
+      "rescued_vs_full": 0,
+      "lost_vs_full": 0,
+      "macro_evidence_recall": 0.4980123556271824
+    },
+    "fusion_vote_omit_semantic": {
+      "questions": 1241,
+      "any_hit": 645,
+      "rescued_vs_full": 0,
+      "lost_vs_full": 0,
+      "macro_evidence_recall": 0.4980123556271824
+    }
+  },
+  "source": "https://github.com/snap-research/locomo/blob/main/data/locomo10.json",
+  "source_sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4"
+}
