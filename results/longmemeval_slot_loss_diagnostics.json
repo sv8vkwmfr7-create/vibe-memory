@@ -1,0 +1,308 @@
+{
+  "source_sha256": "d6f21ea9d60a0d56f34a05b609c79c88a451d2ae03597821ea3d5a9678c3a442",
+  "slot_report_sha256": "2ff8ee7197fc83bea653d5dd632242a01dbd4a8455c36127b1269103f133a757",
+  "rows": [
+    {
+      "id": "e47becba",
+      "type": "single-session-user",
+      "removed_ids": [
+        "e47becba:51:4"
+      ],
+      "added_ids": [
+        "e47becba:36:0"
+      ],
+      "baseline_evidence_ids": [
+        "e47becba:51:4"
+      ],
+      "candidate_evidence_ids": [],
+      "retained_first_four": true,
+      "removed_sole_evidence": true,
+      "bm25_winner_score": 10.451449465194306,
+      "winner_role": "user",
+      "removed_role": "user",
+      "query_tokens": [
+        "degree",
+        "did",
+        "graduate",
+        "what",
+        "with"
+      ],
+      "winner_shared_tokens": [
+        "did",
+        "what"
+      ],
+      "removed_shared_tokens": [
+        "degree",
+        "with"
+      ],
+      "total_official_evidence_turns": 2,
+      "baseline_evidence_recall": 0.5,
+      "candidate_evidence_recall": 0.0
+    },
+    {
+      "id": "2ce6a0f2",
+      "type": "multi-session",
+      "removed_ids": [
+        "2ce6a0f2:38:2"
+      ],
+      "added_ids": [
+        "2ce6a0f2:8:3"
+      ],
+      "baseline_evidence_ids": [
+        "2ce6a0f2:38:2"
+      ],
+      "candidate_evidence_ids": [],
+      "retained_first_four": true,
+      "removed_sole_evidence": true,
+      "bm25_winner_score": 15.339625587928253,
+      "winner_role": "assistant",
+      "removed_role": "user",
+      "query_tokens": [
+        "art",
+        "attend",
+        "did",
+        "different",
+        "events",
+        "how",
+        "in",
+        "many",
+        "month",
+        "past",
+        "related",
+        "the"
+      ],
+      "winner_shared_tokens": [
+        "art",
+        "attend",
+        "events",
+        "in",
+        "many",
+        "related",
+        "the"
+      ],
+      "removed_shared_tokens": [
+        "art",
+        "events",
+        "in",
+        "the"
+      ],
+      "total_official_evidence_turns": 4,
+      "baseline_evidence_recall": 0.25,
+      "candidate_evidence_recall": 0.0
+    },
+    {
+      "id": "2788b940",
+      "type": "multi-session",
+      "removed_ids": [
+        "2788b940:41:0"
+      ],
+      "added_ids": [
+        "2788b940:43:6"
+      ],
+      "baseline_evidence_ids": [
+        "2788b940:41:0"
+      ],
+      "candidate_evidence_ids": [],
+      "retained_first_four": true,
+      "removed_sole_evidence": true,
+      "bm25_winner_score": 11.581436447453815,
+      "winner_role": "user",
+      "removed_role": "user",
+      "query_tokens": [
+        "attend",
+        "classes",
+        "do",
+        "fitness",
+        "how",
+        "in",
+        "many",
+        "typical",
+        "week"
+      ],
+      "winner_shared_tokens": [
+        "attend",
+        "do",
+        "fitness"
+      ],
+      "removed_shared_tokens": [
+        "classes",
+        "do"
+      ],
+      "total_official_evidence_turns": 5,
+      "baseline_evidence_recall": 0.2,
+      "candidate_evidence_recall": 0.0
+    },
+    {
+      "id": "e3038f8c",
+      "type": "multi-session",
+      "removed_ids": [
+        "e3038f8c:10:0"
+      ],
+      "added_ids": [
+        "e3038f8c:25:6"
+      ],
+      "baseline_evidence_ids": [
+        "e3038f8c:10:0"
+      ],
+      "candidate_evidence_ids": [],
+      "retained_first_four": true,
+      "removed_sole_evidence": true,
+      "bm25_winner_score": 12.018426596921941,
+      "winner_role": "user",
+      "removed_role": "user",
+      "query_tokens": [
+        "do",
+        "have",
+        "how",
+        "in",
+        "items",
+        "many",
+        "rare",
+        "total"
+      ],
+      "winner_shared_tokens": [
+        "do",
+        "have",
+        "how",
+        "in",
+        "items",
+        "rare"
+      ],
+      "removed_shared_tokens": [
+        "do",
+        "have",
+        "how",
+        "rare"
+      ],
+      "total_official_evidence_turns": 4,
+      "baseline_evidence_recall": 0.25,
+      "candidate_evidence_recall": 0.0
+    },
+    {
+      "id": "09d032c9",
+      "type": "single-session-preference",
+      "removed_ids": [
+        "09d032c9:28:0"
+      ],
+      "added_ids": [
+        "09d032c9:3:0"
+      ],
+      "baseline_evidence_ids": [
+        "09d032c9:28:0"
+      ],
+      "candidate_evidence_ids": [],
+      "retained_first_four": true,
+      "removed_sole_evidence": true,
+      "bm25_winner_score": 21.584538349005193,
+      "winner_role": "user",
+      "removed_role": "user",
+      "query_tokens": [
+        "any",
+        "battery",
+        "been",
+        "having",
+        "lately",
+        "life",
+        "my",
+        "on",
+        "phone",
+        "the",
+        "tips",
+        "trouble",
+        "ve",
+        "with"
+      ],
+      "winner_shared_tokens": [
+        "been",
+        "having",
+        "my",
+        "on",
+        "the",
+        "trouble",
+        "ve",
+        "with"
+      ],
+      "removed_shared_tokens": [
+        "my",
+        "on",
+        "the"
+      ],
+      "total_official_evidence_turns": 1,
+      "baseline_evidence_recall": 1.0,
+      "candidate_evidence_recall": 0.0
+    },
+    {
+      "id": "b9cfe692",
+      "type": "temporal-reasoning",
+      "removed_ids": [
+        "b9cfe692:11:0"
+      ],
+      "added_ids": [
+        "b9cfe692:25:2"
+      ],
+      "baseline_evidence_ids": [
+        "b9cfe692:11:0"
+      ],
+      "candidate_evidence_ids": [],
+      "retained_first_four": true,
+      "removed_sole_evidence": true,
+      "bm25_winner_score": 37.91508840133416,
+      "winner_role": "user",
+      "removed_role": "user",
+      "query_tokens": [
+        "and",
+        "combined",
+        "did",
+        "evelyn",
+        "finish",
+        "how",
+        "hugo",
+        "husbands",
+        "long",
+        "nightingale",
+        "of",
+        "seven",
+        "take",
+        "the",
+        "to"
+      ],
+      "winner_shared_tokens": [
+        "and",
+        "evelyn",
+        "hugo",
+        "husbands",
+        "nightingale",
+        "of",
+        "seven",
+        "the",
+        "to"
+      ],
+      "removed_shared_tokens": [
+        "and",
+        "evelyn",
+        "finish",
+        "hugo",
+        "husbands",
+        "of",
+        "seven",
+        "the",
+        "to"
+      ],
+      "total_official_evidence_turns": 2,
+      "baseline_evidence_recall": 0.5,
+      "candidate_evidence_recall": 0.0
+    }
+  ],
+  "summary": {
+    "replayed_losses": 6,
+    "removed_sole_evidence": 6,
+    "winner_roles": {
+      "user": 5,
+      "assistant": 1
+    }
+  },
+  "production_defaults_changed": false,
+  "paid_api_calls": 0,
+  "evaluation_is_independent": false,
+  "limits": "Post-hoc diagnosis of six observed failures, not a new benchmark or fix. Original fixed Top-5 rule and scores replayed. No raw dialogue/answers saved, model encoding, generation or timing measurement. Unlabelled lexical winners are not assumed irrelevant or harmful. Roles/term overlap are observations, not validated routing rules."
+}

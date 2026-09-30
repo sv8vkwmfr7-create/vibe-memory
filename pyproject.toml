@@ -35,7 +35,7 @@ dependencies = [
 
 [project.optional-dependencies]
 semantic = ["sentence-transformers>=2.2"]
-dev = ["pytest>=7.0", "pytest-cov>=4.0"]
+dev = ["pytest>=7.0", "pytest-cov>=7.0", "coverage[toml]>=7.10"]
 
 [project.urls]
 Homepage = "https://github.com/sv8vkwmfr7-create/vibe-memory"
@@ -56,3 +56,9 @@ include = ["vibe_memory*"]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 addopts = "-v --tb=short"
+
+[tool.coverage.run]
+source = ["vibe_memory"]
+branch = true
+relative_files = true
+patch = ["subprocess"]

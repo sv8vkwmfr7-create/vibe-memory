@@ -1,0 +1,73 @@
+{
+  "scenario": "synthetic_known_id_forget_plan",
+  "runner_sha256": "e77dfd1a6d72615e5825073272f2df5a594b3446d18d334e3ba41630d0b10936",
+  "before": {
+    "retrieved_ids": [
+      "original",
+      "derived-copy",
+      "unrelated-2",
+      "unrelated"
+    ],
+    "target_rows": 2,
+    "unrelated_rows": 2,
+    "incident_edges": 1,
+    "unrelated_edges": 1
+  },
+  "unknown_id_rejected_before_mutation": true,
+  "deleted_ids": [
+    "original",
+    "derived-copy"
+  ],
+  "deleted_edge_ids": [
+    "incident-edge"
+  ],
+  "after": {
+    "retrieved_ids": [
+      "unrelated-2",
+      "unrelated"
+    ],
+    "target_rows": 0,
+    "unrelated_rows": 2,
+    "incident_edges": 0,
+    "unrelated_edges": 1
+  },
+  "after_restart": {
+    "retrieved_ids": [
+      "unrelated-2",
+      "unrelated"
+    ],
+    "target_rows": 0,
+    "unrelated_rows": 2,
+    "incident_edges": 0,
+    "unrelated_edges": 1
+  },
+  "known_id_reimport_blocked": true,
+  "known_source_reimport_blocked": true,
+  "after_guarded_import": {
+    "retrieved_ids": [
+      "unrelated-2",
+      "unrelated"
+    ],
+    "target_rows": 0,
+    "unrelated_rows": 2,
+    "incident_edges": 0,
+    "unrelated_edges": 1
+  },
+  "unlabeled_new_id_reimported": true,
+  "after_unlabeled_reimport": {
+    "retrieved_ids": [
+      "new-id",
+      "unrelated-2",
+      "unrelated"
+    ],
+    "target_rows": 0,
+    "unrelated_rows": 2,
+    "incident_edges": 0,
+    "unrelated_edges": 1
+  },
+  "complete_forgetting_demonstrated": false,
+  "production_changed": false,
+  "evaluation_is_independent": false,
+  "paid_api_calls": 0,
+  "limits": "Disposable synthetic TF-IDF experiment with manually known provenance and IDs. Uses existing SDK single-atom forget but experiment-only SQL edge cleanup and tombstone/import guard; multi-step plan is not atomic or production integration. Unknown-ID validation is pre-mutation; no keyword/fuzzy/natural-language target selection. Same-ID and declared-origin reimport are blocked only through this local guard; unlabeled new-ID import restores the fact. Direct storage, backup, physical/WAL, real derivative discovery, concurrent importers, cross-scope access, MCP/HTTP, answer quality and user cost are unverified. No real user data deleted; temporary database cleaned."
+}

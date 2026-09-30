@@ -1,0 +1,60 @@
+{
+  "scenario": "synthetic_real_sdk_forget_path_trace",
+  "runner_sha256": "6e6715fe78b6673fdfbde7fae826adf57bd67c87ac47ae1f4ae964b3f5359041",
+  "seed_fixture_sha256": "d4c3c8028103580d0a6f2af1c4a21bc1371e08408ca5428944554a65e46dfaef",
+  "sdk_file_sha256": {
+    "vibe_memory/sdk.py": "af51284cf97cd241ba3f89b47ccea20e90d136b8c66bed55b1c1605b738e77a9",
+    "vibe_memory/coldstart.py": "b4c58f8196eaa1cc373256cb410d0ed58cac97ef7c3ab96dce339c3843ac6ea3",
+    "vibe_memory/chunking/chunker.py": "f4f89b957ce5eaf12588f68e8729384c0a63eb58f431eb34dc6d804efa94d025",
+    "vibe_memory/chunking/episode.py": "6b6475b4c5e87a439122dcceb160cd47f108a5583c4375cb71c197dd48df0e02",
+    "vibe_memory/edges/edge_builder.py": "59c446eb912fecd653b2110698052726029da17f11e608e8ea6e45212ca5e918",
+    "vibe_memory/storage/sqlite_store.py": "ea6065e0f2260f2cb642f896b1aca64cff01b4834e4d74312a5068b5e67a9d21",
+    "vibe_memory/injection.py": "b05e8640d69b58dfea008db9aa5bdf9e652ecc80270c1a8bc94ca60fc6eb4961"
+  },
+  "seed": {
+    "stored_source": "seed_memory",
+    "persisted_clone_recalled_before_forget": true,
+    "forget_returned_true": true,
+    "rows_after_forget": 0,
+    "persisted_clone_not_returned_after_forget": true,
+    "unpersisted_template_returned_after_forget": true,
+    "mac_prompt_contains_fact_after_forget": true,
+    "same_client_rebootstrap_count": 0,
+    "reopen_without_seed_config_returns_fact": false,
+    "configured_rebootstrap_restores_fact_with_new_id": true
+  },
+  "batch_episode": {
+    "stored_assistant_atoms": 3,
+    "all_atom_sources_are_session_id": true,
+    "episodes_before_forget": 1,
+    "forget_returned_true": true,
+    "target_row_absent": true,
+    "surviving_atom_count": 2,
+    "surviving_context_contains_fact": true,
+    "returned_atom_context_contains_fact": true,
+    "returned_content_or_summary_contains_fact": false,
+    "mac_prompt_contains_fact_after_forget": false,
+    "episodes_after_forget": 1,
+    "episode_summary_contains_fact": true,
+    "episode_references_deleted_atom": true,
+    "reimport_uses_fresh_ids": true,
+    "reimport_restores_recall": true
+  },
+  "merge": {
+    "active_atom_count_after_two_stores": 1,
+    "both_parent_rows_absent": true,
+    "returned_second_atom_not_persisted": true,
+    "source_names_immediate_parent_ids": true,
+    "previous_version_points_to_deleted_parent": true,
+    "merged_session_is_first_session_only": true,
+    "original_source_sessions_not_in_merged_source": true,
+    "forget_original_id_returned_true": false,
+    "merged_fact_still_recalled": true,
+    "forget_live_merged_id_returned_true": true,
+    "fact_recalled_after_live_delete": false
+  },
+  "production_changed": false,
+  "evaluation_is_independent": false,
+  "paid_api_calls": 0,
+  "limits": "Three temporary synthetic TF-IDF databases; one explicitly configured seed template, six dialogue messages, two single SDK stores with deliberately identical config tags. Actual SDK calls; no monkeypatches or direct atom inserts. Random UUIDs/timestamps omitted from the report; relationships tested using actual IDs. Seed path is opt-in, not configured by default. Seed augmentation and MAC prompt return old content with zero stored rows; later seed bootstrap is explicitly invoked. Surviving batch context and Episode table retain old content; the batch MAC prompt does not include it. Episode retention is a storage observation, not evidence that core recall or prompt consumes episode summaries. Tag-driven merge does not prove semantic duplication; deleting the actual live merged ID works. No fix, general provenance guarantee, dense-model evaluation, SDK/MCP/HTTP release interface tests, final model answers, concurrency or physical/backups erasure. Independent judgments and user time/price costs unmeasured; no real user data deleted."
+}

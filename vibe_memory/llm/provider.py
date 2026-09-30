@@ -18,6 +18,7 @@ Usage:
 from abc import ABC, abstractmethod
 from typing import Optional
 import json
+import re
 import urllib.request
 import urllib.error
 
@@ -295,6 +296,12 @@ class TransformersProvider(LLMProvider):
         model_name: Hugging Face model name (default: Qwen/Qwen2.5-0.5B-Instruct)
         device: "cpu" or "cuda" (default: auto-detect)
         timeout: Generation timeout in seconds
+        trust_remote_code: Allow reviewed custom Python code (default False).
+            Opt-in requires a full model commit SHA, even for local directories.
+        revision: Model revision; full 40-hex commit required when trusting code.
+        code_revision: Custom code commit; defaults to revision when trusting code.
+            Set separately for code hosted in another repository. A commit pin is
+            not a sandbox, and does not make mutable local files immutable.
     """
 
     def __init__(
@@ -303,6 +310,10 @@ class TransformersProvider(LLMProvider):
         device: Optional[str] = None,
         timeout: float = 60.0,
         max_retries: int = 1,
+        *,
+        trust_remote_code: bool = False,
+        revision: Optional[str] = None,
+        code_revision: Optional[str] = None,
     ):
         self.model_name = model_name
         self.timeout = timeout
@@ -310,26 +321,48 @@ class TransformersProvider(LLMProvider):
         self._model = None
         self._tokenizer = None
         self._device = device
+        self.trust_remote_code = trust_remote_code
+        self.revision = revision
+        self.code_revision = code_revision
+        self._load_options()
 
     @property
     def name(self) -> str:
         return f"local:{self.model_name}"
 
+    def _load_options(self) -> dict:
+        if not isinstance(self.trust_remote_code, bool):
+            raise ValueError("trust_remote_code must be a boolean")
+        options = {"trust_remote_code": self.trust_remote_code}
+        for name, revision in (("revision", self.revision),
+                               ("code_revision", self.code_revision)):
+            if revision is not None and (not isinstance(revision, str) or not revision.strip()):
+                raise ValueError(f"{name} must be a nonempty string or None")
+            if self.trust_remote_code:
+                if name == "code_revision" and revision is None:
+                    revision = self.revision
+                if not isinstance(revision, str) or not re.fullmatch(r"[0-9a-fA-F]{40}", revision):
+                    raise ValueError(f"{name} must be a full 40-hex commit when trusting custom code")
+            if revision is not None:
+                options[name] = revision
+        return options
+
     def _load(self):
         """Lazy-load model and tokenizer."""
         if self._model is not None:
             return
+        options = self._load_options()
 
         import torch
         from transformers import AutoModelForCausalLM, AutoTokenizer
 
         self._tokenizer = AutoTokenizer.from_pretrained(
-            self.model_name, trust_remote_code=True
+            self.model_name, **options
         )
         self._model = AutoModelForCausalLM.from_pretrained(
             self.model_name,
             torch_dtype=torch.float32,
-            trust_remote_code=True,
+            **options,
         )
 
         if self._device:

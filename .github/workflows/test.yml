@@ -27,4 +27,12 @@ jobs:
         pip install -e ".[dev]"
 
     - name: Run tests
-      run: pytest tests/ -v --tb=short
+      run: python -m pytest tests/ -v --tb=short --cov=vibe_memory --cov-branch --cov-report=term-missing --cov-report=xml:coverage.xml
+
+    - name: Upload coverage report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-python-${{ matrix.python-version }}
+        path: coverage.xml
+        if-no-files-found: error

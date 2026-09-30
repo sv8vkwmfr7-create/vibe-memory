@@ -28,6 +28,7 @@ from contextlib import nullcontext
 from typing import Optional
 from datetime import datetime
 from enum import Enum
+from threading import RLock
 
 from vibe_memory.models.memory_atom import (
     MemoryAtom, Edge, Episode,
@@ -35,7 +36,7 @@ from vibe_memory.models.memory_atom import (
     GraphPartition, Lifecycle, DEFAULT_TENANT,
 )
 from vibe_memory.storage.sqlite_store import VibeStorage
-from vibe_memory.chunking.chunker import chunk_session, should_ingest
+from vibe_memory.chunking.chunker import chunk_session
 from vibe_memory.chunking.episode import EpisodeBuilder
 from vibe_memory.edges.edge_builder import (
     build_same_session_edges,
@@ -53,9 +54,9 @@ from vibe_memory.gc import GarbageCollector, GCResult
 from vibe_memory.indexer import IncrementalIndexer
 from vibe_memory.llm.edge_classifier import LLMEdgeClassifier, create_llm_classify_callback
 from vibe_memory.injection import build_injection, MACInjector, MAGInjector
-from vibe_memory.defense import MemoryDefense, scan_before_store
+from vibe_memory.defense import MemoryDefense, scan_text
 from vibe_memory.reflect import Reflector
-from vibe_memory.maintenance import WALMaintenance, coordinated
+from vibe_memory.maintenance import WALMaintenance, coordinated, is_sqlite_lock_error
 
 
 def _validated_scope(scope: Optional[dict[str, str]]) -> dict[str, str]:
@@ -106,6 +107,8 @@ class VibeMemory:
         wal_maintenance: Optional[WALMaintenance] = None,
     ):
         self.wal_maintenance = wal_maintenance
+        # ponytail: serialize whole calls per instance; use separate instances for throughput.
+        self._operation_lock = RLock()
         if wal_maintenance is not None:
             wal_maintenance.validate_path(db_path)
         with wal_maintenance.operation() if wal_maintenance is not None else nullcontext():
@@ -123,7 +126,6 @@ class VibeMemory:
 
             # 反思
             self.reflector = reflector
-            self.defense = defense or MemoryDefense(mode="redact")
 
             # 种子过滤
             self.seed_filter = SeedFilter()
@@ -137,6 +139,7 @@ class VibeMemory:
                 agent_id=agent_id,
                 tenant_id=tenant_id,
                 embedding_provider=self.embedding,
+                defense=self.defense,
             )
 
             # 可观测性
@@ -209,10 +212,12 @@ class VibeMemory:
         sid = session_id or str(uuid.uuid4())
         validated_scope = _validated_scope(scope)
 
-        # 隐私扫描：默认脱敏模式
-        content, violations, blocked = scan_before_store(content, self.defense)
-        if blocked:
-            raise ValueError(f"Memory blocked by defense: {len(violations)} PII violations detected")
+        # Scan before persistence, summary truncation or downstream model use.
+        content = self._scan_text(content)
+        if summary is not None:
+            summary = self._scan_text(summary)
+        context_before = self._scan_text(context_before)
+        context_after = self._scan_text(context_after)
 
         atom = MemoryAtom(
             id=str(uuid.uuid4()),
@@ -244,8 +249,8 @@ class VibeMemory:
             vec = self.embedding.encode_query(atom.content)
             atom.embedding = vec.tolist()
             self.storage.update_atom(atom)
-        except Exception:
-            pass  # embedding 缓存失败不影响主流程
+        except Exception as error:
+            self.metrics.record_failure("embedding_cache", error)
 
         # 冷启动阶段使用激进阈值建边
         if auto_build_edges:
@@ -277,24 +282,29 @@ class VibeMemory:
             创建的 MemoryAtom 列表
         """
         sid = session_id or str(uuid.uuid4())
-        atoms = chunk_session(messages, self.agent_id, sid)
+        # Preflight the entire batch before writing any row; don't mutate caller messages.
+        cleaned_messages = [{**message, "content": self._scan_text(message["content"])}
+                            for message in messages]
+        atoms = chunk_session(cleaned_messages, self.agent_id, sid, filter_routine=True)
+        for atom in atoms:
+            for field in ("content", "summary", "context_before", "context_after"):
+                setattr(atom, field, self._scan_text(getattr(atom, field)))
         stored: list[MemoryAtom] = []
 
         for atom in atoms:
-            if should_ingest(atom.content, None):
-                atom.tenant_id = self.tenant_id
-                self.storage.insert_atom(atom)
-                stored.append(atom)
-                self._store_count += 1
-                self.metrics.record_store()
+            atom.tenant_id = self.tenant_id
+            self.storage.insert_atom(atom)
+            stored.append(atom)
+            self._store_count += 1
+            self.metrics.record_store()
 
         # 同会话建边
         if len(stored) >= 2:
             for edge in build_same_session_edges(stored):
                 edge.tenant_id = self.tenant_id
-                self.storage.insert_edge(edge)
-                self._edge_count += 1
-                self.metrics.record_edge_built(source="rule", label=edge.label.value)
+                if self.storage.insert_edge_if_missing(edge):
+                    self._edge_count += 1
+                    self.metrics.record_edge_built(source="rule", label=edge.label.value)
 
         # Episode 聚合
         self._auto_episode_aggregation(sid)
@@ -325,7 +335,9 @@ class VibeMemory:
 
         Returns:
             {atoms: [MemoryAtom], trace: [...], mode: str, total_walked: int,
-             reinforcement_skipped: bool}（是否跳过部分/全部非关键强化）
+             failures: [{stage, reason}], reinforcement_skipped: bool}
+            failures只含本次策略异常的固定标签；不含查询/异常原文。
+            reinforcement_skipped表示是否跳过部分/全部非关键强化。
         """
         validated_scope = _validated_scope(scope)
         result = _recall(
@@ -343,6 +355,8 @@ class VibeMemory:
         )
         self._recall_count += 1
         self.metrics.record_recall(result_count=len(result.get("atoms", [])))
+        for failure in result.get("failures", []):
+            self.metrics.record_degradation(f"retrieval_{failure['stage']}:{failure['reason']}")
 
         # 冷启动增强：结果不足时用种子记忆补充
         result = self.cold_start.augment_recall(query, result)
@@ -385,9 +399,7 @@ class VibeMemory:
                     self.storage.update_edge(reinforced)
         except sqlite3.OperationalError as error:
             conn.rollback()
-            if getattr(error, "sqlite_errorcode", 0) & 0xFF not in (
-                sqlite3.SQLITE_BUSY, sqlite3.SQLITE_LOCKED
-            ):
+            if not is_sqlite_lock_error(error):
                 raise
             result["reinforcement_skipped"] = True
         finally:
@@ -598,6 +610,9 @@ class VibeMemory:
             raise ValueError("Unsupported update fields; only content/summary/tags/scope/confidence/weight/decay_rate are allowed")
         if "scope" in fields:
             fields["scope"] = _validated_scope(fields["scope"])
+        for field in ("content", "summary"):
+            if field in fields:
+                fields[field] = self._scan_text(fields[field])
         for key, value in fields.items():
             setattr(atom, key, value)
 
@@ -775,9 +790,9 @@ class VibeMemory:
         if same_session:
             for edge in build_same_session_edges(same_session + [new_atom]):
                 edge.tenant_id = self.tenant_id
-                self.storage.insert_edge(edge)
-                self._edge_count += 1
-                self.metrics.record_edge_built(source="rule", label=edge.label.value)
+                if self.storage.insert_edge_if_missing(edge):
+                    self._edge_count += 1
+                    self.metrics.record_edge_built(source="rule", label=edge.label.value)
 
         # 跨会话建边（冷启动感知阈值）→ 增量索引：入队
         edge_sim = self.cold_start.get_edge_similarity_threshold()
@@ -803,16 +818,15 @@ class VibeMemory:
             sim_score = _tag_overlap_ratio(new_atom, sim)
             self.indexer.enqueue(new_atom, sim, sim_score)
 
+    def _scan_text(self, text: str) -> str:
+        """Apply the configured defense without exposing raw findings in errors."""
+        return scan_text(text, self.defense)
+
     def _auto_episode_aggregation(self, session_id: str) -> None:
         """自动 Episode 聚合"""
         session_atoms = self.storage.get_atoms_by_session(
             session_id, agent_id=self.agent_id, tenant_id=self.tenant_id)
-        if len(session_atoms) < 3:
-            return
-
         builder = EpisodeBuilder()
-        episodes = builder.build_episodes(session_atoms)
-
-        for ep in episodes:
-            ep.tenant_id = self.tenant_id
-            self.storage.insert_episode(ep)
+        episodes = builder.build_episodes(deepcopy(session_atoms)) if len(session_atoms) >= 3 else []
+        self.storage.replace_session_episodes(
+            session_id, self.agent_id, self.tenant_id, session_atoms, episodes)

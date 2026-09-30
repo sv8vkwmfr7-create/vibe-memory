@@ -1,0 +1,97 @@
+{
+  "scenario": "synthetic_atomic_source_forgetting",
+  "runner_sha256": "94222bd025bd89f78fa1c1f6be2d095f397b8bd801d49754347410c8b4c64dfa",
+  "before": {
+    "local_ids": [
+      "chain-copy",
+      "copy",
+      "keep",
+      "keep-2",
+      "mixed-summary",
+      "original"
+    ],
+    "foreign_ids": [
+      "foreign-keep",
+      "foreign-original"
+    ],
+    "edge_ids": [
+      "foreign-edge",
+      "incident-chain",
+      "incident-original",
+      "protected-edge"
+    ],
+    "forgotten_fts_matches": 4,
+    "retrieved_ids": [
+      "chain-copy",
+      "original",
+      "copy",
+      "mixed-summary",
+      "keep",
+      "keep-2"
+    ]
+  },
+  "missing_lineage_rejected": true,
+  "foreign_parent_rejected": true,
+  "unknown_source_rejected": true,
+  "rollback_restored_all_rows": true,
+  "second_writer_blocked_during_transaction": true,
+  "deleted_ids": [
+    "chain-copy",
+    "copy",
+    "mixed-summary",
+    "original"
+  ],
+  "deleted_edges": [
+    "incident-chain",
+    "incident-original"
+  ],
+  "after": {
+    "local_ids": [
+      "keep",
+      "keep-2"
+    ],
+    "foreign_ids": [
+      "foreign-keep",
+      "foreign-original"
+    ],
+    "edge_ids": [
+      "foreign-edge",
+      "protected-edge"
+    ],
+    "forgotten_fts_matches": 0,
+    "retrieved_ids": [
+      "keep",
+      "keep-2"
+    ]
+  },
+  "after_restart": {
+    "local_ids": [
+      "keep",
+      "keep-2"
+    ],
+    "foreign_ids": [
+      "foreign-keep",
+      "foreign-original"
+    ],
+    "edge_ids": [
+      "foreign-edge",
+      "protected-edge"
+    ],
+    "forgotten_fts_matches": 0,
+    "retrieved_ids": [
+      "keep",
+      "keep-2"
+    ]
+  },
+  "peer_import_blocked_after_commit": true,
+  "new_id_same_source_blocked_after_restart": true,
+  "protected_source_import_allowed": true,
+  "foreign_same_source_import_allowed": true,
+  "relabeled_source_bypass_restores_fact": true,
+  "direct_storage_bypass_restores_fact": true,
+  "complete_forgetting_demonstrated": false,
+  "production_changed": false,
+  "evaluation_is_independent": false,
+  "paid_api_calls": 0,
+  "limits": "Temporary synthetic TF-IDF database, six local and two foreign-tenant fixture atoms, four fixed edges. Caller-declared scoped root-source keys propagate through this experiment-only importer. Mixed-source derivatives are wholly deleted, not redacted; unrelated base records remain. SQLite atomic deletion/edge cleanup/lineage cleanup/tombstone verified with injected failure, reopen, FTS query and a two-connection lock schedule, not a concurrent stress benchmark. Source keys are not authenticated or discovered from real data. A relabeled root or direct storage can bypass suppression. Production store/batch/seed/merge/update/episode paths, physical/WAL/backups, other agent isolation, final answers and user time/price remain unverified. No real user data deleted; temporary database removed after closed connections."
+}

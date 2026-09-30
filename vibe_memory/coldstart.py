@@ -17,6 +17,7 @@ Cold Start Manager (M3)
 """
 
 import json
+import hashlib
 import uuid
 from pathlib import Path
 from typing import Optional
@@ -24,6 +25,7 @@ from datetime import datetime
 from enum import Enum
 
 from vibe_memory.models.memory_atom import MemoryAtom, GraphPartition, Lifecycle, DEFAULT_TENANT
+from vibe_memory.defense import MemoryDefense, scan_text
 
 
 class ColdPhase(str, Enum):
@@ -66,12 +68,15 @@ class ColdStartManager:
         tenant_id: str = DEFAULT_TENANT,
         embedding_provider=None,
         seed_memory_path: Optional[str] = None,
+        defense: Optional[MemoryDefense] = None,
     ):
         self.storage = storage
         self.agent_id = agent_id
         self.tenant_id = tenant_id
         self.embedding = embedding_provider
         self.seed_memory_path = seed_memory_path
+        self.defense = defense or MemoryDefense()
+        self._seed_key: Optional[str] = None
 
         self._seed_atoms: list[MemoryAtom] = []
         self._bootstrapped = False
@@ -166,18 +171,28 @@ class ColdStartManager:
 
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
+        if not isinstance(data, dict) or not isinstance(data.get("atoms", []), list):
+            raise ValueError("Invalid seed document")
+        seed_key = hashlib.sha256(json.dumps(data, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()
 
         atoms = []
         for item in data.get("atoms", []):
-            atom_type = item.get("type", "session")
+            if not isinstance(item, dict):
+                raise ValueError("Invalid seed atom")
+            content = scan_text(item.get("content"), self.defense)
+            summary = scan_text(item["summary"], self.defense) if "summary" in item else content[:200]
+            try:
+                atom_type = GraphPartition(item.get("type", "session"))
+            except (TypeError, ValueError):
+                raise ValueError("Invalid seed partition") from None
             atom = MemoryAtom(
                 id=str(uuid.uuid4()),
                 agent_id="__seed__",
                 session_id="__seed__",
-                content=item["content"],
-                summary=item.get("summary", item["content"][:200]),
+                content=content,
+                summary=summary,
                 tags=item.get("tags", []),
-                type=GraphPartition(atom_type) if atom_type in ["session", "document", "parametric"] else GraphPartition.SESSION,
+                type=atom_type,
                 lifecycle=Lifecycle.ACTIVE,
                 weight=0.5,
                 decay_rate=0.95,
@@ -187,14 +202,15 @@ class ColdStartManager:
             atoms.append(atom)
 
         self._seed_atoms = atoms
+        self._seed_key = seed_key
         return atoms
 
     def bootstrap(self) -> list[MemoryAtom]:
         """
         注入种子记忆到当前 agent。
 
-        幂等：多次调用只注入一次。
-        仅在 cold 阶段有实际效果。
+        幂等：当前tenant/agent的同一规范化种子文档只提交一次，跨重启有效。
+        不清理旧版本，不强制限制当前阶段；同一实例不热重载。
 
         Returns:
             持久化后的 MemoryAtom 列表
@@ -224,9 +240,10 @@ class ColdStartManager:
                 confidence=atom.confidence,
                 source="seed_memory",
             )
-            self.storage.insert_atom(cloned)
             stored.append(cloned)
 
+        stored = self.storage.bootstrap_seed_atoms(
+            self.tenant_id, self.agent_id, self._seed_key, stored)
         self._bootstrapped = True
         self.invalidate_cache()
         return stored
@@ -265,6 +282,9 @@ class ColdStartManager:
 
         seed_atoms = self.get_seed_atoms()
         if not seed_atoms:
+            return ppr_result
+        # Completed initialization uses persisted atoms only, never fallback templates.
+        if self.storage.is_seed_bootstrapped(self.tenant_id, self.agent_id, self._seed_key):
             return ppr_result
 
         # 用标签重叠率评分种子记忆

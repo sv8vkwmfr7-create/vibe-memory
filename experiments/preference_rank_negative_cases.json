@@ -1,0 +1,66 @@
+{
+  "dataset_id": "preference-rank-negatives-v1",
+  "provenance": "Assistant-authored synthetic diagnostics frozen before first execution. Not independent labels or a public benchmark. All records are in one user scope; other-person statements are quoted distractors, not tenant leakage tests.",
+  "cases": [
+    {
+      "id": "paraphrased-writing-preference",
+      "query": "How should you format explanations for me?",
+      "target_id": "preference",
+      "negative_ids": ["generic", "friend"],
+      "atoms": [
+        {"id": "preference", "content": "user: I dislike long introductions. Keep responses brief, direct and focused on the conclusion."},
+        {"id": "generic", "content": "assistant: Format explanations with lengthy introductions, background history and many sections."},
+        {"id": "friend", "content": "user: My friend likes explanations formatted as long academic essays. That is her taste, not mine."},
+        {"id": "noise1", "content": "assistant: Format explanations for a documentation dashboard."},
+        {"id": "noise2", "content": "assistant: Format explanations for a training archive."},
+        {"id": "noise3", "content": "assistant: Format explanations for an unrelated tutorial."},
+        {"id": "noise4", "content": "user: The weather is clear today."}
+      ]
+    },
+    {
+      "id": "changed-theme-preference",
+      "query": "Which display theme should you use for me now?",
+      "target_id": "current",
+      "negative_ids": ["old", "generic"],
+      "atoms": [
+        {"id": "old", "content": "user: Use a dark display theme for me. I prefer a dark interface."},
+        {"id": "generic", "content": "assistant: A dark display theme is a common recommendation."},
+        {"id": "noise1", "content": "assistant: Display theme settings appear in the account dashboard."},
+        {"id": "noise2", "content": "assistant: Display theme documentation is archived."},
+        {"id": "noise3", "content": "assistant: Display theme settings can be exported."},
+        {"id": "noise4", "content": "user: I bought a new keyboard."},
+        {"id": "current", "content": "user: I changed my mind. From now on I want a light interface, not the dark one I previously asked for."}
+      ]
+    },
+    {
+      "id": "drink-preference-versus-generic-advice",
+      "query": "Suggest a drink for my evening reading time.",
+      "target_id": "preference",
+      "negative_ids": ["generic", "friend"],
+      "atoms": [
+        {"id": "preference", "content": "user: When I settle down with a book after dinner, I enjoy decaffeinated tea and dislike coffee."},
+        {"id": "generic", "content": "assistant: Suggest strong coffee as a drink for evening reading time."},
+        {"id": "friend", "content": "user: My colleague likes an espresso drink for evening reading time. I do not share that preference."},
+        {"id": "noise1", "content": "assistant: Evening reading time appears on the calendar."},
+        {"id": "noise2", "content": "assistant: A drink menu is archived for the book club."},
+        {"id": "noise3", "content": "assistant: Reading time can be tracked in a dashboard."},
+        {"id": "noise4", "content": "user: I finished organizing my shelves."}
+      ]
+    },
+    {
+      "id": "negated-spicy-food-preference",
+      "query": "What kind of dinner should you recommend for me?",
+      "target_id": "preference",
+      "negative_ids": ["generic", "friend"],
+      "atoms": [
+        {"id": "preference", "content": "user: I do not enjoy spicy dishes. When choosing meals for myself, I want mild flavours."},
+        {"id": "generic", "content": "assistant: Recommend a spicy curry dinner for an adventurous person."},
+        {"id": "friend", "content": "user: My friend wants very spicy food for dinner, but that is the opposite of what I enjoy."},
+        {"id": "noise1", "content": "assistant: Dinner recommendations are shown on a dashboard."},
+        {"id": "noise2", "content": "assistant: Dinner recommendation menus are archived."},
+        {"id": "noise3", "content": "assistant: Recommend dinner reservations using an unrelated calendar."},
+        {"id": "noise4", "content": "user: I visited a library this morning."}
+      ]
+    }
+  ]
+}

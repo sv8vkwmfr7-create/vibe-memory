@@ -32,6 +32,10 @@ def _recall_with_stages(
     query: str,
     *,
     causal_bridge: bool,
+    agent_id: str = "stage-probe",
+    embedding_provider=None,
+    semantic_cache=None,
+    bm25_cache=None,
 ) -> tuple[list[str], dict[str, list[str]]]:
     observed: dict[str, list[str]] = {}
     original_fusion = fusion.rrf_fusion
@@ -39,6 +43,8 @@ def _recall_with_stages(
 
     def capture_fusion(ranked_lists, *args, **kwargs):
         names = ("semantic", "bm25", "graph", "temporal")
+        if len(ranked_lists) != len(names):
+            raise RuntimeError("Stage probe requires all four retrieval routes")
         for name, ranked in zip(names, ranked_lists):
             observed[name] = [atom_id for atom_id, _ in ranked]
         fused = original_fusion(ranked_lists, *args, **kwargs)
@@ -57,11 +63,13 @@ def _recall_with_stages(
     ):
         result = recall(
             query,
-            "stage-probe",
+            agent_id,
             store,
             mode="precision",
             top_k=5,
-            embedding_provider=TfidfProvider(),
+            embedding_provider=embedding_provider or TfidfProvider(),
+            semantic_cache=semantic_cache,
+            bm25_cache=bm25_cache,
             causal_bridge=causal_bridge,
         )
     final_ids = [atom.id for atom in result["atoms"]]

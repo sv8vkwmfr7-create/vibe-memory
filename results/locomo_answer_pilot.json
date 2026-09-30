@@ -1,0 +1,271 @@
+{
+  "source": "https://github.com/snap-research/locomo/blob/main/data/locomo10.json",
+  "source_sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+  "sample_id": "conv-26",
+  "selection": "first 11 official-order category-1 QAs with text-only evidence",
+  "model": "Qwen2.5-1.5B-Instruct",
+  "model_load_ms": 3115.3,
+  "stored_turns": 419,
+  "write_setup_ms": 4200.5,
+  "mode": "MCP precision Top-5",
+  "paid_model_calls": 0,
+  "rows": [
+    {
+      "id": "conv-26-qa-3",
+      "category": 1,
+      "evidence_hit": false,
+      "returned_count": 5,
+      "no_memory": {
+        "strict_match": false,
+        "token_f1": 0.0,
+        "abstained": false,
+        "generation_ms": 4121.9,
+        "prompt_tokens": 42
+      },
+      "mcp_memory": {
+        "strict_match": false,
+        "token_f1": 0.0,
+        "abstained": false,
+        "recall_ms": 52.0,
+        "generation_ms": 3165.5,
+        "query_to_answer_ms": 3217.5,
+        "prompt_tokens": 129
+      }
+    },
+    {
+      "id": "conv-26-qa-7",
+      "category": 1,
+      "evidence_hit": false,
+      "returned_count": 5,
+      "no_memory": {
+        "strict_match": false,
+        "token_f1": 0.0,
+        "abstained": true,
+        "generation_ms": 1042.6,
+        "prompt_tokens": 44
+      },
+      "mcp_memory": {
+        "strict_match": false,
+        "token_f1": 0.0,
+        "abstained": true,
+        "recall_ms": 18.3,
+        "generation_ms": 3127.7,
+        "query_to_answer_ms": 3146.0,
+        "prompt_tokens": 163
+      }
+    },
+    {
+      "id": "conv-26-qa-11",
+      "category": 1,
+      "evidence_hit": false,
+      "returned_count": 5,
+      "no_memory": {
+        "strict_match": false,
+        "token_f1": 0.0,
+        "abstained": false,
+        "generation_ms": 4485.2,
+        "prompt_tokens": 47
+      },
+      "mcp_memory": {
+        "strict_match": false,
+        "token_f1": 0.0,
+        "abstained": true,
+        "recall_ms": 17.6,
+        "generation_ms": 2677.7,
+        "query_to_answer_ms": 2695.3,
+        "prompt_tokens": 137
+      }
+    },
+    {
+      "id": "conv-26-qa-13",
+      "category": 1,
+      "evidence_hit": false,
+      "returned_count": 5,
+      "no_memory": {
+        "strict_match": false,
+        "token_f1": 0.051,
+        "abstained": false,
+        "generation_ms": 4744.3,
+        "prompt_tokens": 47
+      },
+      "mcp_memory": {
+        "strict_match": false,
+        "token_f1": 0.545,
+        "abstained": false,
+        "recall_ms": 17.5,
+        "generation_ms": 4378.5,
+        "query_to_answer_ms": 4396.0,
+        "prompt_tokens": 190
+      }
+    },
+    {
+      "id": "conv-26-qa-19",
+      "category": 1,
+      "evidence_hit": false,
+      "returned_count": 5,
+      "no_memory": {
+        "strict_match": false,
+        "token_f1": 0.0,
+        "abstained": false,
+        "generation_ms": 3237.9,
+        "prompt_tokens": 44
+      },
+      "mcp_memory": {
+        "strict_match": false,
+        "token_f1": 0.0,
+        "abstained": false,
+        "recall_ms": 12.9,
+        "generation_ms": 3327.2,
+        "query_to_answer_ms": 3340.1,
+        "prompt_tokens": 154
+      }
+    },
+    {
+      "id": "conv-26-qa-34",
+      "category": 1,
+      "evidence_hit": false,
+      "returned_count": 5,
+      "no_memory": {
+        "strict_match": false,
+        "token_f1": 0.0,
+        "abstained": false,
+        "generation_ms": 5327.4,
+        "prompt_tokens": 47
+      },
+      "mcp_memory": {
+        "strict_match": false,
+        "token_f1": 0.0,
+        "abstained": false,
+        "recall_ms": 13.0,
+        "generation_ms": 5845.8,
+        "query_to_answer_ms": 5858.8,
+        "prompt_tokens": 274
+      }
+    },
+    {
+      "id": "conv-26-qa-39",
+      "category": 1,
+      "evidence_hit": true,
+      "returned_count": 5,
+      "no_memory": {
+        "strict_match": false,
+        "token_f1": 0.118,
+        "abstained": false,
+        "generation_ms": 3558.8,
+        "prompt_tokens": 48
+      },
+      "mcp_memory": {
+        "strict_match": false,
+        "token_f1": 0.178,
+        "abstained": false,
+        "recall_ms": 13.1,
+        "generation_ms": 9871.4,
+        "query_to_answer_ms": 9884.5,
+        "prompt_tokens": 275
+      }
+    },
+    {
+      "id": "conv-26-qa-60",
+      "category": 1,
+      "evidence_hit": true,
+      "returned_count": 5,
+      "no_memory": {
+        "strict_match": false,
+        "token_f1": 0.0,
+        "abstained": false,
+        "generation_ms": 3116.3,
+        "prompt_tokens": 43
+      },
+      "mcp_memory": {
+        "strict_match": false,
+        "token_f1": 0.5,
+        "abstained": false,
+        "recall_ms": 14.5,
+        "generation_ms": 3158.6,
+        "query_to_answer_ms": 3173.1,
+        "prompt_tokens": 149
+      }
+    },
+    {
+      "id": "conv-26-qa-61",
+      "category": 1,
+      "evidence_hit": false,
+      "returned_count": 5,
+      "no_memory": {
+        "strict_match": false,
+        "token_f1": 0.0,
+        "abstained": false,
+        "generation_ms": 3587.6,
+        "prompt_tokens": 46
+      },
+      "mcp_memory": {
+        "strict_match": false,
+        "token_f1": 0.0,
+        "abstained": false,
+        "recall_ms": 17.7,
+        "generation_ms": 4320.1,
+        "query_to_answer_ms": 4337.8,
+        "prompt_tokens": 183
+      }
+    },
+    {
+      "id": "conv-26-qa-65",
+      "category": 1,
+      "evidence_hit": false,
+      "returned_count": 5,
+      "no_memory": {
+        "strict_match": false,
+        "token_f1": 0.105,
+        "abstained": false,
+        "generation_ms": 4764.3,
+        "prompt_tokens": 49
+      },
+      "mcp_memory": {
+        "strict_match": false,
+        "token_f1": 0.077,
+        "abstained": false,
+        "recall_ms": 18.2,
+        "generation_ms": 6490.5,
+        "query_to_answer_ms": 6508.7,
+        "prompt_tokens": 213
+      }
+    },
+    {
+      "id": "conv-26-qa-76",
+      "category": 1,
+      "evidence_hit": true,
+      "returned_count": 5,
+      "no_memory": {
+        "strict_match": false,
+        "token_f1": 0.0,
+        "abstained": false,
+        "generation_ms": 2657.1,
+        "prompt_tokens": 49
+      },
+      "mcp_memory": {
+        "strict_match": false,
+        "token_f1": 0.0,
+        "abstained": false,
+        "recall_ms": 13.6,
+        "generation_ms": 4946.1,
+        "query_to_answer_ms": 4959.7,
+        "prompt_tokens": 238
+      }
+    }
+  ],
+  "summary": {
+    "no_memory": {
+      "strict_match": 0,
+      "mean_token_f1": 0.025,
+      "abstained": 1,
+      "generation_p50_ms": 3587.6
+    },
+    "mcp_memory": {
+      "strict_match": 0,
+      "mean_token_f1": 0.118,
+      "abstained": 2,
+      "generation_p50_ms": 4320.1
+    }
+  },
+  "limits": "All ten LoCoMo conversations were used in prior retrieval tuning: not independent holdout. Strict normalized exact match undercounts valid paraphrases; token F1 measures overlap, not semantic correctness, and mismatches are not certified factual errors. One conversation/category, no images, original timestamps not restored by MCP writes. Query-to-answer excludes one-time model load and corpus writes. No paid API; local electricity and human review unmeasured. No production default change."
+}

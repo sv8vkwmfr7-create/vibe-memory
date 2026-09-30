@@ -2,10 +2,20 @@
 import sqlite3
 import math
 import threading
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from functools import wraps
 from pathlib import Path
 from time import perf_counter
+
+
+def is_sqlite_lock_error(error: sqlite3.OperationalError) -> bool:
+    """Prefer primary SQLite codes; Python 3.10 lacks code attributes/constants."""
+    code = getattr(error, "sqlite_errorcode", None)
+    if code is not None:
+        return code & 0xFF in (5, 6)  # SQLITE_BUSY / SQLITE_LOCKED, including extended codes.
+    return str(error).partition(":")[0] in {
+        "database is locked", "database table is locked", "database schema is locked",
+    }
 
 
 class WALMaintenance:
@@ -70,9 +80,7 @@ class WALMaintenance:
             finally:
                 conn.close()
         except sqlite3.OperationalError as error:
-            if getattr(error, "sqlite_errorcode", 0) & 0xFF not in (
-                sqlite3.SQLITE_BUSY, sqlite3.SQLITE_LOCKED
-            ):
+            if not is_sqlite_lock_error(error):
                 raise
             return self._report("busy", start)
         finally:
@@ -88,12 +96,11 @@ class WALMaintenance:
 
 
 def coordinated(method):
-    """Keep SDK operations, including nested calls, inside the shared gate."""
+    """Admit operations before serializing a shared SDK connection."""
     @wraps(method)
     def wrapped(self, *args, **kwargs):
         maintenance = self.wal_maintenance
-        if maintenance is None:
-            return method(self, *args, **kwargs)
-        with maintenance.operation():
-            return method(self, *args, **kwargs)
+        with maintenance.operation() if maintenance is not None else nullcontext():
+            with self._operation_lock:
+                return method(self, *args, **kwargs)
     return wrapped

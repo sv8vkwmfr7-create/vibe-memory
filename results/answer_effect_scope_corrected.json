@@ -1,0 +1,183 @@
+{
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "model_revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "model_load_ms": 1866.258,
+  "cases": [
+    {
+      "id": "correction",
+      "repeat": 1,
+      "question": "订单服务正式环境当前超时配置是多少秒？",
+      "expected": "60",
+      "direct_question": null,
+      "source_commit": null,
+      "source_path": null,
+      "returned_memories": [
+        "订单服务正式环境超时配置为30秒。",
+        "用户纠正：订单服务正式环境当前超时配置已改为60秒，旧的30秒结论不再适用。"
+      ],
+      "selected_memories": null,
+      "selection_reason": null,
+      "write_setup_ms": 552.055,
+      "recall_ms": 230.38,
+      "answers": {
+        "no_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 62,
+          "generated_tokens": 2,
+          "generation_ms": 580.578,
+          "question_to_answer_ms": 580.578,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "60",
+          "normalized": "60",
+          "prompt_tokens": 102,
+          "generated_tokens": 3,
+          "generation_ms": 923.454,
+          "question_to_answer_ms": 1153.834,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "60",
+          "normalized": "60",
+          "prompt_tokens": 87,
+          "generated_tokens": 3,
+          "generation_ms": 823.996,
+          "question_to_answer_ms": 823.996,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "future_draft",
+      "repeat": 1,
+      "question": "订单服务正式环境当前超时配置是多少秒？",
+      "expected": "30",
+      "direct_question": null,
+      "source_commit": null,
+      "source_path": null,
+      "returned_memories": [
+        "订单服务正式环境当前超时配置为30秒。",
+        "订单服务正式环境下一版草案拟将超时改为60秒，目前生效配置仍为30秒。"
+      ],
+      "selected_memories": null,
+      "selection_reason": null,
+      "write_setup_ms": 639.897,
+      "recall_ms": 250.835,
+      "answers": {
+        "no_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 62,
+          "generated_tokens": 2,
+          "generation_ms": 574.709,
+          "question_to_answer_ms": 574.709,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "30",
+          "normalized": "30",
+          "prompt_tokens": 103,
+          "generated_tokens": 3,
+          "generation_ms": 931.438,
+          "question_to_answer_ms": 1182.273,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 87,
+          "generated_tokens": 2,
+          "generation_ms": 731.843,
+          "question_to_answer_ms": 731.843,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "different_environment",
+      "repeat": 1,
+      "question": "订单服务正式环境当前超时配置是多少秒？",
+      "expected": "30",
+      "direct_question": null,
+      "source_commit": null,
+      "source_path": null,
+      "returned_memories": [
+        "订单服务正式环境当前超时配置为30秒。",
+        "订单服务测试环境超时配置为60秒，正式环境仍为30秒。"
+      ],
+      "selected_memories": null,
+      "selection_reason": null,
+      "write_setup_ms": 641.544,
+      "recall_ms": 247.178,
+      "answers": {
+        "no_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 62,
+          "generated_tokens": 2,
+          "generation_ms": 556.31,
+          "question_to_answer_ms": 556.31,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "30",
+          "normalized": "30",
+          "prompt_tokens": 98,
+          "generated_tokens": 3,
+          "generation_ms": 862.175,
+          "question_to_answer_ms": 1109.353,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "60秒",
+          "normalized": "60",
+          "prompt_tokens": 82,
+          "generated_tokens": 4,
+          "generation_ms": 897.159,
+          "question_to_answer_ms": 897.159,
+          "correct": false,
+          "abstained": false,
+          "stale_answer": false
+        }
+      }
+    }
+  ],
+  "case_count": 3,
+  "repeat_count": 1,
+  "latency": {
+    "no_memory": {
+      "p50_ms": 574.709,
+      "p95_nearest_rank_ms": 580.578
+    },
+    "mcp_memory": {
+      "p50_ms": 1153.834,
+      "p95_nearest_rank_ms": 1182.273
+    },
+    "latest_only": {
+      "p50_ms": 823.996,
+      "p95_nearest_rank_ms": 897.159
+    }
+  },
+  "mode": "precision",
+  "top_k": 5,
+  "paid_model_calls": 0,
+  "evidence_boundary": "Assistant-selected and paraphrased cases with assistant-scored expected answers; source commits are traceability, not independent labels. latest_only supplies the last written case text directly and excludes evidence selection/retrieval: it is an input ablation, not a deployable condition or guaranteed accuracy upper bound. Offline cached CPU model; no download or paid API. MCP query-to-answer includes process startup/recall and generation but excludes prior writes, model load, electricity, memory footprint and human review. P95 is nearest-rank descriptive only for this small local sample. This replay used the corrected explicit query scope after a different-environment write; the earlier answer_effect_probe.json run used the last write scope for that case and should not be treated as a valid environment-scope check."
+}

@@ -1,0 +1,72 @@
+[
+  {
+    "id": "fallback_edge_source",
+    "source_commit": "8b4ff66a7ce4a53deb24b083eb817d2a4e294fa5",
+    "source_path": "vibe_memory/indexer.py",
+    "question": "当前 LLM 分类失败后由规则回退创建的边，source 记为 rule 还是 llm？",
+    "scope": {"service": "vibe-memory", "environment": "release", "operation": "edge-source"},
+    "choices": ["rule", "llm"],
+    "expected": "rule",
+    "stale_value": "llm",
+    "writes": [
+      ["旧版本：LLM 分类失败后规则回退创建的边，source 仍被记录为 llm。", {"service": "vibe-memory", "environment": "release", "operation": "edge-source"}],
+      ["更新后的版本：LLM 分类失败后规则回退创建的边，source 改为 rule；旧的 llm 来源记录不再代表当前实现。", {"service": "vibe-memory", "environment": "release", "operation": "edge-source"}]
+    ]
+  },
+  {
+    "id": "chinese_bigrams",
+    "source_commit": "49be77d588e9a8732e7e5544bd9f9cf4f554590d",
+    "source_path": "vibe_memory/embedding/tfidf.py",
+    "question": "当前 TF-IDF 词面检索是否支持中文双字片段？",
+    "scope": {"service": "vibe-memory", "environment": "release", "operation": "lexical-recall"},
+    "choices": ["支持", "不支持"],
+    "expected": "支持",
+    "stale_value": "不支持",
+    "writes": [
+      ["旧版本：TF-IDF 词面检索尚未支持中文双字片段。", {"service": "vibe-memory", "environment": "release", "operation": "lexical-recall"}],
+      ["更新后的版本：TF-IDF 词面检索已经加入无依赖中文双字片段支持，旧的‘不支持’结论过时。", {"service": "vibe-memory", "environment": "release", "operation": "lexical-recall"}]
+    ]
+  },
+  {
+    "id": "mcp_wal_checkpoint",
+    "source_commit": "cb4b01e314b31625f6ea849fe431f79ecff2639f",
+    "source_path": "vibe_memory/mcp_server.py",
+    "question": "当前 MCP WAL checkpoint 是手动触发，还是根本没有这个入口？",
+    "scope": {"service": "vibe-memory", "environment": "release", "operation": "wal-maintenance"},
+    "choices": ["手动", "无"],
+    "expected": "手动",
+    "stale_value": "无",
+    "writes": [
+      ["旧版本：MCP 尚无 WAL checkpoint 工具入口。", {"service": "vibe-memory", "environment": "release", "operation": "wal-maintenance"}],
+      ["更新后的版本：MCP 可选择启用 WAL 维护并手动调用 vibe_checkpoint；默认关闭，没有自动调度。", {"service": "vibe-memory", "environment": "release", "operation": "wal-maintenance"}]
+    ]
+  },
+  {
+    "id": "mcp_doctor_command",
+    "source_commit": "bb384d4bb575922294ff635bc98ad5d4d0db897a",
+    "source_path": "pyproject.toml",
+    "question": "当前用于 MCP 端到端诊断的独立 CLI 命令是什么？",
+    "scope": {"service": "vibe-memory", "environment": "release", "operation": "doctor-cli"},
+    "choices": ["vibe-doctor", "无"],
+    "expected": "vibe-doctor",
+    "stale_value": "无",
+    "writes": [
+      ["旧版本：还没有独立的 MCP 端到端诊断 CLI 命令。", {"service": "vibe-memory", "environment": "release", "operation": "doctor-cli"}],
+      ["更新后的版本：新增独立命令 vibe-doctor，用于 MCP 端到端诊断。", {"service": "vibe-memory", "environment": "release", "operation": "doctor-cli"}]
+    ]
+  },
+  {
+    "id": "scope_fields",
+    "source_commit": "f952ddb60ba3b1488809ac7a31978602b11cb2db",
+    "source_path": "vibe_memory/sdk.py",
+    "question": "当前显式 scope 元数据允许的字段有几个？",
+    "scope": {"service": "vibe-memory", "environment": "release", "operation": "scope-contract"},
+    "choices": ["3", "0"],
+    "expected": "3",
+    "stale_value": "0",
+    "writes": [
+      ["旧版本：写入接口还没有显式 scope 元数据字段。", {"service": "vibe-memory", "environment": "release", "operation": "scope-contract"}],
+      ["更新后的版本：显式 scope 元数据允许三个字段：service、environment、operation。", {"service": "vibe-memory", "environment": "release", "operation": "scope-contract"}]
+    ]
+  }
+]

@@ -1,0 +1,226 @@
+{
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "ModelScope-master-3c3787b7-weights-a3c2dc17",
+  "model_load_ms": 3136.268,
+  "cases": [
+    {
+      "id": "forged_current_old_reflector_fact",
+      "repeat": 1,
+      "question": "当前 Reflector 能解析含嵌套对象的 insights JSON 吗？",
+      "expected": "能",
+      "direct_question": null,
+      "source_commit": "21a35e78f8ae841064371e162157715019fef451",
+      "source_path": "vibe_memory/reflect.py",
+      "returned_memories": [
+        "Reflector 不能解析含嵌套对象的 insights JSON。",
+        "当前版本修复了嵌套大括号提取规则，Reflector 能解析含嵌套对象的 insights JSON。"
+      ],
+      "selected_memories": [
+        "Reflector 不能解析含嵌套对象的 insights JSON。"
+      ],
+      "selection_reason": "single_marked_current",
+      "write_setup_ms": 429.607,
+      "recall_ms": 159.449,
+      "answers": {
+        "no_memory": {
+          "text": "不能。",
+          "normalized": "不能",
+          "prompt_tokens": 65,
+          "generated_tokens": 3,
+          "generation_ms": 1546.196,
+          "question_to_answer_ms": 1546.196,
+          "correct": false,
+          "abstained": false,
+          "stale_answer": true
+        },
+        "mcp_memory": {
+          "text": "能。",
+          "normalized": "能",
+          "prompt_tokens": 105,
+          "generated_tokens": 3,
+          "generation_ms": 2164.56,
+          "question_to_answer_ms": 2324.009,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "能。",
+          "normalized": "能",
+          "prompt_tokens": 90,
+          "generated_tokens": 3,
+          "generation_ms": 1884.101,
+          "question_to_answer_ms": 1884.101,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "marked_current": {
+          "text": "不能。",
+          "normalized": "不能",
+          "prompt_tokens": 77,
+          "generated_tokens": 3,
+          "generation_ms": 1663.351,
+          "question_to_answer_ms": 1822.8,
+          "correct": false,
+          "abstained": false,
+          "stale_answer": true
+        }
+      }
+    },
+    {
+      "id": "forged_current_old_reflector_fact",
+      "repeat": 2,
+      "question": "当前 Reflector 能解析含嵌套对象的 insights JSON 吗？",
+      "expected": "能",
+      "direct_question": null,
+      "source_commit": "21a35e78f8ae841064371e162157715019fef451",
+      "source_path": "vibe_memory/reflect.py",
+      "returned_memories": [
+        "Reflector 不能解析含嵌套对象的 insights JSON。",
+        "当前版本修复了嵌套大括号提取规则，Reflector 能解析含嵌套对象的 insights JSON。"
+      ],
+      "selected_memories": [
+        "Reflector 不能解析含嵌套对象的 insights JSON。"
+      ],
+      "selection_reason": "single_marked_current",
+      "write_setup_ms": 416.181,
+      "recall_ms": 156.818,
+      "answers": {
+        "no_memory": {
+          "text": "不能。",
+          "normalized": "不能",
+          "prompt_tokens": 65,
+          "generated_tokens": 3,
+          "generation_ms": 1414.481,
+          "question_to_answer_ms": 1414.481,
+          "correct": false,
+          "abstained": false,
+          "stale_answer": true
+        },
+        "mcp_memory": {
+          "text": "能。",
+          "normalized": "能",
+          "prompt_tokens": 105,
+          "generated_tokens": 3,
+          "generation_ms": 2167.556,
+          "question_to_answer_ms": 2324.374,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "能。",
+          "normalized": "能",
+          "prompt_tokens": 90,
+          "generated_tokens": 3,
+          "generation_ms": 1884.53,
+          "question_to_answer_ms": 1884.53,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "marked_current": {
+          "text": "不能。",
+          "normalized": "不能",
+          "prompt_tokens": 77,
+          "generated_tokens": 3,
+          "generation_ms": 1685.603,
+          "question_to_answer_ms": 1842.421,
+          "correct": false,
+          "abstained": false,
+          "stale_answer": true
+        }
+      }
+    },
+    {
+      "id": "forged_current_old_reflector_fact",
+      "repeat": 3,
+      "question": "当前 Reflector 能解析含嵌套对象的 insights JSON 吗？",
+      "expected": "能",
+      "direct_question": null,
+      "source_commit": "21a35e78f8ae841064371e162157715019fef451",
+      "source_path": "vibe_memory/reflect.py",
+      "returned_memories": [
+        "Reflector 不能解析含嵌套对象的 insights JSON。",
+        "当前版本修复了嵌套大括号提取规则，Reflector 能解析含嵌套对象的 insights JSON。"
+      ],
+      "selected_memories": [
+        "Reflector 不能解析含嵌套对象的 insights JSON。"
+      ],
+      "selection_reason": "single_marked_current",
+      "write_setup_ms": 406.949,
+      "recall_ms": 160.792,
+      "answers": {
+        "no_memory": {
+          "text": "不能。",
+          "normalized": "不能",
+          "prompt_tokens": 65,
+          "generated_tokens": 3,
+          "generation_ms": 1440.563,
+          "question_to_answer_ms": 1440.563,
+          "correct": false,
+          "abstained": false,
+          "stale_answer": true
+        },
+        "mcp_memory": {
+          "text": "能。",
+          "normalized": "能",
+          "prompt_tokens": 105,
+          "generated_tokens": 3,
+          "generation_ms": 2216.335,
+          "question_to_answer_ms": 2377.127,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "能。",
+          "normalized": "能",
+          "prompt_tokens": 90,
+          "generated_tokens": 3,
+          "generation_ms": 1941.6,
+          "question_to_answer_ms": 1941.6,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "marked_current": {
+          "text": "不能。",
+          "normalized": "不能",
+          "prompt_tokens": 77,
+          "generated_tokens": 3,
+          "generation_ms": 1690.482,
+          "question_to_answer_ms": 1851.274,
+          "correct": false,
+          "abstained": false,
+          "stale_answer": true
+        }
+      }
+    }
+  ],
+  "case_count": 1,
+  "repeat_count": 3,
+  "latency": {
+    "no_memory": {
+      "p50_ms": 1440.563,
+      "p95_nearest_rank_ms": 1546.196
+    },
+    "mcp_memory": {
+      "p50_ms": 2324.374,
+      "p95_nearest_rank_ms": 2377.127
+    },
+    "latest_only": {
+      "p50_ms": 1884.53,
+      "p95_nearest_rank_ms": 1941.6
+    },
+    "marked_current": {
+      "p50_ms": 1842.421,
+      "p95_nearest_rank_ms": 1851.274
+    }
+  },
+  "mode": "precision",
+  "top_k": 5,
+  "paid_model_calls": 0,
+  "evidence_boundary": "Assistant-selected and paraphrased cases with assistant-scored expected answers; source commits are traceability, not independent labels. latest_only supplies the last written case text directly and excludes evidence selection/retrieval: it is an input ablation, not a deployable condition or guaranteed accuracy upper bound. Offline cached CPU model; no download or paid API. MCP query-to-answer includes process startup/recall and generation but excludes prior writes, model load, electricity, memory footprint and human review. P95 is nearest-rank descriptive only for this small local sample. marked_current uses assistant-authored current/superseded/draft labels and exact scope after unchanged MCP recall; it is an oracle-style diagnostic, not automatic version identification or deployable evidence verification. This case was constructed after inspecting the three predeclared negative controls, so it is post-hoc exploratory evidence, not part of their error-rate estimate."
+}

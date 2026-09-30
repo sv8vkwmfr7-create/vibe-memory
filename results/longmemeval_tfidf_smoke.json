@@ -1,0 +1,83 @@
+{
+  "source": "https://huggingface.co/datasets/xiaowu0162/longmemeval-cleaned",
+  "source_revision": "98d7416",
+  "source_sha256": "d6f21ea9d60a0d56f34a05b609c79c88a451d2ae03597821ea3d5a9678c3a442",
+  "source_bytes": 277383467,
+  "mode": "precision Top-5; warm core; direct SQLite writes",
+  "scope": "first-N adapter smoke, not benchmark",
+  "selected_instances": 3,
+  "excluded_abstention": 0,
+  "scored": 3,
+  "question_types": {
+    "single-session-user": 3
+  },
+  "evidence_top5_hits": 3,
+  "evidence_session_top5_hits": 3,
+  "mean_turn_evidence_recall": 0.8333333333333334,
+  "write_p50_ms": 152.8,
+  "setup_p50_ms": 125.0,
+  "query_p50_ms": 10.5,
+  "working_set_before_bytes": 1090375680,
+  "working_set_after_bytes": 1120731136,
+  "paid_api_calls": 0,
+  "rows": [
+    {
+      "id": "e47becba",
+      "type": "single-session-user",
+      "turns": 550,
+      "evidence_turns": 2,
+      "top5_ids": [
+        "e47becba:36:0",
+        "e47becba:51:4",
+        "e47becba:48:3",
+        "e47becba:17:8",
+        "e47becba:9:0"
+      ],
+      "hit": true,
+      "evidence_recall": 0.5,
+      "session_hit": true,
+      "write_ms": 168.1,
+      "setup_ms": 125.1,
+      "query_ms": 16.4
+    },
+    {
+      "id": "118b2229",
+      "type": "single-session-user",
+      "turns": 485,
+      "evidence_turns": 1,
+      "top5_ids": [
+        "118b2229:7:8",
+        "118b2229:7:0",
+        "118b2229:7:9",
+        "118b2229:0:0",
+        "118b2229:42:10"
+      ],
+      "hit": true,
+      "evidence_recall": 1.0,
+      "session_hit": true,
+      "write_ms": 150.8,
+      "setup_ms": 111.4,
+      "query_ms": 9.0
+    },
+    {
+      "id": "51a45a95",
+      "type": "single-session-user",
+      "turns": 529,
+      "evidence_turns": 1,
+      "top5_ids": [
+        "51a45a95:42:4",
+        "51a45a95:13:16",
+        "51a45a95:42:1",
+        "51a45a95:48:4",
+        "51a45a95:5:0"
+      ],
+      "hit": true,
+      "evidence_recall": 1.0,
+      "session_hit": true,
+      "write_ms": 152.8,
+      "setup_ms": 125.0,
+      "query_ms": 10.5
+    }
+  ],
+  "limits": "Official evidence is not exhaustive relevance; no answer generation. Direct SQLite writes and warm core queries are not SDK/MCP onboarding or end-to-end latency. Public questions may occur in model pretraining. No human review or production change."
+}

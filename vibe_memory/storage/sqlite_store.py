@@ -15,6 +15,7 @@ import json
 import re
 from typing import Optional
 from datetime import datetime
+from dataclasses import replace
 
 from vibe_memory.models.memory_atom import (
     MemoryAtom, Edge, Episode,
@@ -24,6 +25,13 @@ from vibe_memory.models.memory_atom import (
 
 
 SCHEMA = """
+CREATE TABLE IF NOT EXISTS seed_bootstrap (
+    tenant_id TEXT NOT NULL,
+    agent_id TEXT NOT NULL,
+    seed_key TEXT NOT NULL,
+    PRIMARY KEY (tenant_id, agent_id, seed_key)
+);
+
 CREATE TABLE IF NOT EXISTS atoms (
     id TEXT PRIMARY KEY,
     agent_id TEXT NOT NULL,
@@ -589,6 +597,12 @@ class VibeStorage:
         self._insert_edge(edge)
         self.conn.commit()
 
+    def insert_edge_if_missing(self, edge: Edge) -> bool:
+        """Automatic building preserves the existing directed pair, in any status."""
+        inserted = self._insert_edge(edge, preserve_existing=True)
+        self.conn.commit()
+        return inserted
+
     def insert_edge_if_current(self, edge: Edge, first: MemoryAtom, second: MemoryAtom) -> bool:
         """Indexer compare-and-insert: no model/network work inside this transaction."""
         if self.conn.in_transaction:
@@ -605,13 +619,15 @@ class VibeStorage:
             self._insert_edge(edge)
         return True
 
-    def _insert_edge(self, edge: Edge) -> None:
-        self.conn.execute(
-            """INSERT OR REPLACE INTO edges (
+    def _insert_edge(self, edge: Edge, *, preserve_existing: bool = False) -> bool:
+        command = "INSERT" if preserve_existing else "INSERT OR REPLACE"
+        conflict = " ON CONFLICT(from_atom_id, to_atom_id) DO NOTHING" if preserve_existing else ""
+        cursor = self.conn.execute(
+            f"""{command} INTO edges (
                 id, from_atom_id, to_atom_id, tenant_id, label, weight, decay_rate,
                 confidence, source, created_at, last_accessed, status,
                 cross_partition, version
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""" + conflict,
             (
                 edge.id, edge.from_atom_id, edge.to_atom_id, edge.tenant_id,
                 edge.label.value, edge.weight, edge.decay_rate,
@@ -621,6 +637,7 @@ class VibeStorage:
                 edge.status.value, int(edge.cross_partition), edge.version,
             ),
         )
+        return cursor.rowcount == 1
 
     def get_edge(self, edge_id: str) -> Optional[Edge]:
         row = self.conn.execute(
@@ -738,7 +755,33 @@ class VibeStorage:
 
     # ── Episode CRUD ──
 
+    def is_seed_bootstrapped(self, tenant_id: str, agent_id: str, seed_key: str) -> bool:
+        return self.conn.execute(
+            "SELECT 1 FROM seed_bootstrap WHERE tenant_id=? AND agent_id=? AND seed_key=?",
+            (tenant_id, agent_id, seed_key)).fetchone() is not None
+
+    def bootstrap_seed_atoms(self, tenant_id: str, agent_id: str,
+                             seed_key: str, atoms: list[MemoryAtom]) -> list[MemoryAtom]:
+        """Persist seeds and their scoped completion marker atomically, once."""
+        if self.conn.in_transaction:
+            raise RuntimeError("Seed bootstrap requires an idle connection")
+        if not seed_key or any((a.tenant_id, a.agent_id) != (tenant_id, agent_id) for a in atoms):
+            raise ValueError("Invalid seed bootstrap ownership or key")
+        self.conn.execute("BEGIN IMMEDIATE")
+        with self.conn:
+            key = (tenant_id, agent_id, seed_key)
+            if self.is_seed_bootstrapped(*key):
+                return []
+            for atom in atoms:
+                self._insert_atom(atom)
+            self.conn.execute("INSERT INTO seed_bootstrap VALUES (?, ?, ?)", key)
+        return atoms
+
     def insert_episode(self, episode: Episode) -> None:
+        self._insert_episode(episode)
+        self.conn.commit()
+
+    def _insert_episode(self, episode: Episode) -> None:
         self.conn.execute(
             """INSERT INTO episodes (
                 id, agent_id, session_id, tenant_id, summary, topic, atom_ids,
@@ -753,7 +796,43 @@ class VibeStorage:
                 episode.last_accessed.isoformat() if episode.last_accessed else None,
             ),
         )
-        self.conn.commit()
+
+    def replace_session_episodes(self, session_id: str, agent_id: str,
+                                 tenant_id: str, atoms: list[MemoryAtom],
+                                 episodes: list[Episode]) -> None:
+        """Atomically replace one owner's derived session snapshot."""
+        if self.conn.in_transaction:
+            raise RuntimeError("Episode replacement requires an idle connection")
+        owner = (tenant_id, agent_id, session_id)
+        if any((a.tenant_id, a.agent_id, a.session_id) != owner for a in atoms):
+            raise ValueError("Foreign Episode input")
+        members = [mid for ep in episodes for mid in ep.atom_ids]
+        if (len(set(members)) != len(members)
+                or not set(members).issubset({a.id for a in atoms})
+                or any((ep.tenant_id, ep.agent_id, ep.session_id) != owner for ep in episodes)):
+            raise ValueError("Invalid Episode membership")
+        self.conn.execute("BEGIN IMMEDIATE")
+        with self.conn:
+            # ponytail: full-session snapshot; incremental rebuilding only if measured cost warrants it.
+            live = self.get_atoms_by_session(session_id, agent_id=agent_id, tenant_id=tenant_id)
+            current = {a.id: a for a in live}
+            if len(current) != len(atoms) or any(
+                a.id not in current or current[a.id] != a for a in atoms
+            ):
+                raise ValueError("Session changed during Episode aggregation")
+            old = {row["id"]: self._row_to_episode(row) for row in self.conn.execute(
+                "SELECT * FROM episodes WHERE tenant_id=? AND agent_id=? AND session_id=?", owner)}
+            self.conn.execute("DELETE FROM episodes WHERE tenant_id=? AND agent_id=? AND session_id=?", owner)
+            # Keep source positions: rewriting them can reorder timestamp ties on rebuild.
+            self.conn.execute("UPDATE atoms SET episode_id=NULL WHERE tenant_id=? AND agent_id=? AND session_id=?", owner)
+            for ep in episodes:
+                previous = old.get(ep.id)
+                if previous:
+                    ep = replace(ep, weight=previous.weight, access_count=previous.access_count,
+                                 last_accessed=previous.last_accessed, community_id=previous.community_id)
+                self._insert_episode(ep)
+                for mid in ep.atom_ids:
+                    self.conn.execute("UPDATE atoms SET episode_id=? WHERE id=?", (ep.id, mid))
 
     def get_episodes_by_session(self, session_id: str) -> list[Episode]:
         rows = self.conn.execute(

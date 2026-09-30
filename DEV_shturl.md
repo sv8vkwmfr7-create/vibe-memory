@@ -1,6 +1,6 @@
 # VibeMemory 开发日志
 > 项目：多关系图智能体记忆系统 VibeMemory
-> 基于 Phase 1 工程方案（[[wiki/vibe-memory-phase1]]）
+> 历史Phase 1开发日志，私有方案未公开。里程碑勾选、测试数量、模型成绩与“生产就绪”措辞记录当时叙述，不代表当前能力或独立验证；当前以[STATUS](STATUS.md)、[测试基线](docs/TESTING.md)与[修复台账](docs/REVIEW_REPAIR_PROGRESS.md)为准。
 
 ---
 
@@ -74,7 +74,7 @@
 
 **解决方案**：将 BFS 替换为 Personalized PageRank（HippoRAG 启发）。PPR 按边权重概率游走，高权重边高概率被遍历，低权重边自然抑制。重启概率 α 防止陷入局部子图。收敛阈值 ε 替代 max_depth 硬截断。HippoRAG 实证：一次 PPR > 多轮迭代检索，便宜 10-30 倍。
 
-**来源**：HippoRAG 论文 + [[wiki/vibe-memory-phase1#2. PPR 检索算法]]
+**来源**：当时引用的HippoRAG论文及私有Phase 1方案（未公开，不作为可复核证据）。
 
 ---
 
@@ -86,7 +86,7 @@
 
 **解决方案**：恢复两阶段流程。阶段 1：KNN 预筛（规则）→ 三档（疑似重复/疑似相似/无关噪声）。阶段 2：仅对"疑似相似"候选调用 LLM 四分类。预筛和精判职责分离，中间态保留。
 
-**来源**：Mem0 去重/冲突检测独立阶段 + [[wiki/vibe-memory-phase1#3. 两阶段建边流程]]
+**来源**：当时引用的Mem0方案及私有Phase 1记录（未公开，不作为当前产品事实）。
 
 ---
 
@@ -98,7 +98,7 @@
 
 **解决方案**：用连续衰减谱替代离散状态机。每条边 weight ∈ [0, 1]，自然衰减 weight *= 0.95^days，访问强化 weight += 0.1。淘汰阈值 weight < 0.05。高频边自然维持 0.9+，等效准永久。无需特殊状态，无 LRU 冲突。
 
-**来源**：Zep 连续时间衰减 + [[wiki/vibe-memory-phase1#4. 连续衰减 + 在线学习]]
+**来源**：当时引用的Zep方案及私有Phase 1记录（未公开，不作为当前产品事实）。
 
 ---
 
@@ -110,7 +110,7 @@
 
 **解决方案**：LLM 复核输入附上每个分片的前后 1-2 轮对话上下文（context_before/context_after）。MemoryAtom 数据结构中预设这两个字段，分片时自动截取。
 
-**来源**：MemGPT virtual context management + [[wiki/vibe-memory-phase1#1.1 MemoryAtom]]
+**来源**：当时引用的MemGPT virtual context management及私有Phase 1记录（未公开）。
 
 ---
 
@@ -122,7 +122,7 @@
 
 **解决方案**：Vibe Learner——不训练 LLM 参数，而是训练一个微型决策器（几十 KB）。输入分片特征（embedding 方差、被检索频率、边密度），输出衰减速率/建边阈值。反馈信号：分片被 Agent 采纳 → 确信度 +1，被召回但忽略 → -1。无需梯度，在线更新。
 
-**来源**：Titans 学习型遗忘门控 + [[wiki/vibe-memory-phase1#Vibe Learner 反馈学习]]
+**来源**：当时引用的Titans学习型遗忘门控及私有Phase 1记录（未公开）；启发不等于算法等价或复现证明。
 
 ---
 

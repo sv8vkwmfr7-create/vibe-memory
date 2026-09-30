@@ -24,6 +24,8 @@ python -m venv .venv
 
 看到 `VibeMemory quickstart succeeded.` 就表示存储、持久化和召回链路已经工作。示例只使用本地 SQLite 与内置 TF-IDF，不联网、不需要大模型。
 
+直接使用 `TfidfProvider` 时，首次 `encode(texts)` 会拟合该批文本；后续编码不自动更新词表，未见词项权重为零。语料变化后应对完整语料调用 `fit()`，并重新编码旧向量；`encode_query()` 从不拟合，未拟合时返回零长度向量。SDK 的 `recall()` 单独管理语料拟合，语料变化后会更新词表，不受直接调用的首批拟合限制。
+
 安装后可进一步验证真实MCP子进程、重启持久化、跨会话召回、scope和清理：
 
 ```bash
@@ -35,9 +37,9 @@ vibe-doctor --db-path .vibe/memory.db --agent-id my-agent
 > [!NOTE]
 > 当前推荐从 GitHub 源码安装。`pip install vibe-memory` 是否可从 PyPI 获取取决于发布状态，零基础指南不依赖该前提。
 
-MCP支持显式可选维护：`python -m vibe_memory.mcp_server --db-path /path/to/test.db --vibe-dir /path/to/test-state --wal-maintenance`。此参数明确启用WAL并额外暴露手动工具 `vibe_checkpoint`（可传 `drain_timeout`）；不加参数仍为8个工具、保留原数据库模式，没有定时维护。完整工具操作含短ID解析参与协调，检查点在操作范围外执行。316项测试通过；30轮两条记忆MCP协议冒烟全部维护及召回成功，不代表大库或真实聊天体验。复跑：`python experiments/mcp_maintenance_smoke.py`，见 [结果](results/mcp_maintenance_smoke.json)。
+MCP支持显式可选维护：`python -m vibe_memory.mcp_server --db-path /path/to/test.db --vibe-dir /path/to/test-state --wal-maintenance`。此参数明确启用WAL并额外暴露手动工具 `vibe_checkpoint`（可传 `drain_timeout`）；不加参数仍为8个工具、保留原数据库模式，没有定时维护。完整工具操作含短ID解析参与协调，检查点在操作范围外执行。历史30轮两条记忆MCP协议冒烟全部维护及召回成功，不代表大库或真实聊天体验。复跑：`python experiments/mcp_maintenance_smoke.py`，见 [结果](results/mcp_maintenance_smoke.json)。
 
-最新验证：10万条临时WAL库持续30分钟，8974/8974旧答案命中、174次运行中维护全部截断成功，WAL采样峰值约58MB；SQLite/FTS/CRUD一致性通过，312项测试通过。维护最长约501ms、强化仍96.2%调用跳过；默认关闭，不代表真实聊天、硬容量/暂停上限或生产保证。复跑条件与完整结果见 [STATUS.md](STATUS.md) 和 [30分钟JSON](results/disk_soak_sdk_maintenance_30min.json)。
+历史30分钟验证：10万条临时WAL库持续30分钟，8974/8974旧答案命中、174次运行中维护全部截断成功，WAL采样峰值约58MB；SQLite/FTS/CRUD一致性通过。维护最长约501ms、强化仍96.2%调用跳过；默认关闭，不代表真实聊天、硬容量/暂停上限或生产保证。复跑条件与完整结果见 [STATUS.md](STATUS.md) 和 [30分钟JSON](results/disk_soak_sdk_maintenance_30min.json)。
 
 可选WAL维护已接入SDK，默认 `wal_maintenance=None`，不启动后台线程。同一文件库的实例显式共享控制器，应用主动触发：
 
@@ -51,7 +53,9 @@ memory.store("Fixed API timeout", session_id="chat-1")
 report = maintenance.checkpoint(drain_timeout=1.0)  # 应用自行决定触发时机
 ```
 
-已有SDK调用会先执行完，新调用在维护期间等待。超时/忙锁会恢复准入，不中断事务或删除日志。`drain_timeout` 只限制等待已有操作结束，不保证总暂停时间；同一SDK实例仍不支持并发共享。直接使用 `memory.storage`、手动事务或其他组件时须以 `with maintenance.operation():` 覆盖整个操作/事务，同库所有参与者须共享同一控制器；多进程和外部未协调连接不受它控制。状态与限制见 [STATUS.md](STATUS.md)。
+已有SDK调用会先执行完，新调用在维护期间等待。超时/忙锁会恢复准入，不中断事务或删除日志。`drain_timeout` 只限制等待已有操作结束，不保证总暂停时间。直接使用 `memory.storage`、手动事务或其他组件时须以 `with maintenance.operation():` 覆盖整个操作/事务，同库所有参与者须共享同一控制器；这个维护准入不提供共享连接互斥，多进程和外部未协调连接也不受它控制。状态与限制见 [STATUS.md](STATUS.md)。
+
+同一SDK实例的公共操作（store/recall/history/inject等）由实例级可重入锁串行执行，包括未启用WAL维护时；召回临时设置的`busy_timeout=0`不会被另一个公共调用借用。同线程嵌套调用可重入，异常会释放锁；启用维护时先准入再取实例锁，允许已准入操作完成并退出。锁覆盖完整调用，耗时embedding/LLM回调也会让其他调用排队，不保证等待时间或并行吞吐。不要在回调中等待另一个线程调用同一实例。直接操作storage/cold_start/indexer、跨多个调用的手动事务、修改共享组件或返回对象不受此锁保护，须由应用自行协调；独立实例不共享此互斥锁，也不代表同库多实例/多进程写入无需协调。
 
 上一轮实验检查点对照 `--checkpoint-strategy passive|truncate|coordinated`（默认仍passive）：100k/60秒单次负载中，直接TRUNCATE负载内0/5成功；实验内协同暂停后5/5成功，WAL采样峰值约265→47MB，但暂停约171–323ms、写周期约少2%，强化仍大量跳过。这些是实验控制器的历史指标，不能代替新SDK控制器的测量或证明硬空间上限；完整条件/结果见 [STATUS.md](STATUS.md) 与 [JSON](results/disk_checkpoint_comparison.json)。
 
@@ -59,23 +63,23 @@ report = maintenance.checkpoint(drain_timeout=1.0)  # 应用自行决定触发�
 
 混合负载复跑：`python experiments/disk_soak_benchmark.py --scale 100000 --seconds 300`。仅新建临时WAL库，两个独立SDK读线程与一个CRUD写线程，记录命中、延迟、强化跳过与检查点。`recall()` 返回的 `reinforcement_skipped` 为true表示跳过了部分或全部非关键强化，不表示召回失败，也不保证已成功强化的条目回滚。
 
-SDK 强化忙锁降级已修复：仅命中后的非关键强化临时采用零忙锁等待，遇 BUSY/LOCKED 跳过剩余强化并返回召回；其他数据库错误仍抛出。6秒竞争写锁基准约0.6ms返回命中（修复前约5.5秒后报错），299项测试通过。复跑：`python experiments/disk_pressure_benchmark.py`；不是统一延迟SLA或共享SDK线程安全保证。
+SDK 强化忙锁降级已修复：仅命中后的非关键强化临时采用零忙锁等待，遇 BUSY/LOCKED 跳过剩余强化并返回召回；其他数据库错误仍抛出。历史6秒竞争写锁基准约0.6ms返回命中（修复前约5.5秒后报错）。复跑：`python experiments/disk_pressure_benchmark.py`；不是统一延迟SLA或共享SDK线程安全保证。
 
-WAL 恢复验证：`python experiments/wal_recovery_validation.py` 仅创建临时库，检查事务快照、检查点阻塞/释放及测试子进程被杀后的恢复；296 项测试通过。不是长期负载、断电或磁盘故障验证，详见 [STATUS.md](STATUS.md)。
+WAL 恢复验证：`python experiments/wal_recovery_validation.py` 仅创建临时库，检查事务快照、检查点阻塞/释放及测试子进程被杀后的恢复。不是长期负载、断电或磁盘故障验证，详见 [STATUS.md](STATUS.md)。
 
 SQLite 日志模式可显式配置：`VibeMemory(agent_id="my-agent", db_path="memory.db", journal_mode="wal")`。默认 `None` 不改变数据库现有模式；新文件库保持 SQLite 默认行为，已有 WAL 库重开仍保留 WAL。支持小写 `"wal"`、`"delete"`；内存库无法启用 WAL 时明确报错。未修改 synchronous/超时默认值。
 
 WAL 用于本机文件库，不代表单个 SDK 实例可被多线程安全共享。备份应使用 SQLite 备份接口，不能在运行中只复制主数据库而遗漏 WAL；不要手动删除 `-wal` / `-shm` 文件。
 
-高命中率边界：中文候选先相关性、同分再近期排序，287 测试通过。固定10万条全匹配基准旧答案 10/10 命中，但 warm p95 约324 ms；此前6.4 ms仅适用于选择性查询，不是统一 SLA。
+高命中率边界：中文候选先相关性、同分再近期排序。历史固定10万条全匹配基准旧答案 10/10 命中，但 warm p95 约324 ms；此前6.4 ms仅适用于选择性查询，不是统一 SLA。
 
-中文规模优化：三字及以上中文查询使用原生 trigram 索引，近期候选补齐使用复合索引；短查询保留 LIKE。单次 10万条内存库基准 warm p95 6.4 ms、旧答案 20/20 命中，286 测试通过；索引空间和生产边界见 [STATUS.md](STATUS.md)。
+中文规模优化：三字及以上中文查询使用原生 trigram 索引，近期候选补齐使用复合索引；短查询保留 LIKE。历史单次 10万条内存库基准 warm p95 6.4 ms、旧答案 20/20 命中；索引空间和生产边界见 [STATUS.md](STATUS.md)。
 
-中文检索更新：TF-IDF/BM25 支持中文双字片段，budget 中文候选走隔离的 LIKE 回退，285 项测试通过。中文大语料扫描成本与独立真实会话效果仍待验证。
+中文检索更新：TF-IDF/BM25 支持中文双字片段，budget 中文候选走隔离的 LIKE 回退。中文大语料扫描成本与独立真实会话效果仍待验证。
 
-最新：PPR 与召回路径解释已按租户、Agent 和活跃/暖记忆过滤图边；283 项本地测试通过。完整当前作用域的图规模仍未设硬上限。
+PPR 与召回路径解释已按租户、Agent 和活跃/暖记忆过滤图边。完整当前作用域的图规模仍未设硬上限。
 
-2026-09-13 优化：280 项本地测试通过。严格 v3 合成评测中，默认 budget Recall@5 为 0.808；显式二跳为 0.984，默认仍保持一跳。候选扩展已限制每跳边返回量与前沿大小，不等同完整检索耗时硬上限。当前证据与成本边界见 [STATUS.md](STATUS.md)。
+历史2026-09-13 v3 合成评测中，默认 budget Recall@5 为 0.808；显式二跳为 0.984，默认仍保持一跳。候选扩展已限制每跳边返回量与前沿大小，不等同完整检索耗时硬上限。证据与成本边界见 [STATUS.md](STATUS.md)。
 
 > 多关系图智能体记忆系统 — 让 AI Agent 拥有跨会话的长期记忆
 
@@ -84,24 +88,26 @@ WAL 用于本机文件库，不代表单个 SDK 实例可被多线程安全共�
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-0.3.0-orange.svg)](vibe_memory/__init__.py)
 
-**Vibe Memory** 是一套带关系标签的语义分片图记忆系统。核心创新：**分层建边（同会话规则 + 跨会话 LLM 复核）+ 边标签过滤 + PPR 图检索**，用于减少 RAG 向量检索的虚假召回。当前仓库已有固定数据生成器的本地检索消融和 SDK 规模基线；外部公开基准仍待接入。
+**Vibe Memory** 是一套带关系标签的分片图记忆系统。它探索**分层建边（同会话规则 + 可选跨会话 LLM 复核）+ 边标签过滤 + PPR 图检索**，用于改善记忆召回。仓库已有合成消融、SDK规模实验及公开数据检索试跑；这些证据不等于最终回答正确性或独立人工评估。
 
 当前测试基线、能力边界和待验证事项见 [Project Status](STATUS.md)。
+
+测试命令、行/分支覆盖率、真实MCP子进程统计和CI报告保存方式见 [测试与覆盖率](docs/TESTING.md)；本地回归通过不等于GitHub多版本CI已通过，也不等于独立记忆质量评估。
 
 ---
 
 ## 为什么需要 Vibe Memory？
 
 传统 RAG 向量检索的问题：
-- ❌ 返回"看起来相关但实际无关"的噪声结果（20% 噪声比例）
+- 可能返回“看起来相关但实际无关”的结果；噪声比例依语料、模型和检索协议变化，不存在本项目已证明的通用20%基线
 - ❌ 不知道分片之间的因果关系（A 导致了 B）
 - ❌ 无法区分"同类经验"和"修正推翻"
 
 Vibe Memory 的答案：
 - ✅ **边标签过滤**：只沿着有意义的边游走（因果接续/修正推翻/同类经验）
 - ✅ **PPR 图检索**：按边权重概率游走，高权重优先，低权重自然抑制
-- ✅ **多策略检索**：BM25 + 语义 + 图 + 时序，4 路并行 + RRF 融合
-- ✅ **本地消融实验噪声比例 0%**：1,000 条合成记忆、100 个查询的 `PPR + 边标签/种子过滤` 组；不等同于公开基准结论
+- ✅ **多策略检索**：组合BM25、向量、图与时序策略的结果，并使用RRF融合；不承诺并发执行
+- 合成消融用于检查已构造语料上的行为；没有同协议竞品实验，不能证明通用“噪声归零”或优于其他记忆系统
 
 ---
 
@@ -131,7 +137,7 @@ Vibe Memory 的答案：
 ├─────────────────────────────────────────────────────┤
 │ 5. 存储层（SQLite）                                  │
 │    MemoryAtom + Edge + Episode 完整 CRUD             │
-│    多租户隔离 + 隐私扫描 + 降级全覆盖                 │
+│    作用域隔离 + 规则隐私扫描 + 有界降级诊断           │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -142,15 +148,13 @@ Vibe Memory 的答案：
 ### 安装
 
 ```bash
-pip install vibe-memory
-
-# 开发模式
+# 从源码安装，不依赖PyPI发布状态
 git clone https://github.com/sv8vkwmfr7-create/vibe-memory.git
 cd vibe-memory
 pip install -e .
 
 # 可选：语义 embedding
-pip install vibe-memory[semantic]
+pip install -e ".[semantic]"
 ```
 
 如需离线中文语义向量，可将已下载的 `BAAI/bge-small-zh-v1.5` 指定给 SDK；模型目录属于本地文件，已由 `.gitignore` 排除，不会随提交上传：
@@ -227,10 +231,14 @@ vibe-init --dry-run    # 预览不改动
 | MCP Server | Claude Code / Codex / Cursor | `vibe-mcp` |
 | HTTP API | 任何语言 | 先设置私有 `VIBE_HTTP_TOKEN`，再 `vibe-http --port 8420` |
 | Python SDK | 自定义 Agent | `from vibe_memory import VibeMemory` |
-| LangChain | LangChain/LangGraph | `from vibe_memory.langchain import VibeMemoryLC` |
-| OpenAI SDK | OpenAI Agents | `from vibe_memory.openai_agents import create_vibe_tools` |
+| LangChain-style helper | Manual load/save wiring; not BaseMemory or LangGraph state | `from vibe_memory.langchain import VibeMemoryLC` |
+| OpenAI Agents functions | Wrap returned functions with `agents.function_tool` | `from vibe_memory.openai_agents import create_vibe_tools` |
 | CLI | 脚本/手动 | `vibe-session start/end` |
 | MCP诊断 | 安装与跨会话验证 | `vibe-doctor` |
+
+LangChain helper的手动读写方式、OpenAI函数的包装步骤、已验证框架版本及离线冒烟边界见 [适配器与重排契约](docs/ADAPTER_CONTRACTS.md)。不承诺BaseMemory/LangGraph直接替换或尚未实现的cross-encoder/LLM重排类。
+
+接入行为有区别：MCP默认写入关闭自动建边，已有合法边或手工`vibe_link`仍可用于图检索；SDK的规则建边和可选LLM复核须按调用方式启用。安装本库本身不会自动读取所有聊天，也不会自动把检索结果注入任意模型。
 
 HTTP 数据请求须带 `Authorization: Bearer <token>`；默认仅监听本机，禁止跨源访问。会话开始返回完整 `session_id`，后续写入和结束必须显式传入，不再共享隐式会话。详见 [HTTP 安全与接入](docs/HTTP_SECURITY.md)。
 
@@ -246,7 +254,7 @@ provider = OpenAIProvider(api_key="sk-xxx", model="gpt-4o-mini")
 mem = VibeMemory(agent_id="agent", llm_classifier=LLMEdgeClassifier(provider))
 mem.store("API timeout", session_id="s1")
 mem.store("Fixed timeout to 60s", session_id="s2")
-mem.flush_index()  # LLM 自动分类为"因果接续"
+mem.flush_index()  # 处理候选；输出标签由模型/降级规则决定，不保证因果关系
 ```
 
 ### 反思推理（可选，用户自备 API Key）
@@ -317,7 +325,7 @@ MemoryAtom(
 ### 多策略检索
 
 ```
-查询 → 并行分发
+查询 → 按启用策略执行
   ├─ BM25 关键词检索
   ├─ 语义向量检索
   ├─ PPR 图游走检索
@@ -332,49 +340,28 @@ MemoryAtom(
 
 ## 实验验证
 
-### RAG vs VibeMemory 召回对比
+### 历史观察与证据等级
 
-| 指标 | RAG (Top-K) | Vibe (precision) |
-|------|-------------|-----------------|
-| 相关分片 | 3 | 3 |
-| 噪声分片 | 1 | **0** |
-| 噪声比例 | 20% | **0%** |
+[Phase 0手工记录](experiment.md)是设计期观察，不是独立评测。没有完整提交的样本、运行协议、模型版本与原始输出支撑场景星级或LLM分类百分比，因此不再把它们列为产品成绩，也不据此推导模型大小要求。模型选择需在目标任务及成本约束下验证；本地模型能加载不等于记忆分类质量已验证。
 
-### Phase 0：5/5 场景满分
-
-| 场景 | 评分 |
-|------|------|
-| Bug 修复延续 | ⭐⭐⭐⭐⭐ |
-| 项目开发持续 | ⭐⭐⭐⭐⭐ |
-| 用户偏好记忆 | ⭐⭐⭐⭐⭐ |
-| 配置变更追踪 | ⭐⭐⭐⭐⭐ |
-| 多任务切换 | ⭐⭐⭐⭐⭐ |
-
-### LLM 边分类验证
-
-| 模型 | 分类准确率 | 合并准确率 | 延迟 |
-|------|----------|----------|------|
-| DeepSeek-v4-flash | 80% | 100% | 2.3s |
-| Qwen2.5-0.5B (本地) | 33% | 33% | 53s |
-| 结论 | <2B 不可用 | 需 7B+ 或 API | — |
-
-### 可复现检索消融（本地）
+### 合成检索消融存档（retrieval-ablation-v3）
 
 运行：
 
 ```bash
-python experiments/retrieval_benchmark.py --json results/retrieval_ablation.json
+python experiments/retrieval_benchmark.py --json /path/to/new-report.json
 ```
 
-固定数据集包含 1,000 条记忆、20 个主题、100 个查询和 100 条关系边；TF-IDF 文档矩阵只构建一次，延迟从查询编码开始计时。Windows + Python 3.12.14 的一次运行结果：
+存档JSON包含1,000条记忆、20个主题、100个查询和100条关系边，top_k=5；生成的查询、相关标签及边不是独立评审。表格逐项来自[结果文件](results/retrieval_ablation.json)，不是本轮重测：
 
 | 方法 | Precision@5 | Recall@5 | MRR | 噪声率 | p95 延迟 |
 |------|-------------:|----------:|----:|--------:|---------:|
-| TF-IDF 向量 Top-K | 0.6000 | 0.6000 | 1.0000 | 40.00% | 0.130 ms |
-| PPR（全部边标签） | 0.7260 | 0.7260 | 1.0000 | 27.40% | 1.056 ms |
-| PPR + 精确边标签 + 种子过滤 | **1.0000** | **1.0000** | **1.0000** | **0%** | 0.901 ms |
+| TF-IDF 向量 Top-K | 0.6000 | 0.6000 | 1.0000 | 40.00% | 0.160 ms |
+| PPR（全部边标签） | 0.7800 | 0.7800 | 1.0000 | 22.00% | 1.080 ms |
+| PPR + 精确边标签 + 种子过滤 | 1.0000 | 1.0000 | 1.0000 | 0.00% | 0.990 ms |
+| 完整budget管道 | 0.8080 | 0.8080 | 1.0000 | 19.20% | 4.872 ms |
 
-这是合成困难负样本上的回归基线，不是 LOCOMO/LongMemEval，也没有证明生产负载下的吞吐或泛化能力。完整记录见 `results/retrieval_ablation.json` 和 `STATUS.md`。
+artifact最后提交为`6a8ad0606dbb5d6d850ffa8c1776c1e86b070430`，文件SHA256为`c1da44768623ab055f8768af0b0f7124c64631a0888a761e5821ade4db38d65f`。这是结果文件的版本绑定，不是已记录的运行源码提交；JSON未保存运行commit，不能保证用现有代码重跑数值相同。噪声率0.22按百分比为22%，不是0.22%。完整协议/后续试跑见[STATUS](STATUS.md)，不得外推为竞品优势、回答正确率、生产吞吐或延迟SLA。
 
 ### SDK 规模与写后可见性（本地）
 
@@ -402,17 +389,11 @@ python experiments/scale_visibility_benchmark.py --json results/scale_visibility
 
 ---
 
-## 竞品定位
+## 与其他系统比较的边界
 
-| 方案 | 记忆机制 | Vibe 差异 |
-|------|---------|----------|
-| MemGPT | OS 式分页 | 无显式图结构；Vibe 确定性检索 |
-| Mem0 | 向量 + 图增强 | 偏用户画像；Vibe 侧重任务上下文 |
-| Zep | 时序知识图谱 | 偏事件链；Vibe 侧重因果 + 边标签过滤 |
-| HippoRAG | 海马体索引 | 文档级；Vibe 会话级 + 多策略 |
-| Hindsight | 生物模拟 + 反思 | 企业级；Vibe 轻量零依赖 + 可解释 |
+尚无锁版本、同模型、同语料与同预算的端到端竞品对照，不作胜负排名或以合成结果证明通用优势。资料层级与核对日期见[官方资料摘录](docs/MAINSTREAM_MEMORY_COMPARISON_SOURCES.md)；旧Hindsight对比的失效结论及后续协议见[对比边界](HINDSIGHT_COMPARISON.md)。
 
-**差异化定位：Vibe Memory = 轻量 + 图结构 + 边标签过滤 + 多策略检索，零依赖离线可用。**
+本项目定位是本地SQLite、带关系标签、可组合检索策略的记忆库。基础路径可不调用云模型，但有Python依赖及本地资源/用户接入成本；可选语义模型、分类或反思另计，不是零成本保证。
 
 ---
 

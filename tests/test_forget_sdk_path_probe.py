@@ -9,11 +9,12 @@ def test_sdk_path_trace_distinguishes_storage_recall_and_prompt_residuals():
     assert seed["persisted_clone_recalled_before_forget"]
     assert seed["forget_returned_true"] and seed["rows_after_forget"] == 0
     assert seed["persisted_clone_not_returned_after_forget"]
-    assert seed["unpersisted_template_returned_after_forget"]
-    assert seed["mac_prompt_contains_fact_after_forget"]
+    assert not seed["unpersisted_template_returned_after_forget"]
+    assert not seed["mac_prompt_contains_fact_after_forget"]
     assert seed["same_client_rebootstrap_count"] == 0
     assert seed["reopen_without_seed_config_returns_fact"] is False
-    assert seed["configured_rebootstrap_restores_fact_with_new_id"]
+    assert seed["configured_rebootstrap_count"] == 0
+    assert not seed["configured_rebootstrap_restores_fact_with_new_id"]
     batch = report["batch_episode"]
     assert batch["stored_assistant_atoms"] == 3 and batch["episodes_before_forget"] == 1
     assert batch["all_atom_sources_are_session_id"]

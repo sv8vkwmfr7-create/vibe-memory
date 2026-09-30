@@ -44,9 +44,10 @@ def seed_trace(db):
     try:
         report["reopen_without_seed_config_returns_fact"] = contains_fact(memory.recall(QUERY)["atoms"])
         memory.cold_start.seed_memory_path = str(FIXTURE)
-        reimported = memory.cold_start.bootstrap()[0]
-        report["configured_rebootstrap_restores_fact_with_new_id"] = (
-            reimported.id != original.id and reimported.id in {a.id for a in memory.recall(QUERY)["atoms"]})
+        reimported = memory.cold_start.bootstrap()
+        report["configured_rebootstrap_count"] = len(reimported)
+        report["configured_rebootstrap_restores_fact_with_new_id"] = any(
+            atom.id != original.id and memory.storage.get_atom(atom.id) is not None for atom in reimported)
     finally:
         memory.storage.conn.close()
     return report
@@ -153,8 +154,8 @@ def run():
                       "two single SDK stores with deliberately identical config tags. Actual SDK calls with a pass-through "
                       "insertion observer recording the incoming parent ID, no forced candidate classification or direct atom inserts. "
                       "Random UUIDs/timestamps omitted from the report; relationships tested using actual IDs. "
-                      "Seed path is opt-in, not configured by default. Seed augmentation and MAC prompt return old content with "
-                      "zero stored rows; later seed bootstrap is explicitly invoked. Surviving batch context retains old content; "
+                      "Seed path is opt-in, not configured by default. Completed seed initialization suppresses template augmentation; "
+                      "with zero stored rows recall/MAC no longer return this seed fact, and same-version rebootstrap adds zero clones. Surviving batch context retains old content; "
                       "affected Episode rows are invalidated on deletion, and the batch MAC prompt does not include the old fact. "
                       "This is not proof of complete derived-memory erasure. Tag-driven merge does not prove semantic "
                       "duplication; store now returns the live merged ID and deleting that ID works. No general provenance guarantee, dense-model "

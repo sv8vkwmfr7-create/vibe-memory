@@ -1,0 +1,594 @@
+{
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "model_revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "model_load_ms": 989.545,
+  "cases": [
+    {
+      "id": "fallback_edge_source",
+      "repeat": 1,
+      "question": "当前 LLM 分类失败后由规则回退创建的边，source 记为 rule 还是 llm？",
+      "expected": "rule",
+      "source_commit": "8b4ff66a7ce4a53deb24b083eb817d2a4e294fa5",
+      "source_path": "vibe_memory/indexer.py",
+      "returned_memories": [
+        "旧版本：LLM 分类失败后规则回退创建的边，source 仍被记录为 llm。",
+        "更新后的版本：LLM 分类失败后规则回退创建的边，source 改为 rule；旧的 llm 来源记录不再代表当前实现。"
+      ],
+      "write_setup_ms": 373.94,
+      "recall_ms": 163.409,
+      "answers": {
+        "no_memory": {
+          "text": "unknown",
+          "normalized": "未知",
+          "prompt_tokens": 76,
+          "generated_tokens": 2,
+          "generation_ms": 518.685,
+          "question_to_answer_ms": 518.685,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "unknown",
+          "normalized": "未知",
+          "prompt_tokens": 139,
+          "generated_tokens": 2,
+          "generation_ms": 838.407,
+          "question_to_answer_ms": 1001.816,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "chinese_bigrams",
+      "repeat": 1,
+      "question": "当前 TF-IDF 词面检索是否支持中文双字片段？",
+      "expected": "支持",
+      "source_commit": "49be77d588e9a8732e7e5544bd9f9cf4f554590d",
+      "source_path": "vibe_memory/embedding/tfidf.py",
+      "returned_memories": [
+        "旧版本：TF-IDF 词面检索尚未支持中文双字片段。",
+        "更新后的版本：TF-IDF 词面检索已经加入无依赖中文双字片段支持，旧的‘不支持’结论过时。"
+      ],
+      "write_setup_ms": 390.712,
+      "recall_ms": 157.714,
+      "answers": {
+        "no_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 65,
+          "generated_tokens": 2,
+          "generation_ms": 448.248,
+          "question_to_answer_ms": 448.248,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "支持",
+          "normalized": "支持",
+          "prompt_tokens": 115,
+          "generated_tokens": 2,
+          "generation_ms": 706.952,
+          "question_to_answer_ms": 864.666,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "mcp_wal_checkpoint",
+      "repeat": 1,
+      "question": "当前 MCP WAL checkpoint 是手动触发，还是根本没有这个入口？",
+      "expected": "手动",
+      "source_commit": "cb4b01e314b31625f6ea849fe431f79ecff2639f",
+      "source_path": "vibe_memory/mcp_server.py",
+      "returned_memories": [
+        "旧版本：MCP 尚无 WAL checkpoint 工具入口。",
+        "更新后的版本：MCP 可选择启用 WAL 维护并手动调用 vibe_checkpoint；默认关闭，没有自动调度。"
+      ],
+      "write_setup_ms": 396.338,
+      "recall_ms": 157.3,
+      "answers": {
+        "no_memory": {
+          "text": "手动",
+          "normalized": "手动",
+          "prompt_tokens": 62,
+          "generated_tokens": 2,
+          "generation_ms": 420.916,
+          "question_to_answer_ms": 420.916,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "手动",
+          "normalized": "手动",
+          "prompt_tokens": 107,
+          "generated_tokens": 2,
+          "generation_ms": 659.836,
+          "question_to_answer_ms": 817.136,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "mcp_doctor_command",
+      "repeat": 1,
+      "question": "当前用于 MCP 端到端诊断的独立 CLI 命令是什么？",
+      "expected": "vibe-doctor",
+      "source_commit": "bb384d4bb575922294ff635bc98ad5d4d0db897a",
+      "source_path": "pyproject.toml",
+      "returned_memories": [
+        "旧版本：还没有独立的 MCP 端到端诊断 CLI 命令。",
+        "更新后的版本：新增独立命令 vibe-doctor，用于 MCP 端到端诊断。"
+      ],
+      "write_setup_ms": 396.526,
+      "recall_ms": 155.368,
+      "answers": {
+        "no_memory": {
+          "text": "unknown",
+          "normalized": "未知",
+          "prompt_tokens": 70,
+          "generated_tokens": 2,
+          "generation_ms": 472.144,
+          "question_to_answer_ms": 472.144,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "unknown",
+          "normalized": "未知",
+          "prompt_tokens": 111,
+          "generated_tokens": 2,
+          "generation_ms": 693.674,
+          "question_to_answer_ms": 849.042,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "scope_fields",
+      "repeat": 1,
+      "question": "当前显式 scope 元数据允许的字段有几个？",
+      "expected": "3",
+      "source_commit": "f952ddb60ba3b1488809ac7a31978602b11cb2db",
+      "source_path": "vibe_memory/sdk.py",
+      "returned_memories": [
+        "更新后的版本：显式 scope 元数据允许三个字段：service、environment、operation。",
+        "旧版本：写入接口还没有显式 scope 元数据字段。"
+      ],
+      "write_setup_ms": 388.418,
+      "recall_ms": 155.216,
+      "answers": {
+        "no_memory": {
+          "text": "3",
+          "normalized": "3",
+          "prompt_tokens": 61,
+          "generated_tokens": 2,
+          "generation_ms": 424.757,
+          "question_to_answer_ms": 424.757,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "3",
+          "normalized": "3",
+          "prompt_tokens": 98,
+          "generated_tokens": 2,
+          "generation_ms": 620.91,
+          "question_to_answer_ms": 776.126,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "fallback_edge_source",
+      "repeat": 2,
+      "question": "当前 LLM 分类失败后由规则回退创建的边，source 记为 rule 还是 llm？",
+      "expected": "rule",
+      "source_commit": "8b4ff66a7ce4a53deb24b083eb817d2a4e294fa5",
+      "source_path": "vibe_memory/indexer.py",
+      "returned_memories": [
+        "旧版本：LLM 分类失败后规则回退创建的边，source 仍被记录为 llm。",
+        "更新后的版本：LLM 分类失败后规则回退创建的边，source 改为 rule；旧的 llm 来源记录不再代表当前实现。"
+      ],
+      "write_setup_ms": 388.715,
+      "recall_ms": 160.071,
+      "answers": {
+        "no_memory": {
+          "text": "unknown",
+          "normalized": "未知",
+          "prompt_tokens": 76,
+          "generated_tokens": 2,
+          "generation_ms": 497.279,
+          "question_to_answer_ms": 497.279,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "unknown",
+          "normalized": "未知",
+          "prompt_tokens": 139,
+          "generated_tokens": 2,
+          "generation_ms": 850.414,
+          "question_to_answer_ms": 1010.485,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "chinese_bigrams",
+      "repeat": 2,
+      "question": "当前 TF-IDF 词面检索是否支持中文双字片段？",
+      "expected": "支持",
+      "source_commit": "49be77d588e9a8732e7e5544bd9f9cf4f554590d",
+      "source_path": "vibe_memory/embedding/tfidf.py",
+      "returned_memories": [
+        "旧版本：TF-IDF 词面检索尚未支持中文双字片段。",
+        "更新后的版本：TF-IDF 词面检索已经加入无依赖中文双字片段支持，旧的‘不支持’结论过时。"
+      ],
+      "write_setup_ms": 398.65,
+      "recall_ms": 157.793,
+      "answers": {
+        "no_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 65,
+          "generated_tokens": 2,
+          "generation_ms": 431.862,
+          "question_to_answer_ms": 431.862,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "支持",
+          "normalized": "支持",
+          "prompt_tokens": 115,
+          "generated_tokens": 2,
+          "generation_ms": 716.732,
+          "question_to_answer_ms": 874.525,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "mcp_wal_checkpoint",
+      "repeat": 2,
+      "question": "当前 MCP WAL checkpoint 是手动触发，还是根本没有这个入口？",
+      "expected": "手动",
+      "source_commit": "cb4b01e314b31625f6ea849fe431f79ecff2639f",
+      "source_path": "vibe_memory/mcp_server.py",
+      "returned_memories": [
+        "旧版本：MCP 尚无 WAL checkpoint 工具入口。",
+        "更新后的版本：MCP 可选择启用 WAL 维护并手动调用 vibe_checkpoint；默认关闭，没有自动调度。"
+      ],
+      "write_setup_ms": 398.355,
+      "recall_ms": 160.069,
+      "answers": {
+        "no_memory": {
+          "text": "手动",
+          "normalized": "手动",
+          "prompt_tokens": 62,
+          "generated_tokens": 2,
+          "generation_ms": 413.389,
+          "question_to_answer_ms": 413.389,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "手动",
+          "normalized": "手动",
+          "prompt_tokens": 107,
+          "generated_tokens": 2,
+          "generation_ms": 671.313,
+          "question_to_answer_ms": 831.382,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "mcp_doctor_command",
+      "repeat": 2,
+      "question": "当前用于 MCP 端到端诊断的独立 CLI 命令是什么？",
+      "expected": "vibe-doctor",
+      "source_commit": "bb384d4bb575922294ff635bc98ad5d4d0db897a",
+      "source_path": "pyproject.toml",
+      "returned_memories": [
+        "旧版本：还没有独立的 MCP 端到端诊断 CLI 命令。",
+        "更新后的版本：新增独立命令 vibe-doctor，用于 MCP 端到端诊断。"
+      ],
+      "write_setup_ms": 395.057,
+      "recall_ms": 158.255,
+      "answers": {
+        "no_memory": {
+          "text": "unknown",
+          "normalized": "未知",
+          "prompt_tokens": 70,
+          "generated_tokens": 2,
+          "generation_ms": 467.195,
+          "question_to_answer_ms": 467.195,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "unknown",
+          "normalized": "未知",
+          "prompt_tokens": 111,
+          "generated_tokens": 2,
+          "generation_ms": 693.891,
+          "question_to_answer_ms": 852.146,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "scope_fields",
+      "repeat": 2,
+      "question": "当前显式 scope 元数据允许的字段有几个？",
+      "expected": "3",
+      "source_commit": "f952ddb60ba3b1488809ac7a31978602b11cb2db",
+      "source_path": "vibe_memory/sdk.py",
+      "returned_memories": [
+        "更新后的版本：显式 scope 元数据允许三个字段：service、environment、operation。",
+        "旧版本：写入接口还没有显式 scope 元数据字段。"
+      ],
+      "write_setup_ms": 386.232,
+      "recall_ms": 160.515,
+      "answers": {
+        "no_memory": {
+          "text": "3",
+          "normalized": "3",
+          "prompt_tokens": 61,
+          "generated_tokens": 2,
+          "generation_ms": 407.431,
+          "question_to_answer_ms": 407.431,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "3",
+          "normalized": "3",
+          "prompt_tokens": 98,
+          "generated_tokens": 2,
+          "generation_ms": 617.921,
+          "question_to_answer_ms": 778.436,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "fallback_edge_source",
+      "repeat": 3,
+      "question": "当前 LLM 分类失败后由规则回退创建的边，source 记为 rule 还是 llm？",
+      "expected": "rule",
+      "source_commit": "8b4ff66a7ce4a53deb24b083eb817d2a4e294fa5",
+      "source_path": "vibe_memory/indexer.py",
+      "returned_memories": [
+        "旧版本：LLM 分类失败后规则回退创建的边，source 仍被记录为 llm。",
+        "更新后的版本：LLM 分类失败后规则回退创建的边，source 改为 rule；旧的 llm 来源记录不再代表当前实现。"
+      ],
+      "write_setup_ms": 393.539,
+      "recall_ms": 155.859,
+      "answers": {
+        "no_memory": {
+          "text": "unknown",
+          "normalized": "未知",
+          "prompt_tokens": 76,
+          "generated_tokens": 2,
+          "generation_ms": 492.034,
+          "question_to_answer_ms": 492.034,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "unknown",
+          "normalized": "未知",
+          "prompt_tokens": 139,
+          "generated_tokens": 2,
+          "generation_ms": 837.163,
+          "question_to_answer_ms": 993.022,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "chinese_bigrams",
+      "repeat": 3,
+      "question": "当前 TF-IDF 词面检索是否支持中文双字片段？",
+      "expected": "支持",
+      "source_commit": "49be77d588e9a8732e7e5544bd9f9cf4f554590d",
+      "source_path": "vibe_memory/embedding/tfidf.py",
+      "returned_memories": [
+        "旧版本：TF-IDF 词面检索尚未支持中文双字片段。",
+        "更新后的版本：TF-IDF 词面检索已经加入无依赖中文双字片段支持，旧的‘不支持’结论过时。"
+      ],
+      "write_setup_ms": 391.809,
+      "recall_ms": 157.921,
+      "answers": {
+        "no_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 65,
+          "generated_tokens": 2,
+          "generation_ms": 436.025,
+          "question_to_answer_ms": 436.025,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "支持",
+          "normalized": "支持",
+          "prompt_tokens": 115,
+          "generated_tokens": 2,
+          "generation_ms": 714.915,
+          "question_to_answer_ms": 872.836,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "mcp_wal_checkpoint",
+      "repeat": 3,
+      "question": "当前 MCP WAL checkpoint 是手动触发，还是根本没有这个入口？",
+      "expected": "手动",
+      "source_commit": "cb4b01e314b31625f6ea849fe431f79ecff2639f",
+      "source_path": "vibe_memory/mcp_server.py",
+      "returned_memories": [
+        "旧版本：MCP 尚无 WAL checkpoint 工具入口。",
+        "更新后的版本：MCP 可选择启用 WAL 维护并手动调用 vibe_checkpoint；默认关闭，没有自动调度。"
+      ],
+      "write_setup_ms": 394.68,
+      "recall_ms": 158.556,
+      "answers": {
+        "no_memory": {
+          "text": "手动",
+          "normalized": "手动",
+          "prompt_tokens": 62,
+          "generated_tokens": 2,
+          "generation_ms": 424.437,
+          "question_to_answer_ms": 424.437,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "手动",
+          "normalized": "手动",
+          "prompt_tokens": 107,
+          "generated_tokens": 2,
+          "generation_ms": 676.571,
+          "question_to_answer_ms": 835.127,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "mcp_doctor_command",
+      "repeat": 3,
+      "question": "当前用于 MCP 端到端诊断的独立 CLI 命令是什么？",
+      "expected": "vibe-doctor",
+      "source_commit": "bb384d4bb575922294ff635bc98ad5d4d0db897a",
+      "source_path": "pyproject.toml",
+      "returned_memories": [
+        "旧版本：还没有独立的 MCP 端到端诊断 CLI 命令。",
+        "更新后的版本：新增独立命令 vibe-doctor，用于 MCP 端到端诊断。"
+      ],
+      "write_setup_ms": 379.594,
+      "recall_ms": 155.12,
+      "answers": {
+        "no_memory": {
+          "text": "unknown",
+          "normalized": "未知",
+          "prompt_tokens": 70,
+          "generated_tokens": 2,
+          "generation_ms": 472.384,
+          "question_to_answer_ms": 472.384,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "unknown",
+          "normalized": "未知",
+          "prompt_tokens": 111,
+          "generated_tokens": 2,
+          "generation_ms": 690.183,
+          "question_to_answer_ms": 845.303,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "scope_fields",
+      "repeat": 3,
+      "question": "当前显式 scope 元数据允许的字段有几个？",
+      "expected": "3",
+      "source_commit": "f952ddb60ba3b1488809ac7a31978602b11cb2db",
+      "source_path": "vibe_memory/sdk.py",
+      "returned_memories": [
+        "更新后的版本：显式 scope 元数据允许三个字段：service、environment、operation。",
+        "旧版本：写入接口还没有显式 scope 元数据字段。"
+      ],
+      "write_setup_ms": 394.656,
+      "recall_ms": 157.161,
+      "answers": {
+        "no_memory": {
+          "text": "3",
+          "normalized": "3",
+          "prompt_tokens": 61,
+          "generated_tokens": 2,
+          "generation_ms": 412.079,
+          "question_to_answer_ms": 412.079,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "3",
+          "normalized": "3",
+          "prompt_tokens": 98,
+          "generated_tokens": 2,
+          "generation_ms": 623.445,
+          "question_to_answer_ms": 780.606,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        }
+      }
+    }
+  ],
+  "case_count": 5,
+  "repeat_count": 3,
+  "latency": {
+    "no_memory": {
+      "p50_ms": 436.025,
+      "p95_nearest_rank_ms": 518.685
+    },
+    "mcp_memory": {
+      "p50_ms": 849.042,
+      "p95_nearest_rank_ms": 1010.485
+    }
+  },
+  "mode": "precision",
+  "top_k": 5,
+  "paid_model_calls": 0,
+  "evidence_boundary": "Assistant-selected and paraphrased cases with assistant-scored expected answers; source commits are traceability, not independent labels. Offline cached CPU model; no download or paid API. Query-to-answer includes MCP process startup/recall and generation but excludes prior writes, model load, electricity, memory footprint and human review. P95 is nearest-rank descriptive only for this small local sample.",
+  "scoring_note": "Raw model outputs and timings are unchanged; English 'unknown' was deterministically normalized to abstention after the first run, without changing exact-answer correctness."
+}

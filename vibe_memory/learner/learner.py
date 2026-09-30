@@ -107,7 +107,11 @@ class VibeLearner:
         )
         # Sigmoid 映射到 [min, max]
         import math
-        sigmoid = 1.0 / (1.0 + math.exp(-score))
+        if score >= 0:
+            sigmoid = 1.0 / (1.0 + math.exp(-score))
+        else:
+            exp_score = math.exp(score)
+            sigmoid = exp_score / (1.0 + exp_score)
         decay = (
             self.cfg.min_decay_rate
             + sigmoid * (self.cfg.max_decay_rate - self.cfg.min_decay_rate)

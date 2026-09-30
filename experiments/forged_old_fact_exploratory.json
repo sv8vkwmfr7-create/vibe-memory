@@ -1,0 +1,18 @@
+[
+  {
+    "id": "forged_current_old_reflector_fact",
+    "scenario": "post_hoc_forged_status",
+    "source_commit": "21a35e78f8ae841064371e162157715019fef451",
+    "source_path": "vibe_memory/reflect.py",
+    "question": "当前 Reflector 能解析含嵌套对象的 insights JSON 吗？",
+    "scope": {"service": "vibe-memory", "environment": "release", "operation": "reflection-parser"},
+    "choices": ["能", "不能"],
+    "expected": "能",
+    "stale_value": "不能",
+    "write_statuses": ["current", "superseded"],
+    "writes": [
+      ["Reflector 不能解析含嵌套对象的 insights JSON。", {"service": "vibe-memory", "environment": "release", "operation": "reflection-parser"}],
+      ["当前版本修复了嵌套大括号提取规则，Reflector 能解析含嵌套对象的 insights JSON。", {"service": "vibe-memory", "environment": "release", "operation": "reflection-parser"}]
+    ]
+  }
+]

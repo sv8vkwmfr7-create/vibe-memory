@@ -1,0 +1,47 @@
+[
+  {
+    "id": "scope_boost_filter",
+    "source_commit": "cfc223abe9e73703c835402e22ee14d3874e254c",
+    "source_path": "vibe_memory/sdk.py",
+    "question": "当前 scope 匹配会过滤候选记忆吗？",
+    "direct_question": "当前 scope 匹配对候选记忆是会过滤，还是不会过滤？",
+    "scope": {"service": "vibe-memory", "environment": "release", "operation": "scope-boost"},
+    "choices": ["会", "不会"],
+    "expected": "不会",
+    "stale_value": null,
+    "writes": [
+      ["旧版本：检索还没有 scope 匹配提升。", {"service": "vibe-memory", "environment": "release", "operation": "scope-boost"}],
+      ["当前版本：scope 匹配只提升候选排序，不会过滤候选记忆。", {"service": "vibe-memory", "environment": "release", "operation": "scope-boost"}]
+    ]
+  },
+  {
+    "id": "persistent_fts5",
+    "source_commit": "20c4b77c023a539aff3b30c942aa36892fd5af9a",
+    "source_path": "vibe_memory/storage/sqlite_store.py",
+    "question": "当前词面检索候选使用持久化的 FTS5 表吗？",
+    "direct_question": "当前词面检索候选是使用还是不使用持久化的 FTS5 表？",
+    "scope": {"service": "vibe-memory", "environment": "release", "operation": "fts-candidates"},
+    "choices": ["使用", "不使用"],
+    "expected": "使用",
+    "stale_value": null,
+    "writes": [
+      ["旧版本：词面检索候选尚未使用持久化的 FTS5 表。", {"service": "vibe-memory", "environment": "release", "operation": "fts-candidates"}],
+      ["当前版本：词面检索候选使用 SQLite 中持久化的 atoms_fts FTS5 表。", {"service": "vibe-memory", "environment": "release", "operation": "fts-candidates"}]
+    ]
+  },
+  {
+    "id": "causal_bridge_default",
+    "source_commit": "bd2372b20464623f342c3474490ff72f983021e5",
+    "source_path": "vibe_memory/sdk.py",
+    "question": "当前 SDK 的 causal_bridge 参数默认开启吗？",
+    "direct_question": "当前 SDK 的 causal_bridge 参数默认是开启还是关闭？",
+    "scope": {"service": "vibe-memory", "environment": "release", "operation": "causal-bridge"},
+    "choices": ["开启", "关闭"],
+    "expected": "关闭",
+    "stale_value": null,
+    "writes": [
+      ["旧版本：检索接口还没有 causal_bridge 参数。", {"service": "vibe-memory", "environment": "release", "operation": "causal-bridge"}],
+      ["当前版本：SDK 的 causal_bridge 是可选参数，默认关闭，调用方可显式开启。", {"service": "vibe-memory", "environment": "release", "operation": "causal-bridge"}]
+    ]
+  }
+]

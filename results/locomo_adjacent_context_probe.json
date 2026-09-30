@@ -1,0 +1,370 @@
+{
+  "source": "https://github.com/snap-research/locomo/blob/main/data/locomo10.json",
+  "source_sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+  "paid_model_calls": 0,
+  "sample_id": "conv-26",
+  "selection": "all 11 eligible category-1 text-only questions",
+  "mode": "MCP precision Top-5; current turn first, optional previous turn in same session",
+  "baseline": {
+    "write_ms": 5576.0,
+    "stored_turns": 419,
+    "mean_written_chars": 147.2,
+    "over_mcp_300_char_cap": 19,
+    "rows": [
+      {
+        "id": "conv-26-qa-3",
+        "direct_hit": false,
+        "context_coverage": false,
+        "context_coverage_upper": false,
+        "returned_ids": [
+          "D10:15",
+          "D8:20",
+          "D15:13",
+          "D1:17",
+          "D1:4"
+        ],
+        "returned_chars": 350,
+        "recall_ms": 43.2
+      },
+      {
+        "id": "conv-26-qa-7",
+        "direct_hit": false,
+        "context_coverage": false,
+        "context_coverage_upper": false,
+        "returned_ids": [
+          "D14:29",
+          "D15:15",
+          "D16:12",
+          "D8:15",
+          "D12:5"
+        ],
+        "returned_chars": 487,
+        "recall_ms": 12.6
+      },
+      {
+        "id": "conv-26-qa-11",
+        "direct_hit": false,
+        "context_coverage": false,
+        "context_coverage_upper": false,
+        "returned_ids": [
+          "D14:22",
+          "D8:29",
+          "D15:21",
+          "D7:12",
+          "D10:15"
+        ],
+        "returned_chars": 395,
+        "recall_ms": 11.9
+      },
+      {
+        "id": "conv-26-qa-13",
+        "direct_hit": false,
+        "context_coverage": false,
+        "context_coverage_upper": false,
+        "returned_ids": [
+          "D4:12",
+          "D1:9",
+          "D4:11",
+          "D14:13",
+          "D7:24"
+        ],
+        "returned_chars": 644,
+        "recall_ms": 10.0
+      },
+      {
+        "id": "conv-26-qa-19",
+        "direct_hit": false,
+        "context_coverage": false,
+        "context_coverage_upper": false,
+        "returned_ids": [
+          "D10:9",
+          "D8:3",
+          "D8:33",
+          "D10:15",
+          "D13:10"
+        ],
+        "returned_chars": 425,
+        "recall_ms": 9.1
+      },
+      {
+        "id": "conv-26-qa-34",
+        "direct_hit": false,
+        "context_coverage": false,
+        "context_coverage_upper": false,
+        "returned_ids": [
+          "D7:4",
+          "D8:9",
+          "D19:11",
+          "D7:2",
+          "D10:5"
+        ],
+        "returned_chars": 1033,
+        "recall_ms": 7.4
+      },
+      {
+        "id": "conv-26-qa-39",
+        "direct_hit": true,
+        "context_coverage": true,
+        "context_coverage_upper": true,
+        "returned_ids": [
+          "D11:8",
+          "D10:3",
+          "D2:9",
+          "D11:12",
+          "D14:34"
+        ],
+        "returned_chars": 985,
+        "recall_ms": 11.5
+      },
+      {
+        "id": "conv-26-qa-60",
+        "direct_hit": true,
+        "context_coverage": true,
+        "context_coverage_upper": true,
+        "returned_ids": [
+          "D15:25",
+          "D15:18",
+          "D17:22",
+          "D15:26",
+          "D13:2"
+        ],
+        "returned_chars": 416,
+        "recall_ms": 12.1
+      },
+      {
+        "id": "conv-26-qa-61",
+        "direct_hit": false,
+        "context_coverage": false,
+        "context_coverage_upper": false,
+        "returned_ids": [
+          "D14:35",
+          "D7:24",
+          "D16:14",
+          "D7:10",
+          "D15:15"
+        ],
+        "returned_chars": 591,
+        "recall_ms": 9.6
+      },
+      {
+        "id": "conv-26-qa-65",
+        "direct_hit": false,
+        "context_coverage": false,
+        "context_coverage_upper": false,
+        "returned_ids": [
+          "D8:29",
+          "D16:9",
+          "D18:14",
+          "D10:20",
+          "D17:2"
+        ],
+        "returned_chars": 780,
+        "recall_ms": 9.2
+      },
+      {
+        "id": "conv-26-qa-76",
+        "direct_hit": true,
+        "context_coverage": true,
+        "context_coverage_upper": true,
+        "returned_ids": [
+          "D4:18",
+          "D13:7",
+          "D2:3",
+          "D18:17",
+          "D12:2"
+        ],
+        "returned_chars": 793,
+        "recall_ms": 9.5
+      }
+    ],
+    "direct_hits": 3,
+    "context_coverage": 3,
+    "context_coverage_upper": 3,
+    "recall_p50_ms": 10.0,
+    "returned_chars_p50": 591
+  },
+  "previous_turn": {
+    "write_ms": 6615.1,
+    "stored_turns": 419,
+    "mean_written_chars": 305.0,
+    "over_mcp_300_char_cap": 188,
+    "rows": [
+      {
+        "id": "conv-26-qa-3",
+        "direct_hit": false,
+        "context_coverage": false,
+        "context_coverage_upper": false,
+        "returned_ids": [
+          "D17:8",
+          "D1:17",
+          "D8:20",
+          "D1:18",
+          "D8:19"
+        ],
+        "returned_chars": 1240,
+        "recall_ms": 66.3
+      },
+      {
+        "id": "conv-26-qa-7",
+        "direct_hit": false,
+        "context_coverage": false,
+        "context_coverage_upper": false,
+        "returned_ids": [
+          "D14:30",
+          "D14:29",
+          "D12:5",
+          "D11:3",
+          "D5:6"
+        ],
+        "returned_chars": 1230,
+        "recall_ms": 12.3
+      },
+      {
+        "id": "conv-26-qa-11",
+        "direct_hit": false,
+        "context_coverage": false,
+        "context_coverage_upper": false,
+        "returned_ids": [
+          "D8:29",
+          "D14:23",
+          "D8:30",
+          "D3:18",
+          "D3:17"
+        ],
+        "returned_chars": 1168,
+        "recall_ms": 10.0
+      },
+      {
+        "id": "conv-26-qa-13",
+        "direct_hit": false,
+        "context_coverage": false,
+        "context_coverage_upper": false,
+        "returned_ids": [
+          "D4:12",
+          "D1:9",
+          "D4:11",
+          "D1:10",
+          "D7:11"
+        ],
+        "returned_chars": 1153,
+        "recall_ms": 9.3
+      },
+      {
+        "id": "conv-26-qa-19",
+        "direct_hit": false,
+        "context_coverage": false,
+        "context_coverage_upper": false,
+        "returned_ids": [
+          "D10:9",
+          "D13:10",
+          "D10:10",
+          "D8:3",
+          "D8:4"
+        ],
+        "returned_chars": 1390,
+        "recall_ms": 11.8
+      },
+      {
+        "id": "conv-26-qa-34",
+        "direct_hit": false,
+        "context_coverage": false,
+        "context_coverage_upper": false,
+        "returned_ids": [
+          "D10:6",
+          "D8:10",
+          "D7:5",
+          "D7:3",
+          "D8:9"
+        ],
+        "returned_chars": 1500,
+        "recall_ms": 12.0
+      },
+      {
+        "id": "conv-26-qa-39",
+        "direct_hit": true,
+        "context_coverage": true,
+        "context_coverage_upper": true,
+        "returned_ids": [
+          "D10:3",
+          "D11:9",
+          "D10:4",
+          "D11:8",
+          "D3:2"
+        ],
+        "returned_chars": 1473,
+        "recall_ms": 10.7
+      },
+      {
+        "id": "conv-26-qa-60",
+        "direct_hit": true,
+        "context_coverage": true,
+        "context_coverage_upper": true,
+        "returned_ids": [
+          "D15:26",
+          "D15:25",
+          "D15:19",
+          "D15:27",
+          "D15:18"
+        ],
+        "returned_chars": 987,
+        "recall_ms": 11.6
+      },
+      {
+        "id": "conv-26-qa-61",
+        "direct_hit": false,
+        "context_coverage": false,
+        "context_coverage_upper": false,
+        "returned_ids": [
+          "D14:35",
+          "D1:8",
+          "D7:22",
+          "D1:7",
+          "D6:1"
+        ],
+        "returned_chars": 886,
+        "recall_ms": 7.3
+      },
+      {
+        "id": "conv-26-qa-65",
+        "direct_hit": false,
+        "context_coverage": false,
+        "context_coverage_upper": false,
+        "returned_ids": [
+          "D10:21",
+          "D10:20",
+          "D14:13",
+          "D16:10",
+          "D18:14"
+        ],
+        "returned_chars": 1373,
+        "recall_ms": 12.0
+      },
+      {
+        "id": "conv-26-qa-76",
+        "direct_hit": false,
+        "context_coverage": true,
+        "context_coverage_upper": true,
+        "returned_ids": [
+          "D13:8",
+          "D18:18",
+          "D12:2",
+          "D13:7",
+          "D4:18"
+        ],
+        "returned_chars": 1282,
+        "recall_ms": 18.7
+      }
+    ],
+    "direct_hits": 2,
+    "context_coverage": 3,
+    "context_coverage_upper": 3,
+    "recall_p50_ms": 11.8,
+    "returned_chars_p50": 1240
+  },
+  "rescued_direct": [],
+  "lost_direct": [
+    "conv-26-qa-76"
+  ],
+  "mean_top5_overlap": 2.09,
+  "limits": "Official evidence IDs are not exhaustive relevance labels. Visible context coverage requires the entire previous turn to survive MCP's 300-character response cap; upper coverage ignores truncation and is optimistic. Previous turn is from the same session; no future turn is used. One previously tuned LoCoMo sample; no answer generation, human review, paid API or production change. One run and fixed arm order cannot establish a stable latency difference."
+}

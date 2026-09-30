@@ -1,0 +1,30 @@
+{
+  "run_date": "2026-09-23",
+  "experiment": "report-only explicit-revision rerank across real MCP subprocesses",
+  "cases": [
+    {
+      "case": "true_production_correction",
+      "baseline": {"old_30_rank": 1, "new_60_rank": 2},
+      "after_explicit_revision_link": {"old_30_rank": 1, "new_60_rank": 2},
+      "report_only_rerank": {"old_30_rank": 2, "new_60_rank": 1},
+      "one_run_tool_ms": {"baseline_recall": 4.501, "link": 1.939, "linked_recall": 5.176}
+    },
+    {
+      "case": "different_environment_no_revision",
+      "baseline": {"production_30_rank": 1, "test_60_rank": 2},
+      "report_only_rerank": {"production_30_rank": 1, "test_60_rank": 2},
+      "one_run_tool_ms": {"baseline_recall": 4.702}
+    },
+    {
+      "case": "different_environment_false_revision_link",
+      "baseline": {"production_30_rank": 1, "test_60_rank": 2},
+      "after_false_link": {"production_30_rank": 1, "test_60_rank": 2},
+      "report_only_rerank": {"production_30_rank": 2, "test_60_rank": 1},
+      "known_wrong_environment_promotion": true,
+      "one_run_tool_ms": {"baseline_recall": 5.84, "link": 2.293, "linked_recall": 4.873}
+    }
+  ],
+  "validation": "Four probe tests, prior session-effect test and 37 MCP tests: 42 passed using a fresh dedicated pytest basetemp.",
+  "decision": "Reject production promotion. A manually asserted revision edge has no verified scope/truth contract; one false edge promotes the wrong environment. No SDK/MCP default was changed.",
+  "cost_boundary": "No model/API calls. One extra MCP link call is needed to assert a revision; its measured tool round trip excludes human or agent work to identify a true correction. Timings are one-run observations, not latency percentiles. Final answer quality remains unmeasured."
+}

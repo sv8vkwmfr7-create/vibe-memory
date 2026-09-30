@@ -185,3 +185,13 @@ def scan_before_store(content: str, defense: Optional[MemoryDefense] = None) -> 
     cleaned, violations = d.scan(content)
     blocked = d.mode == DefenseMode.BLOCK and len(violations) > 0
     return cleaned, violations, blocked
+
+
+def scan_text(text: str, defense: MemoryDefense) -> str:
+    """Preflight a text field without exposing matched text in errors."""
+    if not isinstance(text, str):
+        raise ValueError("Memory text fields must be strings")
+    cleaned, violations, blocked = scan_before_store(text, defense)
+    if blocked:
+        raise ValueError(f"Memory blocked by defense: {len(violations)} PII violations detected")
+    return cleaned

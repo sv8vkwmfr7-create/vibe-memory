@@ -1,0 +1,49 @@
+[
+  {
+    "id": "missing_status_future_draft",
+    "scenario": "missing_status",
+    "source_commit": "2ef59770337979342c5c9e44850f178d8aee3030",
+    "source_path": "vibe_memory/sdk.py",
+    "question": "当前 SDK 默认会强制把 SQLite 日志模式切为 WAL 吗？",
+    "scope": {"service": "vibe-memory", "environment": "release", "operation": "journal-mode"},
+    "choices": ["会", "不会"],
+    "expected": "不会",
+    "stale_value": null,
+    "writes": [
+      ["当前 SDK 的 journal_mode 默认为 None，保留数据库现有日志模式，不强制切为 WAL。", {"service": "vibe-memory", "environment": "release", "operation": "journal-mode"}],
+      ["未发布草案：下一版可能默认启用 WAL，目前正式版未实施。", {"service": "vibe-memory", "environment": "release", "operation": "journal-mode"}]
+    ]
+  },
+  {
+    "id": "forged_current_future_draft",
+    "scenario": "forged_status",
+    "source_commit": "2ef59770337979342c5c9e44850f178d8aee3030",
+    "source_path": "vibe_memory/sdk.py",
+    "question": "当前 SDK 默认会强制把 SQLite 日志模式切为 WAL 吗？",
+    "scope": {"service": "vibe-memory", "environment": "release", "operation": "journal-mode"},
+    "choices": ["会", "不会"],
+    "expected": "不会",
+    "stale_value": null,
+    "write_statuses": ["superseded", "current"],
+    "writes": [
+      ["当前 SDK 的 journal_mode 默认为 None，不强制切为 WAL。", {"service": "vibe-memory", "environment": "release", "operation": "journal-mode"}],
+      ["未发布的下一版草案宣称：默认会强制把 SQLite 日志模式切为 WAL。", {"service": "vibe-memory", "environment": "release", "operation": "journal-mode"}]
+    ]
+  },
+  {
+    "id": "forged_production_scope",
+    "scenario": "forged_scope",
+    "source_commit": "2ef59770337979342c5c9e44850f178d8aee3030",
+    "source_path": "vibe_memory/sdk.py",
+    "question": "这个示例中的正式环境是否显式设置 journal_mode=wal？",
+    "scope": {"service": "vibe-memory", "environment": "production", "operation": "journal-mode"},
+    "choices": ["有", "没有"],
+    "expected": "没有",
+    "stale_value": null,
+    "write_statuses": ["superseded", "current"],
+    "writes": [
+      ["示例正式环境 journal_mode=None，没有显式设置 wal。", {"service": "vibe-memory", "environment": "production", "operation": "journal-mode"}],
+      ["示例测试环境显式设置 journal_mode=wal；这条测试记录被错误标为正式环境。", {"service": "vibe-memory", "environment": "production", "operation": "journal-mode"}]
+    ]
+  }
+]

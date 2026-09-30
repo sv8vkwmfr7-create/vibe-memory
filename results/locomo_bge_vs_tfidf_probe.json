@@ -1,0 +1,130 @@
+{
+  "source": "https://github.com/snap-research/locomo/blob/main/data/locomo10.json",
+  "source_sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+  "sample_id": "conv-26",
+  "question_count": 11,
+  "stored_turns": 419,
+  "mode": "precision Top-5; same MCP-written DB; warm core recall",
+  "model": "BAAI/bge-small-zh-v1.5",
+  "model_dir": "models\\bge-small-zh-v1.5",
+  "model_files_bytes": 192253560,
+  "paid_model_calls": 0,
+  "write_ms": 5827.3,
+  "tfidf_setup_ms": 11.6,
+  "bge_load_and_encode_ms": 1701.1,
+  "working_set_before_bge_bytes": 435781632,
+  "working_set_after_bge_bytes": 638832640,
+  "working_set_bge_delta_bytes": 203051008,
+  "rows": [
+    {
+      "id": "conv-26-qa-3",
+      "mcp_hit": false,
+      "tfidf_hit": false,
+      "bge_hit": false,
+      "tfidf_matches_mcp": true,
+      "tfidf_recall_ms": 16.8,
+      "bge_recall_ms": 21.5
+    },
+    {
+      "id": "conv-26-qa-7",
+      "mcp_hit": false,
+      "tfidf_hit": false,
+      "bge_hit": false,
+      "tfidf_matches_mcp": true,
+      "tfidf_recall_ms": 10.5,
+      "bge_recall_ms": 25.2
+    },
+    {
+      "id": "conv-26-qa-11",
+      "mcp_hit": false,
+      "tfidf_hit": false,
+      "bge_hit": false,
+      "tfidf_matches_mcp": true,
+      "tfidf_recall_ms": 6.7,
+      "bge_recall_ms": 25.6
+    },
+    {
+      "id": "conv-26-qa-13",
+      "mcp_hit": false,
+      "tfidf_hit": false,
+      "bge_hit": false,
+      "tfidf_matches_mcp": true,
+      "tfidf_recall_ms": 9.2,
+      "bge_recall_ms": 18.5
+    },
+    {
+      "id": "conv-26-qa-19",
+      "mcp_hit": false,
+      "tfidf_hit": false,
+      "bge_hit": false,
+      "tfidf_matches_mcp": true,
+      "tfidf_recall_ms": 12.5,
+      "bge_recall_ms": 22.8
+    },
+    {
+      "id": "conv-26-qa-34",
+      "mcp_hit": false,
+      "tfidf_hit": false,
+      "bge_hit": false,
+      "tfidf_matches_mcp": true,
+      "tfidf_recall_ms": 14.7,
+      "bge_recall_ms": 23.6
+    },
+    {
+      "id": "conv-26-qa-39",
+      "mcp_hit": true,
+      "tfidf_hit": true,
+      "bge_hit": true,
+      "tfidf_matches_mcp": true,
+      "tfidf_recall_ms": 13.2,
+      "bge_recall_ms": 15.2
+    },
+    {
+      "id": "conv-26-qa-60",
+      "mcp_hit": true,
+      "tfidf_hit": true,
+      "bge_hit": false,
+      "tfidf_matches_mcp": true,
+      "tfidf_recall_ms": 11.1,
+      "bge_recall_ms": 17.5
+    },
+    {
+      "id": "conv-26-qa-61",
+      "mcp_hit": false,
+      "tfidf_hit": false,
+      "bge_hit": false,
+      "tfidf_matches_mcp": true,
+      "tfidf_recall_ms": 11.0,
+      "bge_recall_ms": 19.3
+    },
+    {
+      "id": "conv-26-qa-65",
+      "mcp_hit": false,
+      "tfidf_hit": false,
+      "bge_hit": false,
+      "tfidf_matches_mcp": true,
+      "tfidf_recall_ms": 11.8,
+      "bge_recall_ms": 19.2
+    },
+    {
+      "id": "conv-26-qa-76",
+      "mcp_hit": true,
+      "tfidf_hit": true,
+      "bge_hit": true,
+      "tfidf_matches_mcp": true,
+      "tfidf_recall_ms": 11.1,
+      "bge_recall_ms": 24.5
+    }
+  ],
+  "mcp_hits": 3,
+  "tfidf_hits": 3,
+  "bge_hits": 2,
+  "tfidf_mcp_order_agreement": 11,
+  "bge_rescued": [],
+  "bge_lost": [
+    "conv-26-qa-60"
+  ],
+  "tfidf_recall_p50_ms": 11.1,
+  "bge_recall_p50_ms": 21.5,
+  "limits": "One LoCoMo conversation and category, already used in earlier retrieval tuning: not an independent holdout. Official evidence IDs are not exhaustive relevance labels and no final answers were generated. BGE is a Chinese model tested on English QA. Setup uses one process, warm in-memory vectors and BM25; this is not a full BGE SDK/MCP write or first-query latency measurement. Windows working-set delta is process-wide, not model-only peak RAM. Original dataset stays outside Git; no paid API, human review or production default change."
+}

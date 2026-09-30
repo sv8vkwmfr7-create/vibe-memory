@@ -51,8 +51,16 @@ class MCPClient:
         return json.loads(response["result"]["content"][0]["text"])
 
     def close(self):
-        self.proc.terminate()
-        self.proc.wait()
+        self.proc.stdin.close()
+        try:
+            self.proc.wait(timeout=10)
+        except subprocess.TimeoutExpired:
+            self.proc.kill()
+            self.proc.wait(timeout=5)
+            raise
+        finally:
+            self.proc.stdout.close()
+            self.proc.stderr.close()
 
 
 @pytest.fixture
@@ -62,6 +70,16 @@ def client():
     c.send("initialize", {})
     yield c
     c.close()
+
+
+def test_mcp_client_closes_server_cleanly_on_eof():
+    client = MCPClient()
+    try:
+        response = client.send("initialize", {})
+        assert "result" in response
+    finally:
+        client.close()
+    assert client.proc.returncode == 0
 
 
 def test_forget_rejects_empty_and_short_id(client):

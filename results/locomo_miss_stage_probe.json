@@ -1,0 +1,136 @@
+{
+  "source_sha256": "79fa87e90f04081343b8c8debecb80a9a6842b76a7aa537dc9fdf651ea698ff4",
+  "sample_id": "conv-26",
+  "stored_turns": 419,
+  "mode": "unchanged MCP precision Top-5, report-only Top-20 comparison; TF-IDF/BM25 ranks read from same DB",
+  "rows": [
+    {
+      "id": "conv-26-qa-3",
+      "stage": "before_lexical_top5",
+      "semantic_hit": false,
+      "bm25_hit": false,
+      "final_hit": false,
+      "top20_hit": false,
+      "best_semantic_rank": 190,
+      "best_bm25_rank": 190,
+      "query_gold_term_overlap": 1
+    },
+    {
+      "id": "conv-26-qa-7",
+      "stage": "before_lexical_top5",
+      "semantic_hit": false,
+      "bm25_hit": false,
+      "final_hit": false,
+      "top20_hit": false,
+      "best_semantic_rank": 262,
+      "best_bm25_rank": 250,
+      "query_gold_term_overlap": 1
+    },
+    {
+      "id": "conv-26-qa-11",
+      "stage": "before_lexical_top5",
+      "semantic_hit": false,
+      "bm25_hit": false,
+      "final_hit": false,
+      "top20_hit": true,
+      "best_semantic_rank": 16,
+      "best_bm25_rank": 7,
+      "query_gold_term_overlap": 3
+    },
+    {
+      "id": "conv-26-qa-13",
+      "stage": "before_lexical_top5",
+      "semantic_hit": false,
+      "bm25_hit": false,
+      "final_hit": false,
+      "top20_hit": false,
+      "best_semantic_rank": 174,
+      "best_bm25_rank": 150,
+      "query_gold_term_overlap": 2
+    },
+    {
+      "id": "conv-26-qa-19",
+      "stage": "before_lexical_top5",
+      "semantic_hit": false,
+      "bm25_hit": false,
+      "final_hit": false,
+      "top20_hit": false,
+      "best_semantic_rank": 136,
+      "best_bm25_rank": 133,
+      "query_gold_term_overlap": 2
+    },
+    {
+      "id": "conv-26-qa-34",
+      "stage": "before_lexical_top5",
+      "semantic_hit": false,
+      "bm25_hit": false,
+      "final_hit": false,
+      "top20_hit": false,
+      "best_semantic_rank": 29,
+      "best_bm25_rank": 25,
+      "query_gold_term_overlap": 4
+    },
+    {
+      "id": "conv-26-qa-39",
+      "stage": "hit",
+      "semantic_hit": true,
+      "bm25_hit": true,
+      "final_hit": true,
+      "top20_hit": true,
+      "best_semantic_rank": 2,
+      "best_bm25_rank": 2,
+      "query_gold_term_overlap": 6
+    },
+    {
+      "id": "conv-26-qa-60",
+      "stage": "hit",
+      "semantic_hit": true,
+      "bm25_hit": true,
+      "final_hit": true,
+      "top20_hit": true,
+      "best_semantic_rank": 4,
+      "best_bm25_rank": 4,
+      "query_gold_term_overlap": 2
+    },
+    {
+      "id": "conv-26-qa-61",
+      "stage": "before_lexical_top5",
+      "semantic_hit": false,
+      "bm25_hit": false,
+      "final_hit": false,
+      "top20_hit": false,
+      "best_semantic_rank": 76,
+      "best_bm25_rank": 62,
+      "query_gold_term_overlap": 2
+    },
+    {
+      "id": "conv-26-qa-65",
+      "stage": "before_lexical_top5",
+      "semantic_hit": false,
+      "bm25_hit": false,
+      "final_hit": false,
+      "top20_hit": false,
+      "best_semantic_rank": 45,
+      "best_bm25_rank": 47,
+      "query_gold_term_overlap": 3
+    },
+    {
+      "id": "conv-26-qa-76",
+      "stage": "hit",
+      "semantic_hit": true,
+      "bm25_hit": true,
+      "final_hit": true,
+      "top20_hit": true,
+      "best_semantic_rank": 4,
+      "best_bm25_rank": 3,
+      "query_gold_term_overlap": 4
+    }
+  ],
+  "counts": {
+    "hit": 3,
+    "before_lexical_top5": 8,
+    "after_lexical_top5": 0
+  },
+  "top20_hits": 4,
+  "limits": "Official evidence IDs are not exhaustive relevance labels. Semantic/BM25 are first-stage diagnostics, not independent candidate pools; graph, temporal, fusion and rerank may also affect final Top-5. One previously tuned sample, no production change."
+}

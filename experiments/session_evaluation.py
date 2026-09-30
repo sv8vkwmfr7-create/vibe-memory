@@ -46,8 +46,11 @@ def evaluate(data: dict, top_k: int = 5) -> dict:
                     and a.lifecycle.value in ("active", "warm")]
         ids = {a.id for a in eligible}
         relevant = set(query["relevant_ids"])
+        negative = set(query.get("negative_ids", []))
         if not relevant or not relevant <= ids:
             raise ValueError("Labels must reference eligible memories before the cutoff")
+        if not negative <= ids or relevant & negative:
+            raise ValueError("Negative labels must be eligible and disjoint from relevant labels")
         store = VibeStorage(":memory:", tenant_id=query["tenant_id"])
         try:
             for atom in eligible:
@@ -75,6 +78,8 @@ def evaluate(data: dict, top_k: int = 5) -> dict:
                     "returned_ids": returned,
                     "precision": hits / len(returned) if returned else 0.0,
                     "recall": hits / len(relevant),
+                    "evidence_hit": bool(set(returned) & relevant),
+                    "known_harmful_hit": bool(set(returned) & negative),
                     "latency_ms": (time.perf_counter() - start) * 1000,
                 })
         finally:

@@ -1,0 +1,44 @@
+{
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "model_revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "model_load_ms": 970.957,
+  "mode": "precision",
+  "top_k": 5,
+  "paid_model_calls": 0,
+  "cases": [
+    {
+      "id": "correction",
+      "expected": "60",
+      "returned_memories": ["订单服务正式环境超时配置为30秒。", "用户纠正：订单服务正式环境当前超时配置已改为60秒，旧的30秒结论不再适用。"],
+      "write_setup_ms": 369.515,
+      "recall_ms": 157.256,
+      "answers": {
+        "no_memory": {"text": "未知", "normalized": "未知", "prompt_tokens": 62, "generated_tokens": 2, "generation_ms": 441.566, "question_to_answer_ms": 441.566, "correct": false, "abstained": true, "stale_answer": false},
+        "mcp_memory": {"text": "60", "normalized": "60", "prompt_tokens": 102, "generated_tokens": 3, "generation_ms": 675.27, "question_to_answer_ms": 832.526, "correct": true, "abstained": false, "stale_answer": false}
+      }
+    },
+    {
+      "id": "future_draft",
+      "expected": "30",
+      "returned_memories": ["订单服务正式环境当前超时配置为30秒。", "订单服务正式环境下一版草案拟将超时改为60秒，目前生效配置仍为30秒。"],
+      "write_setup_ms": 402.016,
+      "recall_ms": 154.909,
+      "answers": {
+        "no_memory": {"text": "未知", "normalized": "未知", "prompt_tokens": 62, "generated_tokens": 2, "generation_ms": 425.958, "question_to_answer_ms": 425.958, "correct": false, "abstained": true, "stale_answer": false},
+        "mcp_memory": {"text": "30", "normalized": "30", "prompt_tokens": 103, "generated_tokens": 3, "generation_ms": 688.15, "question_to_answer_ms": 843.059, "correct": true, "abstained": false, "stale_answer": false}
+      }
+    },
+    {
+      "id": "different_environment",
+      "expected": "30",
+      "returned_memories": ["订单服务正式环境当前超时配置为30秒。", "订单服务测试环境超时配置为60秒，正式环境仍为30秒。"],
+      "write_setup_ms": 402.858,
+      "recall_ms": 152.125,
+      "answers": {
+        "no_memory": {"text": "未知", "normalized": "未知", "prompt_tokens": 62, "generated_tokens": 2, "generation_ms": 427.12, "question_to_answer_ms": 427.12, "correct": false, "abstained": true, "stale_answer": false},
+        "mcp_memory": {"text": "30", "normalized": "30", "prompt_tokens": 98, "generated_tokens": 3, "generation_ms": 652.44, "question_to_answer_ms": 804.565, "correct": true, "abstained": false, "stale_answer": false}
+      }
+    }
+  ],
+  "evidence_boundary": "Three assistant-authored Chinese cases, one deterministic CPU run, not independent or public-benchmark quality evidence. Offline cached model; no model download or paid API. Query-to-answer includes MCP process startup/recall and generation but excludes prior writes, model load, electricity, memory footprint and human review. Exact-answer scoring requires 30 or 60; abstention is reported separately."
+}

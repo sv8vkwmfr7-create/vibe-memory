@@ -20,15 +20,47 @@ Metrics Collector (M3 — 可观测性)
 """
 
 import time
+import sqlite3
 from datetime import datetime, timedelta
-from collections import defaultdict
+from collections import defaultdict, deque
 from typing import Optional
 from contextlib import contextmanager
+
+SAMPLE_LIMIT = 1000
+PHASE_HISTORY_LIMIT = 20
+FAILURE_STAGES = frozenset({"semantic", "bm25", "graph", "temporal", "embedding_cache",
+                            "reflect_provider", "reflect_parse", "reflect_store", "other"})
+FAILURE_REASONS = frozenset({"timeout", "connection", "storage", "invalid_data", "os_error", "unexpected"})
+FAILURE_KEYS = frozenset(f"{stage}:{reason}" for stage in FAILURE_STAGES | {
+    "retrieval_semantic", "retrieval_bm25", "retrieval_graph", "retrieval_temporal"}
+    for reason in FAILURE_REASONS)
+
+
+def failure_event(stage: str, error: Exception) -> dict[str, str]:
+    """Only fixed labels; never retain exception text, names or traceback."""
+    if stage not in FAILURE_STAGES:
+        stage = "other"
+    if isinstance(error, TimeoutError):
+        reason = "timeout"
+    elif isinstance(error, ConnectionError):
+        reason = "connection"
+    elif isinstance(error, sqlite3.Error):
+        reason = "storage"
+    elif isinstance(error, (ValueError, TypeError, KeyError, IndexError)):
+        reason = "invalid_data"
+    elif isinstance(error, OSError):
+        reason = "os_error"
+    else:
+        reason = "unexpected"
+    return {"stage": stage, "reason": reason}
 
 
 class MetricsCollector:
     """
     运行时指标收集器。
+
+    延迟/召回结果分布只统计最近1000个样本；计数和图峰值累计至reset。
+    冷启动phase_history保留最近20条，transition_count仍统计全部记录调用。
 
     使用方式：
         metrics = MetricsCollector()
@@ -45,8 +77,8 @@ class MetricsCollector:
     """
 
     def __init__(self):
-        # 操作延迟（ms）：{operation_name: [latencies]}
-        self._latencies: dict[str, list[float]] = defaultdict(list)
+        # 操作延迟（ms）：每个操作名保留有界的最近样本。
+        self._latencies: dict[str, deque[float]] = defaultdict(lambda: deque(maxlen=SAMPLE_LIMIT))
 
         # 操作计数
         self._store_count: int = 0
@@ -62,7 +94,7 @@ class MetricsCollector:
         self._edge_labels: dict[str, int] = defaultdict(int)
 
         # 检索结果数分布
-        self._recall_result_counts: list[int] = []
+        self._recall_result_counts: deque[int] = deque(maxlen=SAMPLE_LIMIT)
 
         # 降级事件
         self._degradation_events: dict[str, int] = defaultdict(int)
@@ -76,10 +108,13 @@ class MetricsCollector:
         }
 
         # 图规模快照（时间序列）
-        self._graph_size_snapshots: list[dict] = []
+        self._graph_size_snapshots: deque[dict] = deque(maxlen=SAMPLE_LIMIT)
+        self._graph_snapshot_count = 0
+        self._graph_peak = {"atoms": 0, "edges": 0, "episodes": 0}
 
         # 冷启动阶段历史
-        self._cold_start_phase_history: list[dict] = []
+        self._cold_start_phase_history: deque[dict] = deque(maxlen=PHASE_HISTORY_LIMIT)
+        self._phase_record_count = 0
 
         # 创建时间（用于计算 uptime）
         self._created_at: datetime = datetime.now()
@@ -152,10 +187,13 @@ class MetricsCollector:
         Args:
             event_type: "ppr_to_topk" | "llm_to_rule" | "learner_to_fixed" | "graphdb_to_vector" | "seed_filter_skipped"
         """
-        if event_type in self._DEGRADATION_TYPES:
-            self._degradation_events[event_type] += 1
-        else:
-            self._degradation_events[event_type] += 1
+        self._degradation_events[event_type] += 1
+
+    def record_failure(self, stage: str, error: Exception) -> dict[str, str]:
+        """Count a safely classified fallback using fixed, bounded labels."""
+        event = failure_event(stage, error)
+        self.record_degradation(f"{event['stage']}:{event['reason']}")
+        return event
 
     # ── 图规模快照 ──
 
@@ -178,6 +216,9 @@ class MetricsCollector:
             "warm_atoms": warm_atoms,
             "cold_atoms": cold_atoms,
         })
+        self._graph_snapshot_count += 1
+        for key, value in (("atoms", atoms), ("edges", edges), ("episodes", episodes)):
+            self._graph_peak[key] = max(self._graph_peak[key], value)
 
     def record_cold_start_phase(self, phase: str) -> None:
         """记录冷启动阶段变更"""
@@ -185,6 +226,7 @@ class MetricsCollector:
             "timestamp": datetime.now().isoformat(),
             "phase": phase,
         })
+        self._phase_record_count += 1
 
     # ── 统计聚合 ──
 
@@ -209,6 +251,11 @@ class MetricsCollector:
 
         return {
             "uptime_seconds": round(uptime, 1),
+            "sampling": {
+                "scope": "recent_samples",
+                "sample_limit": SAMPLE_LIMIT,
+                "phase_history_limit": PHASE_HISTORY_LIMIT,
+            },
             "operations": {
                 "store": self._store_count,
                 "recall": self._recall_count,
@@ -228,9 +275,10 @@ class MetricsCollector:
                 self._DEGRADATION_TYPES.get(k, k): v
                 for k, v in self._degradation_events.items()
             },
+            "failures": {k: v for k, v in self._degradation_events.items() if k in FAILURE_KEYS},
             "cold_start": {
-                "phase_history": self._cold_start_phase_history[-20:],  # 最近 20 次
-                "transition_count": len(self._cold_start_phase_history),
+                "phase_history": list(self._cold_start_phase_history),
+                "transition_count": self._phase_record_count,
             },
             "timestamps": {
                 "created": self._created_at.isoformat(),
@@ -241,8 +289,8 @@ class MetricsCollector:
             },
         }
 
-    def _latency_summary(self, latencies: list[float]) -> dict:
-        """计算延迟分布统计"""
+    def _latency_summary(self, latencies: deque[float]) -> dict:
+        """计算最近采样窗口的延迟分布，count为窗口样本数。"""
         if not latencies:
             return {"count": 0, "min_ms": 0, "max_ms": 0, "avg_ms": 0, "p50_ms": 0, "p95_ms": 0, "p99_ms": 0}
 
@@ -260,9 +308,9 @@ class MetricsCollector:
         }
 
     def _recall_hit_rate_summary(self) -> dict:
-        """计算检索命中率统计"""
+        """结果分布为最近窗口，total_recalls为累计调用数。"""
         if not self._recall_result_counts:
-            return {"total_recalls": 0, "min_results": 0, "max_results": 0, "avg_results": 0, "p50_results": 0, "p95_results": 0, "zero_hit_rate": 0.0}
+            return {"total_recalls": 0, "sample_count": 0, "min_results": 0, "max_results": 0, "avg_results": 0, "p50_results": 0, "p95_results": 0, "zero_hit_rate": 0.0}
 
         counts = self._recall_result_counts
         sorted_counts = sorted(counts)
@@ -270,7 +318,8 @@ class MetricsCollector:
         zero_hits = sum(1 for c in counts if c == 0)
 
         return {
-            "total_recalls": n,
+            "total_recalls": self._recall_count,
+            "sample_count": n,
             "min_results": sorted_counts[0],
             "max_results": sorted_counts[-1],
             "avg_results": round(sum(counts) / n, 2),
@@ -289,9 +338,6 @@ class MetricsCollector:
             }
 
         current = self._graph_size_snapshots[-1]
-        peak_atoms = max(s["atoms"] for s in self._graph_size_snapshots)
-        peak_edges = max(s["edges"] for s in self._graph_size_snapshots)
-        peak_episodes = max(s["episodes"] for s in self._graph_size_snapshots)
 
         return {
             "current": {
@@ -302,12 +348,8 @@ class MetricsCollector:
                 "warm": current.get("warm_atoms", 0),
                 "cold": current.get("cold_atoms", 0),
             },
-            "peak": {
-                "atoms": peak_atoms,
-                "edges": peak_edges,
-                "episodes": peak_episodes,
-            },
-            "snapshot_count": len(self._graph_size_snapshots),
+            "peak": dict(self._graph_peak),
+            "snapshot_count": self._graph_snapshot_count,
         }
 
     # ── 生命周期 ──
@@ -325,7 +367,10 @@ class MetricsCollector:
         self._recall_result_counts.clear()
         self._degradation_events.clear()
         self._graph_size_snapshots.clear()
+        self._graph_snapshot_count = 0
+        self._graph_peak = {"atoms": 0, "edges": 0, "episodes": 0}
         self._cold_start_phase_history.clear()
+        self._phase_record_count = 0
         self._created_at = datetime.now()
         self._first_store_at = None
         self._first_recall_at = None

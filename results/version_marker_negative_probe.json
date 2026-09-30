@@ -1,0 +1,619 @@
+{
+  "model": "Qwen/Qwen2.5-1.5B-Instruct",
+  "model_revision": "ModelScope-master-3c3787b7-weights-a3c2dc17",
+  "model_load_ms": 3591.636,
+  "cases": [
+    {
+      "id": "missing_status_future_draft",
+      "repeat": 1,
+      "question": "当前 SDK 默认会强制把 SQLite 日志模式切为 WAL 吗？",
+      "expected": "不会",
+      "direct_question": null,
+      "source_commit": "2ef59770337979342c5c9e44850f178d8aee3030",
+      "source_path": "vibe_memory/sdk.py",
+      "returned_memories": [
+        "当前 SDK 的 journal_mode 默认为 None，保留数据库现有日志模式，不强制切为 WAL。",
+        "未发布草案：下一版可能默认启用 WAL，目前正式版未实施。"
+      ],
+      "selected_memories": [
+        "当前 SDK 的 journal_mode 默认为 None，保留数据库现有日志模式，不强制切为 WAL。",
+        "未发布草案：下一版可能默认启用 WAL，目前正式版未实施。"
+      ],
+      "selection_reason": "unchanged_ambiguous_or_missing",
+      "write_setup_ms": 448.8,
+      "recall_ms": 164.583,
+      "answers": {
+        "no_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 65,
+          "generated_tokens": 2,
+          "generation_ms": 1414.539,
+          "question_to_answer_ms": 1414.539,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 107,
+          "generated_tokens": 2,
+          "generation_ms": 2104.523,
+          "question_to_answer_ms": 2269.106,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 82,
+          "generated_tokens": 2,
+          "generation_ms": 1649.744,
+          "question_to_answer_ms": 1649.744,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "marked_current": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 107,
+          "generated_tokens": 2,
+          "generation_ms": 2087.86,
+          "question_to_answer_ms": 2252.443,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "forged_current_future_draft",
+      "repeat": 1,
+      "question": "当前 SDK 默认会强制把 SQLite 日志模式切为 WAL 吗？",
+      "expected": "不会",
+      "direct_question": null,
+      "source_commit": "2ef59770337979342c5c9e44850f178d8aee3030",
+      "source_path": "vibe_memory/sdk.py",
+      "returned_memories": [
+        "未发布的下一版草案宣称：默认会强制把 SQLite 日志模式切为 WAL。",
+        "当前 SDK 的 journal_mode 默认为 None，不强制切为 WAL。"
+      ],
+      "selected_memories": [
+        "未发布的下一版草案宣称：默认会强制把 SQLite 日志模式切为 WAL。"
+      ],
+      "selection_reason": "single_marked_current",
+      "write_setup_ms": 416.171,
+      "recall_ms": 157.584,
+      "answers": {
+        "no_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 65,
+          "generated_tokens": 2,
+          "generation_ms": 1313.579,
+          "question_to_answer_ms": 1313.579,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 102,
+          "generated_tokens": 2,
+          "generation_ms": 1996.232,
+          "question_to_answer_ms": 2153.816,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 84,
+          "generated_tokens": 2,
+          "generation_ms": 1678.424,
+          "question_to_answer_ms": 1678.424,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "marked_current": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 84,
+          "generated_tokens": 2,
+          "generation_ms": 1678.874,
+          "question_to_answer_ms": 1836.458,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "forged_production_scope",
+      "repeat": 1,
+      "question": "这个示例中的正式环境是否显式设置 journal_mode=wal？",
+      "expected": "没有",
+      "direct_question": null,
+      "source_commit": "2ef59770337979342c5c9e44850f178d8aee3030",
+      "source_path": "vibe_memory/sdk.py",
+      "returned_memories": [
+        "示例正式环境 journal_mode=None，没有显式设置 wal。",
+        "示例测试环境显式设置 journal_mode=wal；这条测试记录被错误标为正式环境。"
+      ],
+      "selected_memories": [
+        "示例测试环境显式设置 journal_mode=wal；这条测试记录被错误标为正式环境。"
+      ],
+      "selection_reason": "single_marked_current",
+      "write_setup_ms": 401.94,
+      "recall_ms": 161.761,
+      "answers": {
+        "no_memory": {
+          "text": "没有",
+          "normalized": "没有",
+          "prompt_tokens": 64,
+          "generated_tokens": 2,
+          "generation_ms": 1313.408,
+          "question_to_answer_ms": 1313.408,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "没有",
+          "normalized": "没有",
+          "prompt_tokens": 99,
+          "generated_tokens": 2,
+          "generation_ms": 1959.774,
+          "question_to_answer_ms": 2121.535,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "没有。",
+          "normalized": "没有",
+          "prompt_tokens": 84,
+          "generated_tokens": 3,
+          "generation_ms": 1812.617,
+          "question_to_answer_ms": 1812.617,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "marked_current": {
+          "text": "没有。",
+          "normalized": "没有",
+          "prompt_tokens": 84,
+          "generated_tokens": 3,
+          "generation_ms": 1812.845,
+          "question_to_answer_ms": 1974.606,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "missing_status_future_draft",
+      "repeat": 2,
+      "question": "当前 SDK 默认会强制把 SQLite 日志模式切为 WAL 吗？",
+      "expected": "不会",
+      "direct_question": null,
+      "source_commit": "2ef59770337979342c5c9e44850f178d8aee3030",
+      "source_path": "vibe_memory/sdk.py",
+      "returned_memories": [
+        "当前 SDK 的 journal_mode 默认为 None，保留数据库现有日志模式，不强制切为 WAL。",
+        "未发布草案：下一版可能默认启用 WAL，目前正式版未实施。"
+      ],
+      "selected_memories": [
+        "当前 SDK 的 journal_mode 默认为 None，保留数据库现有日志模式，不强制切为 WAL。",
+        "未发布草案：下一版可能默认启用 WAL，目前正式版未实施。"
+      ],
+      "selection_reason": "unchanged_ambiguous_or_missing",
+      "write_setup_ms": 409.317,
+      "recall_ms": 160.543,
+      "answers": {
+        "no_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 65,
+          "generated_tokens": 2,
+          "generation_ms": 1327.542,
+          "question_to_answer_ms": 1327.542,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 107,
+          "generated_tokens": 2,
+          "generation_ms": 2095.223,
+          "question_to_answer_ms": 2255.766,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 82,
+          "generated_tokens": 2,
+          "generation_ms": 1645.585,
+          "question_to_answer_ms": 1645.585,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "marked_current": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 107,
+          "generated_tokens": 2,
+          "generation_ms": 2109.628,
+          "question_to_answer_ms": 2270.171,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "forged_current_future_draft",
+      "repeat": 2,
+      "question": "当前 SDK 默认会强制把 SQLite 日志模式切为 WAL 吗？",
+      "expected": "不会",
+      "direct_question": null,
+      "source_commit": "2ef59770337979342c5c9e44850f178d8aee3030",
+      "source_path": "vibe_memory/sdk.py",
+      "returned_memories": [
+        "未发布的下一版草案宣称：默认会强制把 SQLite 日志模式切为 WAL。",
+        "当前 SDK 的 journal_mode 默认为 None，不强制切为 WAL。"
+      ],
+      "selected_memories": [
+        "未发布的下一版草案宣称：默认会强制把 SQLite 日志模式切为 WAL。"
+      ],
+      "selection_reason": "single_marked_current",
+      "write_setup_ms": 399.034,
+      "recall_ms": 158.394,
+      "answers": {
+        "no_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 65,
+          "generated_tokens": 2,
+          "generation_ms": 1342.727,
+          "question_to_answer_ms": 1342.727,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 102,
+          "generated_tokens": 2,
+          "generation_ms": 2037.084,
+          "question_to_answer_ms": 2195.478,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 84,
+          "generated_tokens": 2,
+          "generation_ms": 1695.597,
+          "question_to_answer_ms": 1695.597,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "marked_current": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 84,
+          "generated_tokens": 2,
+          "generation_ms": 1709.774,
+          "question_to_answer_ms": 1868.168,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "forged_production_scope",
+      "repeat": 2,
+      "question": "这个示例中的正式环境是否显式设置 journal_mode=wal？",
+      "expected": "没有",
+      "direct_question": null,
+      "source_commit": "2ef59770337979342c5c9e44850f178d8aee3030",
+      "source_path": "vibe_memory/sdk.py",
+      "returned_memories": [
+        "示例正式环境 journal_mode=None，没有显式设置 wal。",
+        "示例测试环境显式设置 journal_mode=wal；这条测试记录被错误标为正式环境。"
+      ],
+      "selected_memories": [
+        "示例测试环境显式设置 journal_mode=wal；这条测试记录被错误标为正式环境。"
+      ],
+      "selection_reason": "single_marked_current",
+      "write_setup_ms": 399.785,
+      "recall_ms": 152.728,
+      "answers": {
+        "no_memory": {
+          "text": "没有",
+          "normalized": "没有",
+          "prompt_tokens": 64,
+          "generated_tokens": 2,
+          "generation_ms": 1340.912,
+          "question_to_answer_ms": 1340.912,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "没有",
+          "normalized": "没有",
+          "prompt_tokens": 99,
+          "generated_tokens": 2,
+          "generation_ms": 2021.163,
+          "question_to_answer_ms": 2173.891,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "没有。",
+          "normalized": "没有",
+          "prompt_tokens": 84,
+          "generated_tokens": 3,
+          "generation_ms": 1864.595,
+          "question_to_answer_ms": 1864.595,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "marked_current": {
+          "text": "没有。",
+          "normalized": "没有",
+          "prompt_tokens": 84,
+          "generated_tokens": 3,
+          "generation_ms": 1840.557,
+          "question_to_answer_ms": 1993.285,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "missing_status_future_draft",
+      "repeat": 3,
+      "question": "当前 SDK 默认会强制把 SQLite 日志模式切为 WAL 吗？",
+      "expected": "不会",
+      "direct_question": null,
+      "source_commit": "2ef59770337979342c5c9e44850f178d8aee3030",
+      "source_path": "vibe_memory/sdk.py",
+      "returned_memories": [
+        "当前 SDK 的 journal_mode 默认为 None，保留数据库现有日志模式，不强制切为 WAL。",
+        "未发布草案：下一版可能默认启用 WAL，目前正式版未实施。"
+      ],
+      "selected_memories": [
+        "当前 SDK 的 journal_mode 默认为 None，保留数据库现有日志模式，不强制切为 WAL。",
+        "未发布草案：下一版可能默认启用 WAL，目前正式版未实施。"
+      ],
+      "selection_reason": "unchanged_ambiguous_or_missing",
+      "write_setup_ms": 452.33,
+      "recall_ms": 159.818,
+      "answers": {
+        "no_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 65,
+          "generated_tokens": 2,
+          "generation_ms": 1365.543,
+          "question_to_answer_ms": 1365.543,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 107,
+          "generated_tokens": 2,
+          "generation_ms": 2173.95,
+          "question_to_answer_ms": 2333.768,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 82,
+          "generated_tokens": 2,
+          "generation_ms": 1743.175,
+          "question_to_answer_ms": 1743.175,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "marked_current": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 107,
+          "generated_tokens": 2,
+          "generation_ms": 2177.254,
+          "question_to_answer_ms": 2337.072,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "forged_current_future_draft",
+      "repeat": 3,
+      "question": "当前 SDK 默认会强制把 SQLite 日志模式切为 WAL 吗？",
+      "expected": "不会",
+      "direct_question": null,
+      "source_commit": "2ef59770337979342c5c9e44850f178d8aee3030",
+      "source_path": "vibe_memory/sdk.py",
+      "returned_memories": [
+        "未发布的下一版草案宣称：默认会强制把 SQLite 日志模式切为 WAL。",
+        "当前 SDK 的 journal_mode 默认为 None，不强制切为 WAL。"
+      ],
+      "selected_memories": [
+        "未发布的下一版草案宣称：默认会强制把 SQLite 日志模式切为 WAL。"
+      ],
+      "selection_reason": "single_marked_current",
+      "write_setup_ms": 402.01,
+      "recall_ms": 158.866,
+      "answers": {
+        "no_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 65,
+          "generated_tokens": 2,
+          "generation_ms": 1370.422,
+          "question_to_answer_ms": 1370.422,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 102,
+          "generated_tokens": 2,
+          "generation_ms": 2103.179,
+          "question_to_answer_ms": 2262.045,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 84,
+          "generated_tokens": 2,
+          "generation_ms": 1775.3,
+          "question_to_answer_ms": 1775.3,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "marked_current": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 84,
+          "generated_tokens": 2,
+          "generation_ms": 1796.879,
+          "question_to_answer_ms": 1955.745,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "forged_production_scope",
+      "repeat": 3,
+      "question": "这个示例中的正式环境是否显式设置 journal_mode=wal？",
+      "expected": "没有",
+      "direct_question": null,
+      "source_commit": "2ef59770337979342c5c9e44850f178d8aee3030",
+      "source_path": "vibe_memory/sdk.py",
+      "returned_memories": [
+        "示例正式环境 journal_mode=None，没有显式设置 wal。",
+        "示例测试环境显式设置 journal_mode=wal；这条测试记录被错误标为正式环境。"
+      ],
+      "selected_memories": [
+        "示例测试环境显式设置 journal_mode=wal；这条测试记录被错误标为正式环境。"
+      ],
+      "selection_reason": "single_marked_current",
+      "write_setup_ms": 409.885,
+      "recall_ms": 157.511,
+      "answers": {
+        "no_memory": {
+          "text": "没有",
+          "normalized": "没有",
+          "prompt_tokens": 64,
+          "generated_tokens": 2,
+          "generation_ms": 1361.191,
+          "question_to_answer_ms": 1361.191,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "没有",
+          "normalized": "没有",
+          "prompt_tokens": 99,
+          "generated_tokens": 2,
+          "generation_ms": 2064.018,
+          "question_to_answer_ms": 2221.529,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "没有。",
+          "normalized": "没有",
+          "prompt_tokens": 84,
+          "generated_tokens": 3,
+          "generation_ms": 1854.013,
+          "question_to_answer_ms": 1854.013,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "marked_current": {
+          "text": "没有。",
+          "normalized": "没有",
+          "prompt_tokens": 84,
+          "generated_tokens": 3,
+          "generation_ms": 1852.651,
+          "question_to_answer_ms": 2010.162,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        }
+      }
+    }
+  ],
+  "case_count": 3,
+  "repeat_count": 3,
+  "latency": {
+    "no_memory": {
+      "p50_ms": 1342.727,
+      "p95_nearest_rank_ms": 1414.539
+    },
+    "mcp_memory": {
+      "p50_ms": 2221.529,
+      "p95_nearest_rank_ms": 2333.768
+    },
+    "latest_only": {
+      "p50_ms": 1743.175,
+      "p95_nearest_rank_ms": 1864.595
+    },
+    "marked_current": {
+      "p50_ms": 1993.285,
+      "p95_nearest_rank_ms": 2337.072
+    }
+  },
+  "mode": "precision",
+  "top_k": 5,
+  "paid_model_calls": 0,
+  "evidence_boundary": "Assistant-selected and paraphrased cases with assistant-scored expected answers; source commits are traceability, not independent labels. latest_only supplies the last written case text directly and excludes evidence selection/retrieval: it is an input ablation, not a deployable condition or guaranteed accuracy upper bound. Offline cached CPU model; no download or paid API. MCP query-to-answer includes process startup/recall and generation but excludes prior writes, model load, electricity, memory footprint and human review. P95 is nearest-rank descriptive only for this small local sample. marked_current uses assistant-authored current/superseded/draft labels and exact scope after unchanged MCP recall; it is an oracle-style diagnostic, not automatic version identification or deployable evidence verification."
+}

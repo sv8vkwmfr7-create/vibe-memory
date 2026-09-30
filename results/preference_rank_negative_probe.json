@@ -1,0 +1,193 @@
+{
+  "dataset_id": "preference-rank-negatives-v1",
+  "dataset_sha256": "c316df401802d53f24df86f05b2a3bff76751c6a400ea07703a58fc6d90e3b05",
+  "model_weight_sha256": "53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db",
+  "rows": [
+    {
+      "id": "paraphrased-writing-preference",
+      "baseline_ids": [
+        "noise3",
+        "noise2",
+        "noise1",
+        "friend",
+        "generic"
+      ],
+      "bm25_ids": [
+        "noise1",
+        "noise2",
+        "noise3",
+        "generic",
+        "friend"
+      ],
+      "candidate_ids": [
+        "noise3",
+        "noise1",
+        "noise2",
+        "friend",
+        "generic"
+      ],
+      "baseline": {
+        "target_top5": false,
+        "target_top1": false,
+        "known_negative_ids": [
+          "friend",
+          "generic"
+        ],
+        "known_negative_top1": false
+      },
+      "candidate": {
+        "target_top5": false,
+        "target_top1": false,
+        "known_negative_ids": [
+          "friend",
+          "generic"
+        ],
+        "known_negative_top1": false
+      }
+    },
+    {
+      "id": "changed-theme-preference",
+      "baseline_ids": [
+        "generic",
+        "old",
+        "noise3",
+        "current",
+        "noise2"
+      ],
+      "bm25_ids": [
+        "old",
+        "current",
+        "noise2",
+        "generic",
+        "noise3"
+      ],
+      "candidate_ids": [
+        "old",
+        "generic",
+        "current",
+        "noise3",
+        "noise2"
+      ],
+      "baseline": {
+        "target_top5": true,
+        "target_top1": false,
+        "known_negative_ids": [
+          "generic",
+          "old"
+        ],
+        "known_negative_top1": true
+      },
+      "candidate": {
+        "target_top5": true,
+        "target_top1": false,
+        "known_negative_ids": [
+          "generic",
+          "old"
+        ],
+        "known_negative_top1": true
+      }
+    },
+    {
+      "id": "drink-preference-versus-generic-advice",
+      "baseline_ids": [
+        "generic",
+        "friend",
+        "noise1",
+        "preference",
+        "noise2"
+      ],
+      "bm25_ids": [
+        "generic",
+        "friend",
+        "noise1",
+        "noise2",
+        "noise4"
+      ],
+      "candidate_ids": [
+        "generic",
+        "friend",
+        "noise1",
+        "noise2",
+        "preference"
+      ],
+      "baseline": {
+        "target_top5": true,
+        "target_top1": false,
+        "known_negative_ids": [
+          "friend",
+          "generic"
+        ],
+        "known_negative_top1": true
+      },
+      "candidate": {
+        "target_top5": true,
+        "target_top1": false,
+        "known_negative_ids": [
+          "friend",
+          "generic"
+        ],
+        "known_negative_top1": true
+      }
+    },
+    {
+      "id": "negated-spicy-food-preference",
+      "baseline_ids": [
+        "noise2",
+        "noise3",
+        "generic",
+        "noise1",
+        "friend"
+      ],
+      "bm25_ids": [
+        "friend",
+        "generic",
+        "noise3",
+        "preference",
+        "noise2"
+      ],
+      "candidate_ids": [
+        "noise3",
+        "generic",
+        "noise2",
+        "friend",
+        "noise1"
+      ],
+      "baseline": {
+        "target_top5": false,
+        "target_top1": false,
+        "known_negative_ids": [
+          "friend",
+          "generic"
+        ],
+        "known_negative_top1": false
+      },
+      "candidate": {
+        "target_top5": false,
+        "target_top1": false,
+        "known_negative_ids": [
+          "friend",
+          "generic"
+        ],
+        "known_negative_top1": false
+      }
+    }
+  ],
+  "summary": {
+    "baseline": {
+      "target_top5": 2,
+      "target_top1": 0,
+      "known_negative_top1": 2
+    },
+    "candidate": {
+      "target_top5": 2,
+      "target_top1": 0,
+      "known_negative_top1": 2
+    }
+  },
+  "rule": "Unchanged MiniLM final precision Top-5 + positive BM25 Top-5; equal RRF k=60, output five, final-rank list first.",
+  "paid_api_calls": 0,
+  "evaluation_is_independent": false,
+  "eligible_for_default": false,
+  "production_defaults_changed": false,
+  "limits": "Assistant-authored synthetic diagnostics frozen before first execution. Not independent labels or a public benchmark. All records are in one user scope; other-person statements are quoted distractors, not tenant leakage tests. Actual cached CPU model encoding and core replay, not SDK/MCP end-to-end or answer generation. Labels used only by scorer. No automatic old/current selection. Retrieval of both a preference and a contradiction is not correct personalized answering. Costs/timing/memory unmeasured."
+}

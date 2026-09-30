@@ -25,6 +25,7 @@ from typing import Optional
 from datetime import datetime, timedelta
 
 from vibe_memory.models.memory_atom import MemoryAtom, Lifecycle, GraphPartition
+from vibe_memory.metrics import MetricsCollector
 
 
 REFLECT_SYSTEM_PROMPT = """You are a memory analyst. You will be given a set of memory atoms from an AI agent's conversation history. Your job is to analyze them and generate insights.
@@ -80,6 +81,7 @@ class Reflector:
         self.auto_store = auto_store
         self._reflect_count = 0
         self._insight_count = 0
+        self.metrics = MetricsCollector()
 
     def reflect(
         self,
@@ -111,6 +113,7 @@ class Reflector:
         user_prompt = self._build_reflection_prompt(atoms, prompt)
 
         # Call LLM
+        stage = "reflect_provider"
         try:
             result = self.provider.chat(
                 messages=[
@@ -120,8 +123,10 @@ class Reflector:
                 temperature=0.3,
                 max_tokens=1024,
             )
+            stage = "reflect_parse"
             parsed = self._parse_reflection(result["content"])
-        except Exception as e:
+        except Exception as error:
+            self.metrics.record_failure(stage, error)
             return []
 
         self._reflect_count += 1
@@ -162,6 +167,7 @@ class Reflector:
             return []
 
         user_prompt = self._build_reflection_prompt(atoms, f"Analyze these memories about '{topic}'.")
+        stage = "reflect_provider"
         try:
             result = self.provider.chat(
                 messages=[
@@ -171,8 +177,10 @@ class Reflector:
                 temperature=0.3,
                 max_tokens=1024,
             )
+            stage = "reflect_parse"
             parsed = self._parse_reflection(result["content"])
-        except Exception:
+        except Exception as error:
+            self.metrics.record_failure(stage, error)
             return []
 
         stored = []
@@ -189,6 +197,7 @@ class Reflector:
             "reflect_count": self._reflect_count,
             "insight_count": self._insight_count,
             "auto_store": self.auto_store,
+            "degradation": self.metrics.stats()["failures"],
         }
 
     # ── Internal ──
@@ -242,6 +251,13 @@ class Reflector:
         return "\n".join(lines)
 
     def _parse_reflection(self, content: str) -> dict:
+        parsed = self._parse_reflection_json(content)
+        if (not isinstance(parsed, dict) or not isinstance(parsed.get("insights"), list)
+                or not all(isinstance(insight, dict) for insight in parsed["insights"])):
+            raise ValueError("Invalid reflection structure")
+        return parsed
+
+    def _parse_reflection_json(self, content: str):
         """Parse LLM reflection response."""
         # Try direct JSON
         try:
@@ -266,7 +282,7 @@ class Reflector:
             except json.JSONDecodeError:
                 pass
 
-        return {"insights": []}
+        raise ValueError("Invalid reflection JSON")
 
     def _store_insight(self, insight: dict) -> Optional[MemoryAtom]:
         """Store an insight as a memory atom."""
@@ -277,7 +293,8 @@ class Reflector:
                 tags=["reflect", insight.get("type", "insight")],
                 auto_build_edges=False,
             )
-        except Exception:
+        except Exception as error:
+            self.metrics.record_failure("reflect_store", error)
             return None
 
 
@@ -292,12 +309,16 @@ def create_reflector(
     **kwargs,
 ) -> Reflector:
     """
-    Create a Reflector with zero-config provider setup.
+    Create a Reflector with explicit hosted-provider configuration.
+
+    OpenAI-compatible services (including DeepSeek) use provider_type="openai"
+    with an explicit api_key, base_url and service model; "deepseek" is not an alias.
+    For local/custom providers, construct Reflector(memory, provider) directly.
 
     Args:
         memory: VibeMemory instance
-        provider_type: "openai", "anthropic", or "deepseek"
-        api_key: API key (uses env var if not set)
+        provider_type: "openai" or "anthropic"
+        api_key: Explicit API key; this helper does not read environment variables
         base_url: API base URL
         model: Model name
         **kwargs: Passed to Reflector

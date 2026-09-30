@@ -1,0 +1,20 @@
+{
+  "run_date": "2026-09-23",
+  "scenario": "synthetic_cross_session_correction",
+  "interface": "real MCP stdio subprocess, separate process for each write and the later query",
+  "input": "Two assistant-authored Chinese memories: old 30-second timeout, then user correction to 60 seconds; later query asks the production Orders timeout.",
+  "mode": "precision",
+  "top_k": 5,
+  "result": {
+    "target_rank": 2,
+    "stale_rank": 1,
+    "target_in_top5": true,
+    "stale_in_top5": true,
+    "write_tool_ms": [5.605, 8.878],
+    "recall_tool_ms": 10.734,
+    "paid_model_calls": 0,
+    "answer_quality": "not_measured_no_answer_model"
+  },
+  "validation": "New probe plus prior session-effect check and MCP suite: 39 passed with a dedicated pytest temporary directory. Default Windows pytest temp path returned WinError 5; the dedicated-directory rerun passed.",
+  "evidence_boundary": "Single synthetic assistant-authored case, not independent human labels or a final-answer test. Tool timings exclude MCP process startup and answer generation; not latency percentiles or user-facing cost. No SDK/MCP production defaults changed."
+}

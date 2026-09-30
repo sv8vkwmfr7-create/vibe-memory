@@ -1,0 +1,1038 @@
+{
+  "dataset": "bowen-upenn/PersonaMem-v2",
+  "revision": "ed956dea41521fc4499acbc63f966e0fd3c053ba",
+  "license": "CC-BY-4.0",
+  "source_sha256": "a47a7dd3879de5e282c6d15266437ed44cf69c0c93c79634645dbd73d655b29a",
+  "source_bytes": 17474290,
+  "source_rows": 2061,
+  "selection": "fixed first three val_text rows; text 32k; adapter smoke only",
+  "candidate_rows": 3,
+  "uniquely_mapped_rows": 3,
+  "excluded_rows": [],
+  "model_weight_sha256": "53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db",
+  "rows": [
+    {
+      "row_index": 0,
+      "persona_id": "988",
+      "history_path": "data/chat_history_32k/chat_history_250913_163134_persona988.json",
+      "history_sha256": "54b4b069d9b0dafa68fd96bab6f2b2330393ab1414b680dda7ee599f7e2031b1",
+      "history_bytes": 155546,
+      "original_message_count": 225,
+      "stored_dialogue_count": 224,
+      "excluded_system_count": 1,
+      "evidence_original_indices": [
+        45,
+        46,
+        47,
+        48
+      ],
+      "arms": {
+        "tfidf": {
+          "ids": [
+            "988:121",
+            "988:124",
+            "988:83",
+            "988:65",
+            "988:153"
+          ],
+          "snippet_any_hit": false,
+          "whole_snippet_covered": false,
+          "snippet_turn_recall": 0.0
+        },
+        "model": {
+          "ids": [
+            "988:121",
+            "988:142",
+            "988:17",
+            "988:124",
+            "988:34"
+          ],
+          "snippet_any_hit": false,
+          "whole_snippet_covered": false,
+          "snippet_turn_recall": 0.0
+        },
+        "rank_fusion": {
+          "ids": [
+            "988:121",
+            "988:124",
+            "988:142",
+            "988:17",
+            "988:83"
+          ],
+          "snippet_any_hit": false,
+          "whole_snippet_covered": false,
+          "snippet_turn_recall": 0.0
+        }
+      },
+      "traces": {
+        "tfidf": {
+          "loss_stage": "before_fusion",
+          "ids": {
+            "semantic": [
+              "988:121",
+              "988:124",
+              "988:83",
+              "988:65",
+              "988:153"
+            ],
+            "bm25": [
+              "988:124",
+              "988:121",
+              "988:83",
+              "988:153",
+              "988:110"
+            ],
+            "graph": [
+              "988:121",
+              "988:124",
+              "988:83",
+              "988:65",
+              "988:153"
+            ],
+            "temporal": [],
+            "fused": [
+              "988:121",
+              "988:124",
+              "988:83",
+              "988:153",
+              "988:65",
+              "988:110"
+            ],
+            "final": [
+              "988:121",
+              "988:124",
+              "988:83",
+              "988:65",
+              "988:153"
+            ]
+          },
+          "fused_top5_snippet_hit": false,
+          "evidence_ranks": {
+            "988:45": {
+              "semantic": null,
+              "bm25": null,
+              "graph": null,
+              "temporal": null,
+              "fused": null,
+              "final": null
+            },
+            "988:46": {
+              "semantic": null,
+              "bm25": null,
+              "graph": null,
+              "temporal": null,
+              "fused": null,
+              "final": null
+            },
+            "988:47": {
+              "semantic": null,
+              "bm25": null,
+              "graph": null,
+              "temporal": null,
+              "fused": null,
+              "final": null
+            },
+            "988:48": {
+              "semantic": null,
+              "bm25": null,
+              "graph": null,
+              "temporal": null,
+              "fused": null,
+              "final": null
+            }
+          }
+        },
+        "model": {
+          "loss_stage": "before_fusion",
+          "ids": {
+            "semantic": [
+              "988:121",
+              "988:142",
+              "988:17",
+              "988:124",
+              "988:34"
+            ],
+            "bm25": [
+              "988:124",
+              "988:121",
+              "988:83",
+              "988:153",
+              "988:110"
+            ],
+            "graph": [
+              "988:121",
+              "988:142",
+              "988:17",
+              "988:124",
+              "988:34"
+            ],
+            "temporal": [],
+            "fused": [
+              "988:121",
+              "988:124",
+              "988:142",
+              "988:17",
+              "988:34",
+              "988:83",
+              "988:153",
+              "988:110"
+            ],
+            "final": [
+              "988:121",
+              "988:142",
+              "988:17",
+              "988:124",
+              "988:34"
+            ]
+          },
+          "fused_top5_snippet_hit": false,
+          "evidence_ranks": {
+            "988:45": {
+              "semantic": null,
+              "bm25": null,
+              "graph": null,
+              "temporal": null,
+              "fused": null,
+              "final": null
+            },
+            "988:46": {
+              "semantic": null,
+              "bm25": null,
+              "graph": null,
+              "temporal": null,
+              "fused": null,
+              "final": null
+            },
+            "988:47": {
+              "semantic": null,
+              "bm25": null,
+              "graph": null,
+              "temporal": null,
+              "fused": null,
+              "final": null
+            },
+            "988:48": {
+              "semantic": null,
+              "bm25": null,
+              "graph": null,
+              "temporal": null,
+              "fused": null,
+              "final": null
+            }
+          }
+        },
+        "rank_fusion": {
+          "input_ids": {
+            "model_final": [
+              "988:121",
+              "988:142",
+              "988:17",
+              "988:124",
+              "988:34"
+            ],
+            "positive_bm25": [
+              "988:124",
+              "988:121",
+              "988:83",
+              "988:153",
+              "988:110"
+            ]
+          },
+          "evidence_input_ranks": {
+            "988:45": {
+              "model_final": null,
+              "positive_bm25": null
+            },
+            "988:46": {
+              "model_final": null,
+              "positive_bm25": null
+            },
+            "988:47": {
+              "model_final": null,
+              "positive_bm25": null
+            },
+            "988:48": {
+              "model_final": null,
+              "positive_bm25": null
+            }
+          },
+          "snippet_in_input_union": false
+        }
+      },
+      "context_probe": {
+        "protocol_id": "preceding-turn-context-v1",
+        "candidate_ids": [
+          "988:143",
+          "988:142",
+          "988:124",
+          "988:125",
+          "988:35"
+        ],
+        "candidate_trace": {
+          "loss_stage": "before_fusion",
+          "ids": {
+            "semantic": [
+              "988:143",
+              "988:142",
+              "988:124",
+              "988:125",
+              "988:35"
+            ],
+            "bm25": [
+              "988:124",
+              "988:121",
+              "988:83",
+              "988:153",
+              "988:110"
+            ],
+            "graph": [
+              "988:143",
+              "988:142",
+              "988:124",
+              "988:125",
+              "988:35"
+            ],
+            "temporal": [],
+            "fused": [
+              "988:124",
+              "988:143",
+              "988:142",
+              "988:125",
+              "988:35",
+              "988:121",
+              "988:83",
+              "988:153",
+              "988:110"
+            ],
+            "final": [
+              "988:143",
+              "988:142",
+              "988:124",
+              "988:125",
+              "988:35"
+            ]
+          },
+          "fused_top5_snippet_hit": false,
+          "evidence_ranks": {
+            "988:45": {
+              "semantic": null,
+              "bm25": null,
+              "graph": null,
+              "temporal": null,
+              "fused": null,
+              "final": null
+            },
+            "988:46": {
+              "semantic": null,
+              "bm25": null,
+              "graph": null,
+              "temporal": null,
+              "fused": null,
+              "final": null
+            },
+            "988:47": {
+              "semantic": null,
+              "bm25": null,
+              "graph": null,
+              "temporal": null,
+              "fused": null,
+              "final": null
+            },
+            "988:48": {
+              "semantic": null,
+              "bm25": null,
+              "graph": null,
+              "temporal": null,
+              "fused": null,
+              "final": null
+            }
+          }
+        },
+        "encoded_characters": {
+          "baseline": 137077,
+          "previous_context": 275762
+        },
+        "vector_bytes": {
+          "baseline": 344064,
+          "previous_context": 344064
+        },
+        "task": "other_person",
+        "baseline": {
+          "snippet_any_hit": false,
+          "snippet_turn_recall": 0.0
+        },
+        "previous_context": {
+          "snippet_any_hit": false,
+          "snippet_turn_recall": 0.0
+        }
+      }
+    },
+    {
+      "row_index": 1,
+      "persona_id": "782",
+      "history_path": "data/chat_history_32k/chat_history_250913_163134_persona782.json",
+      "history_sha256": "5efec92c18af920d19dc6a0cf8977d5f39bd4003df9ea45959f69b33cd8e824f",
+      "history_bytes": 185388,
+      "original_message_count": 221,
+      "stored_dialogue_count": 220,
+      "excluded_system_count": 1,
+      "evidence_original_indices": [
+        113,
+        114
+      ],
+      "arms": {
+        "model": {
+          "ids": [
+            "782:53",
+            "782:107",
+            "782:54",
+            "782:68",
+            "782:110"
+          ],
+          "snippet_any_hit": false,
+          "whole_snippet_covered": false,
+          "snippet_turn_recall": 0.0
+        },
+        "tfidf": {
+          "ids": [
+            "782:125",
+            "782:107",
+            "782:53",
+            "782:65",
+            "782:68"
+          ],
+          "snippet_any_hit": false,
+          "whole_snippet_covered": false,
+          "snippet_turn_recall": 0.0
+        },
+        "rank_fusion": {
+          "ids": [
+            "782:107",
+            "782:53",
+            "782:68",
+            "782:125",
+            "782:54"
+          ],
+          "snippet_any_hit": false,
+          "whole_snippet_covered": false,
+          "snippet_turn_recall": 0.0
+        }
+      },
+      "traces": {
+        "model": {
+          "loss_stage": "before_fusion",
+          "ids": {
+            "semantic": [
+              "782:53",
+              "782:54",
+              "782:107",
+              "782:110",
+              "782:68"
+            ],
+            "bm25": [
+              "782:125",
+              "782:107",
+              "782:68",
+              "782:53",
+              "782:65"
+            ],
+            "graph": [
+              "782:53",
+              "782:54",
+              "782:107",
+              "782:110",
+              "782:68"
+            ],
+            "temporal": [],
+            "fused": [
+              "782:53",
+              "782:107",
+              "782:68",
+              "782:54",
+              "782:110",
+              "782:125",
+              "782:65"
+            ],
+            "final": [
+              "782:53",
+              "782:107",
+              "782:54",
+              "782:68",
+              "782:110"
+            ]
+          },
+          "fused_top5_snippet_hit": false,
+          "evidence_ranks": {
+            "782:113": {
+              "semantic": null,
+              "bm25": null,
+              "graph": null,
+              "temporal": null,
+              "fused": null,
+              "final": null
+            },
+            "782:114": {
+              "semantic": null,
+              "bm25": null,
+              "graph": null,
+              "temporal": null,
+              "fused": null,
+              "final": null
+            }
+          }
+        },
+        "tfidf": {
+          "loss_stage": "before_fusion",
+          "ids": {
+            "semantic": [
+              "782:125",
+              "782:107",
+              "782:53",
+              "782:65",
+              "782:68"
+            ],
+            "bm25": [
+              "782:125",
+              "782:107",
+              "782:68",
+              "782:53",
+              "782:65"
+            ],
+            "graph": [
+              "782:125",
+              "782:107",
+              "782:53",
+              "782:65",
+              "782:68"
+            ],
+            "temporal": [],
+            "fused": [
+              "782:125",
+              "782:107",
+              "782:53",
+              "782:68",
+              "782:65"
+            ],
+            "final": [
+              "782:125",
+              "782:107",
+              "782:53",
+              "782:65",
+              "782:68"
+            ]
+          },
+          "fused_top5_snippet_hit": false,
+          "evidence_ranks": {
+            "782:113": {
+              "semantic": null,
+              "bm25": null,
+              "graph": null,
+              "temporal": null,
+              "fused": null,
+              "final": null
+            },
+            "782:114": {
+              "semantic": null,
+              "bm25": null,
+              "graph": null,
+              "temporal": null,
+              "fused": null,
+              "final": null
+            }
+          }
+        },
+        "rank_fusion": {
+          "input_ids": {
+            "model_final": [
+              "782:53",
+              "782:107",
+              "782:54",
+              "782:68",
+              "782:110"
+            ],
+            "positive_bm25": [
+              "782:125",
+              "782:107",
+              "782:68",
+              "782:53",
+              "782:65"
+            ]
+          },
+          "evidence_input_ranks": {
+            "782:113": {
+              "model_final": null,
+              "positive_bm25": null
+            },
+            "782:114": {
+              "model_final": null,
+              "positive_bm25": null
+            }
+          },
+          "snippet_in_input_union": false
+        }
+      },
+      "context_probe": {
+        "protocol_id": "preceding-turn-context-v1",
+        "candidate_ids": [
+          "782:107",
+          "782:54",
+          "782:88",
+          "782:53",
+          "782:68"
+        ],
+        "candidate_trace": {
+          "loss_stage": "before_fusion",
+          "ids": {
+            "semantic": [
+              "782:107",
+              "782:54",
+              "782:88",
+              "782:53",
+              "782:68"
+            ],
+            "bm25": [
+              "782:125",
+              "782:107",
+              "782:68",
+              "782:53",
+              "782:65"
+            ],
+            "graph": [
+              "782:107",
+              "782:54",
+              "782:88",
+              "782:53",
+              "782:68"
+            ],
+            "temporal": [],
+            "fused": [
+              "782:107",
+              "782:53",
+              "782:68",
+              "782:54",
+              "782:88",
+              "782:125",
+              "782:65"
+            ],
+            "final": [
+              "782:107",
+              "782:54",
+              "782:88",
+              "782:53",
+              "782:68"
+            ]
+          },
+          "fused_top5_snippet_hit": false,
+          "evidence_ranks": {
+            "782:113": {
+              "semantic": null,
+              "bm25": null,
+              "graph": null,
+              "temporal": null,
+              "fused": null,
+              "final": null
+            },
+            "782:114": {
+              "semantic": null,
+              "bm25": null,
+              "graph": null,
+              "temporal": null,
+              "fused": null,
+              "final": null
+            }
+          }
+        },
+        "encoded_characters": {
+          "baseline": 167818,
+          "previous_context": 336021
+        },
+        "vector_bytes": {
+          "previous_context": 337920,
+          "baseline": 337920
+        },
+        "task": "implicit_self_preference",
+        "baseline": {
+          "snippet_any_hit": false,
+          "snippet_turn_recall": 0.0
+        },
+        "previous_context": {
+          "snippet_any_hit": false,
+          "snippet_turn_recall": 0.0
+        }
+      }
+    },
+    {
+      "row_index": 2,
+      "persona_id": "730",
+      "history_path": "data/chat_history_32k/chat_history_250913_163134_persona730.json",
+      "history_sha256": "943d5af3c3dded94c80dd1641901473b6f1cb8b1d46280d3c2d58c189182fcaa",
+      "history_bytes": 176730,
+      "original_message_count": 220,
+      "stored_dialogue_count": 219,
+      "excluded_system_count": 1,
+      "evidence_original_indices": [
+        107,
+        108,
+        109,
+        110
+      ],
+      "arms": {
+        "tfidf": {
+          "ids": [
+            "730:109",
+            "730:5",
+            "730:108",
+            "730:106",
+            "730:105"
+          ],
+          "snippet_any_hit": true,
+          "whole_snippet_covered": false,
+          "snippet_turn_recall": 0.5
+        },
+        "model": {
+          "ids": [
+            "730:108",
+            "730:77",
+            "730:106",
+            "730:105",
+            "730:109"
+          ],
+          "snippet_any_hit": true,
+          "whole_snippet_covered": false,
+          "snippet_turn_recall": 0.5
+        },
+        "rank_fusion": {
+          "ids": [
+            "730:108",
+            "730:109",
+            "730:106",
+            "730:77",
+            "730:105"
+          ],
+          "snippet_any_hit": true,
+          "whole_snippet_covered": false,
+          "snippet_turn_recall": 0.5
+        }
+      },
+      "traces": {
+        "tfidf": {
+          "loss_stage": "retained",
+          "ids": {
+            "semantic": [
+              "730:109",
+              "730:5",
+              "730:108",
+              "730:106",
+              "730:105"
+            ],
+            "bm25": [
+              "730:109",
+              "730:108",
+              "730:106",
+              "730:110",
+              "730:5"
+            ],
+            "graph": [
+              "730:109",
+              "730:5",
+              "730:108",
+              "730:106",
+              "730:105"
+            ],
+            "temporal": [],
+            "fused": [
+              "730:109",
+              "730:108",
+              "730:5",
+              "730:106",
+              "730:105",
+              "730:110"
+            ],
+            "final": [
+              "730:109",
+              "730:5",
+              "730:108",
+              "730:106",
+              "730:105"
+            ]
+          },
+          "fused_top5_snippet_hit": true,
+          "evidence_ranks": {
+            "730:107": {
+              "semantic": null,
+              "bm25": null,
+              "graph": null,
+              "temporal": null,
+              "fused": null,
+              "final": null
+            },
+            "730:108": {
+              "semantic": 3,
+              "bm25": 2,
+              "graph": 3,
+              "temporal": null,
+              "fused": 2,
+              "final": 3
+            },
+            "730:109": {
+              "semantic": 1,
+              "bm25": 1,
+              "graph": 1,
+              "temporal": null,
+              "fused": 1,
+              "final": 1
+            },
+            "730:110": {
+              "semantic": null,
+              "bm25": 4,
+              "graph": null,
+              "temporal": null,
+              "fused": 6,
+              "final": null
+            }
+          }
+        },
+        "model": {
+          "loss_stage": "retained",
+          "ids": {
+            "semantic": [
+              "730:108",
+              "730:77",
+              "730:105",
+              "730:106",
+              "730:109"
+            ],
+            "bm25": [
+              "730:109",
+              "730:108",
+              "730:106",
+              "730:110",
+              "730:5"
+            ],
+            "graph": [
+              "730:108",
+              "730:77",
+              "730:105",
+              "730:106",
+              "730:109"
+            ],
+            "temporal": [],
+            "fused": [
+              "730:108",
+              "730:109",
+              "730:106",
+              "730:77",
+              "730:105",
+              "730:110",
+              "730:5"
+            ],
+            "final": [
+              "730:108",
+              "730:77",
+              "730:106",
+              "730:105",
+              "730:109"
+            ]
+          },
+          "fused_top5_snippet_hit": true,
+          "evidence_ranks": {
+            "730:107": {
+              "semantic": null,
+              "bm25": null,
+              "graph": null,
+              "temporal": null,
+              "fused": null,
+              "final": null
+            },
+            "730:108": {
+              "semantic": 1,
+              "bm25": 2,
+              "graph": 1,
+              "temporal": null,
+              "fused": 1,
+              "final": 1
+            },
+            "730:109": {
+              "semantic": 5,
+              "bm25": 1,
+              "graph": 5,
+              "temporal": null,
+              "fused": 2,
+              "final": 5
+            },
+            "730:110": {
+              "semantic": null,
+              "bm25": 4,
+              "graph": null,
+              "temporal": null,
+              "fused": 6,
+              "final": null
+            }
+          }
+        },
+        "rank_fusion": {
+          "input_ids": {
+            "model_final": [
+              "730:108",
+              "730:77",
+              "730:106",
+              "730:105",
+              "730:109"
+            ],
+            "positive_bm25": [
+              "730:109",
+              "730:108",
+              "730:106",
+              "730:110",
+              "730:5"
+            ]
+          },
+          "evidence_input_ranks": {
+            "730:107": {
+              "model_final": null,
+              "positive_bm25": null
+            },
+            "730:108": {
+              "model_final": 1,
+              "positive_bm25": 2
+            },
+            "730:109": {
+              "model_final": 5,
+              "positive_bm25": 1
+            },
+            "730:110": {
+              "model_final": null,
+              "positive_bm25": 4
+            }
+          },
+          "snippet_in_input_union": true
+        }
+      },
+      "context_probe": {
+        "protocol_id": "preceding-turn-context-v1",
+        "candidate_ids": [
+          "730:108",
+          "730:109",
+          "730:107",
+          "730:110",
+          "730:77"
+        ],
+        "candidate_trace": {
+          "loss_stage": "retained",
+          "ids": {
+            "semantic": [
+              "730:108",
+              "730:109",
+              "730:107",
+              "730:110",
+              "730:77"
+            ],
+            "bm25": [
+              "730:109",
+              "730:108",
+              "730:106",
+              "730:110",
+              "730:5"
+            ],
+            "graph": [
+              "730:108",
+              "730:109",
+              "730:107",
+              "730:110",
+              "730:77"
+            ],
+            "temporal": [],
+            "fused": [
+              "730:108",
+              "730:109",
+              "730:110",
+              "730:107",
+              "730:77",
+              "730:106",
+              "730:5"
+            ],
+            "final": [
+              "730:108",
+              "730:109",
+              "730:107",
+              "730:110",
+              "730:77"
+            ]
+          },
+          "fused_top5_snippet_hit": true,
+          "evidence_ranks": {
+            "730:107": {
+              "semantic": 3,
+              "bm25": null,
+              "graph": 3,
+              "temporal": null,
+              "fused": 4,
+              "final": 3
+            },
+            "730:108": {
+              "semantic": 1,
+              "bm25": 2,
+              "graph": 1,
+              "temporal": null,
+              "fused": 1,
+              "final": 1
+            },
+            "730:109": {
+              "semantic": 2,
+              "bm25": 1,
+              "graph": 2,
+              "temporal": null,
+              "fused": 2,
+              "final": 2
+            },
+            "730:110": {
+              "semantic": 4,
+              "bm25": 4,
+              "graph": 4,
+              "temporal": null,
+              "fused": 3,
+              "final": 4
+            }
+          }
+        },
+        "encoded_characters": {
+          "baseline": 159066,
+          "previous_context": 321547
+        },
+        "vector_bytes": {
+          "baseline": 336384,
+          "previous_context": 336384
+        },
+        "task": "ask_to_forget",
+        "baseline": {
+          "snippet_any_hit": true,
+          "snippet_turn_recall": 0.5,
+          "forget_risk_ranks": {
+            "old_standalone_fact": 1,
+            "forget_instruction": 5,
+            "forget_confirmation": null
+          }
+        },
+        "previous_context": {
+          "snippet_any_hit": true,
+          "snippet_turn_recall": 1.0,
+          "forget_risk_ranks": {
+            "old_standalone_fact": 1,
+            "forget_instruction": 2,
+            "forget_confirmation": 4
+          }
+        }
+      }
+    }
+  ],
+  "paid_api_calls": 0,
+  "eligible_for_default": false,
+  "evaluation_is_independent": false,
+  "production_defaults_changed": false,
+  "provenance": "Mirror downloads at pinned publisher revision. CSV SHA-256 matches official file page; revision verified against official commit page. History SHA-256 values are locally pinned, not independently cross-checked with official per-file hashes. Snippets fully match each downloaded history.",
+  "limits": "Original smoke provenance and input constraints retained; added context_probe rows describe an actual representation intervention. See context_limits for task/quality boundaries and per-row explicit timing limits when present. Not a benchmark score or final-answer accuracy.",
+  "stage_reference_sha256": "3ceeac077d4a3da543442ba0c1952e5302cc106ca29a55e6436ac6f0924f385e",
+  "replay_match_rows": 3,
+  "stage_limits": "Baseline stage observations unchanged; added candidate_trace reflects the preceding-turn representation intervention, not a stage-disable ablation or forgetting implementation.",
+  "context_limits": "Exploratory representation intervention on exposed first-three rows, not independent evaluation. Original stored/returned turns, BM25 and final Top-5 unchanged; semantic seeds, downstream graph results and similarity reranking may change due to the one representation intervention. Task metadata used only for scoring, not retrieval. Related spans are not uniformly positive targets: others, implicit self preference, and ask-to-forget disclosed separately. Prior fact 108 retrieval is a risk indicator, not final-answer misuse; no natural-language forgetting action or SDK deletion was performed. No production defaults, model download, paid API or answers. Default report excludes timing; explicit timing is bounded local core cost, not onboarding/peak RAM/electricity. encoded_characters counts supplied strings before tokenizer truncation, not actual encoded tokens; unchanged model context limits may truncate the previous-turn suffix."
+}

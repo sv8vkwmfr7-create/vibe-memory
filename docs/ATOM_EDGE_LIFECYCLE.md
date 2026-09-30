@@ -1,5 +1,9 @@
 # Atom deletion and merge boundaries
 
+## Same-session automatic edge insertion
+
+SDK single and batch writes use `insert_edge_if_missing`: SQLite's directed-pair unique constraint skips an existing pair without changing any columns, including manual labels and pending/stale state. Only an actual insert increments SDK edge metrics. Explicit `insert_edge`/SDK link and indexer replacement behavior remain unchanged. A conflicting ID on a different pair still raises, rather than silently swallowing unrelated constraints. This does not reconcile old history, change timestamp-tie ordering, or prevent the builder from recomputing all session pairs.
+
 ## Delete
 
 `VibeStorage.delete_atom(id)` deletes all incoming/outgoing edges (including pending and stale) before deleting the atom, in one SQLite transaction. Failure rolls back both changes. SDK forget, GC eviction and partition deletion share this path. Unrelated atoms and edges are not removed. Malformed cross-owner edges incident to the deleted ID are also removed because retaining them would create orphans.
@@ -28,12 +32,30 @@ Tests use synthetic atoms and an in-memory database, including failed SQL trigge
 
 Within the same delete/merge transaction, affected Episode rows in each parent's tenant/agent are invalidated if their member list contains a parent ID or a parent's explicit episode pointer names them. Surviving same-owner atom pointers to those Episodes are cleared. The whole derived summary is removed, not merely an ID from its list, because the text can still contain the deleted fact. Unrelated/foreign Episodes remain unchanged; malformed cross-owner legacy memberships and already-missing historical parent IDs require separate auditing. Invalid scoped JSON can fail the operation, rolling it back rather than silently discarding data.
 
-This is conservative cache invalidation, not immediate rebuilding. Surviving members remain stored and future normal aggregation can build a new Episode. Stable Episode identity, bounded repeated aggregation and complete source provenance are still open. The scoped JSON membership scan is linear in the owner's Episodes on each mutation; a normalized membership table/index is the upgrade path if measured costs warrant it.
+This is conservative cache invalidation, not immediate rebuilding. Surviving members remain stored and future normal aggregation can build a new Episode. Batch 3d below bounds normal SDK rebuilds; complete source provenance remains open. The scoped JSON membership scan is linear in the owner's Episodes on each mutation; a normalized membership table/index is the upgrade path if measured costs warrant it.
+
+## Bounded SDK Episode rebuilding (batch 3d)
+
+The builder rejects mixed tenant/agent/session inputs and duplicate atoms. An Episode ID is a UUID5 derived from tenant, agent, session and its first member ID. It is stable for the same leading member, including appending to that topic group; changing the leading member or regrouping can change identities. This is not permanent identity across deletion/merge/topic changes.
+
+SDK aggregation atomically replaces only the current owner's session Episode snapshot, including clearing obsolete groups and persisting member pointers. A BEGIN IMMEDIATE transaction compares the complete live atom snapshot before replacement; changed input refuses replacement without destroying old rows. SQL failure restores rows and pointers. Existing usage/community metadata survives when the stable ID matches. Original atom positions are retained to avoid reordering timestamp ties. Fewer than three session atoms retain the existing SDK aggregation threshold and clear obsolete groups.
+
+No schema migration or startup cleanup occurs. Old random-ID Episodes are replaced only when their owning session is rebuilt; their old per-Episode statistics are not transferred to newly identified groups. Raw insert_episode remains append-only and can reject duplicate IDs. get_episodes_by_session remains a trusted, unscoped storage reader, not an authorization API. Same-connection calls still require caller coordination.
+
+This bounds stored groups by the current topic segmentation, not runtime by a fixed limit: every SDK rebuild reads/sorts the entire session and rewrites the derived snapshot, even when unchanged. Incremental computation, complete erasure/provenance and backpressure counters are separate work. No network/model call or retrieval-default change is introduced.
 
 Indexer consumption reloads live endpoints and enforces tenant/agent and distinct IDs before classification. It uses current content rather than queued snapshots. After classification it rechecks relevant content/version metadata. A final BEGIN IMMEDIATE compare-and-insert validates the serialized current snapshots and inserts the edge without an intervening other-connection writer. No model/network call holds that transaction. Missing, changed or foreign endpoints consume the candidate without creating an edge; merged parents are not transparently mapped to new IDs because an old relation judgment may no longer apply.
 
 Invalid queued objects can remain in RAM until flush/clear/reset; the queue is not a secret-erasure or cross-process invalidation bus. General shared-connection concurrency still requires the existing HTTP operation lock/caller coordination. Raw insert_edge remains trusted and unchanged; the guarded insertion path is used by the indexer.
 
-flush_all continues when a batch consumes candidates but creates zero edges and stops if the queue does not shrink, avoiding premature exit and unbounded no-progress loops. Batch limits must be positive integers. Low-similarity enqueue requests are rejected before full-queue eviction. Existing backpressure policies, accepted full-queue return values and accounting quirks are not otherwise redesigned.
+flush_all continues when a batch consumes candidates but creates zero edges and stops if the queue does not shrink, avoiding premature exit and unbounded no-progress loops. Batch limits must be positive integers. Low-similarity enqueue requests are rejected before full-queue eviction. Batch 3e below fixes return values and accounting without changing the eviction policies.
+
+## Backpressure results and accounting (batch 3e)
+
+Full-queue DROP_OLDEST and a successful DROP_LOWEST replacement return True and count exactly one discarded old candidate. DROP_LOWEST rejects equal/lower scores; BLOCK retains its existing non-waiting refusal behavior. Rejected full-queue offers return False and count one discarded incoming candidate. Positive integer queue capacity and known strategy names are required; zero/negative/fractional/bool capacities and unknown names raise ValueError.
+
+enqueued_count counts new admissions, including replacements, not duplicate offers or updates. enqueue_batch counts successful offers, including duplicate successes and candidates that can be evicted by later offers in the same batch; it is not final queue growth. processed_count counts consumed candidates, even stale/failed/zero-edge work. dropped_count includes evictions, full-queue incoming refusals, compacted and cleared work, but excludes below-threshold input and duplicate updates. Therefore enqueued_count alone does not equal processed + dropped + queued when incoming full-queue offers were rejected. Counts reset with reset; no additional telemetry fields or policy changes are added.
+
+These are sequential/caller-coordinated queue semantics, not a new thread-safe or persistent work queue. Queue bounds do not cap candidate atom snapshot size or guarantee total RAM. Classification failures remain consumed without retry, and existing downgrade diagnostics are separate work.
 
 The real SDK forgetting trace now checks that affected Episode rows and their deleted-atom references are gone. Its observations of retained survivor context, configured seeds and reimport behavior remain: this repair is not a guarantee of complete forgetting or independent answer-quality gains.

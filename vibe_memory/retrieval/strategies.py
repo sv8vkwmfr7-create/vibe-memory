@@ -9,7 +9,8 @@ Strategies:
 
 Fusion:
   - RRF (Reciprocal Rank Fusion): merge ranked lists from multiple strategies
-  - Reranker: optional cross-encoder or LLM scoring for final ranking
+  - rerank_by_similarity: cosine/RRF scoring in production recall
+  - Reranker: pass-through placeholder; no cross-encoder/LLM scorer here
 
 Usage:
     from vibe_memory.retrieval.strategies import BM25Strategy, SemanticStrategy

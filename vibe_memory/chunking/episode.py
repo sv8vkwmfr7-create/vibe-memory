@@ -10,6 +10,7 @@ Episode = 同一话题的连续分片组。
 """
 
 import uuid
+import json
 from typing import Optional
 from datetime import datetime
 
@@ -41,6 +42,9 @@ class EpisodeBuilder:
         """
         if not atoms:
             return []
+        owners = {(a.tenant_id, a.agent_id, a.session_id) for a in atoms}
+        if len(owners) != 1 or len({a.id for a in atoms}) != len(atoms):
+            raise ValueError("Episode atoms must be distinct and share tenant, agent and session")
 
         sorted_atoms = sorted(atoms, key=lambda a: a.created_at)
         episodes: list[Episode] = []
@@ -78,8 +82,10 @@ class EpisodeBuilder:
         summary = f"[{topic}] {atoms[0].summary} ... ({len(atoms)} chunks)"
 
         episode = Episode(
-            id=str(uuid.uuid4()),
+            id=str(uuid.uuid5(uuid.NAMESPACE_URL, json.dumps(
+                [atoms[0].tenant_id, agent_id, atoms[0].session_id, atoms[0].id]))),
             agent_id=agent_id,
+            tenant_id=atoms[0].tenant_id,
             session_id=atoms[0].session_id,
             summary=summary,
             topic=topic,

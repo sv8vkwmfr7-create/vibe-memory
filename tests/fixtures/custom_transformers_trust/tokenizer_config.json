@@ -1,0 +1,6 @@
+{
+  "tokenizer_class": "SyntheticTokenizer",
+  "auto_map": {
+    "AutoTokenizer": ["custom_tokenizer.SyntheticTokenizer", null]
+  }
+}

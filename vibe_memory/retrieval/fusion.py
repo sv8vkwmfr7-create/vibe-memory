@@ -5,10 +5,9 @@ RRF: merges ranked lists from multiple strategies without tuning.
   score(d) = Σ 1/(k + rank_i(d))
   where k=60 (standard), rank_i(d) is position of doc d in strategy i's result.
 
-Reranker: optional fine-grained scoring layer.
-  - DefaultReranker: cosine similarity only (zero cost)
-  - CrossEncoderReranker: sentence-transformers CrossEncoder (optional)
-  - LLMReranker: LLM-based scoring (optional, requires API)
+Production rerank_by_similarity combines cosine similarity and RRF scores.
+Reranker is only a pass-through compatibility placeholder, not a scoring layer.
+Cross-encoder and LLM reranker classes are not implemented in this module.
 """
 
 from typing import Optional
@@ -60,13 +59,14 @@ def rrf_fusion(
 
 class Reranker:
     """
-    Optional fine-grained scoring layer.
+    A pass-through compatibility placeholder; preserves order and scores.
 
-    Default: cosine similarity reranking (zero cost).
-    Can be swapped for CrossEncoder or LLM-based reranking.
+    This class is not used by the production recall pipeline. Use
+    rerank_by_similarity with document vectors for actual similarity scoring.
 
     Args:
-        provider: Embedding provider for scoring
+        provider: Optional provider whose query encoding is attempted, then
+            discarded. Encoding failure also preserves the original order.
     """
 
     def __init__(self, provider=None):
@@ -79,7 +79,7 @@ class Reranker:
         top_k: int = 20,
     ) -> list[tuple]:
         """
-        Rerank candidates by relevance to query.
+        Return candidates[:top_k] without relevance scoring.
 
         Args:
             query: Search query
@@ -87,12 +87,12 @@ class Reranker:
             top_k: Return top-K
 
         Returns:
-            [(id, reranked_score), ...]
+            [(id, original_score), ...] in the original order
         """
         if not candidates or not self.provider:
             return candidates[:top_k]
 
-        # Default: use embedding similarity to rerank
+        # Compatibility behavior: encoding is attempted but does not affect ranking.
         try:
             query_vec = self.provider.encode_query(query)
             # For now, just return original order — reranker is a pass-through

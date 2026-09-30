@@ -1,8 +1,11 @@
 """
 VibeMemory LangChain Memory Adapter
 
-Drop-in BaseMemory implementation for LangChain/LangGraph agents.
-Works with any LangChain chain or agent that accepts a memory object.
+Dependency-free helper with LangChain-style memory methods, not a BaseMemory subclass.
+It cannot be passed as a drop-in memory to chains that validate BaseMemory.
+Use explicit load/save wiring in a RunnableLambda chain; LangGraph state,
+checkpoint persistence, legacy BaseMemory inheritance and async execution are
+not provided by this adapter.
 
 Usage:
     from vibe_memory.langchain import VibeMemoryLC
@@ -13,7 +16,12 @@ Usage:
         {"output": "Fixed by changing timeout from 30s to 60s"},
     )
     variables = memory.load_memory_variables({"query": "API timeout"})
-    # → {"history": "Fixed API timeout by changing from 30s to 60s..."}
+    # variables contains the retrieved history, not an exact guaranteed answer.
+
+    # Optional langchain-core integration; saving remains an explicit step.
+    from langchain_core.runnables import RunnableLambda
+    chain = RunnableLambda(memory.load_memory_variables)
+    variables = chain.invoke({"input": "API timeout"})
 """
 
 import json
@@ -26,9 +34,10 @@ from vibe_memory.models.memory_atom import EdgeLabel, EdgeSource
 
 class VibeMemoryLC:
     """
-    LangChain-compatible memory adapter.
+    Manual LangChain-style memory helper, not a BaseMemory implementation.
 
-    Implements the BaseMemory interface: save_context, load_memory_variables, clear.
+    Provides save_context, load_memory_variables, clear and memory_variables.
+    Call these explicitly; framework drop-in compatibility is not promised.
     Uses VibeMemory's PPR graph retrieval under the hood.
 
     Args:

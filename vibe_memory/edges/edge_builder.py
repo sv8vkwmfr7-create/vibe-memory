@@ -14,18 +14,17 @@ L1 原型：四分类规则（Bug 8 修复）
 
 from typing import Optional
 from datetime import datetime
+import re
 import uuid
 
 from vibe_memory.models.memory_atom import MemoryAtom, Edge, EdgeLabel, EdgeSource, EdgeStatus, DEFAULT_TENANT
 
 
-# 因果信号词列表
+# 因果连接词；时序词和修改动作本身不证明因果关系。
 CAUSAL_SIGNALS = [
-    "所以", "因此", "因为", "由于", "导致", "结果",
-    "接下来", "然后", "于是", "从而", "故", "因而",
-    "修改", "变更", "调整", "更新", "修复", "解决",
+    "所以", "因此", "因为", "由于", "导致",
+    "于是", "从而", "因而", "故而", "故此",
     "therefore", "because", "so", "thus", "hence",
-    "update", "fix", "change", "modify", "resolve",
 ]
 
 
@@ -165,9 +164,11 @@ def classify_cross_session_edge(
 
 
 def _has_causal_signal(text: str) -> bool:
-    """检测文本中是否包含因果信号词"""
+    """词法启发式：中文因果短语或完整英文词，不是语义因果证明。"""
     text_lower = text.lower()
-    return any(signal in text_lower for signal in CAUSAL_SIGNALS)
+    words = set(re.findall(r"\b[a-z]+\b", text_lower))
+    return any(signal in words if signal.isascii() else signal in text_lower
+               for signal in CAUSAL_SIGNALS)
 
 
 def _has_shared_tags(a: MemoryAtom, b: MemoryAtom) -> bool:

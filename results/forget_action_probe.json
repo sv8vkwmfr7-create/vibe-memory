@@ -1,0 +1,65 @@
+{
+  "scenario": "synthetic_explicit_id_forgetting",
+  "source_sha256": "d1db74d66fbc28adb2226a4bef5495f3af74b2d756a14a11de0b0893787ed4e5",
+  "fixture": "three fixed assistant-authored atoms; one manually duplicated summary; one fixed similarity edge",
+  "before": {
+    "ids": [
+      "original",
+      "derived-copy",
+      "unrelated"
+    ],
+    "original_present": true,
+    "derived_copy_present": true,
+    "original_in_storage": true,
+    "original_in_semantic_cache": true,
+    "original_in_bm25_cache": true,
+    "incident_edge_rows": 1
+  },
+  "forget_returned": true,
+  "cache_retained_before_next_recall": {
+    "semantic": true,
+    "bm25": true
+  },
+  "after": {
+    "ids": [
+      "derived-copy",
+      "unrelated"
+    ],
+    "original_present": false,
+    "derived_copy_present": true,
+    "original_in_storage": false,
+    "original_in_semantic_cache": false,
+    "original_in_bm25_cache": false,
+    "incident_edge_rows": 1
+  },
+  "after_restart": {
+    "ids": [
+      "derived-copy",
+      "unrelated"
+    ],
+    "original_present": false,
+    "derived_copy_present": true,
+    "original_in_storage": false,
+    "original_in_semantic_cache": false,
+    "original_in_bm25_cache": false,
+    "incident_edge_rows": 1
+  },
+  "after_reimport": {
+    "ids": [
+      "original",
+      "derived-copy",
+      "unrelated"
+    ],
+    "original_present": true,
+    "derived_copy_present": true,
+    "original_in_storage": true,
+    "original_in_semantic_cache": true,
+    "original_in_bm25_cache": true,
+    "incident_edge_rows": 1
+  },
+  "complete_forgetting_demonstrated": false,
+  "production_changed": false,
+  "evaluation_is_independent": false,
+  "paid_api_calls": 0,
+  "limits": "Actual existing SDK forget/recall on a disposable file database, explicitly known target ID and TF-IDF. Fixture inserted via storage, not store/chunk/automatic summaries. Derived copy is manually planted, not evidence of real summary generation. Index-cache metadata observed before/after warmed recall; not proof of wiping process memory. Incident edge rows do not imply reachable graph leakage. Direct storage reimport deliberately bypasses SDK ingest; not a claim about all importers. No natural-language resolution, full derivative deletion, tombstones, backup/WAL physical erasure, MCP/HTTP, concurrency, answer quality, performance or cost measurement. No real user data deleted; temporary synthetic database is cleaned after the run."
+}

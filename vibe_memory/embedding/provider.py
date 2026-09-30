@@ -65,17 +65,27 @@ class TfidfProvider(EmbeddingProvider):
         self._fitted = False
 
     def fit(self, documents: list[str]) -> "TfidfProvider":
-        """在文档集上拟合词汇表"""
+        """Replace the vocabulary and IDF weights using the complete document corpus.
+
+        Previously encoded vectors must be recomputed after fitting a new corpus.
+        """
         self.vectorizer.fit(documents)
         self._fitted = True
         return self
 
     def encode(self, texts: list[str]) -> np.ndarray:
+        """Fit on the first batch if unfitted; subsequent encoding does not refit.
+
+        Call fit with the complete corpus when documents change. Unseen terms
+        have zero weight until refitting. SDK recall manages corpus fitting
+        separately, so this direct-call contract does not freeze SDK vocabulary.
+        """
         if not self._fitted:
             self.fit(texts)
         return self.vectorizer.transform(texts)
 
     def encode_query(self, query: str) -> np.ndarray:
+        """Transform without fitting; before fit, return a zero-length vector."""
         vec = self.vectorizer.transform([query])
         return vec[0] if vec.shape[0] > 0 else np.zeros(self.dim)
 

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "reflect_nested_json_correction",
+    "scenario": "correction",
+    "source_commit": "21a35e78f8ae841064371e162157715019fef451",
+    "source_path": "vibe_memory/reflect.py",
+    "question": "当前 Reflector 能解析含嵌套对象的 insights JSON 吗？",
+    "scope": {"service": "vibe-memory", "environment": "release", "operation": "reflection-parser"},
+    "choices": ["能", "不能"],
+    "expected": "能",
+    "stale_value": "不能",
+    "write_statuses": ["superseded", "current"],
+    "writes": [
+      ["旧版 Reflector 的 insights JSON 提取规则不能处理嵌套对象。", {"service": "vibe-memory", "environment": "release", "operation": "reflection-parser"}],
+      ["当前 Reflector 改用可覆盖嵌套大括号的提取规则，能够解析含嵌套对象的 insights JSON；旧规则已被替换。", {"service": "vibe-memory", "environment": "release", "operation": "reflection-parser"}]
+    ]
+  },
+  {
+    "id": "journal_mode_future_draft",
+    "scenario": "future_draft",
+    "source_commit": "2ef59770337979342c5c9e44850f178d8aee3030",
+    "source_path": "vibe_memory/sdk.py",
+    "question": "当前 SDK 默认会强制把 SQLite 日志模式切为 WAL 吗？",
+    "scope": {"service": "vibe-memory", "environment": "release", "operation": "journal-mode"},
+    "choices": ["会", "不会"],
+    "expected": "不会",
+    "stale_value": null,
+    "write_statuses": ["current", "draft"],
+    "writes": [
+      ["当前 SDK 的 journal_mode 默认为 None，保留数据库现有日志模式，不强制切为 WAL；仅显式传入 wal 才切换。", {"service": "vibe-memory", "environment": "release", "operation": "journal-mode"}],
+      ["下一版未实施草案：计划把默认日志模式改成 WAL；当前正式版仍按 journal_mode=None 保留原模式。", {"service": "vibe-memory", "environment": "release", "operation": "journal-mode"}]
+    ]
+  },
+  {
+    "id": "journal_mode_other_environment",
+    "scenario": "different_environment",
+    "source_commit": "2ef59770337979342c5c9e44850f178d8aee3030",
+    "source_path": "vibe_memory/sdk.py",
+    "question": "这个示例中的正式环境是否显式设置 journal_mode=wal？",
+    "scope": {"service": "vibe-memory", "environment": "production", "operation": "journal-mode"},
+    "choices": ["有", "没有"],
+    "expected": "没有",
+    "stale_value": null,
+    "write_statuses": ["current", "current"],
+    "writes": [
+      ["示例正式环境调用 SDK 时 journal_mode=None，没有显式设置 wal，保留数据库原有日志模式。", {"service": "vibe-memory", "environment": "production", "operation": "journal-mode"}],
+      ["示例测试环境调用 SDK 时显式设置 journal_mode=wal；这不代表正式环境也设置了 wal。", {"service": "vibe-memory", "environment": "test", "operation": "journal-mode"}]
+    ]
+  }
+]

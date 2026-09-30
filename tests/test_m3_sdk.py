@@ -392,7 +392,7 @@ def test_link():
     assert edge.tenant_id == "default"
 
     # Cross-tenant link should be rejected
-    mem2 = VibeMemory(agent_id="test-agent", db_path=":memory:", tenant_id="other")
+    mem2 = VibeMemory(agent_id="test-agent", db_path=":memory:", tenant_id="other", embedding_backend="tfidf")
     a3 = mem2.store("Other content", session_id="s3", tags=["query"])
     edge2 = mem.link(a1.id, a3.id)  # a1 in 'default', a3 in 'other'
     assert edge2 is None

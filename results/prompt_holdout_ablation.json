@@ -1,0 +1,571 @@
+{
+  "model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "model_revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+  "model_load_ms": 1060.67,
+  "cases": [
+    {
+      "id": "scope_boost_filter",
+      "repeat": 1,
+      "question": "当前 scope 匹配会过滤候选记忆吗？",
+      "expected": "不会",
+      "source_commit": "cfc223abe9e73703c835402e22ee14d3874e254c",
+      "source_path": "vibe_memory/sdk.py",
+      "returned_memories": [
+        "当前版本：scope 匹配只提升候选排序，不会过滤候选记忆。",
+        "旧版本：检索还没有 scope 匹配提升。"
+      ],
+      "write_setup_ms": 359.436,
+      "recall_ms": 158.546,
+      "answers": {
+        "no_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 60,
+          "generated_tokens": 2,
+          "generation_ms": 420.682,
+          "question_to_answer_ms": 420.682,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 91,
+          "generated_tokens": 2,
+          "generation_ms": 585.259,
+          "question_to_answer_ms": 743.805,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 77,
+          "generated_tokens": 2,
+          "generation_ms": 510.356,
+          "question_to_answer_ms": 510.356,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "clarified_prompt": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 104,
+          "generated_tokens": 2,
+          "generation_ms": 661.927,
+          "question_to_answer_ms": 820.473,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "persistent_fts5",
+      "repeat": 1,
+      "question": "当前词面检索候选使用持久化的 FTS5 表吗？",
+      "expected": "使用",
+      "source_commit": "20c4b77c023a539aff3b30c942aa36892fd5af9a",
+      "source_path": "vibe_memory/storage/sqlite_store.py",
+      "returned_memories": [
+        "当前版本：词面检索候选使用 SQLite 中持久化的 atoms_fts FTS5 表。",
+        "旧版本：词面检索候选尚未使用持久化的 FTS5 表。"
+      ],
+      "write_setup_ms": 417.611,
+      "recall_ms": 161.798,
+      "answers": {
+        "no_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 65,
+          "generated_tokens": 2,
+          "generation_ms": 445.404,
+          "question_to_answer_ms": 445.404,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "使用",
+          "normalized": "使用",
+          "prompt_tokens": 106,
+          "generated_tokens": 2,
+          "generation_ms": 677.933,
+          "question_to_answer_ms": 839.731,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "使用",
+          "normalized": "使用",
+          "prompt_tokens": 86,
+          "generated_tokens": 2,
+          "generation_ms": 559.133,
+          "question_to_answer_ms": 559.133,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "clarified_prompt": {
+          "text": "使用",
+          "normalized": "使用",
+          "prompt_tokens": 119,
+          "generated_tokens": 2,
+          "generation_ms": 745.7,
+          "question_to_answer_ms": 907.498,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "causal_bridge_default",
+      "repeat": 1,
+      "question": "当前 SDK 的 causal_bridge 参数默认开启吗？",
+      "expected": "关闭",
+      "source_commit": "bd2372b20464623f342c3474490ff72f983021e5",
+      "source_path": "vibe_memory/sdk.py",
+      "returned_memories": [
+        "当前版本：SDK 的 causal_bridge 是可选参数，默认关闭，调用方可显式开启。",
+        "旧版本：检索接口还没有 causal_bridge 参数。"
+      ],
+      "write_setup_ms": 413.696,
+      "recall_ms": 163.182,
+      "answers": {
+        "no_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 59,
+          "generated_tokens": 2,
+          "generation_ms": 409.447,
+          "question_to_answer_ms": 409.447,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 93,
+          "generated_tokens": 2,
+          "generation_ms": 600.855,
+          "question_to_answer_ms": 764.037,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 80,
+          "generated_tokens": 2,
+          "generation_ms": 524.98,
+          "question_to_answer_ms": 524.98,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "clarified_prompt": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 106,
+          "generated_tokens": 2,
+          "generation_ms": 668.901,
+          "question_to_answer_ms": 832.083,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "scope_boost_filter",
+      "repeat": 2,
+      "question": "当前 scope 匹配会过滤候选记忆吗？",
+      "expected": "不会",
+      "source_commit": "cfc223abe9e73703c835402e22ee14d3874e254c",
+      "source_path": "vibe_memory/sdk.py",
+      "returned_memories": [
+        "当前版本：scope 匹配只提升候选排序，不会过滤候选记忆。",
+        "旧版本：检索还没有 scope 匹配提升。"
+      ],
+      "write_setup_ms": 412.283,
+      "recall_ms": 164.725,
+      "answers": {
+        "no_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 60,
+          "generated_tokens": 2,
+          "generation_ms": 413.495,
+          "question_to_answer_ms": 413.495,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 91,
+          "generated_tokens": 2,
+          "generation_ms": 588.712,
+          "question_to_answer_ms": 753.437,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 77,
+          "generated_tokens": 2,
+          "generation_ms": 511.792,
+          "question_to_answer_ms": 511.792,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "clarified_prompt": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 104,
+          "generated_tokens": 2,
+          "generation_ms": 670.276,
+          "question_to_answer_ms": 835.001,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "persistent_fts5",
+      "repeat": 2,
+      "question": "当前词面检索候选使用持久化的 FTS5 表吗？",
+      "expected": "使用",
+      "source_commit": "20c4b77c023a539aff3b30c942aa36892fd5af9a",
+      "source_path": "vibe_memory/storage/sqlite_store.py",
+      "returned_memories": [
+        "当前版本：词面检索候选使用 SQLite 中持久化的 atoms_fts FTS5 表。",
+        "旧版本：词面检索候选尚未使用持久化的 FTS5 表。"
+      ],
+      "write_setup_ms": 403.997,
+      "recall_ms": 155.228,
+      "answers": {
+        "no_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 65,
+          "generated_tokens": 2,
+          "generation_ms": 438.443,
+          "question_to_answer_ms": 438.443,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "使用",
+          "normalized": "使用",
+          "prompt_tokens": 106,
+          "generated_tokens": 2,
+          "generation_ms": 676.902,
+          "question_to_answer_ms": 832.13,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "使用",
+          "normalized": "使用",
+          "prompt_tokens": 86,
+          "generated_tokens": 2,
+          "generation_ms": 560.431,
+          "question_to_answer_ms": 560.431,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "clarified_prompt": {
+          "text": "使用",
+          "normalized": "使用",
+          "prompt_tokens": 119,
+          "generated_tokens": 2,
+          "generation_ms": 752.018,
+          "question_to_answer_ms": 907.246,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "causal_bridge_default",
+      "repeat": 2,
+      "question": "当前 SDK 的 causal_bridge 参数默认开启吗？",
+      "expected": "关闭",
+      "source_commit": "bd2372b20464623f342c3474490ff72f983021e5",
+      "source_path": "vibe_memory/sdk.py",
+      "returned_memories": [
+        "当前版本：SDK 的 causal_bridge 是可选参数，默认关闭，调用方可显式开启。",
+        "旧版本：检索接口还没有 causal_bridge 参数。"
+      ],
+      "write_setup_ms": 405.002,
+      "recall_ms": 157.421,
+      "answers": {
+        "no_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 59,
+          "generated_tokens": 2,
+          "generation_ms": 409.495,
+          "question_to_answer_ms": 409.495,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 93,
+          "generated_tokens": 2,
+          "generation_ms": 596.419,
+          "question_to_answer_ms": 753.84,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 80,
+          "generated_tokens": 2,
+          "generation_ms": 531.974,
+          "question_to_answer_ms": 531.974,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "clarified_prompt": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 106,
+          "generated_tokens": 2,
+          "generation_ms": 677.175,
+          "question_to_answer_ms": 834.596,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "scope_boost_filter",
+      "repeat": 3,
+      "question": "当前 scope 匹配会过滤候选记忆吗？",
+      "expected": "不会",
+      "source_commit": "cfc223abe9e73703c835402e22ee14d3874e254c",
+      "source_path": "vibe_memory/sdk.py",
+      "returned_memories": [
+        "当前版本：scope 匹配只提升候选排序，不会过滤候选记忆。",
+        "旧版本：检索还没有 scope 匹配提升。"
+      ],
+      "write_setup_ms": 405.504,
+      "recall_ms": 158.185,
+      "answers": {
+        "no_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 60,
+          "generated_tokens": 2,
+          "generation_ms": 407.9,
+          "question_to_answer_ms": 407.9,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 91,
+          "generated_tokens": 2,
+          "generation_ms": 575.239,
+          "question_to_answer_ms": 733.424,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 77,
+          "generated_tokens": 2,
+          "generation_ms": 509.276,
+          "question_to_answer_ms": 509.276,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "clarified_prompt": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 104,
+          "generated_tokens": 2,
+          "generation_ms": 661.454,
+          "question_to_answer_ms": 819.639,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "persistent_fts5",
+      "repeat": 3,
+      "question": "当前词面检索候选使用持久化的 FTS5 表吗？",
+      "expected": "使用",
+      "source_commit": "20c4b77c023a539aff3b30c942aa36892fd5af9a",
+      "source_path": "vibe_memory/storage/sqlite_store.py",
+      "returned_memories": [
+        "当前版本：词面检索候选使用 SQLite 中持久化的 atoms_fts FTS5 表。",
+        "旧版本：词面检索候选尚未使用持久化的 FTS5 表。"
+      ],
+      "write_setup_ms": 410.775,
+      "recall_ms": 159.993,
+      "answers": {
+        "no_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 65,
+          "generated_tokens": 2,
+          "generation_ms": 433.958,
+          "question_to_answer_ms": 433.958,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "使用",
+          "normalized": "使用",
+          "prompt_tokens": 106,
+          "generated_tokens": 2,
+          "generation_ms": 657.959,
+          "question_to_answer_ms": 817.952,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "使用",
+          "normalized": "使用",
+          "prompt_tokens": 86,
+          "generated_tokens": 2,
+          "generation_ms": 551.877,
+          "question_to_answer_ms": 551.877,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        },
+        "clarified_prompt": {
+          "text": "使用",
+          "normalized": "使用",
+          "prompt_tokens": 119,
+          "generated_tokens": 2,
+          "generation_ms": 748.036,
+          "question_to_answer_ms": 908.029,
+          "correct": true,
+          "abstained": false,
+          "stale_answer": false
+        }
+      }
+    },
+    {
+      "id": "causal_bridge_default",
+      "repeat": 3,
+      "question": "当前 SDK 的 causal_bridge 参数默认开启吗？",
+      "expected": "关闭",
+      "source_commit": "bd2372b20464623f342c3474490ff72f983021e5",
+      "source_path": "vibe_memory/sdk.py",
+      "returned_memories": [
+        "当前版本：SDK 的 causal_bridge 是可选参数，默认关闭，调用方可显式开启。",
+        "旧版本：检索接口还没有 causal_bridge 参数。"
+      ],
+      "write_setup_ms": 395.563,
+      "recall_ms": 161.91,
+      "answers": {
+        "no_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 59,
+          "generated_tokens": 2,
+          "generation_ms": 408.303,
+          "question_to_answer_ms": 408.303,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "mcp_memory": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 93,
+          "generated_tokens": 2,
+          "generation_ms": 588.964,
+          "question_to_answer_ms": 750.874,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "latest_only": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 80,
+          "generated_tokens": 2,
+          "generation_ms": 513.38,
+          "question_to_answer_ms": 513.38,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        },
+        "clarified_prompt": {
+          "text": "未知",
+          "normalized": "未知",
+          "prompt_tokens": 106,
+          "generated_tokens": 2,
+          "generation_ms": 660.061,
+          "question_to_answer_ms": 821.971,
+          "correct": false,
+          "abstained": true,
+          "stale_answer": false
+        }
+      }
+    }
+  ],
+  "case_count": 3,
+  "repeat_count": 3,
+  "latency": {
+    "no_memory": {
+      "p50_ms": 413.495,
+      "p95_nearest_rank_ms": 445.404
+    },
+    "mcp_memory": {
+      "p50_ms": 753.84,
+      "p95_nearest_rank_ms": 839.731
+    },
+    "latest_only": {
+      "p50_ms": 524.98,
+      "p95_nearest_rank_ms": 560.431
+    },
+    "clarified_prompt": {
+      "p50_ms": 834.596,
+      "p95_nearest_rank_ms": 908.029
+    }
+  },
+  "mode": "precision",
+  "top_k": 5,
+  "paid_model_calls": 0,
+  "evidence_boundary": "Assistant-selected and paraphrased cases with assistant-scored expected answers; source commits are traceability, not independent labels. latest_only supplies the last written case text directly and excludes evidence selection/retrieval: it is an input ablation, not a deployable condition or guaranteed accuracy upper bound. Offline cached CPU model; no download or paid API. MCP query-to-answer includes process startup/recall and generation but excludes prior writes, model load, electricity, memory footprint and human review. P95 is nearest-rank descriptive only for this small local sample."
+}

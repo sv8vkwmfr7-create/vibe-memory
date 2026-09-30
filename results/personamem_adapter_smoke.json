@@ -1,0 +1,181 @@
+{
+  "dataset": "bowen-upenn/PersonaMem-v2",
+  "revision": "ed956dea41521fc4499acbc63f966e0fd3c053ba",
+  "license": "CC-BY-4.0",
+  "source_sha256": "a47a7dd3879de5e282c6d15266437ed44cf69c0c93c79634645dbd73d655b29a",
+  "source_bytes": 17474290,
+  "source_rows": 2061,
+  "selection": "fixed first three val_text rows; text 32k; adapter smoke only",
+  "candidate_rows": 3,
+  "uniquely_mapped_rows": 3,
+  "excluded_rows": [],
+  "model_weight_sha256": "53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db",
+  "rows": [
+    {
+      "row_index": 0,
+      "persona_id": "988",
+      "history_path": "data/chat_history_32k/chat_history_250913_163134_persona988.json",
+      "history_sha256": "54b4b069d9b0dafa68fd96bab6f2b2330393ab1414b680dda7ee599f7e2031b1",
+      "history_bytes": 155546,
+      "original_message_count": 225,
+      "stored_dialogue_count": 224,
+      "excluded_system_count": 1,
+      "evidence_original_indices": [
+        45,
+        46,
+        47,
+        48
+      ],
+      "arms": {
+        "tfidf": {
+          "ids": [
+            "988:121",
+            "988:124",
+            "988:83",
+            "988:65",
+            "988:153"
+          ],
+          "snippet_any_hit": false,
+          "whole_snippet_covered": false,
+          "snippet_turn_recall": 0.0
+        },
+        "model": {
+          "ids": [
+            "988:121",
+            "988:142",
+            "988:17",
+            "988:124",
+            "988:34"
+          ],
+          "snippet_any_hit": false,
+          "whole_snippet_covered": false,
+          "snippet_turn_recall": 0.0
+        },
+        "rank_fusion": {
+          "ids": [
+            "988:121",
+            "988:124",
+            "988:142",
+            "988:17",
+            "988:83"
+          ],
+          "snippet_any_hit": false,
+          "whole_snippet_covered": false,
+          "snippet_turn_recall": 0.0
+        }
+      }
+    },
+    {
+      "row_index": 1,
+      "persona_id": "782",
+      "history_path": "data/chat_history_32k/chat_history_250913_163134_persona782.json",
+      "history_sha256": "5efec92c18af920d19dc6a0cf8977d5f39bd4003df9ea45959f69b33cd8e824f",
+      "history_bytes": 185388,
+      "original_message_count": 221,
+      "stored_dialogue_count": 220,
+      "excluded_system_count": 1,
+      "evidence_original_indices": [
+        113,
+        114
+      ],
+      "arms": {
+        "model": {
+          "ids": [
+            "782:53",
+            "782:107",
+            "782:54",
+            "782:68",
+            "782:110"
+          ],
+          "snippet_any_hit": false,
+          "whole_snippet_covered": false,
+          "snippet_turn_recall": 0.0
+        },
+        "tfidf": {
+          "ids": [
+            "782:125",
+            "782:107",
+            "782:53",
+            "782:65",
+            "782:68"
+          ],
+          "snippet_any_hit": false,
+          "whole_snippet_covered": false,
+          "snippet_turn_recall": 0.0
+        },
+        "rank_fusion": {
+          "ids": [
+            "782:107",
+            "782:53",
+            "782:68",
+            "782:125",
+            "782:54"
+          ],
+          "snippet_any_hit": false,
+          "whole_snippet_covered": false,
+          "snippet_turn_recall": 0.0
+        }
+      }
+    },
+    {
+      "row_index": 2,
+      "persona_id": "730",
+      "history_path": "data/chat_history_32k/chat_history_250913_163134_persona730.json",
+      "history_sha256": "943d5af3c3dded94c80dd1641901473b6f1cb8b1d46280d3c2d58c189182fcaa",
+      "history_bytes": 176730,
+      "original_message_count": 220,
+      "stored_dialogue_count": 219,
+      "excluded_system_count": 1,
+      "evidence_original_indices": [
+        107,
+        108,
+        109,
+        110
+      ],
+      "arms": {
+        "tfidf": {
+          "ids": [
+            "730:109",
+            "730:5",
+            "730:108",
+            "730:106",
+            "730:105"
+          ],
+          "snippet_any_hit": true,
+          "whole_snippet_covered": false,
+          "snippet_turn_recall": 0.5
+        },
+        "model": {
+          "ids": [
+            "730:108",
+            "730:77",
+            "730:106",
+            "730:105",
+            "730:109"
+          ],
+          "snippet_any_hit": true,
+          "whole_snippet_covered": false,
+          "snippet_turn_recall": 0.5
+        },
+        "rank_fusion": {
+          "ids": [
+            "730:108",
+            "730:109",
+            "730:106",
+            "730:77",
+            "730:105"
+          ],
+          "snippet_any_hit": true,
+          "whole_snippet_covered": false,
+          "snippet_turn_recall": 0.5
+        }
+      }
+    }
+  ],
+  "paid_api_calls": 0,
+  "eligible_for_default": false,
+  "evaluation_is_independent": false,
+  "production_defaults_changed": false,
+  "provenance": "Mirror downloads at pinned publisher revision. CSV SHA-256 matches official file page; revision verified against official commit page. History SHA-256 values are locally pinned, not independently cross-checked with official per-file hashes. Snippets fully match each downloaded history.",
+  "limits": "First-three adapter smoke on publisher LLM-generated data; no benchmark score, human relevance review or final-answer accuracy. Related snippets include generic openings, not minimal fact-bearing gold turns. System profiles excluded; queries/answers/preference metadata not stored. Direct SQLite writes and unchanged warm core retrieval, not SDK/MCP end-to-end. No real timestamps/session IDs published here; synthetic microsecond order used, no causal edges. No timing, memory, electricity or onboarding claims; downloaded subset now exposed and cannot be called fresh after future tuning."
+}

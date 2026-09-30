@@ -1,13 +1,16 @@
 """
 VibeMemory OpenAI Agents SDK Adapter
 
-Plug-in memory for OpenAI's Agents SDK (openai-agents).
-Provides a Tool set that agents can call directly.
+Plain memory functions for optional OpenAI Agents SDK integration (openai-agents).
+Wrap them with function_tool before passing them to Agent; the factory itself
+does not import the Agents SDK or return FunctionTool objects.
 
 Usage:
-    from vibe_memory.openai import create_vibe_tools
+    from agents import Agent, function_tool
+    from vibe_memory.openai_agents import create_vibe_tools
 
-    tools = create_vibe_tools(agent_id="my-agent", db_path="memory.db")
+    functions = create_vibe_tools(agent_id="my-agent", db_path="memory.db")
+    tools = [function_tool(fn) for fn in functions]
     agent = Agent(
         name="Assistant",
         instructions="You have memory. Use vibe_store and vibe_recall.",
@@ -29,7 +32,9 @@ def create_vibe_tools(
     """
     Create VibeMemory tools for OpenAI Agents SDK.
 
-    Returns a list of function tools that can be passed to Agent().
+    Returns a list of plain Python functions. With openai-agents installed,
+    wrap each using agents.function_tool before passing the result to Agent().
+    Direct function calls remain supported without the framework dependency.
 
     Tools:
       - vibe_store(content, tags, summary, session_id)

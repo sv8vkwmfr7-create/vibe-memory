@@ -25,6 +25,7 @@ from vibe_memory.models.memory_atom import MemoryAtom, Edge, EdgeLabel, EdgeStat
 from vibe_memory.storage.sqlite_store import VibeStorage
 from vibe_memory.embedding import index_flat, EmbeddingProvider, TfidfProvider
 from vibe_memory.retrieval.seed_filter import SeedFilter
+from vibe_memory.metrics import failure_event
 
 
 class PPRConfig:
@@ -313,7 +314,8 @@ def recall(
         causal_bridge: 可选保留主语义锚点的双锚点因果桥，仅 precision
 
     Returns:
-        {atoms, trace, mode, total_walked, seed_count, filtered_count, strategies_used}
+        {atoms, trace, mode, total_walked, seed_count, filtered_count, strategies_used,
+         failures: [{stage, reason}]} (strategies_used lists requested strategies)
     """
     if not isinstance(causal_bridge, bool):
         raise ValueError("causal_bridge must be a boolean")
@@ -323,6 +325,7 @@ def recall(
     seed_filter = seed_filter or SeedFilter()
     tid = tenant_id or storage.tenant_id
     enabled_strategies = strategies or ["semantic", "bm25", "graph", "temporal"]
+    failures = []
 
     # 阶段 0：budget 模式先在存储层收窄候选，其他模式保持完整语义。
     if mode == "budget":
@@ -348,6 +351,7 @@ def recall(
             "atoms": [], "trace": [], "mode": mode,
             "total_walked": 0, "seed_count": 0, "filtered_count": 0,
             "strategies_used": enabled_strategies,
+            "failures": failures,
         }
 
     documents = [a.content for a in active_atoms]
@@ -421,8 +425,9 @@ def recall(
             semantic_ranked = [(a.id, 1.0 - i/len(semantic_seeds)) for i, a in enumerate(semantic_seeds)]
             all_ranked_lists.append(semantic_ranked)
             fusion_weights.append(1.0)
-        except Exception:
-            pass
+        except Exception as error:
+            failures.append(failure_event("semantic", error))
+            query_vec = None
 
     # 1b. BM25 关键词检索
     if "bm25" in enabled_strategies:
@@ -447,8 +452,8 @@ def recall(
             ]
             all_ranked_lists.append(bm25_ranked)
             fusion_weights.append(1.0)
-        except Exception:
-            pass
+        except Exception as error:
+            failures.append(failure_event("bm25", error))
 
     # 1c. 图检索（PPR）
     if "graph" in enabled_strategies:
@@ -473,8 +478,8 @@ def recall(
                 ]
             all_ranked_lists.append(graph_results)
             fusion_weights.append(2.0 if mode == "budget" else 1.0)
-        except Exception:
-            pass
+        except Exception as error:
+            failures.append(failure_event("graph", error))
 
     # 1d. 时序过滤
     if "temporal" in enabled_strategies:
@@ -485,8 +490,8 @@ def recall(
                 (active_atoms[i].id, s) for i, s in temp_results
             ])
             fusion_weights.append(0.5 if mode == "budget" else 1.0)
-        except Exception:
-            pass
+        except Exception as error:
+            failures.append(failure_event("temporal", error))
 
     # 阶段 2：RRF 融合
     if not all_ranked_lists:
@@ -494,6 +499,7 @@ def recall(
             "atoms": [], "trace": [], "mode": mode,
             "total_walked": 0, "seed_count": 0, "filtered_count": 0,
             "strategies_used": enabled_strategies,
+            "failures": failures,
         }
 
     fused = rrf_fusion(all_ranked_lists, top_k=top_k * 2, weights=fusion_weights)
@@ -547,6 +553,7 @@ def recall(
         "seed_count": seed_count,
         "filtered_count": len(semantic_seeds) if semantic_seeds else 0,
         "strategies_used": enabled_strategies,
+        "failures": failures,
     }
 
 

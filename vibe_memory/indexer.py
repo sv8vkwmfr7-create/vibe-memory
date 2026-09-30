@@ -60,7 +60,7 @@ class BackpressureStrategy:
 
     DROP_OLDEST = "drop_oldest"   # 丢弃队列中最旧的
     DROP_LOWEST = "drop_lowest"   # 丢弃相似度最低的
-    BLOCK = "block"               # 阻塞 store（不推荐）
+    BLOCK = "block"               # 当前实现拒绝新候选，不等待
 
 
 class IncrementalIndexer:
@@ -91,6 +91,11 @@ class IncrementalIndexer:
         edge_similarity_threshold: float = 0.7,
         llm_classify: Optional[Callable] = None,
     ):
+        if not isinstance(max_queue_size, int) or isinstance(max_queue_size, bool) or max_queue_size <= 0:
+            raise ValueError("Queue capacity must be a positive integer")
+        if backpressure not in (BackpressureStrategy.DROP_OLDEST,
+                                BackpressureStrategy.DROP_LOWEST, BackpressureStrategy.BLOCK):
+            raise ValueError("Unknown backpressure strategy")
         self.storage = storage
         self.agent_id = agent_id
         self.tenant_id = tenant_id
@@ -143,9 +148,7 @@ class IncrementalIndexer:
 
         # 回压：队列已满
         if len(self._queue) >= self.max_queue_size:
-            self._dropped_count += 1
-            self._apply_backpressure(candidate)
-            return False
+            return self._apply_backpressure(candidate)
 
         self._queue[pair_key] = candidate
         self._enqueued_count += 1
@@ -311,8 +314,8 @@ class IncrementalIndexer:
 
     # ── 回压控制 ──
 
-    def _apply_backpressure(self, candidate: IndexCandidate) -> None:
-        """实施回压策略"""
+    def _apply_backpressure(self, candidate: IndexCandidate) -> bool:
+        """Return whether the new candidate was admitted; count one lost candidate."""
         if self.backpressure == BackpressureStrategy.DROP_OLDEST:
             # 删除最旧的候选
             if self._queue:
@@ -322,6 +325,7 @@ class IncrementalIndexer:
                 # 重新插入新候选
                 self._queue[candidate.pair_key] = candidate
                 self._enqueued_count += 1
+                return True
 
         elif self.backpressure == BackpressureStrategy.DROP_LOWEST:
             # 删除相似度最低的
@@ -332,8 +336,11 @@ class IncrementalIndexer:
                     self._dropped_count += 1
                     self._queue[candidate.pair_key] = candidate
                     self._enqueued_count += 1
+                    return True
 
         # BLOCK: do nothing, candidate is simply dropped
+        self._dropped_count += 1
+        return False
 
     # ── 队列管理 ──
 
@@ -373,7 +380,7 @@ class IncrementalIndexer:
     # ── 统计 ──
 
     def stats(self) -> dict:
-        """索引器统计"""
+        """统计：入队为新增接纳数；丢弃含满队列拒绝，低分过滤不计数。"""
         linked = self.storage.get_edges_by_agent(
             self.agent_id, tenant_id=self.tenant_id, status=EdgeStatus.ACTIVE)
         return {

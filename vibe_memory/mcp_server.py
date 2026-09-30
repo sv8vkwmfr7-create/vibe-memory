@@ -251,6 +251,7 @@ def run_server(db_path: str, agent_id: str, vibe_dir: str, wal_maintenance: bool
                     "count": len(atoms),
                     "mode": result.get("mode"),
                     "scope_boosted": result.get("scope_boosted", False),
+                    "failures": result.get("failures", []),
                     "memories": formatted,
                     "relationships": trace[:5],
                 }, ensure_ascii=False)}],
@@ -292,6 +293,7 @@ def run_server(db_path: str, agent_id: str, vibe_dir: str, wal_maintenance: bool
                 "content": [{"type": "text", "text": json.dumps({
                     "session_id": session_id[:8],
                     "memories_recalled": len(atoms),
+                    "failures": result.get("failures", []),
                     "injection_length": len(injection),
                     "inject_file": inject_file,
                     "message": f"Session started. {len(atoms)} memories recalled from previous sessions.",
@@ -343,6 +345,7 @@ def run_server(db_path: str, agent_id: str, vibe_dir: str, wal_maintenance: bool
                     "total_edges": stats["total_edges"],
                     "store_count": stats["store_count"],
                     "recall_count": stats["recall_count"],
+                    "failures": stats["metrics"]["failures"],
                     "embedding_backend": stats["embedding_backend"],
                     "partitions": stats.get("partitions", {}),
                     "edge_labels": stats.get("edge_labels", {}),

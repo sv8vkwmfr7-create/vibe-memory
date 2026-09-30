@@ -131,6 +131,7 @@ class VibeHTTPHandler(BaseHTTPRequestHandler):
                     "total_edges": stats["total_edges"],
                     "store_count": stats["store_count"],
                     "recall_count": stats["recall_count"],
+                    "failures": stats["metrics"]["failures"],
                 })
             elif self.path == "/health":
                 self._send({"status": "ok", "version": "0.3.0"})
@@ -167,6 +168,7 @@ class VibeHTTPHandler(BaseHTTPRequestHandler):
                 self._send({
                     "count": len(result.get("atoms", [])),
                     "mode": result.get("mode"),
+                    "failures": result.get("failures", []),
                     "memories": [
                         {"id": a.id[:8], "summary": a.summary[:150], "tags": a.tags}
                         for a in result.get("atoms", [])
@@ -180,6 +182,7 @@ class VibeHTTPHandler(BaseHTTPRequestHandler):
                 self._send({
                     "session_id": session_id,
                     "memories_recalled": len(result.get("atoms", [])),
+                    "failures": result.get("failures", []),
                 })
 
             elif self.path == "/session/end":
