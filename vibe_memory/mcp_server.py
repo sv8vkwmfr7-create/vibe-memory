@@ -389,21 +389,13 @@ def run_server(db_path: str, agent_id: str, vibe_dir: str, wal_maintenance: bool
             else:
                 return {
                     "content": [{"type": "text", "text": json.dumps({
-                        "error": "Failed to create edge. Check atom IDs exist and belong to same tenant.",
+                        "error": "Failed to create edge. Check atom IDs exist and belong to the current tenant and agent.",
                     }, ensure_ascii=False)}],
                 }
 
         elif tool_name == "vibe_forget":
             atom_id = arguments["atom_id"]
-            # Try exact match first, then prefix match
             ok = mem.forget(atom_id)
-            if not ok:
-                # Try to find by prefix
-                all_atoms = mem.storage.get_atoms_by_agent(mem.agent_id, tenant_id=mem.tenant_id)
-                for a in all_atoms:
-                    if a.id.startswith(atom_id):
-                        ok = mem.forget(a.id)
-                        break
             return {
                 "content": [{"type": "text", "text": json.dumps({
                     "deleted": ok,

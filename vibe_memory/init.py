@@ -16,8 +16,43 @@ Adds after `vibe-http` in pyproject.toml [project.scripts]:
 import os
 import sys
 import json
+import shutil
+import tempfile
+import uuid
 from pathlib import Path
 from typing import Optional
+
+try:
+    import tomllib
+except ImportError:
+    import tomli as tomllib
+
+
+def _write_config(path: Path, content: str) -> None:
+    """Back up existing bytes, then replace from a flushed same-directory file."""
+    if path.is_symlink():
+        raise ValueError(f"Refusing to replace symlink: {path}")
+    data = content.encode("utf-8")
+    original = path.read_bytes() if path.exists() else None
+    if original == data:
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if original is not None:
+        backup = path.with_name(f"{path.name}.{uuid.uuid4().hex}.bak")
+        shutil.copy2(path, backup)
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=path.parent, suffix=".tmp", delete=False) as stream:
+            temporary = Path(stream.name)
+            stream.write(data)
+            stream.flush()
+            os.fsync(stream.fileno())
+        if original is not None:
+            shutil.copymode(path, temporary)
+        os.replace(temporary, path)
+    finally:
+        if temporary is not None and temporary.exists():
+            temporary.unlink()
 
 
 class AgentDetector:
@@ -89,18 +124,20 @@ class AgentDetector:
         result = {"agent": "claude-code", "actions": []}
 
         # MCP config
-        mcp_file = self.cwd / ".claude" / "mcp.json"
-        mcp_file.parent.mkdir(parents=True, exist_ok=True)
+        mcp_file = self.cwd / ".mcp.json"
+        legacy = self.cwd / ".claude" / "mcp.json"
+        source = mcp_file if mcp_file.exists() else legacy
         config = self._mcp_config()
-        if mcp_file.exists():
-            try:
-                existing = json.loads(mcp_file.read_text())
-                existing["mcpServers"] = {**existing.get("mcpServers", {}), **config["mcpServers"]}
-                config = existing
-            except json.JSONDecodeError:
-                pass
-        mcp_file.write_text(json.dumps(config, indent=2))
+        if source.exists():
+            existing = json.loads(source.read_text(encoding="utf-8"))
+            if not isinstance(existing, dict) or not isinstance(existing.get("mcpServers", {}), dict):
+                raise ValueError(f"Invalid MCP configuration in {source}; left unchanged")
+            existing["mcpServers"] = {**existing.get("mcpServers", {}), **config["mcpServers"]}
+            config = existing
+        _write_config(mcp_file, json.dumps(config, indent=2, ensure_ascii=False))
         result["actions"].append(f"MCP config written to {mcp_file}")
+        if legacy.exists():
+            result["actions"].append(f"Legacy config retained at {legacy}; review before removing it")
 
         # CLAUDE.md hook
         claude_md = self.cwd / "CLAUDE.md"
@@ -108,10 +145,10 @@ class AgentDetector:
         if claude_md.exists():
             content = claude_md.read_text(encoding="utf-8")
             if "VibeMemory" not in content:
-                claude_md.write_text(content + "\n\n" + hook, encoding="utf-8")
+                _write_config(claude_md, content + "\n\n" + hook)
                 result["actions"].append(f"VibeMemory section added to CLAUDE.md")
         else:
-            claude_md.write_text(hook, encoding="utf-8")
+            _write_config(claude_md, hook)
             result["actions"].append(f"CLAUDE.md created with VibeMemory setup")
 
         result["status"] = "configured"
@@ -122,20 +159,21 @@ class AgentDetector:
 
         # MCP config
         codex_config = Path.home() / ".codex" / "config.toml"
-        codex_config.parent.mkdir(parents=True, exist_ok=True)
+        server = self._mcp_config()["mcpServers"]["vibe-memory"]
         mcp_entry = (
             f'[mcp_servers.vibe-memory]\n'
-            f'command = "{sys.executable}"\n'
-            f'args = ["-m", "vibe_memory.mcp_server", "--db-path", "{self.db_path}", "--agent-id", "{self._agent_id()}", "--vibe-dir", "{self.vibe_dir}"]\n'
+            f'command = {json.dumps(server["command"], ensure_ascii=False)}\n'
+            f'args = {json.dumps(server["args"], ensure_ascii=False)}\n'
         )
-        if codex_config.exists():
-            content = codex_config.read_text()
-            if "vibe-memory" not in content:
-                codex_config.write_text(content + "\n" + mcp_entry)
-                result["actions"].append(f"MCP config added to {codex_config}")
+        content = codex_config.read_text(encoding="utf-8") if codex_config.exists() else ""
+        parsed = tomllib.loads(content)
+        if "vibe-memory" not in parsed.get("mcp_servers", {}):
+            updated = content + "\n" + mcp_entry
+            tomllib.loads(updated)
+            _write_config(codex_config, updated)
+            result["actions"].append(f"MCP config added to {codex_config}")
         else:
-            codex_config.write_text(mcp_entry)
-            result["actions"].append(f"Codex config created at {codex_config}")
+            result["actions"].append(f"Existing vibe-memory configuration retained at {codex_config}")
 
         # AGENTS.md hook
         agents_md = self.cwd / "AGENTS.md"
@@ -143,10 +181,10 @@ class AgentDetector:
         if agents_md.exists():
             content = agents_md.read_text(encoding="utf-8")
             if "VibeMemory" not in content:
-                agents_md.write_text(content + "\n\n" + hook, encoding="utf-8")
+                _write_config(agents_md, content + "\n\n" + hook)
                 result["actions"].append(f"VibeMemory section added to AGENTS.md")
         else:
-            agents_md.write_text(hook, encoding="utf-8")
+            _write_config(agents_md, hook)
             result["actions"].append(f"AGENTS.md created with VibeMemory setup")
 
         result["status"] = "configured"
@@ -160,10 +198,10 @@ class AgentDetector:
         if rules_file.exists():
             content = rules_file.read_text(encoding="utf-8")
             if "VibeMemory" not in content:
-                rules_file.write_text(content + "\n\n" + hook, encoding="utf-8")
+                _write_config(rules_file, content + "\n\n" + hook)
                 result["actions"].append(f"VibeMemory section added to .cursorrules")
         else:
-            rules_file.write_text(hook, encoding="utf-8")
+            _write_config(rules_file, hook)
             result["actions"].append(f".cursorrules created with VibeMemory setup")
 
         result["status"] = "configured"
@@ -178,10 +216,10 @@ class AgentDetector:
         if instructions.exists():
             content = instructions.read_text(encoding="utf-8")
             if "VibeMemory" not in content:
-                instructions.write_text(content + "\n\n" + hook, encoding="utf-8")
+                _write_config(instructions, content + "\n\n" + hook)
                 result["actions"].append(f"VibeMemory section added to copilot-instructions.md")
         else:
-            instructions.write_text(hook, encoding="utf-8")
+            _write_config(instructions, hook)
             result["actions"].append(f"copilot-instructions.md created")
 
         result["status"] = "configured"

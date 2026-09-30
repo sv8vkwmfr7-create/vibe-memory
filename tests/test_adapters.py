@@ -36,7 +36,7 @@ def http_base():
     _pool.add(port)
 
     from vibe_memory.http_server import VibeHTTPServer
-    server = VibeHTTPServer(port=port, db_path=":memory:", agent_id="test-http")
+    server = VibeHTTPServer(port=port, db_path=":memory:", agent_id="test-http", token="synthetic-http-test-token")
     t = threading.Thread(target=server.start, daemon=True)
     t.start()
     time.sleep(0.5)
@@ -48,19 +48,20 @@ def http_base():
 def _post(url, data):
     req = urllib.request.Request(
         url, data=json.dumps(data).encode("utf-8"),
-        headers={"Content-Type": "application/json"}, method="POST",
+        headers={"Content-Type": "application/json", "Authorization": "Bearer synthetic-http-test-token"}, method="POST",
     )
     with urllib.request.urlopen(req, timeout=5) as resp:
         return json.loads(resp.read())
 
 
 def _get(url):
-    with urllib.request.urlopen(url, timeout=5) as resp:
+    req = urllib.request.Request(url, headers={"Authorization": "Bearer synthetic-http-test-token"})
+    with urllib.request.urlopen(req, timeout=5) as resp:
         return json.loads(resp.read())
 
 
 def _delete(url):
-    req = urllib.request.Request(url, method="DELETE")
+    req = urllib.request.Request(url, method="DELETE", headers={"Authorization": "Bearer synthetic-http-test-token"})
     with urllib.request.urlopen(req, timeout=5) as resp:
         return json.loads(resp.read())
 
@@ -89,6 +90,7 @@ def test_http_session_lifecycle(http_base):
     assert len(r["session_id"]) > 0
 
     r = _post(f"{http_base}/session/end", {
+        "session_id": r["session_id"],
         "summary": "Fixed timeout bug",
         "highlights": ["timeout 30→60s"],
     })
@@ -123,7 +125,7 @@ def test_http_flush(http_base):
 def test_http_cors(http_base):
     req = urllib.request.Request(f"{http_base}/store", method="OPTIONS")
     resp = urllib.request.urlopen(req, timeout=5)
-    assert resp.headers.get("Access-Control-Allow-Origin") == "*"
+    assert resp.headers.get("Access-Control-Allow-Origin") is None
 
 
 # ═══════════════════════════════════════════════════════════════════

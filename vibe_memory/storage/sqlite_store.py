@@ -195,6 +195,10 @@ class VibeStorage:
     # ── Atom CRUD ──
 
     def insert_atom(self, atom: MemoryAtom) -> None:
+        self._insert_atom(atom)
+        self.conn.commit()
+
+    def _insert_atom(self, atom: MemoryAtom) -> None:
         self.conn.execute(
             """INSERT INTO atoms (
                 id, agent_id, session_id, tenant_id, content, summary, type, tags, scope,
@@ -216,7 +220,6 @@ class VibeStorage:
                 atom.version, atom.previous_version_id,
             ),
         )
-        self.conn.commit()
 
     def get_atom(self, atom_id: str) -> Optional[MemoryAtom]:
         row = self.conn.execute(
@@ -224,10 +227,18 @@ class VibeStorage:
         ).fetchone()
         return self._row_to_atom(row) if row else None
 
-    def get_atoms_by_session(self, session_id: str) -> list[MemoryAtom]:
+    def get_atoms_by_session(
+        self, session_id: str, *, agent_id: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+    ) -> list[MemoryAtom]:
+        """Session atoms in one tenant; SDK callers also specify their agent."""
+        query = "SELECT * FROM atoms WHERE session_id = ? AND tenant_id = ?"
+        params = [session_id, self.tenant_id if tenant_id is None else tenant_id]
+        if agent_id is not None:
+            query += " AND agent_id = ?"
+            params.append(agent_id)
         rows = self.conn.execute(
-            "SELECT * FROM atoms WHERE session_id = ? ORDER BY created_at",
-            (session_id,),
+            query + " ORDER BY created_at, episode_position, id", params,
         ).fetchall()
         return [self._row_to_atom(r) for r in rows]
 
@@ -508,12 +519,93 @@ class VibeStorage:
         self.conn.commit()
 
     def delete_atom(self, atom_id: str) -> None:
-        self.conn.execute("DELETE FROM atoms WHERE id = ?", (atom_id,))
-        self.conn.commit()
+        if self.conn.in_transaction:
+            raise ValueError("delete_atom requires a connection without an open transaction")
+        with self.conn:
+            self.conn.execute("BEGIN IMMEDIATE")
+            atom = self.get_atom(atom_id)
+            if atom:
+                self._invalidate_episodes([atom])
+            self.conn.execute("DELETE FROM edges WHERE from_atom_id = ? OR to_atom_id = ?", (atom_id, atom_id))
+            self.conn.execute("DELETE FROM atoms WHERE id = ?", (atom_id,))
+
+    def _invalidate_episodes(self, atoms: list[MemoryAtom]) -> None:
+        """Discard affected derived summaries inside the caller's transaction."""
+        ids = {atom.id for atom in atoms}
+        for tenant, agent in {(atom.tenant_id, atom.agent_id) for atom in atoms}:
+            # ponytail: scan scoped JSON memberships; normalize membership rows if this becomes a bottleneck.
+            rows = self.conn.execute("SELECT id, atom_ids FROM episodes WHERE tenant_id=? AND agent_id=?", (tenant, agent)).fetchall()
+            for row in rows:
+                if ids.intersection(json.loads(row["atom_ids"])) or row["id"] in {atom.episode_id for atom in atoms}:
+                    self.conn.execute("UPDATE atoms SET episode_id=NULL, episode_position=0 WHERE episode_id=? AND tenant_id=? AND agent_id=?", (row["id"], tenant, agent))
+                    self.conn.execute("DELETE FROM episodes WHERE id=?", (row["id"],))
+
+    def merge_atoms(self, merged: MemoryAtom, first_id: str, second_id: str) -> None:
+        """Replace two owned atoms and rewire their edges in one transaction.
+
+        Same-pair duplicates keep the oldest row; conflicting label/status pairs
+        refuse the merge. Historical unrelated orphans are not cleaned here.
+        """
+        if self.conn.in_transaction:
+            raise ValueError("merge_atoms requires a connection without an open transaction")
+        with self.conn:
+            self.conn.execute("BEGIN IMMEDIATE")
+            first, second = self.get_atom(first_id), self.get_atom(second_id)
+            if first_id == second_id or not first or not second or self.get_atom(merged.id):
+                raise ValueError("Merge requires distinct existing parents and a new ID")
+            if any((a.tenant_id, a.agent_id, a.type, a.scope) != (merged.tenant_id, merged.agent_id, merged.type, merged.scope) for a in (first, second)) or merged.tenant_id != self.tenant_id:
+                raise ValueError("Merge ownership, partition and scope must match")
+            rows = self.conn.execute(
+                "SELECT * FROM edges WHERE from_atom_id IN (?, ?) OR to_atom_id IN (?, ?) ORDER BY created_at, id",
+                (first_id, second_id, first_id, second_id),
+            ).fetchall()
+            inherited = {}
+            parents = {first_id, second_id}
+            for row in rows:
+                edge = self._row_to_edge(row)
+                src, dst = self.get_atom(edge.from_atom_id), self.get_atom(edge.to_atom_id)
+                if edge.tenant_id != merged.tenant_id or any(not a or (a.tenant_id, a.agent_id) != (merged.tenant_id, merged.agent_id) for a in (src, dst)):
+                    raise ValueError("Cannot migrate malformed or foreign edges")
+                edge.from_atom_id = merged.id if edge.from_atom_id in parents else edge.from_atom_id
+                edge.to_atom_id = merged.id if edge.to_atom_id in parents else edge.to_atom_id
+                if edge.from_atom_id == edge.to_atom_id:
+                    continue
+                edge.cross_partition = (merged.type if src.id in parents else src.type) != (merged.type if dst.id in parents else dst.type)
+                pair = (edge.from_atom_id, edge.to_atom_id)
+                previous = inherited.get(pair)
+                if previous and (previous.label, previous.status) != (edge.label, edge.status):
+                    raise ValueError("Conflicting relations cannot share one endpoint pair")
+                inherited.setdefault(pair, edge)
+            self._insert_atom(merged)
+            self._invalidate_episodes([first, second])
+            self.conn.execute("DELETE FROM edges WHERE from_atom_id IN (?, ?) OR to_atom_id IN (?, ?)", (first_id, second_id, first_id, second_id))
+            for edge in inherited.values():
+                self._insert_edge(edge)
+            self.conn.execute("DELETE FROM atoms WHERE id IN (?, ?)", (first_id, second_id))
 
     # ── Edge CRUD ──
 
     def insert_edge(self, edge: Edge) -> None:
+        self._insert_edge(edge)
+        self.conn.commit()
+
+    def insert_edge_if_current(self, edge: Edge, first: MemoryAtom, second: MemoryAtom) -> bool:
+        """Indexer compare-and-insert: no model/network work inside this transaction."""
+        if self.conn.in_transaction:
+            raise ValueError("Indexed edge insertion requires no open caller transaction")
+        if (edge.from_atom_id, edge.to_atom_id) != (first.id, second.id) or first.id == second.id or any(
+            (a.tenant_id, a.agent_id) != (edge.tenant_id, first.agent_id) for a in (first, second)):
+            return False
+        with self.conn:
+            self.conn.execute("BEGIN IMMEDIATE")
+            for expected in (first, second):
+                current = self.get_atom(expected.id)
+                if not current or current.to_dict() != expected.to_dict():
+                    return False
+            self._insert_edge(edge)
+        return True
+
+    def _insert_edge(self, edge: Edge) -> None:
         self.conn.execute(
             """INSERT OR REPLACE INTO edges (
                 id, from_atom_id, to_atom_id, tenant_id, label, weight, decay_rate,
@@ -529,7 +621,6 @@ class VibeStorage:
                 edge.status.value, int(edge.cross_partition), edge.version,
             ),
         )
-        self.conn.commit()
 
     def get_edge(self, edge_id: str) -> Optional[Edge]:
         row = self.conn.execute(
@@ -580,6 +671,28 @@ class VibeStorage:
             params,
         ).fetchall()
         return [self._row_to_edge(row) for row in rows]
+
+    def get_edges_by_agent(
+        self, agent_id: str, *, tenant_id: Optional[str] = None,
+        status: Optional[EdgeStatus] = None,
+    ) -> list[Edge]:
+        """Edges whose tenant and both existing endpoints belong to this scope.
+
+        Unlike recall edges, this includes cold/archived endpoints and, when
+        status is omitted, stale/pending edges needed by scoped maintenance.
+        """
+        tid = self.tenant_id if tenant_id is None else tenant_id
+        query = """SELECT e.* FROM edges e
+                   JOIN atoms src ON src.id = e.from_atom_id
+                   JOIN atoms dst ON dst.id = e.to_atom_id
+                   WHERE e.tenant_id = ? AND src.tenant_id = ? AND dst.tenant_id = ?
+                     AND src.agent_id = ? AND dst.agent_id = ?"""
+        params = [tid, tid, tid, agent_id, agent_id]
+        if status is not None:
+            query += " AND e.status = ?"
+            params.append(status.value)
+        rows = self.conn.execute(query, params).fetchall()
+        return [self._row_to_edge(r) for r in rows]
 
     def get_all_edges(self) -> list[Edge]:
         rows = self.conn.execute(

@@ -181,7 +181,8 @@ class GarbageCollector:
         Returns:
             删除的边数量
         """
-        all_edges = self.storage.get_all_edges_raw()  # 含 stale/pending
+        all_edges = self.storage.get_edges_by_agent(
+            self.agent_id, tenant_id=self.tenant_id)  # 含 stale/pending
         to_delete: list[str] = []
 
         for edge in all_edges:

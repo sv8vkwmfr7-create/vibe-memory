@@ -197,11 +197,15 @@ def merge_atoms(
     """
     合并两个高度相似的分片（Bug 12 压缩优先）。
 
-    合并后的分片继承两者的所有边。
+    构造合并内容；持久化及关系迁移由 storage.merge_atoms 原子完成。
     """
+    if (atom_a.tenant_id, atom_a.agent_id, atom_a.type, atom_a.scope) != (atom_b.tenant_id, atom_b.agent_id, atom_b.type, atom_b.scope):
+        raise ValueError("Cannot merge atoms with different ownership, partition or scope")
     merged = MemoryAtom(
         id=str(uuid.uuid4()),
         agent_id=atom_a.agent_id,
+        tenant_id=atom_a.tenant_id,
+        scope=dict(atom_a.scope),
         session_id=atom_a.session_id,
         content=f"{atom_a.content}\n---\n{atom_b.content}",
         summary=f"{atom_a.summary} | {atom_b.summary}",

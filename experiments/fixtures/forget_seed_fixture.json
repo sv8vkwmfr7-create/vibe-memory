@@ -1,0 +1,12 @@
+{
+  "version": "1.0",
+  "domain": "synthetic-forget-probe",
+  "atoms": [
+    {
+      "content": "Configuration display color preference is violet.",
+      "summary": "Configuration display color preference is violet.",
+      "tags": ["config"],
+      "type": "session"
+    }
+  ]
+}

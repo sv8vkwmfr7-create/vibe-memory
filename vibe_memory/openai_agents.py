@@ -144,13 +144,6 @@ def create_vibe_tools(
     def vibe_forget(atom_id: str) -> str:
         """Delete a memory atom."""
         ok = mem.forget(atom_id)
-        if not ok:
-            # Try prefix match
-            all_atoms = mem.storage.get_atoms_by_agent(mem.agent_id, tenant_id=mem.tenant_id)
-            for a in all_atoms:
-                if a.id.startswith(atom_id):
-                    ok = mem.forget(a.id)
-                    break
         return json.dumps({"deleted": ok}, ensure_ascii=False)
 
     return [

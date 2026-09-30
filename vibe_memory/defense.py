@@ -49,7 +49,6 @@ PATTERNS = [
     (r'github_pat_[A-Za-z0-9_]{36,}', "github_pat"),
     (r'AIza[0-9A-Za-z\-_]{35}', "google_api_key"),
     (r'AKIA[0-9A-Z]{16}', "aws_access_key"),
-    (r'[A-Za-z0-9+/]{40}', "generic_api_key"),  # Last resort, lower confidence
 
     # Passwords & Credentials
     (r'(?:password|passwd|pwd)\s*[:=]\s*[\S]{4,}', "password_in_text"),
@@ -59,11 +58,8 @@ PATTERNS = [
     (r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}', "email"),
 
     # Phone numbers
-    (r'1[3-9]\d{9}', "cn_phone"),
+    (r'(?<![A-Za-z0-9_])1[3-9]\d{9}(?![A-Za-z0-9_])', "cn_phone"),
     (r'\+\d{1,3}[\s-]?\d{3}[\s-]?\d{3}[\s-]?\d{4}', "international_phone"),
-
-    # Credit cards
-    (r'\b(?:\d[ -]*?){13,16}\b', "credit_card"),
 
     # IP addresses
     (r'\b(?:\d{1,3}\.){3}\d{1,3}\b', "ip_address"),
@@ -82,8 +78,8 @@ PATTERNS = [
 
 # Lower-confidence patterns (only match if context suggests it's a secret)
 LOW_CONFIDENCE_PATTERNS = [
-    (r'[A-Za-z0-9+/]{40}', "generic_api_key"),
-    (r'\b(?:\d[ -]*?){13,16}\b', "credit_card"),
+    (r'\b(?:api[ _-]?key|access[ _-]?key)\s*[:=]\s*[A-Za-z0-9+/]{40,}(?![A-Za-z0-9+/])', "generic_api_key"),
+    (r'(?:\bcredit[ _-]?card\b|\bcard[ _-]?(?:number|no)\b|银行卡(?:号)?|信用卡(?:号)?)\s*[:=：]\s*(?:\d[ -]*?){13,19}(?!\d)', "credit_card"),
 ]
 
 
@@ -92,7 +88,7 @@ class MemoryDefense:
     Privacy scanner for memory content.
 
     Args:
-        mode: "redact" (default) — replace PII; "block" — reject; "warn" — log only
+        mode: "redact" (default) — replace PII; "block" — reject; "warn" — return findings without rewriting
         patterns: Custom patterns to add (list of (regex, type) tuples)
         exclude_patterns: Pattern types to skip
     """
@@ -108,7 +104,7 @@ class MemoryDefense:
         self._compiled = self._compile_patterns(patterns)
 
     def _compile_patterns(self, custom: Optional[list[tuple[str, str]]] = None):
-        all_patterns = list(PATTERNS)
+        all_patterns = list(PATTERNS) + list(LOW_CONFIDENCE_PATTERNS)
         if custom:
             all_patterns.extend(custom)
         return [(re.compile(p, re.IGNORECASE), t) for p, t in all_patterns if t not in self.exclude]
@@ -116,6 +112,11 @@ class MemoryDefense:
     def scan(self, content: str) -> tuple[str, list[dict]]:
         """
         Scan content for PII.
+
+        Generic keys and card numbers require explicit labels; identifiers are not
+        secrets merely because of their length. This is a heuristic, not a DLP guarantee.
+        Overlap markers use the leftmost, longest finding's type; all original
+        findings (including raw matches) remain in violations. Do not log them.
 
         Returns:
             (cleaned_content, violations_list)
@@ -137,10 +138,16 @@ class MemoryDefense:
             return content, violations
 
         if self.mode == DefenseMode.REDACT and violations:
-            # Redact from end to start to preserve positions
-            for v in sorted(violations, key=lambda x: x["position"][0], reverse=True):
+            # All offsets refer to the original text. Merge overlaps before replacement.
+            spans = []
+            for v in sorted(violations, key=lambda x: (x["position"][0], -x["position"][1])):
                 start, end = v["position"]
-                cleaned = cleaned[:start] + f"[REDACTED:{v['type']}]" + cleaned[end:]
+                if spans and start < spans[-1][1]:
+                    spans[-1][1] = max(spans[-1][1], end)
+                else:
+                    spans.append([start, end, v["type"]])
+            for start, end, ptype in reversed(spans):
+                cleaned = cleaned[:start] + f"[REDACTED:{ptype}]" + cleaned[end:]
 
         return cleaned, violations
 

@@ -249,7 +249,7 @@ class VibeMemory:
 
         # 冷启动阶段使用激进阈值建边
         if auto_build_edges:
-            self._auto_build_edges(atom)
+            atom = self._auto_build_edges(atom) or atom
 
         # 增量索引：自动入队 + 触发 flush
         self.indexer.on_store()
@@ -477,8 +477,9 @@ class VibeMemory:
         if from_atom is None or to_atom is None:
             return None
 
-        # 跨租户检查
-        if from_atom.tenant_id != self.tenant_id or to_atom.tenant_id != self.tenant_id:
+        # 两个端点都必须属于当前 tenant/agent。
+        if (from_atom.tenant_id != self.tenant_id or to_atom.tenant_id != self.tenant_id
+                or from_atom.agent_id != self.agent_id or to_atom.agent_id != self.agent_id):
             return None
 
         edge = Edge(
@@ -522,7 +523,7 @@ class VibeMemory:
             是否成功
         """
         atom = self.storage.get_atom(atom_id)
-        if atom is None or atom.tenant_id != self.tenant_id:
+        if atom is None or atom.tenant_id != self.tenant_id or atom.agent_id != self.agent_id:
             return False
 
         old_partition = atom.type
@@ -543,16 +544,27 @@ class VibeMemory:
         删除一条记忆。
 
         Args:
-            atom_id: 分片 ID
+            atom_id: 完整分片 ID，或当前 tenant/agent 内唯一的至少 8 字符前缀
 
         Returns:
             是否成功
         """
+        if not isinstance(atom_id, str) or not atom_id.strip():
+            return False
         atom = self.storage.get_atom(atom_id)
-        if atom is None or atom.tenant_id != self.tenant_id:
+        if atom is None:
+            if len(atom_id) < 8:
+                return False
+            # ponytail: scoped linear prefix scan; index it if deletion lookup becomes costly.
+            matches = [a for a in self.storage.get_atoms_by_agent(
+                self.agent_id, tenant_id=self.tenant_id) if a.id.startswith(atom_id)]
+            if len(matches) != 1:
+                return False
+            atom = matches[0]
+        if atom.tenant_id != self.tenant_id or atom.agent_id != self.agent_id:
             return False
 
-        self.storage.delete_atom(atom_id)
+        self.storage.delete_atom(atom.id)
         self.cold_start.invalidate_cache()
         return True
 
@@ -567,7 +579,8 @@ class VibeMemory:
         """
         更新分片元数据。
 
-        可更新字段：content, summary, tags, confidence, weight, decay_rate
+        可更新字段：content, summary, tags, scope, confidence, weight, decay_rate。
+        所有权、ID、会话及其他系统管理字段不可通过此接口改写。
 
         Args:
             atom_id: 分片 ID
@@ -577,14 +590,16 @@ class VibeMemory:
             更新后的 MemoryAtom，失败返回 None
         """
         atom = self.storage.get_atom(atom_id)
-        if atom is None or atom.tenant_id != self.tenant_id:
+        if atom is None or atom.tenant_id != self.tenant_id or atom.agent_id != self.agent_id:
             return None
 
+        allowed = {"content", "summary", "tags", "scope", "confidence", "weight", "decay_rate"}
+        if fields.keys() - allowed:
+            raise ValueError("Unsupported update fields; only content/summary/tags/scope/confidence/weight/decay_rate are allowed")
         if "scope" in fields:
             fields["scope"] = _validated_scope(fields["scope"])
         for key, value in fields.items():
-            if hasattr(atom, key):
-                setattr(atom, key, value)
+            setattr(atom, key, value)
 
         atom.version += 1
         self.storage.update_atom(atom)
@@ -608,8 +623,9 @@ class VibeMemory:
         Returns:
             MemoryAtom 列表（按时间倒序）
         """
-        if session_id:
-            atoms = self.storage.get_atoms_by_session(session_id)
+        if session_id is not None:
+            atoms = self.storage.get_atoms_by_session(
+                session_id, agent_id=self.agent_id, tenant_id=self.tenant_id)
         else:
             atoms = self.storage.get_atoms_by_agent(self.agent_id, tenant_id=self.tenant_id)
 
@@ -639,8 +655,10 @@ class VibeMemory:
         warm = sum(1 for a in all_atoms if a.lifecycle == Lifecycle.WARM)
         cold = sum(1 for a in all_atoms if a.lifecycle == Lifecycle.COLD)
 
-        all_edges = self.storage.get_all_edges()
-        pending = self.storage.get_pending_edges()
+        all_edges = self.storage.get_edges_by_agent(
+            self.agent_id, tenant_id=self.tenant_id, status=EdgeStatus.ACTIVE)
+        pending = self.storage.get_edges_by_agent(
+            self.agent_id, tenant_id=self.tenant_id, status=EdgeStatus.PENDING_REVIEW)
 
         # 分区统计
         partitions: dict[str, int] = {}
@@ -720,7 +738,8 @@ class VibeMemory:
         if result.total_cleaned > 0:
             self.metrics.snapshot_graph_size(
                 atoms=len(self.storage.get_atoms_by_agent(self.agent_id, tenant_id=self.tenant_id)),
-                edges=len(self.storage.get_all_edges()),
+                edges=len(self.storage.get_edges_by_agent(
+                    self.agent_id, tenant_id=self.tenant_id, status=EdgeStatus.ACTIVE)),
             )
 
         return result.to_dict()
@@ -742,7 +761,7 @@ class VibeMemory:
 
     # ── 内部辅助 ──
 
-    def _auto_build_edges(self, new_atom: MemoryAtom) -> None:
+    def _auto_build_edges(self, new_atom: MemoryAtom) -> Optional[MemoryAtom]:
         """自动为新分片建边（冷启动感知）"""
         existing = self.storage.get_atoms_by_agent(self.agent_id, tenant_id=self.tenant_id)
         # 排除自身
@@ -769,13 +788,14 @@ class VibeMemory:
             medium_similarity=edge_sim,
         )
         for dup in candidates["duplicate"]:
-            merged = merge_atoms(dup, new_atom)
-            merged.tenant_id = self.tenant_id
-            self.storage.insert_atom(merged)
-            self.storage.delete_atom(new_atom.id)
-            self.storage.delete_atom(dup.id)
+            try:
+                merged = merge_atoms(dup, new_atom)
+                self.storage.merge_atoms(merged, dup.id, new_atom.id)
+            except ValueError:
+                continue  # Keep both records when a safe merge is not representable.
             self._store_count += 1
-            return
+            self.cold_start.invalidate_cache()
+            return merged
 
         # 跨会话相似候选 → 入队（增量索引）
         for sim in candidates["similar"]:
@@ -785,7 +805,8 @@ class VibeMemory:
 
     def _auto_episode_aggregation(self, session_id: str) -> None:
         """自动 Episode 聚合"""
-        session_atoms = self.storage.get_atoms_by_session(session_id)
+        session_atoms = self.storage.get_atoms_by_session(
+            session_id, agent_id=self.agent_id, tenant_id=self.tenant_id)
         if len(session_atoms) < 3:
             return
 

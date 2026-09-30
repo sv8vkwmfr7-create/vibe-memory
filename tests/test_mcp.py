@@ -64,7 +64,69 @@ def client():
     c.close()
 
 
+def test_forget_rejects_empty_and_short_id(client):
+    atom = client.get_text(client.call_tool('vibe_store', {
+        'content': 'synthetic important memory',
+    }))
+    for atom_id in ['', atom['id'][:7]]:
+        result = client.get_text(client.call_tool('vibe_forget', {'atom_id': atom_id}))
+        assert result['deleted'] is False
+    assert client.get_text(client.call_tool('vibe_stats'))['total_atoms'] == 1
+    assert client.get_text(client.call_tool('vibe_forget', {
+        'atom_id': atom['id'],
+    }))['deleted'] is True
+
+
+def test_forget_rejects_ambiguous_prefix_over_stdio(tmp_path):
+    from vibe_memory import VibeMemory
+    from vibe_memory.models.memory_atom import MemoryAtom
+
+    db = str(tmp_path / 'ambiguous.db')
+    mem = VibeMemory(agent_id='test-agent', db_path=db)
+    for atom_id in ['abcdefgh-1111', 'abcdefgh-2222']:
+        mem.storage.insert_atom(MemoryAtom(
+            id=atom_id, agent_id='test-agent', tenant_id=mem.tenant_id,
+            session_id='s', content='synthetic', summary='synthetic'))
+    mem.storage.conn.close()
+    c = MCPClient(db_path=db)
+    try:
+        c.send('initialize')
+        result = c.get_text(c.call_tool('vibe_forget', {'atom_id': 'abcdefgh'}))
+        assert result['deleted'] is False
+        assert c.get_text(c.call_tool('vibe_stats'))['total_atoms'] == 2
+    finally:
+        c.close()
+
+
 # ── Protocol ──
+
+
+def test_link_rejects_other_agent_over_stdio(tmp_path):
+    from vibe_memory import VibeMemory
+    from vibe_memory.models.memory_atom import MemoryAtom
+
+    db = str(tmp_path / 'link-ownership.db')
+    mem = VibeMemory(agent_id='test-agent', db_path=db)
+    for atom_id, agent_id in [('owned-memory', 'test-agent'), ('foreign-memory', 'other-agent')]:
+        mem.storage.insert_atom(MemoryAtom(
+            id=atom_id, agent_id=agent_id, tenant_id=mem.tenant_id,
+            session_id='s', content='synthetic', summary='synthetic'))
+    mem.storage.conn.close()
+    c = MCPClient(db_path=db)
+    try:
+        c.send('initialize')
+        for source, target in [('owned-memory', 'foreign-memory'), ('foreign-memory', 'owned-memory')]:
+            result = c.get_text(c.call_tool('vibe_link', {
+                'from_id': source, 'to_id': target, 'label': 'causal'}))
+            assert 'error' in result
+        assert c.get_text(c.call_tool('vibe_stats'))['total_edges'] == 0
+    finally:
+        c.close()
+    conn = sqlite3.connect(db)
+    try:
+        assert conn.execute('SELECT COUNT(*) FROM edges').fetchone()[0] == 0
+    finally:
+        conn.close()
 
 def test_initialize(client):
     r = client.send("initialize", {})

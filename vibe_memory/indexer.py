@@ -131,6 +131,9 @@ class IncrementalIndexer:
         """
         candidate = IndexCandidate(new_atom, existing_atom, similarity)
         pair_key = candidate.pair_key
+        # Reject low-quality input before it can evict an accepted candidate.
+        if similarity < self.edge_similarity_threshold:
+            return False
 
         # 去重：已存在则更新相似度（取最大值）
         if pair_key in self._queue:
@@ -142,10 +145,6 @@ class IncrementalIndexer:
         if len(self._queue) >= self.max_queue_size:
             self._dropped_count += 1
             self._apply_backpressure(candidate)
-            return False
-
-        # 相似度低于阈值：不建边，但也不入队
-        if similarity < self.edge_similarity_threshold:
             return False
 
         self._queue[pair_key] = candidate
@@ -200,7 +199,9 @@ class IncrementalIndexer:
         Returns:
             创建的边数量
         """
-        batch_limit = max_batch or self.batch_size
+        batch_limit = self.batch_size if max_batch is None else max_batch
+        if not isinstance(batch_limit, int) or isinstance(batch_limit, bool) or batch_limit <= 0:
+            raise ValueError("Batch limit must be a positive integer")
         if not self._queue:
             return 0
 
@@ -217,11 +218,17 @@ class IncrementalIndexer:
         for candidate in batch:
             # 从队列中移除
             self._queue.pop(candidate.pair_key, None)
+            self._processed_count += 1
 
             try:
+                new_atom = self.storage.get_atom(candidate.new_atom.id)
+                existing_atom = self.storage.get_atom(candidate.existing_atom.id)
+                if not self._valid_endpoints(new_atom, existing_atom):
+                    continue
+                signatures = [self._classification_signature(a) for a in (new_atom, existing_atom)]
                 decision = classify_cross_session_edge(
-                    candidate.new_atom,
-                    candidate.existing_atom,
+                    new_atom,
+                    existing_atom,
                     llm_classify=self.llm_classify,
                 )
                 if len(decision) == 3:
@@ -231,26 +238,27 @@ class IncrementalIndexer:
                     source = EdgeSource.LLM if self.llm_classify else EdgeSource.RULE
 
                 if conf >= 0.3:
+                    current = [self.storage.get_atom(a.id) for a in (new_atom, existing_atom)]
+                    if not self._valid_endpoints(*current) or signatures != [self._classification_signature(a) for a in current]:
+                        continue
                     edge = Edge(
                         id=str(uuid.uuid4()),
-                        from_atom_id=candidate.new_atom.id,
-                        to_atom_id=candidate.existing_atom.id,
+                        from_atom_id=new_atom.id,
+                        to_atom_id=existing_atom.id,
                         tenant_id=self.tenant_id,
                         label=label,
                         confidence=conf,
                         source=source,
                         created_at=datetime.now(),
                         status=EdgeStatus.ACTIVE,
+                        cross_partition=new_atom.type != existing_atom.type,
                     )
-                    self.storage.insert_edge(edge)
-                    edges_created += 1
-                    self._edges_created += 1
-
-                self._processed_count += 1
+                    if self.storage.insert_edge_if_current(edge, *current):
+                        edges_created += 1
+                        self._edges_created += 1
 
             except Exception:
                 # 单个候选失败不影响整批
-                self._processed_count += 1
                 continue
 
         self._flush_count += 1
@@ -259,13 +267,24 @@ class IncrementalIndexer:
 
         return edges_created
 
+    def _valid_endpoints(self, first, second) -> bool:
+        return bool(first and second and first.id != second.id and all(
+            (atom.tenant_id, atom.agent_id) == (self.tenant_id, self.agent_id)
+            for atom in (first, second)))
+
+    @staticmethod
+    def _classification_signature(atom):
+        return (atom.version, atom.content, atom.summary, tuple(atom.tags),
+                atom.context_before, atom.context_after, atom.type, tuple(sorted(atom.scope.items())))
+
     def flush_all(self) -> int:
         """处理队列中所有候选（不限制 batch_size）"""
         total = 0
         while self._queue:
+            before = len(self._queue)
             created = self.flush(max_batch=self.batch_size)
             total += created
-            if created == 0:
+            if len(self._queue) >= before:
                 break
         return total
 
@@ -355,7 +374,8 @@ class IncrementalIndexer:
 
     def stats(self) -> dict:
         """索引器统计"""
-        linked = self.storage.get_all_edges()
+        linked = self.storage.get_edges_by_agent(
+            self.agent_id, tenant_id=self.tenant_id, status=EdgeStatus.ACTIVE)
         return {
             "queue_size": len(self._queue),
             "max_queue_size": self.max_queue_size,

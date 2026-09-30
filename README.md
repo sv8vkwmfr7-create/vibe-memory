@@ -225,12 +225,18 @@ vibe-init --dry-run    # 预览不改动
 | 方式 | 适用 | 命令 |
 |------|------|------|
 | MCP Server | Claude Code / Codex / Cursor | `vibe-mcp` |
-| HTTP API | 任何语言 | `vibe-http --port 8420` |
+| HTTP API | 任何语言 | 先设置私有 `VIBE_HTTP_TOKEN`，再 `vibe-http --port 8420` |
 | Python SDK | 自定义 Agent | `from vibe_memory import VibeMemory` |
 | LangChain | LangChain/LangGraph | `from vibe_memory.langchain import VibeMemoryLC` |
 | OpenAI SDK | OpenAI Agents | `from vibe_memory.openai_agents import create_vibe_tools` |
 | CLI | 脚本/手动 | `vibe-session start/end` |
 | MCP诊断 | 安装与跨会话验证 | `vibe-doctor` |
+
+HTTP 数据请求须带 `Authorization: Bearer <token>`；默认仅监听本机，禁止跨源访问。会话开始返回完整 `session_id`，后续写入和结束必须显式传入，不再共享隐式会话。详见 [HTTP 安全与接入](docs/HTTP_SECURITY.md)。
+
+默认隐私扫描不是完整防泄漏保证：普通长串/银行卡号需要明确上下文才触发低置信度规则；重叠命中统一替换。扫描路径、误报与漏报边界见 [隐私扫描说明](docs/PRIVACY_SCANNER.md)。
+
+删除与合并通过存储事务维护关系边；这不等于清除所有派生记忆，历史孤儿与Episode/队列引用仍需治理。详见 [记忆与边生命周期](docs/ATOM_EDGE_LIFECYCLE.md)。
 
 ### LLM 建边（可选）
 
@@ -414,6 +420,7 @@ python experiments/scale_visibility_benchmark.py --json results/scale_visibility
 
 - **Python 3.10+**
 - **numpy** — TF-IDF 向量化 + BM25
+- **tomli**（仅 Python 3.10）— 初始化时校验 TOML；Python 3.11+ 使用标准库
 - **sentence-transformers**（可选）— 语义 embedding
 - **SQLite** — 内置，无需额外安装
 
