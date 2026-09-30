@@ -1,7 +1,7 @@
 # VibeMemory 实验记录
 
 > 记录测试效果，对比普通向量RAG vs VibeMemory 召回差异。
-> 数据来源：Phase 0 手动模拟实验（[[wiki/vibe-memory-phase0]] + [[wiki/vibe-memory-log]]）
+> 历史资料：2026-08设计期的手工观察和早期实验叙述；私有来源未公开。以下数字、评价、模型大小建议及能力描述未按当前版本重新核验，不作现行产品成绩、独立评测或生产保证。当前可复核记录见[STATUS](STATUS.md)、[测试基线](docs/TESTING.md)及[修复台账](docs/REVIEW_REPAIR_PROGRESS.md)。
 
 ---
 
@@ -173,14 +173,16 @@ f988873 feat(retrieval): PPR graph walk with 3 config modes
 | E. 语义 RAG | 20% | 3 | 1 | 语义 embedding 从源头降噪 |
 | F. 语义 + 种子过滤 + PPR | **0%** | 3 | 0 | **全链路完美** |
 
-**关键发现**：
+**历史观察：语义后端 E/F（非独立验证）**：
 
 1. **语义 embedding 从源头降噪**：40%→20%。all-MiniLM-L6-v2 (384d) 能区分"API timeout"和"DB pool config"——TF-IDF 做不到。
 2. **种子过滤在语义后端生效**：5→4 种子，剔除了 1 个噪声分片。语义种子质量高，噪声是孤立的，过滤器能识别。
 3. **全链路 0% 噪声**：语义 embedding → 种子过滤 → PPR 图游走 = 完美。噪声走过一个 U 型曲线：20%（手工）→ 40%（TF-IDF）→ 0%（语义+PPR）。回到原点，但这次不是靠手工标签，是靠真实的语义理解。
 4. **模型选择**：all-MiniLM-L6-v2（384d, 80MB）适合本地原型。后续可升级到更大模型（如 all-mpnet-base-v2, 768d）。
 
-**关键发现**：
+**历史观察：标签/TF-IDF后端 A–D（非独立验证）**：
+
+两组观察对应不同后端/配置，不是两个可互换的总结果；原始协议、标签与逐查询输出不完整，不能合并为通用“完美”或优于竞品的证明。
 
 1. **噪声从 20%→40%**：标签匹配不是真实 baseline——手工标签天然偏袒了相关分片。TF-IDF 才是诚实的 baseline。
 2. **PPR 不能过滤种子噪声**：噪声在种子阶段就进入了，PPR 边标签过滤只抑制图游走阶段的噪声。
@@ -475,7 +477,7 @@ vibe-session inject                  # 输出注入内容
 **目标**：用真实 LLM API 验证跨会话边分类质量和端到端集成。
 
 **方法**：
-- 使用 DeepSeek-v4-flash（OpenAI 兼容 API，`https://aiapi.legendkaitian.com`）
+- 使用当时配置的OpenAI兼容网关（地址不公开；服务/model ID未独立核验）
 - 新增 AnthropicProvider + TransformersProvider（本地模型）
 - 6 分类测试 + 3 合并测试 + 端到端建边
 
@@ -515,7 +517,7 @@ vibe-session inject                  # 输出注入内容
 
 ---
 
-## 实验 13：真实使用 — VibeMemory + 知识库 Vault
+## 实验 14：真实使用 — VibeMemory + 知识库 Vault
 
 **日期**：2026-08-24
 
@@ -550,7 +552,7 @@ vibe-session inject                  # 输出注入内容
 
 ---
 
-## 实验 14：MAC/MAG 双模式注入
+## 实验 15：MAC/MAG 双模式注入
 
 **日期**：2026-08-24
 
