@@ -50,7 +50,6 @@ def test_store_single():
     assert retrieved is not None
     assert retrieved.content == atom.content
 
-    print("[PASS] store single test")
 
 
 def test_store_scope_metadata_survives_restart_without_changing_tags(tmp_path):
@@ -160,7 +159,6 @@ def test_store_batch():
     stats = mem.stats()
     assert stats["total_edges"] >= 1
 
-    print("[PASS] store batch test")
 
 
 def test_recall():
@@ -186,7 +184,6 @@ def test_recall():
     result_b = mem.recall("timeout", mode="budget")
     assert result_b["mode"] == "budget"
 
-    print("[PASS] recall test")
 
 
 def test_recall_scope_boost_reorders_without_filtering_or_changing_default():
@@ -310,7 +307,6 @@ def test_recall_semantic_cache_invalidates_on_update():
 
     assert any(item.id == atom.id for item in second["atoms"])
     assert mem._semantic_cache["key"] != first_key
-    print("[PASS] semantic cache invalidation test")
 
 
 def test_budget_recall_skips_duplicate_tfidf_rerank():
@@ -397,7 +393,6 @@ def test_link():
     edge2 = mem.link(a1.id, a3.id)  # a1 in 'default', a3 in 'other'
     assert edge2 is None
 
-    print("[PASS] link test")
 
 
 def test_migrate():
@@ -425,7 +420,6 @@ def test_migrate():
     success = mem2.migrate(a1.id, GraphPartition.SESSION)
     assert success is False
 
-    print("[PASS] migrate test")
 
 
 def test_forget():
@@ -448,7 +442,6 @@ def test_forget():
     success = mem2.forget(a2.id)
     assert success is False
 
-    print("[PASS] forget test")
 
 
 def test_update():
@@ -470,7 +463,6 @@ def test_update():
     result = mem2.update(a1.id, content="hacked")
     assert result is None
 
-    print("[PASS] update test")
 
 
 def test_history():
@@ -494,7 +486,6 @@ def test_history():
     h_limited = mem.history(limit=2)
     assert len(h_limited) == 2
 
-    print("[PASS] history test")
 
 
 def test_stats():
@@ -518,7 +509,6 @@ def test_stats():
     assert "partitions" in stats
     assert stats["partitions"]["session"] == 3
 
-    print("[PASS] stats test")
 
 
 def test_sdk_tenant_isolation():
@@ -537,7 +527,6 @@ def test_sdk_tenant_isolation():
     edge = mem_a.link(a1.id, b1.id)
     assert edge is None
 
-    print("[PASS] SDK tenant isolation test")
 
 
 def test_sdk_auto_edges():
@@ -550,32 +539,3 @@ def test_sdk_auto_edges():
     # Auto edges should be built within same session
     stats = mem.stats()
     assert stats["total_edges"] >= 1
-
-    print("[PASS] SDK auto edges test")
-
-
-def run_all():
-    print("=" * 50)
-    print("VibeMemory M3 SDK API Tests")
-    print("=" * 50)
-
-    test_store_single()
-    test_store_batch()
-    test_recall()
-    test_link()
-    test_migrate()
-    test_forget()
-    test_update()
-    test_history()
-    test_stats()
-    test_sdk_tenant_isolation()
-    test_sdk_auto_edges()
-
-    print()
-    print("=" * 50)
-    print("All SDK API tests passed [PASS]")
-    print("=" * 50)
-
-
-if __name__ == "__main__":
-    run_all()

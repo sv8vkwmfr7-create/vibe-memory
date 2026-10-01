@@ -15,6 +15,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from vibe_memory import VibeMemory
+from vibe_memory.maintenance import is_sqlite_lock_error
 from vibe_memory.models.memory_atom import MemoryAtom
 from vibe_memory.storage.sqlite_store import VibeStorage
 from vibe_memory.retrieval.ppr import recall
@@ -86,7 +87,7 @@ def write_lock(path, hold_seconds):
                 sdk_result = memory.recall(QUERY, mode="budget", top_k=5)
                 sdk_hit = any(atom.id == "anchor" for atom in sdk_result["atoms"])
             except sqlite3.OperationalError as error:
-                if error.sqlite_errorcode != sqlite3.SQLITE_BUSY:
+                if not is_sqlite_lock_error(error):
                     raise
                 error_name = "SQLITE_BUSY"
                 memory.storage.conn.rollback()

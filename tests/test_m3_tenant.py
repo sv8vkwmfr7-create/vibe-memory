@@ -52,7 +52,6 @@ def test_tenant_field_default():
     )
     assert episode.tenant_id == "default"
 
-    print("[PASS] tenant field default test")
 
 
 def test_storage_tenant_scope():
@@ -76,7 +75,6 @@ def test_storage_tenant_scope():
     assert len(atoms_b) == 1
     assert atoms_b[0].id == "a2"
 
-    print("[PASS] storage tenant scope test")
 
 
 def test_scope_metadata_remains_tenant_isolated():
@@ -249,7 +247,6 @@ def test_cross_tenant_edge_prevention():
     all_ids = {a.id for a in result["duplicate"] + result["similar"] + result["noise"]}
     assert "e2" not in all_ids
 
-    print("[PASS] cross-tenant edge prevention test")
 
 
 def test_multi_tenant_atoms():
@@ -272,7 +269,6 @@ def test_multi_tenant_atoms():
     assert len(atoms_t2) == 1
     assert atoms_t2[0].id == "a2"
 
-    print("[PASS] multi-tenant atoms test")
 
 
 def test_multi_tenant_edges():
@@ -305,7 +301,6 @@ def test_multi_tenant_edges():
     e2_retrieved = store.get_edge("e2")
     assert e2_retrieved.tenant_id == "t2"
 
-    print("[PASS] multi-tenant edges test")
 
 
 def test_multi_tenant_episodes():
@@ -329,7 +324,6 @@ def test_multi_tenant_episodes():
     assert len(eps) == 2
     assert {e.tenant_id for e in eps} == {"t1", "t2"}
 
-    print("[PASS] multi-tenant episodes test")
 
 
 def test_recall_tenant_isolation():
@@ -367,7 +361,6 @@ def test_recall_tenant_isolation():
     # T1 atom should be in results
     assert "a1" in atom_ids
 
-    print("[PASS] recall tenant isolation test")
 
 
 def test_recall_explicit_tenant():
@@ -401,7 +394,6 @@ def test_recall_explicit_tenant():
     assert "a2" in t2_ids
     assert "a1" not in t2_ids
 
-    print("[PASS] recall explicit tenant test")
 
 
 def test_tenant_sqlite_persistence():
@@ -421,7 +413,6 @@ def test_tenant_sqlite_persistence():
     assert retrieved.tenant_id == "custom-tenant"
     assert retrieved.content == "persistent test"
 
-    print("[PASS] tenant SQLite persistence test")
 
 
 def test_budget_recall_keeps_causal_outcomes_over_isolated_cross_reference():
@@ -654,28 +645,3 @@ def test_high_match_chinese_recall_prefers_relevant_old_answer():
         store.insert_atom(atom)
     result = recall("连接池超时修复", "agent-1", store, mode="budget", top_k=1)
     assert [a.id for a in result["atoms"]] == [answer.id]
-
-
-def run_all():
-    print("=" * 50)
-    print("VibeMemory M3 Multi-Tenant Tests")
-    print("=" * 50)
-
-    test_tenant_field_default()
-    test_storage_tenant_scope()
-    test_cross_tenant_edge_prevention()
-    test_multi_tenant_atoms()
-    test_multi_tenant_edges()
-    test_multi_tenant_episodes()
-    test_recall_tenant_isolation()
-    test_recall_explicit_tenant()
-    test_tenant_sqlite_persistence()
-
-    print()
-    print("=" * 50)
-    print("All M3 tenant tests passed [PASS]")
-    print("=" * 50)
-
-
-if __name__ == "__main__":
-    run_all()

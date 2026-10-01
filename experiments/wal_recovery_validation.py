@@ -14,6 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from vibe_memory.models.memory_atom import MemoryAtom
 from vibe_memory.storage.sqlite_store import VibeStorage
 from vibe_memory import VibeMemory
+from vibe_memory.maintenance import is_sqlite_lock_error
 
 
 def validate_transactions(path):
@@ -37,7 +38,7 @@ def validate_transactions(path):
             competitor.insert_atom(MemoryAtom(id="contender", agent_id="test",
                                               session_id="s", content="竞争写入", summary="竞争写入"))
         except sqlite3.OperationalError as error:
-            if error.sqlite_errorcode not in (sqlite3.SQLITE_BUSY, sqlite3.SQLITE_LOCKED):
+            if not is_sqlite_lock_error(error):
                 raise
             blocked = True
         finally:

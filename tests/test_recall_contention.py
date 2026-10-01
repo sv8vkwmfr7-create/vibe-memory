@@ -40,7 +40,9 @@ def test_recall_does_not_hide_non_lock_database_errors():
         memory.storage.conn.execute("PRAGMA query_only=ON")
         with pytest.raises(sqlite3.OperationalError) as failure:
             memory.recall("连接池超时修复", mode="budget", top_k=5)
-        assert failure.value.sqlite_errorcode == sqlite3.SQLITE_READONLY
+        assert "readonly" in str(failure.value)
+        if hasattr(failure.value, "sqlite_errorcode"):
+            assert failure.value.sqlite_errorcode == 8  # SQLITE_READONLY
         assert memory.storage.conn.execute("PRAGMA busy_timeout").fetchone()[0] == 5000
     finally:
         memory.storage.conn.close()

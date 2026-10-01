@@ -38,7 +38,6 @@ def test_measure_latency():
     # avg should be roughly 10ms (sleep 0.01s)
     assert 1 < stats["latency_ms"]["store"]["avg_ms"] < 100
 
-    print("[PASS] measure latency test")
 
 
 def test_measure_async():
@@ -50,7 +49,6 @@ def test_measure_async():
     assert stats["latency_ms"]["recall"]["count"] == 1
     assert stats["latency_ms"]["recall"]["avg_ms"] == 42.5
 
-    print("[PASS] measure async test")
 
 
 def test_record_operations():
@@ -74,7 +72,6 @@ def test_record_operations():
     assert ops["episode_build"] == 1
     assert ops["chunk"] == 1
 
-    print("[PASS] record operations test")
 
 
 def test_edge_source_distribution():
@@ -91,7 +88,6 @@ def test_edge_source_distribution():
     assert stats["edge_sources"] == {"rule": 3, "llm": 1, "learner": 1}
     assert stats["edge_labels"] == {"因果接续": 2, "同类经验": 2, "修正推翻": 1}
 
-    print("[PASS] edge source distribution test")
 
 
 def test_recall_hit_rate():
@@ -111,7 +107,6 @@ def test_recall_hit_rate():
     assert hr["max_results"] == 10
     assert hr["zero_hit_rate"] == 0.4  # 2/5 = 0.4
 
-    print("[PASS] recall hit rate test")
 
 
 def test_degradation_events():
@@ -131,7 +126,6 @@ def test_degradation_events():
     assert deg["Vibe Learner → 固定衰减"] == 1
     assert "custom_fallback" in deg
 
-    print("[PASS] degradation events test")
 
 
 def test_graph_size_snapshots():
@@ -150,7 +144,6 @@ def test_graph_size_snapshots():
     assert gs["peak"]["atoms"] == 20
     assert gs["peak"]["edges"] == 15
 
-    print("[PASS] graph size snapshots test")
 
 
 def test_cold_start_phase_tracking():
@@ -169,7 +162,6 @@ def test_cold_start_phase_tracking():
     assert cs["phase_history"][0]["phase"] == "cold"
     assert cs["phase_history"][-1]["phase"] == "normal"
 
-    print("[PASS] cold start phase tracking test")
 
 
 def test_timestamps():
@@ -191,7 +183,6 @@ def test_timestamps():
     assert stats["timestamps"]["last_store"] is not None
     assert stats["timestamps"]["last_recall"] is not None
 
-    print("[PASS] timestamps test")
 
 
 def test_uptime():
@@ -202,7 +193,6 @@ def test_uptime():
     assert stats["uptime_seconds"] >= 0
     assert stats["uptime_seconds"] < 10  # just created
 
-    print("[PASS] uptime test")
 
 
 def test_reset():
@@ -226,7 +216,6 @@ def test_reset():
     assert stats["graph_size"]["snapshot_count"] == 0
     assert len(stats["degradation"]) == 0
 
-    print("[PASS] reset test")
 
 
 def test_empty_stats():
@@ -245,7 +234,6 @@ def test_empty_stats():
     # Latency summary for empty should return zeros
     assert "store" not in stats["latency_ms"] or stats["latency_ms"].get("store", {}).get("count", 0) == 0
 
-    print("[PASS] empty stats test")
 
 
 def test_multiple_operations_latency():
@@ -266,7 +254,6 @@ def test_multiple_operations_latency():
     # p50 ≤ p95 ≤ p99
     assert lat["p50_ms"] <= lat["p95_ms"] <= lat["p99_ms"]
 
-    print("[PASS] multiple operations latency test")
 
 
 def test_sdk_metrics_integration():
@@ -299,7 +286,6 @@ def test_sdk_metrics_integration():
     # Graph size should be snapshot
     assert m["graph_size"]["current"]["atoms"] >= 1
 
-    print("[PASS] SDK metrics integration test")
 
 
 def test_sdk_edge_metrics():
@@ -316,7 +302,6 @@ def test_sdk_edge_metrics():
     assert "edge_sources" in m
     assert "rule" in m["edge_sources"]
 
-    print("[PASS] SDK edge metrics test")
 
 
 def test_sdk_degradation_tracking():
@@ -331,7 +316,6 @@ def test_sdk_degradation_tracking():
     assert "PPR 超时 → 向量 Top-K" in deg
     assert "种子过滤跳过（种子不足）" in deg
 
-    print("[PASS] SDK degradation tracking test")
 
 
 def test_sdk_recall_hit_rate():
@@ -350,38 +334,3 @@ def test_sdk_recall_hit_rate():
     stats = mem.stats()
     hr = stats["metrics"]["recall_hit_rate"]
     assert hr["total_recalls"] == 3
-
-    print("[PASS] SDK recall hit rate test")
-
-
-def run_all():
-    print("=" * 50)
-    print("VibeMemory M3 Metrics Tests")
-    print("=" * 50)
-
-    test_measure_latency()
-    test_measure_async()
-    test_record_operations()
-    test_edge_source_distribution()
-    test_recall_hit_rate()
-    test_degradation_events()
-    test_graph_size_snapshots()
-    test_cold_start_phase_tracking()
-    test_timestamps()
-    test_uptime()
-    test_reset()
-    test_empty_stats()
-    test_multiple_operations_latency()
-    test_sdk_metrics_integration()
-    test_sdk_edge_metrics()
-    test_sdk_degradation_tracking()
-    test_sdk_recall_hit_rate()
-
-    print()
-    print("=" * 50)
-    print("All metrics tests passed [PASS]")
-    print("=" * 50)
-
-
-if __name__ == "__main__":
-    run_all()

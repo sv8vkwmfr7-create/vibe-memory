@@ -80,7 +80,6 @@ def test_sparsify_low_weight_edges():
     e2_after = storage.get_edge("e2")
     assert e2_after.status == EdgeStatus.STALE
 
-    print("[PASS] sparsify low weight edges test")
 
 
 def test_sparsify_stale_edges():
@@ -101,7 +100,6 @@ def test_sparsify_stale_edges():
     count = gc.sparsify()
     assert count >= 1  # e2 is stale
 
-    print("[PASS] sparsify stale edges test")
 
 
 def test_sparsify_dry_run():
@@ -123,7 +121,6 @@ def test_sparsify_dry_run():
     e_after = storage.get_edge("e1")
     assert e_after.status == EdgeStatus.ACTIVE  # not actually changed
 
-    print("[PASS] sparsify dry run test")
 
 
 def test_enforce_pool():
@@ -146,7 +143,6 @@ def test_enforce_pool():
     weights = sorted([a.weight for a in remaining])
     assert weights[0] >= 0.55  # top 3 by weight
 
-    print("[PASS] enforce pool test")
 
 
 def test_enforce_pool_parametric_protected():
@@ -167,7 +163,6 @@ def test_enforce_pool_parametric_protected():
     remaining = storage.get_atoms_by_agent("agent-1")
     assert len(remaining) == 5  # all still there
 
-    print("[PASS] enforce pool parametric protected test")
 
 
 def test_migrate_cold():
@@ -200,7 +195,6 @@ def test_migrate_cold():
     assert a3.lifecycle == Lifecycle.COLD
     assert a4.lifecycle == Lifecycle.ARCHIVED
 
-    print("[PASS] migrate cold test")
 
 
 def test_migrate_cold_dry_run():
@@ -216,7 +210,6 @@ def test_migrate_cold_dry_run():
     a1 = storage.get_atom("a1")
     assert a1.lifecycle == Lifecycle.ACTIVE  # not changed
 
-    print("[PASS] migrate cold dry run test")
 
 
 def test_evict_dead_atoms():
@@ -235,7 +228,6 @@ def test_evict_dead_atoms():
     assert storage.get_atom("a2") is None
     assert storage.get_atom("a3") is None
 
-    print("[PASS] evict dead atoms test")
 
 
 def test_evict_archived_low_weight():
@@ -251,7 +243,6 @@ def test_evict_archived_low_weight():
     assert storage.get_atom("a1") is None
     assert storage.get_atom("a2") is not None
 
-    print("[PASS] evict archived low weight test")
 
 
 def test_evict_parametric_protected():
@@ -268,7 +259,6 @@ def test_evict_parametric_protected():
     assert storage.get_atom("p1") is not None
     assert storage.get_atom("p2") is not None
 
-    print("[PASS] evict parametric protected test")
 
 
 def test_full_pipeline():
@@ -305,7 +295,6 @@ def test_full_pipeline():
     assert result.duration_ms >= 0
     assert len(result.errors) == 0
 
-    print("[PASS] full pipeline test")
 
 
 def test_dry_run_collect():
@@ -323,7 +312,6 @@ def test_dry_run_collect():
     assert storage.get_atom("a1") is not None
     assert storage.get_atom("a2") is not None
 
-    print("[PASS] dry run collect test")
 
 
 def test_partition_usage():
@@ -346,7 +334,6 @@ def test_partition_usage():
     assert usage["document"]["count"] == 3
     assert usage["parametric"]["count"] == 0
 
-    print("[PASS] partition usage test")
 
 
 def test_set_partition_capacity():
@@ -360,7 +347,6 @@ def test_set_partition_capacity():
     usage = gc.get_partition_usage()
     assert usage["session"]["capacity"] == 500
 
-    print("[PASS] set partition capacity test")
 
 
 def test_gc_stats():
@@ -384,7 +370,6 @@ def test_gc_stats():
     assert stats["last_gc_at"] is not None
     assert stats["last_gc_result"] is not None
 
-    print("[PASS] gc stats test")
 
 
 def test_sdk_collect_garbage():
@@ -400,7 +385,6 @@ def test_sdk_collect_garbage():
     assert "total_cleaned" in result
     assert "errors" in result
 
-    print("[PASS] SDK collect garbage test")
 
 
 def test_sdk_gc_stats():
@@ -418,7 +402,6 @@ def test_sdk_gc_stats():
     assert "config" in gc_stats
     assert gc_stats["gc_count"] >= 1
 
-    print("[PASS] SDK gc stats test")
 
 
 def test_sdk_gc_dry_run():
@@ -434,7 +417,6 @@ def test_sdk_gc_dry_run():
     atoms = mem.storage.get_atoms_by_agent("test-agent")
     assert len(atoms) >= 1
 
-    print("[PASS] SDK gc dry run test")
 
 
 def test_gc_errors_handled():
@@ -450,40 +432,3 @@ def test_gc_errors_handled():
     # Should complete without exception even on empty DB
     assert len(result.errors) == 0
     assert result.total_cleaned == 0
-
-    print("[PASS] gc errors handled test")
-
-
-def run_all():
-    print("=" * 50)
-    print("VibeMemory M3 GC Compression Tests")
-    print("=" * 50)
-
-    test_sparsify_low_weight_edges()
-    test_sparsify_stale_edges()
-    test_sparsify_dry_run()
-    test_enforce_pool()
-    test_enforce_pool_parametric_protected()
-    test_migrate_cold()
-    test_migrate_cold_dry_run()
-    test_evict_dead_atoms()
-    test_evict_archived_low_weight()
-    test_evict_parametric_protected()
-    test_full_pipeline()
-    test_dry_run_collect()
-    test_partition_usage()
-    test_set_partition_capacity()
-    test_gc_stats()
-    test_sdk_collect_garbage()
-    test_sdk_gc_stats()
-    test_sdk_gc_dry_run()
-    test_gc_errors_handled()
-
-    print()
-    print("=" * 50)
-    print("All GC tests passed [PASS]")
-    print("=" * 50)
-
-
-if __name__ == "__main__":
-    run_all()

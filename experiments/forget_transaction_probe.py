@@ -9,6 +9,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from vibe_memory import VibeMemory
+from vibe_memory.maintenance import is_sqlite_lock_error
 from vibe_memory.models.memory_atom import Edge, EdgeLabel, MemoryAtom
 
 
@@ -152,7 +153,7 @@ def run():
             try:
                 import_record(peer, "racing-import", content, sources=("preference-v1",))
             except sqlite3.OperationalError as error:
-                writer_blocked = error.sqlite_errorcode == sqlite3.SQLITE_BUSY
+                writer_blocked = is_sqlite_lock_error(error)
             else:
                 writer_blocked = False
             finally:

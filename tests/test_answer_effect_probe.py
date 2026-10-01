@@ -8,6 +8,12 @@ import pytest
 from experiments.answer_effect_probe import CASES, MODEL_CACHE, replay_case, run
 
 
+@pytest.fixture
+def local_answer_runtime():
+    pytest.importorskip("transformers")
+    pytest.importorskip("torch")
+
+
 def test_correction_case_replays_two_sessions_before_a_new_process_recall():
     replay = replay_case(CASES[0])
 
@@ -44,7 +50,7 @@ def test_replay_queries_requested_scope_after_other_environment_write():
 
 
 @pytest.mark.skipif(not MODEL_CACHE.exists(), reason="offline answer model not cached")
-def test_one_case_compares_full_answers_with_and_without_mcp_memory():
+def test_one_case_compares_full_answers_with_and_without_mcp_memory(local_answer_runtime):
     report = run(CASES[:1])
 
     assert report["model_load_ms"] > 0
@@ -55,7 +61,7 @@ def test_one_case_compares_full_answers_with_and_without_mcp_memory():
 
 
 @pytest.mark.skipif(not MODEL_CACHE.exists(), reason="offline answer model not cached")
-def test_source_case_repeats_with_its_answer_choices():
+def test_source_case_repeats_with_its_answer_choices(local_answer_runtime):
     scope = {"service": "vibe-memory", "operation": "chinese-recall"}
     case = {"id": "source-case", "question": "当前是否支持中文双字检索？",
             "scope": scope, "expected": "支持", "choices": ["支持", "不支持"],
@@ -72,7 +78,7 @@ def test_source_case_repeats_with_its_answer_choices():
 
 
 @pytest.mark.skipif(not MODEL_CACHE.exists(), reason="offline answer model not cached")
-def test_english_unknown_is_counted_as_abstention():
+def test_english_unknown_is_counted_as_abstention(local_answer_runtime):
     cases = json.loads((Path(__file__).parents[1] / "experiments" / "source_backed_answer_cases.json").read_text(encoding="utf-8"))
     report = run((cases[0],))
 
@@ -81,7 +87,7 @@ def test_english_unknown_is_counted_as_abstention():
 
 
 @pytest.mark.skipif(not MODEL_CACHE.exists(), reason="offline answer model not cached")
-def test_latest_only_context_is_compared_without_changing_mcp_recall():
+def test_latest_only_context_is_compared_without_changing_mcp_recall(local_answer_runtime):
     cases = json.loads((Path(__file__).parents[1] / "experiments" / "source_backed_answer_cases.json").read_text(encoding="utf-8"))
     report = run((cases[0],))
     answers = report["cases"][0]["answers"]
@@ -92,7 +98,7 @@ def test_latest_only_context_is_compared_without_changing_mcp_recall():
 
 
 @pytest.mark.skipif(not MODEL_CACHE.exists(), reason="offline answer model not cached")
-def test_prompt_clarification_uses_same_recalled_memories():
+def test_prompt_clarification_uses_same_recalled_memories(local_answer_runtime):
     scope = {"service": "vibe-memory", "operation": "scope-boost"}
     case = {"id": "prompt-check", "question": "作用域匹配会过滤候选吗？",
             "scope": scope, "expected": "不会", "choices": ["会", "不会"],
@@ -108,7 +114,7 @@ def test_prompt_clarification_uses_same_recalled_memories():
 
 
 @pytest.mark.skipif(not MODEL_CACHE.exists(), reason="offline answer model not cached")
-def test_direct_question_compares_answer_on_the_same_mcp_recall():
+def test_direct_question_compares_answer_on_the_same_mcp_recall(local_answer_runtime):
     scope = {"service": "vibe-memory", "operation": "scope-boost"}
     case = {"id": "direct-question-check", "question": "scope 匹配会过滤候选吗？",
             "direct_question": "scope 匹配是会过滤候选，还是不会过滤候选？",
@@ -126,7 +132,7 @@ def test_direct_question_compares_answer_on_the_same_mcp_recall():
 
 
 @pytest.mark.skipif(not MODEL_CACHE.exists(), reason="offline answer model not cached")
-def test_explicit_local_model_path_is_reported_without_changing_default():
+def test_explicit_local_model_path_is_reported_without_changing_default(local_answer_runtime):
     report = run(CASES[:1], model_path=MODEL_CACHE,
                  model_id="Qwen/Qwen2.5-0.5B-Instruct", model_revision="local-test-revision")
 
@@ -135,7 +141,7 @@ def test_explicit_local_model_path_is_reported_without_changing_default():
 
 
 @pytest.mark.skipif(not MODEL_CACHE.exists(), reason="offline answer model not cached")
-def test_marked_current_context_uses_only_recalled_matching_scope():
+def test_marked_current_context_uses_only_recalled_matching_scope(local_answer_runtime):
     cases = json.loads((Path(__file__).parents[1] / "experiments" / "version_context_holdout_cases.json").read_text(encoding="utf-8"))
 
     report = run(tuple(cases), compare_selection=True)

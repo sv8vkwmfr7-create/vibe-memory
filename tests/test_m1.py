@@ -64,7 +64,6 @@ def test_memory_atom():
     atom.learn_from_feedback(was_adopted=False)
     assert atom.ignored_count == 1
 
-    print("[PASS] MemoryAtom test")
 
 
 def test_chunking():
@@ -89,7 +88,6 @@ def test_chunking():
     # Third msg is routine
     assert len(atoms[2].tags) >= 1
 
-    print("[PASS] chunking test")
 
 
 def test_surprise_ingest():
@@ -103,7 +101,6 @@ def test_surprise_ingest():
     # User correction -> should ingest
     assert should_ingest("No, that's not the issue", None) is True
 
-    print("[PASS] surprise-based ingest test")
 
 
 def test_same_session_edges():
@@ -138,7 +135,6 @@ def test_same_session_edges():
     assert edges[1].label == EdgeLabel.ADJACENT
     assert edges[1].confidence == 0.3
 
-    print("[PASS] same-session edges test")
 
 
 def test_cross_session_candidates():
@@ -181,7 +177,6 @@ def test_cross_session_candidates():
     assert len(result["noise"]) == 1
     assert result["noise"][0].id == "e3"
 
-    print("[PASS] cross-session KNN test")
 
 
 def test_merge_atoms():
@@ -206,7 +201,6 @@ def test_merge_atoms():
     assert merged.previous_version_id == "a"
     assert merged.version == 2  # max(1, 1) + 1
 
-    print("[PASS] atom merge test")
 
 
 def test_storage():
@@ -245,7 +239,6 @@ def test_storage():
     atoms = store.get_atoms_by_session("s1")
     assert len(atoms) == 1
 
-    print("[PASS] SQLite storage test")
 
 
 def test_ppr_config():
@@ -266,7 +259,6 @@ def test_ppr_config():
     assert budget_cfg.restart_probability == 0.5
     assert budget_cfg.top_n == 3
 
-    print("[PASS] PPR config test")
 
 
 def test_ppr_walk():
@@ -319,7 +311,6 @@ def test_ppr_walk():
     assert "a2" in scores_recall
     assert "a3" in scores_recall
 
-    print("[PASS] PPR walk test")
 
 
 def test_ppr_strong_edge_survives_more_seed_candidates():
@@ -417,7 +408,6 @@ def test_recall_api():
     assert result["mode"] == "precision"
     assert result["total_walked"] >= 0
 
-    print("[PASS] recall API test")
 
 
 def test_fallback_vector_topk():
@@ -441,7 +431,6 @@ def test_fallback_vector_topk():
     assert len(results) >= 1
     assert results[0].id == "f1"  # "timeout" matches error+config
 
-    print("[PASS] fallback vector top-k test")
 
 
 def test_vibe_learner():
@@ -477,7 +466,6 @@ def test_vibe_learner():
     assert stats["total_positive"] == 1
     assert stats["total_negative"] == 1
 
-    print("[PASS] Vibe Learner test")
 
 
 def test_decay_manager():
@@ -511,7 +499,6 @@ def test_decay_manager():
     assert atom2.access_count == 1
     assert atom2.weight >= 1.0  # should be at max after reinforce
 
-    print("[PASS] DecayManager test")
 
 
 def test_learner_feature_extraction():
@@ -534,7 +521,6 @@ def test_learner_feature_extraction():
     assert "adopted_ratio" in features
     assert features["adopted_ratio"] == 0.8  # 4/5
 
-    print("[PASS] learner feature extraction test")
 
 
 def test_bm25_worked_example_preserves_scores_and_order():
@@ -553,34 +539,3 @@ def test_bm25_worked_example_preserves_scores_and_order():
     assert [index for index, _ in results] == [0, 3]
     assert results[0][1] == pytest.approx(3.020551323829725)
     assert results[1][1] == pytest.approx(2.6264062120617)
-
-
-def run_all():
-    print("=" * 50)
-    print("VibeMemory L1 Prototype Tests")
-    print("=" * 50)
-
-    test_memory_atom()
-    test_chunking()
-    test_surprise_ingest()
-    test_same_session_edges()
-    test_cross_session_candidates()
-    test_merge_atoms()
-    test_storage()
-    test_ppr_config()
-    test_ppr_walk()
-    test_recall_api()
-    test_fallback_vector_topk()
-    test_vibe_learner()
-    test_decay_manager()
-    test_learner_feature_extraction()
-    test_bm25_worked_example_preserves_scores_and_order()
-
-    print()
-    print("=" * 50)
-    print("All tests passed [PASS]")
-    print("=" * 50)
-
-
-if __name__ == "__main__":
-    run_all()

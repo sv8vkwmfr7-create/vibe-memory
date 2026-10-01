@@ -81,7 +81,6 @@ def test_partition_manager_init():
     assert len(cross) == 1
     assert cross[0].label == EdgeLabel.LOOKUP
 
-    print("[PASS] partition manager init test")
 
 
 def test_partition_route():
@@ -115,7 +114,6 @@ def test_partition_route():
     mgr.route_edge(e2)
     assert e2.cross_partition
 
-    print("[PASS] partition route test")
 
 
 def test_cross_partition_edge_building():
@@ -149,7 +147,6 @@ def test_cross_partition_edge_building():
         assert edge.cross_partition
         assert edge.label in (EdgeLabel.LOOKUP, EdgeLabel.INFLUENCE, EdgeLabel.REFERENCE)
 
-    print("[PASS] cross-partition edge building test")
 
 
 def test_partition_get_neighbors():
@@ -190,7 +187,6 @@ def test_partition_get_neighbors():
     assert "s2" in neighbor_ids
     assert "d1" in neighbor_ids
 
-    print("[PASS] partition get_neighbors test")
 
 
 def test_partition_stats():
@@ -245,7 +241,6 @@ def test_partition_stats():
     assert overall["total_edges"] == 1
     assert overall["total_cross_partition_edges"] >= 1
 
-    print("[PASS] partition stats test")
 
 
 def test_evict_atoms():
@@ -274,7 +269,6 @@ def test_evict_atoms():
     # s1's outgoing edges should be removed
     assert "s1" not in mgr._outgoing_index[GraphPartition.SESSION]
 
-    print("[PASS] evict atoms test")
 
 
 # ── Louvain Community Detection Tests ──
@@ -307,7 +301,6 @@ def test_louvain_simple_chain():
     assert stats["num_communities"] >= 1
     assert stats["modularity"] >= 0.0
 
-    print("[PASS] Louvain simple chain test")
 
 
 def test_louvain_empty():
@@ -319,7 +312,6 @@ def test_louvain_empty():
     stats = detector.get_stats()
     assert stats["num_communities"] == 0
 
-    print("[PASS] Louvain empty test")
 
 
 def test_louvain_single_node():
@@ -330,7 +322,6 @@ def test_louvain_single_node():
     assert len(communities) == 1
     assert "a1" in communities
 
-    print("[PASS] Louvain single node test")
 
 
 def test_louvain_isolated_nodes():
@@ -345,7 +336,6 @@ def test_louvain_isolated_nodes():
     # Each isolated node gets its own community, then small ones get merged
     assert len(communities) == 3
 
-    print("[PASS] Louvain isolated nodes test")
 
 
 def test_louvain_config():
@@ -376,7 +366,6 @@ def test_louvain_config():
     assert len(communities_high) >= 1
     assert len(communities_low) >= 1
 
-    print("[PASS] Louvain config test")
 
 
 def test_louvain_two_clusters():
@@ -420,7 +409,6 @@ def test_louvain_two_clusters():
     assert stats["num_communities"] >= 1
     assert stats["modularity"] >= 0.0
 
-    print("[PASS] Louvain two clusters test")
 
 
 def test_cross_edge_label_inference():
@@ -447,7 +435,6 @@ def test_cross_edge_label_inference():
     label, conf = _infer_cross_edge_label(s, s2)
     assert label in (EdgeLabel.REFERENCE, EdgeLabel.VERSION)
 
-    print("[PASS] cross edge label inference test")
 
 
 def test_tag_overlap_util():
@@ -459,40 +446,3 @@ def test_tag_overlap_util():
     assert _tag_overlap(a, b) == 2/3  # 2 shared / 3 union
     assert _tag_overlap(a, c) == 0.0  # 0 shared / 4 union
     assert _tag_overlap(b, c) == 0.0
-
-    print("[PASS] tag overlap test")
-
-
-def run_all():
-    print("=" * 50)
-    print("VibeMemory M2 Graph Partition + Community Tests")
-    print("=" * 50)
-
-    # Partition tests
-    test_partition_manager_init()
-    test_partition_route()
-    test_cross_partition_edge_building()
-    test_partition_get_neighbors()
-    test_partition_stats()
-    test_evict_atoms()
-
-    # Louvain tests
-    test_louvain_simple_chain()
-    test_louvain_empty()
-    test_louvain_single_node()
-    test_louvain_isolated_nodes()
-    test_louvain_config()
-    test_louvain_two_clusters()
-
-    # Utility tests
-    test_cross_edge_label_inference()
-    test_tag_overlap_util()
-
-    print()
-    print("=" * 50)
-    print("All M2 tests passed [PASS]")
-    print("=" * 50)
-
-
-if __name__ == "__main__":
-    run_all()

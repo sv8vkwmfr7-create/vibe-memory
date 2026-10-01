@@ -71,7 +71,6 @@ def test_session_manager_init(temp_vibe_dir):
     assert mgr.agent_id == "test-agent"
     assert mgr.session_file.name == "session.json"
     assert mgr.inject_file.name == "inject.md"
-    print("[PASS] session_manager_init")
 
 
 # --- 2. start_session ---
@@ -90,7 +89,6 @@ def test_start_session_empty(session_manager, temp_vibe_dir):
         state = json.load(f)
     assert state["session_id"] == result["session_id"]
     assert state["agent_id"] == "test-agent"
-    print("[PASS] start_session_empty")
 
 
 def test_start_session_writes_injection(session_manager, temp_vibe_dir):
@@ -102,7 +100,6 @@ def test_start_session_writes_injection(session_manager, temp_vibe_dir):
 
     content = open(inject_path, encoding="utf-8").read()
     assert "VibeMemory" in content
-    print("[PASS] start_session_writes_injection")
 
 
 def test_start_session_with_context(session_manager, temp_vibe_dir):
@@ -113,7 +110,6 @@ def test_start_session_with_context(session_manager, temp_vibe_dir):
     with open(os.path.join(temp_vibe_dir, "session.json"), encoding="utf-8") as f:
         state = json.load(f)
     assert "API timeout" in state["context"]
-    print("[PASS] start_session_with_context")
 
 
 def test_start_session_recalls_stored_memories(session_manager, temp_vibe_dir):
@@ -139,7 +135,6 @@ def test_start_session_recalls_stored_memories(session_manager, temp_vibe_dir):
     result = session_manager.start_session(context="API timeout issue")
 
     assert result["memories_count"] > 0
-    print("[PASS] start_session_recalls_stored_memories")
 
 
 # --- 3. end_session ---
@@ -158,7 +153,6 @@ def test_end_session_stores_summary(session_manager, temp_vibe_dir):
     atoms = session_manager.mem.storage.get_atoms_by_agent("test-agent")
     assert len(atoms) == 1
     assert "Fixed API timeout" in atoms[0].content
-    print("[PASS] end_session_stores_summary")
 
 
 def test_end_session_stores_highlights(session_manager, temp_vibe_dir):
@@ -176,7 +170,6 @@ def test_end_session_stores_highlights(session_manager, temp_vibe_dir):
     assert result["stored_count"] == 4  # 1 summary + 3 highlights
     atoms = session_manager.mem.storage.get_atoms_by_agent("test-agent")
     assert len(atoms) == 4
-    print("[PASS] end_session_stores_highlights")
 
 
 def test_end_session_marks_ended(session_manager, temp_vibe_dir):
@@ -187,7 +180,6 @@ def test_end_session_marks_ended(session_manager, temp_vibe_dir):
     with open(os.path.join(temp_vibe_dir, "session.json"), encoding="utf-8") as f:
         state = json.load(f)
     assert "ended_at" in state
-    print("[PASS] end_session_marks_ended")
 
 
 def test_end_session_no_active(session_manager, temp_vibe_dir):
@@ -196,7 +188,6 @@ def test_end_session_no_active(session_manager, temp_vibe_dir):
     result = session_manager.end_session(summary="Should fail")
     assert "error" in result
     assert result["stored_count"] == 0
-    print("[PASS] end_session_no_active")
 
 
 def test_end_session_with_tags(session_manager, temp_vibe_dir):
@@ -210,7 +201,6 @@ def test_end_session_with_tags(session_manager, temp_vibe_dir):
     atoms = session_manager.mem.storage.get_atoms_by_agent("test-agent")
     assert len(atoms) == 1
     assert "deployment" in atoms[0].tags
-    print("[PASS] end_session_with_tags")
 
 
 # --- 4. recall ---
@@ -225,7 +215,6 @@ def test_recall(session_manager, temp_vibe_dir):
 
     result = session_manager.recall("API timeout")
     assert len(result["atoms"]) > 0
-    print("[PASS] recall")
 
 
 # --- 5. stats ---
@@ -239,7 +228,6 @@ def test_stats(session_manager, temp_vibe_dir):
     assert "session" in stats
     assert "memory" in stats
     assert stats["memory"]["total_atoms"] == 1
-    print("[PASS] stats")
 
 
 # --- 6. Convenience functions ---
@@ -249,7 +237,6 @@ def test_quick_start(temp_vibe_dir):
     mgr = quick_start(agent_id="test-agent", vibe_dir=temp_vibe_dir)
     assert isinstance(mgr, SessionManager)
     assert os.path.exists(os.path.join(temp_vibe_dir, "session.json"))
-    print("[PASS] quick_start")
 
 
 def test_quick_end(temp_vibe_dir):
@@ -257,7 +244,6 @@ def test_quick_end(temp_vibe_dir):
     mgr = quick_start(agent_id="test-agent", vibe_dir=temp_vibe_dir)
     result = quick_end(agent_id="test-agent", vibe_dir=temp_vibe_dir, summary="Test done")
     assert result["stored_count"] == 1
-    print("[PASS] quick_end")
 
 
 # --- 7. Persistence ---
@@ -271,7 +257,6 @@ def test_session_state_persists(temp_vibe_dir):
     mgr2 = SessionManager(agent_id="test-agent", vibe_dir=temp_vibe_dir)
     state = mgr2._read_session_state()
     assert state["session_id"] == result1["session_id"]
-    print("[PASS] session_state_persists")
 
 
 def test_multiple_session_cycle(session_manager, temp_vibe_dir):
@@ -290,7 +275,6 @@ def test_multiple_session_cycle(session_manager, temp_vibe_dir):
     # All 3 sessions stored
     atoms = session_manager.mem.storage.get_atoms_by_agent("test-agent")
     assert len(atoms) == 3
-    print("[PASS] multiple_session_cycle")
 
 
 # --- 8. Cross-session recall ---
@@ -312,7 +296,6 @@ def test_cross_session_recall(session_manager, temp_vibe_dir):
     # Should recall session 1's API fix
     atoms = session_manager.mem.storage.get_atoms_by_agent("test-agent")
     assert len(atoms) == 2
-    print("[PASS] cross_session_recall")
 
 
 # --- 9. Injection format ---
@@ -336,7 +319,6 @@ def test_injection_format(session_manager, temp_vibe_dir):
     assert "VibeMemory" in content
     assert "Memory Signals" in content  # MAG default injection mode
     assert "Session" not in content  # MAG groups by priority, not session
-    print("[PASS] injection_format")
 
 
 # --- 10. CLI ---
@@ -350,7 +332,6 @@ def test_cli_start(temp_vibe_dir, monkeypatch):
     # Should not crash
     cli_main()
     assert os.path.exists(os.path.join(temp_vibe_dir, "session.json"))
-    print("[PASS] cli_start")
 
 
 def test_cli_end(temp_vibe_dir, monkeypatch):
@@ -373,7 +354,6 @@ def test_cli_end(temp_vibe_dir, monkeypatch):
     with open(os.path.join(temp_vibe_dir, "session.json"), encoding="utf-8") as f:
         state = json.load(f)
     assert "ended_at" in state
-    print("[PASS] cli_end")
 
 
 def test_cli_recall(temp_vibe_dir, monkeypatch):
@@ -387,7 +367,6 @@ def test_cli_recall(temp_vibe_dir, monkeypatch):
 
     monkeypatch.setattr(sys, "argv", ["vibe-session", "recall", "API timeout"])
     cli_main()
-    print("[PASS] cli_recall")
 
 
 def test_cli_stats(temp_vibe_dir, monkeypatch):
@@ -401,7 +380,6 @@ def test_cli_stats(temp_vibe_dir, monkeypatch):
 
     monkeypatch.setattr(sys, "argv", ["vibe-session", "stats"])
     cli_main()
-    print("[PASS] cli_stats")
 
 
 def test_cli_inject(temp_vibe_dir, monkeypatch):
@@ -414,7 +392,6 @@ def test_cli_inject(temp_vibe_dir, monkeypatch):
 
     monkeypatch.setattr(sys, "argv", ["vibe-session", "inject"])
     cli_main()
-    print("[PASS] cli_inject")
 
 
 def test_cli_env_var_override(temp_vibe_dir, monkeypatch):
@@ -430,53 +407,3 @@ def test_cli_env_var_override(temp_vibe_dir, monkeypatch):
     with open(os.path.join(custom_dir, "session.json"), encoding="utf-8") as f:
         state = json.load(f)
     assert state["agent_id"] == "custom-agent"
-    print("[PASS] cli_env_var_override")
-
-
-# --- Run all ---
-
-if __name__ == "__main__":
-    tests = [
-        test_session_manager_init,
-        test_start_session_empty,
-        test_start_session_writes_injection,
-        test_start_session_with_context,
-        test_start_session_recalls_stored_memories,
-        test_end_session_stores_summary,
-        test_end_session_stores_highlights,
-        test_end_session_marks_ended,
-        test_end_session_no_active,
-        test_end_session_with_tags,
-        test_recall,
-        test_stats,
-        test_quick_start,
-        test_quick_end,
-        test_session_state_persists,
-        test_multiple_session_cycle,
-        test_cross_session_recall,
-        test_injection_format,
-        test_cli_start,
-        test_cli_end,
-        test_cli_recall,
-        test_cli_stats,
-        test_cli_inject,
-        test_cli_env_var_override,
-    ]
-
-    passed = 0
-    for test in tests:
-        try:
-            # Create temp dir for each test
-            tmp = tempfile.mkdtemp(prefix="vibe-test-")
-            if "cli_" in test.__name__:
-                # CLI tests need monkeypatch
-                import pytest
-                pytest.skip("Run with pytest for CLI tests")
-            test(tmp)
-            passed += 1
-            shutil.rmtree(tmp, ignore_errors=True)
-        except Exception as e:
-            print(f"[FAIL] {test.__name__}: {e}")
-            shutil.rmtree(tmp, ignore_errors=True)
-
-    print(f"\n{passed}/{len(tests)} tests passed")

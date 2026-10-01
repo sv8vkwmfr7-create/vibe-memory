@@ -91,7 +91,6 @@ def test_llm_provider_abc():
     # Verify it has abstract methods
     assert hasattr(LLMProvider, 'chat')
     assert hasattr(LLMProvider, 'name')
-    print("[PASS] llm_provider_abc")
 
 
 def test_llm_error():
@@ -99,7 +98,6 @@ def test_llm_error():
     err = LLMError("test error")
     assert str(err) == "test error"
     assert isinstance(err, Exception)
-    print("[PASS] llm_error")
 
 
 # ── 2. OpenAIProvider ──
@@ -113,7 +111,6 @@ def test_openai_provider_init():
     assert p.timeout == 30.0
     assert p.max_retries == 2
     assert p.name == "openai:gpt-4o-mini"
-    print("[PASS] openai_provider_init")
 
 
 def test_openai_provider_custom():
@@ -128,7 +125,6 @@ def test_openai_provider_custom():
     assert p.base_url == "http://localhost:11434/v1"
     assert p.model == "llama3.2"
     assert p.name == "openai:llama3.2"
-    print("[PASS] openai_provider_custom")
 
 
 def test_create_provider():
@@ -142,7 +138,6 @@ def test_create_provider():
         assert False, "Should raise"
     except ValueError:
         pass
-    print("[PASS] create_provider")
 
 
 # ── 3. Prompt Building ──
@@ -160,7 +155,6 @@ def test_build_classification_messages():
     assert "Atom B" in msgs[1]["content"]
     assert "Fixed API timeout bug" in msgs[1]["content"]
     assert "Timeout increased to 60s" in msgs[1]["content"]
-    print("[PASS] build_classification_messages")
 
 
 def test_build_classification_messages_with_context():
@@ -172,7 +166,6 @@ def test_build_classification_messages_with_context():
     assert "Context before: User reported error" in msgs[1]["content"]
     assert "Context after: Test passed" in msgs[1]["content"]
     assert "Context before: CI passed" in msgs[1]["content"]
-    print("[PASS] build_classification_messages_with_context")
 
 
 def test_build_merge_messages():
@@ -185,7 +178,6 @@ def test_build_merge_messages():
     assert msgs[0]["role"] == "system"
     assert "merge" in msgs[0]["content"].lower()
     assert "Config timeout=30s" in msgs[1]["content"]
-    print("[PASS] build_merge_messages")
 
 
 # ── 4. JSON Parsing ──
@@ -195,7 +187,6 @@ def test_extract_json_pure():
     result = _extract_json('{"label": "causal", "confidence": 0.9}')
     assert result["label"] == "causal"
     assert result["confidence"] == 0.9
-    print("[PASS] extract_json_pure")
 
 
 def test_extract_json_code_block():
@@ -203,7 +194,6 @@ def test_extract_json_code_block():
     result = _extract_json('```json\n{"label": "similar", "confidence": 0.7}\n```')
     assert result["label"] == "similar"
     assert result["confidence"] == 0.7
-    print("[PASS] extract_json_code_block")
 
 
 def test_extract_json_inline():
@@ -211,7 +201,6 @@ def test_extract_json_inline():
     result = _extract_json('Here is my analysis: {"label": "revision", "confidence": 0.85, "reasoning": "B overrides A"}')
     assert result["label"] == "revision"
     assert result["confidence"] == 0.85
-    print("[PASS] extract_json_inline")
 
 
 def test_extract_json_invalid():
@@ -221,7 +210,6 @@ def test_extract_json_invalid():
         assert False, "Should raise"
     except ValueError:
         pass
-    print("[PASS] extract_json_invalid")
 
 
 def test_parse_label():
@@ -233,7 +221,6 @@ def test_parse_label():
     assert _parse_label("none") is None
     assert _parse_label("CAUSAL") == EdgeLabel.CAUSAL  # case insensitive
     assert _parse_label("  causal  ") == EdgeLabel.CAUSAL  # strip
-    print("[PASS] parse_label")
 
 
 # ── 5. LLMEdgeClassifier: classify ──
@@ -252,7 +239,6 @@ def test_classifier_classify_causal():
     assert conf == 0.95
     assert classifier._classify_calls == 1
     assert classifier._classify_success == 1
-    print("[PASS] classifier_classify_causal")
 
 
 def test_classifier_classify_similar():
@@ -267,7 +253,6 @@ def test_classifier_classify_similar():
     label, conf = classifier.classify(a, b)
     assert label == EdgeLabel.SIMILAR
     assert conf == 0.8
-    print("[PASS] classifier_classify_similar")
 
 
 def test_classifier_classify_revision():
@@ -281,7 +266,6 @@ def test_classifier_classify_revision():
 
     label, conf = classifier.classify(a, b)
     assert label == EdgeLabel.REVISION
-    print("[PASS] classifier_classify_revision")
 
 
 def test_classifier_classify_none():
@@ -296,7 +280,6 @@ def test_classifier_classify_none():
     label, conf = classifier.classify(a, b)
     # "none" returns SIMILAR with 0.01 confidence (effectively no edge)
     assert conf == 0.01
-    print("[PASS] classifier_classify_none")
 
 
 def test_classifier_confidence_clamping():
@@ -317,7 +300,6 @@ def test_classifier_confidence_clamping():
     classifier2 = LLMEdgeClassifier(provider2)
     _, conf = classifier2.classify(a, b)
     assert conf == 0.0  # clamped
-    print("[PASS] classifier_confidence_clamping")
 
 
 # ── 6. LLMEdgeClassifier: fallback ──
@@ -333,7 +315,6 @@ def test_classifier_fallback_on_error():
     label, conf = classifier.classify(a, b)
     assert classifier._classify_fallback == 1
     assert conf <= 0.4  # fallback confidence is low
-    print("[PASS] classifier_fallback_on_error")
 
 
 def test_classifier_retry_then_fallback():
@@ -353,7 +334,6 @@ def test_classifier_retry_then_fallback():
     # Call 3 succeeds (index 2 in responses)
     assert classifier._classify_success == 1
     assert label == EdgeLabel.CAUSAL
-    print("[PASS] classifier_retry_then_fallback")
 
 
 # ── 7. LLMEdgeClassifier: merge ──
@@ -372,7 +352,6 @@ def test_classifier_merge_true():
     assert conf == 0.9
     assert classifier._merge_calls == 1
     assert classifier._merge_success == 1
-    print("[PASS] classifier_merge_true")
 
 
 def test_classifier_merge_false():
@@ -386,7 +365,6 @@ def test_classifier_merge_false():
 
     should, conf = classifier.should_merge(a, b)
     assert should is False
-    print("[PASS] classifier_merge_false")
 
 
 def test_classifier_merge_fallback():
@@ -402,7 +380,6 @@ def test_classifier_merge_fallback():
     assert classifier._merge_fallback == 1
     # With 3 shared tags and high content overlap, should merge
     assert should is True
-    print("[PASS] classifier_merge_fallback")
 
 
 # ── 8. Stats ──
@@ -428,7 +405,6 @@ def test_classifier_stats():
     assert stats["classify_fallback"] == 0
     assert stats["classify_success_rate"] == 1.0
     assert stats["merge_calls"] == 0
-    print("[PASS] classifier_stats")
 
 
 # ── 9. create_llm_classify_callback ──
@@ -447,7 +423,6 @@ def test_create_llm_classify_callback():
     label, conf = callback(a, b)
     assert label == EdgeLabel.CAUSAL
     assert conf == 0.9
-    print("[PASS] create_llm_classify_callback")
 
 
 # ── 10. Code block JSON extraction ──
@@ -456,7 +431,6 @@ def test_extract_json_code_block_no_lang():
     """Test: extract JSON from ``` code block without language"""
     result = _extract_json('```\n{"label": "causal", "confidence": 0.9}\n```')
     assert result["label"] == "causal"
-    print("[PASS] extract_json_code_block_no_lang")
 
 
 def test_extract_json_with_reasoning():
@@ -467,7 +441,6 @@ def test_extract_json_with_reasoning():
     assert result["label"] == "similar"
     assert result["confidence"] == 0.75
     assert "reasoning" in result
-    print("[PASS] extract_json_with_reasoning")
 
 
 # ── 11. Prompt template content ──
@@ -479,7 +452,6 @@ def test_classification_prompt_contains_edge_types():
     assert "revision" in CLASSIFICATION_SYSTEM_PROMPT
     assert "adjacent" in CLASSIFICATION_SYSTEM_PROMPT
     assert "none" in CLASSIFICATION_SYSTEM_PROMPT
-    print("[PASS] classification_prompt_contains_edge_types")
 
 
 def test_merge_prompt_structure():
@@ -487,7 +459,6 @@ def test_merge_prompt_structure():
     assert "merge" in MERGE_SYSTEM_PROMPT.lower()
     assert "When to Merge" in MERGE_SYSTEM_PROMPT
     assert "When NOT to Merge" in MERGE_SYSTEM_PROMPT
-    print("[PASS] merge_prompt_structure")
 
 
 # ── 12. SDK Integration ──
@@ -503,7 +474,6 @@ def test_sdk_llm_classifier_constructor():
     )
     assert mem.llm_classifier is classifier
     assert mem.indexer.llm_classify is not None
-    print("[PASS] sdk_llm_classifier_constructor")
 
 
 def test_sdk_stats_includes_llm_classifier():
@@ -518,7 +488,6 @@ def test_sdk_stats_includes_llm_classifier():
     stats = mem.stats()
     assert "llm_classifier" in stats
     assert stats["llm_classifier"]["provider"] == "mock"
-    print("[PASS] sdk_stats_includes_llm_classifier")
 
 
 def test_sdk_stats_no_llm_classifier():
@@ -526,7 +495,6 @@ def test_sdk_stats_no_llm_classifier():
     mem = VibeMemory(agent_id="test-agent", db_path=":memory:")
     stats = mem.stats()
     assert "llm_classifier" not in stats
-    print("[PASS] sdk_stats_no_llm_classifier")
 
 
 def test_sdk_flush_index_with_llm():
@@ -557,7 +525,6 @@ def test_sdk_flush_index_with_llm():
 
     idx_stats = mem.indexer.stats()
     assert idx_stats["edges_created"] == 1
-    print("[PASS] sdk_flush_index_with_llm")
 
 
 def test_sdk_flush_index_llm_error_graceful():
@@ -582,7 +549,6 @@ def test_sdk_flush_index_llm_error_graceful():
     # due to low fallback confidence
     idx_stats = mem.indexer.stats()
     assert idx_stats["processed_count"] == 1
-    print("[PASS] sdk_flush_index_llm_error_graceful")
 
 
 # ── 13. Edge source tracking ──
@@ -609,7 +575,6 @@ def test_llm_classifier_edge_source():
     all_edges = mem.storage.get_all_edges()
     assert len(all_edges) == 1
     assert all_edges[0].source == EdgeSource.LLM
-    print("[PASS] llm_classifier_edge_source")
 
 
 def test_llm_fallback_edge_records_rule_source():
@@ -642,7 +607,6 @@ def test_classifier_default_values():
     assert classifier.max_retries == 2
     assert classifier.default_label == EdgeLabel.SIMILAR
     assert classifier.default_confidence == 0.3
-    print("[PASS] classifier_default_values")
 
 
 def test_classifier_custom_defaults():
@@ -657,7 +621,6 @@ def test_classifier_custom_defaults():
     assert classifier.max_retries == 5
     assert classifier.default_label == EdgeLabel.CAUSAL
     assert classifier.default_confidence == 0.5
-    print("[PASS] classifier_custom_defaults")
 
 
 # ── 15. Messages contain tags ──
@@ -670,59 +633,3 @@ def test_build_messages_contains_tags():
     msgs = build_classification_messages(a, b)
     assert "Tags: error, api, timeout" in msgs[1]["content"]
     assert "Tags: error, fix" in msgs[1]["content"]
-    print("[PASS] build_messages_contains_tags")
-
-
-# ─── Run all ───
-
-if __name__ == "__main__":
-    tests = [
-        test_llm_provider_abc,
-        test_llm_error,
-        test_openai_provider_init,
-        test_openai_provider_custom,
-        test_create_provider,
-        test_build_classification_messages,
-        test_build_classification_messages_with_context,
-        test_build_merge_messages,
-        test_extract_json_pure,
-        test_extract_json_code_block,
-        test_extract_json_inline,
-        test_extract_json_invalid,
-        test_parse_label,
-        test_classifier_classify_causal,
-        test_classifier_classify_similar,
-        test_classifier_classify_revision,
-        test_classifier_classify_none,
-        test_classifier_confidence_clamping,
-        test_classifier_fallback_on_error,
-        test_classifier_retry_then_fallback,
-        test_classifier_merge_true,
-        test_classifier_merge_false,
-        test_classifier_merge_fallback,
-        test_classifier_stats,
-        test_create_llm_classify_callback,
-        test_extract_json_code_block_no_lang,
-        test_extract_json_with_reasoning,
-        test_classification_prompt_contains_edge_types,
-        test_merge_prompt_structure,
-        test_sdk_llm_classifier_constructor,
-        test_sdk_stats_includes_llm_classifier,
-        test_sdk_stats_no_llm_classifier,
-        test_sdk_flush_index_with_llm,
-        test_sdk_flush_index_llm_error_graceful,
-        test_llm_classifier_edge_source,
-        test_classifier_default_values,
-        test_classifier_custom_defaults,
-        test_build_messages_contains_tags,
-    ]
-
-    passed = 0
-    for test in tests:
-        try:
-            test()
-            passed += 1
-        except Exception as e:
-            print(f"[FAIL] {test.__name__}: {e}")
-
-    print(f"\n{passed}/{len(tests)} tests passed")

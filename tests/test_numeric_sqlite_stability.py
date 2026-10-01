@@ -68,8 +68,8 @@ def test_checkpoint_handles_legacy_lock_errors_and_recovers_admission(tmp_path, 
     def fail(*args, **kwargs):
         raise error
     monkeypatch.setattr(sqlite3, "connect", fail)
-    monkeypatch.delattr(sqlite3, "SQLITE_BUSY")
-    monkeypatch.delattr(sqlite3, "SQLITE_LOCKED")
+    monkeypatch.delattr(sqlite3, "SQLITE_BUSY", raising=False)
+    monkeypatch.delattr(sqlite3, "SQLITE_LOCKED", raising=False)
     assert maintenance.checkpoint()["status"] == "busy"
     assert maintenance._paused is False
     with maintenance.operation():

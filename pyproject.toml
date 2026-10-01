@@ -35,7 +35,7 @@ dependencies = [
 
 [project.optional-dependencies]
 semantic = ["sentence-transformers>=2.2"]
-dev = ["pytest>=7.0", "pytest-cov>=7.0", "coverage[toml]>=7.10"]
+dev = ["pytest>=7.0", "pytest-cov>=7.0", "coverage[toml]>=7.10", "scikit-learn>=1.2"]
 
 [project.urls]
 Homepage = "https://github.com/sv8vkwmfr7-create/vibe-memory"

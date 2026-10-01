@@ -55,7 +55,6 @@ def test_enqueue():
     assert idx.stats()["queue_size"] == 1
     assert idx.stats()["enqueued_count"] == 1
 
-    print("[PASS] enqueue test")
 
 
 def test_enqueue_dedup():
@@ -75,7 +74,6 @@ def test_enqueue_dedup():
     candidates = list(idx._queue.values())
     assert candidates[0].similarity == 0.7
 
-    print("[PASS] enqueue dedup test")
 
 
 def test_enqueue_below_threshold():
@@ -90,7 +88,6 @@ def test_enqueue_below_threshold():
     assert success is False
     assert idx.stats()["queue_size"] == 0
 
-    print("[PASS] enqueue below threshold test")
 
 
 def test_backpressure_drop_oldest():
@@ -117,7 +114,6 @@ def test_backpressure_drop_oldest():
     assert idx.stats()["queue_size"] == 3
     assert idx.stats()["dropped_count"] >= 1
 
-    print("[PASS] backpressure drop oldest test")
 
 
 def test_backpressure_drop_lowest():
@@ -145,7 +141,6 @@ def test_backpressure_drop_lowest():
     sims = [c.similarity for c in idx._queue.values()]
     assert 0.3 not in sims
 
-    print("[PASS] backpressure drop lowest test")
 
 
 def test_flush_creates_edges():
@@ -172,7 +167,6 @@ def test_flush_creates_edges():
     # Flushed items removed from queue
     assert idx.stats()["queue_size"] == 0
 
-    print("[PASS] flush creates edges test")
 
 
 def test_flush_all():
@@ -198,7 +192,6 @@ def test_flush_all():
     assert idx.stats()["queue_size"] == 0
     assert total >= 0  # may create edges depending on sim
 
-    print("[PASS] flush all test")
 
 
 def test_flush_empty_queue():
@@ -209,7 +202,6 @@ def test_flush_empty_queue():
     edges = idx.flush()
     assert edges == 0
 
-    print("[PASS] flush empty queue test")
 
 
 def test_auto_flush_on_store():
@@ -239,7 +231,6 @@ def test_auto_flush_on_store():
     assert result is not None
     assert idx.stats()["flush_count"] >= 1
 
-    print("[PASS] auto flush on store test")
 
 
 def test_should_flush():
@@ -264,7 +255,6 @@ def test_should_flush():
     idx.enqueue(a2, a3, 0.5)
     assert idx.should_flush() is True
 
-    print("[PASS] should flush test")
 
 
 def test_compact_queue():
@@ -294,7 +284,6 @@ def test_compact_queue():
     assert len(remaining) == 1
     assert remaining[0].similarity == 0.7
 
-    print("[PASS] compact queue test")
 
 
 def test_clear_queue():
@@ -314,7 +303,6 @@ def test_clear_queue():
     assert idx.stats()["queue_size"] == 0
     assert idx.stats()["dropped_count"] == 2
 
-    print("[PASS] clear queue test")
 
 
 def test_stats():
@@ -334,7 +322,6 @@ def test_stats():
     assert stats["has_llm"] is False
     assert stats["auto_flush_threshold"] == 20
 
-    print("[PASS] stats test")
 
 
 def test_reset():
@@ -352,7 +339,6 @@ def test_reset():
     assert idx.stats()["enqueued_count"] == 0
     assert idx.stats()["queue_size"] == 0
 
-    print("[PASS] reset test")
 
 
 def test_sdk_indexer_in_stats():
@@ -367,7 +353,6 @@ def test_sdk_indexer_in_stats():
     assert "edges_created" in idx_stats
     assert "backpressure" in idx_stats
 
-    print("[PASS] SDK indexer in stats test")
 
 
 def test_sdk_store_enqueues_candidates():
@@ -387,7 +372,6 @@ def test_sdk_store_enqueues_candidates():
     total_processed = idx["enqueued_count"] + idx["edges_created"]
     assert total_processed >= 0  # depends on similarity
 
-    print("[PASS] SDK store enqueues candidates test")
 
 
 def test_sdk_flush_index():
@@ -410,7 +394,6 @@ def test_sdk_flush_index():
     assert idx["enqueued_count"] >= 0
     assert idx["edges_created"] >= 0
 
-    print("[PASS] SDK flush index test")
 
 
 def test_sdk_auto_flush():
@@ -427,7 +410,6 @@ def test_sdk_auto_flush():
     # May or may not have flushed depending on queue size
     assert stats["indexer"]["store_since_last_flush"] >= 0
 
-    print("[PASS] SDK auto flush test")
 
 
 def test_enqueue_batch():
@@ -446,40 +428,3 @@ def test_enqueue_batch():
     count = idx.enqueue_batch(a1, existing, similarity_threshold=0.0)
     # a2 and a3 should be similar enough (tag overlap), a4 not
     assert count >= 1
-
-    print("[PASS] enqueue batch test")
-
-
-def run_all():
-    print("=" * 50)
-    print("VibeMemory M3 Incremental Indexer Tests")
-    print("=" * 50)
-
-    test_enqueue()
-    test_enqueue_dedup()
-    test_enqueue_below_threshold()
-    test_backpressure_drop_oldest()
-    test_backpressure_drop_lowest()
-    test_flush_creates_edges()
-    test_flush_all()
-    test_flush_empty_queue()
-    test_auto_flush_on_store()
-    test_should_flush()
-    test_compact_queue()
-    test_clear_queue()
-    test_stats()
-    test_reset()
-    test_sdk_indexer_in_stats()
-    test_sdk_store_enqueues_candidates()
-    test_sdk_flush_index()
-    test_sdk_auto_flush()
-    test_enqueue_batch()
-
-    print()
-    print("=" * 50)
-    print("All incremental indexer tests passed [PASS]")
-    print("=" * 50)
-
-
-if __name__ == "__main__":
-    run_all()

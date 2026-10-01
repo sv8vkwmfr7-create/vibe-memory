@@ -24,6 +24,16 @@ SDK automatic merging skips rejected incompatible/conflicting candidates and kee
 
 ## Still open
 
+### Historical administration boundary (2026-10-01 investigation)
+
+A real temporary SQLite file containing an edge to an already-missing endpoint retained one orphan before and after SDK collect_garbage. Scoped GC joins both endpoints, so it cannot see this historical row. The new deletion transaction is preventive, not retrospective repair. Existing edges have no stale-transition timestamp; created_at/last_accessed cannot establish how long a row has been stale. GC marks status rather than physically purging rows. Neither finding is closed by this investigation.
+
+Proposed next seam, awaiting user confirmation: a standalone administrator command, not an SDK/MCP tool. Preview opens an existing file read-only without initializing schema and reports missing-source, missing-target and both-missing edges. Existing cross-owner endpoints, self-loops and valid stale/pending history are not automatically deletion candidates. Both-missing edges have no recoverable agent ownership, so repair must be explicitly whole-file administration, not tenant-authorized SDK access. Reports should contain counts/opaque IDs, not atom content, and be treated as private.
+
+Explicit apply must require an exclusive new backup destination, verified SQLite backup including committed WAL contents, and no deletion before backup succeeds. Select and delete only currently orphaned edges in one transaction; failed SQL must roll back, and reruns must be idempotent. No automatic startup cleanup, global foreign_keys change, atom/Episode deletion, STALE purge or VACUUM is proposed. Operators must quiesce writers and protect backup/report data. This is an acceptance design, not an implemented CLI or tested recovery promise.
+
+STALE retention requires a separate explicit policy and reliable transition-time recording. Preserve legacy rows with unknown transition time rather than treating creation time as stale age. Retention duration, reactivation semantics and legacy migration must be decided before physical cleanup.
+
 The merge transaction is not an atomic transaction for the entire SDK store: the incoming atom and earlier same-session edge writes may already be committed before merge is attempted. A later unexpected failure can leave that incoming atom stored. Version references and session attribution are not comprehensively rewritten. Removing an atom/edges is not proof of erasure from all derived memory or logs. Historical orphan auditing/migration requires separate backup and rollback planning, not an automatic startup deletion.
 
 Tests use synthetic atoms and an in-memory database, including failed SQL triggers, foreign-key checks, ownership boundaries and forced SDK candidates. They validate storage lifecycle behavior, not the semantic correctness of automatic duplicate classification or independent memory quality.

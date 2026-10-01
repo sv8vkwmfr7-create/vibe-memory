@@ -48,7 +48,6 @@ def test_phase_cold():
     assert cm.is_normal is False
     assert cm.atom_count == 0
 
-    print("[PASS] phase cold test")
 
 
 def test_phase_warmup():
@@ -63,7 +62,6 @@ def test_phase_warmup():
     assert cm.is_warmup is True
     assert cm.atom_count == 10
 
-    print("[PASS] phase warmup test")
 
 
 def test_phase_normal():
@@ -78,7 +76,6 @@ def test_phase_normal():
     assert cm.is_normal is True
     assert cm.atom_count == 50
 
-    print("[PASS] phase normal test")
 
 
 def test_threshold_adjustment():
@@ -104,7 +101,6 @@ def test_threshold_adjustment():
     assert cm.get_edge_similarity_threshold() == 0.7
     assert cm.get_merge_similarity_threshold() == 0.9
 
-    print("[PASS] threshold adjustment test")
 
 
 def test_seed_memory_loading():
@@ -130,7 +126,6 @@ def test_seed_memory_loading():
     assert "error" in all_tags
     assert "best-practice" in all_tags
 
-    print("[PASS] seed memory loading test")
 
 
 def test_bootstrap_injects_seeds():
@@ -160,7 +155,6 @@ def test_bootstrap_injects_seeds():
     cm.invalidate_cache()
     assert cm.atom_count == 5  # no change
 
-    print("[PASS] bootstrap injects seeds test")
 
 
 def test_bootstrap_no_seed_path():
@@ -172,7 +166,6 @@ def test_bootstrap_no_seed_path():
     assert len(stored) == 0
     assert cm.atom_count == 0
 
-    print("[PASS] bootstrap no seed path test")
 
 
 def test_recall_augmentation_cold():
@@ -193,7 +186,6 @@ def test_recall_augmentation_cold():
     assert augmented["augmented"] is True
     assert augmented["seed_count"] >= 1
 
-    print("[PASS] recall augmentation cold test")
 
 
 def test_recall_augmentation_normal_skips():
@@ -214,7 +206,6 @@ def test_recall_augmentation_normal_skips():
     assert augmented["atoms"] == []
     assert "augmented" not in augmented
 
-    print("[PASS] recall augmentation normal skips test")
 
 
 def test_recall_augmentation_sufficient_results():
@@ -235,7 +226,6 @@ def test_recall_augmentation_sufficient_results():
     assert "augmented" not in augmented
     assert len(augmented["atoms"]) == 5
 
-    print("[PASS] recall augmentation sufficient results test")
 
 
 def test_cache_invalidation():
@@ -251,7 +241,6 @@ def test_cache_invalidation():
     cm.invalidate_cache()
     assert cm.atom_count == 1  # refreshed
 
-    print("[PASS] cache invalidation test")
 
 
 def test_atom_count_uses_count_query(monkeypatch):
@@ -270,7 +259,6 @@ def test_atom_count_uses_count_query(monkeypatch):
     cm = ColdStartManager(storage=storage, agent_id="agent-1")
 
     assert cm.atom_count == 3
-    print("[PASS] atom count query test")
 
 
 def test_sdk_cold_start_integration():
@@ -284,7 +272,6 @@ def test_sdk_cold_start_integration():
     assert stats["cold_start"]["cold_start_atom_count"] == 0
     assert stats["cold_start"]["bootstrapped"] is False
 
-    print("[PASS] SDK cold start integration test")
 
 
 def test_sdk_bootstrap_integration():
@@ -305,7 +292,6 @@ def test_sdk_bootstrap_integration():
     assert stats["cold_start"]["seed_memory_count"] == 5
     assert stats["total_atoms"] == 5
 
-    print("[PASS] SDK bootstrap integration test")
 
 
 def test_sdk_phase_transition():
@@ -326,7 +312,6 @@ def test_sdk_phase_transition():
         mem.store(f"Test content {i}", session_id=f"s{i}", auto_build_edges=False)
     assert mem.cold_start.phase == ColdPhase.NORMAL
 
-    print("[PASS] SDK phase transition test")
 
 
 def test_auto_build_edges_cold_thresholds():
@@ -351,7 +336,6 @@ def test_auto_build_edges_cold_thresholds():
     # Same session edges always built (时序相邻 or better)
     assert len(all_edges) >= 0
 
-    print("[PASS] auto build edges cold thresholds test")
 
 
 def test_stats_phase_field():
@@ -376,37 +360,3 @@ def test_stats_phase_field():
     assert cs["cold_threshold"] == 10
     assert cs["warmup_threshold"] == 50
     assert cs["seed_memory_count"] == 5
-
-    print("[PASS] stats phase field test")
-
-
-def run_all():
-    print("=" * 50)
-    print("VibeMemory M3 Cold Start Tests")
-    print("=" * 50)
-
-    test_phase_cold()
-    test_phase_warmup()
-    test_phase_normal()
-    test_threshold_adjustment()
-    test_seed_memory_loading()
-    test_bootstrap_injects_seeds()
-    test_bootstrap_no_seed_path()
-    test_recall_augmentation_cold()
-    test_recall_augmentation_normal_skips()
-    test_recall_augmentation_sufficient_results()
-    test_cache_invalidation()
-    test_sdk_cold_start_integration()
-    test_sdk_bootstrap_integration()
-    test_sdk_phase_transition()
-    test_auto_build_edges_cold_thresholds()
-    test_stats_phase_field()
-
-    print()
-    print("=" * 50)
-    print("All cold start tests passed [PASS]")
-    print("=" * 50)
-
-
-if __name__ == "__main__":
-    run_all()
