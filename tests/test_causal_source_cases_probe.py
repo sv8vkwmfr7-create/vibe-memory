@@ -35,9 +35,9 @@ def test_source_traced_directional_replay_reports_no_directional_gain():
     assert report["conditions"]["queries"] == 3
     assert report["conditions"]["production_defaults_changed"] is False
     assert report["evaluation_is_independent"] is False
-    assert report["aggregates"]["baseline"]["macro_recall"] == 2 / 3
+    assert report["aggregates"]["baseline"]["macro_recall"] == 1.0
     assert report["aggregates"]["causal_bridge"]["macro_recall"] == 1.0
-    assert report["aggregates"]["directional_chain"]["macro_recall"] == 2 / 3
+    assert report["aggregates"]["directional_chain"]["macro_recall"] == 1.0
     assert report["directional_diagnostics"]["outcome_counts"] == {
         "no_primary_outgoing_candidate": 3
     }

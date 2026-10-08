@@ -1,0 +1,34 @@
+{
+  "cases": [
+    {"case_id":"r01","question":"接口超时的根因以及如何修复连接池","noise_count":5,
+     "atoms":[
+       {"id":"repair","text":"连接池耗尽导致接口超时，释放连接后恢复正常","context_after":"本次恢复已观察确认；关联排查笔记中有已排除与已确认两种说法。"},
+       {"id":"suspect","text":"长事务没有结束，持有的资源无法归还","context_after":"初步猜测，后续证据已排除，不能作为本次根因。"},
+       {"id":"cause","text":"资源持有者未执行结束动作，回收流程一直等待","context_after":"同次事故复盘确认的原因：持有者遗漏结束动作；释放后恢复。"}],
+     "references":[{"from_id":"repair","to_id":"suspect"},{"from_id":"repair","to_id":"cause"}],
+     "relevant_ids":["repair","cause"],"negative_ids":["suspect"]},
+    {"case_id":"r02","question":"接口超时的根因以及如何修复连接池","noise_count":5,
+     "atoms":[
+       {"id":"repair","text":"连接池耗尽导致接口超时，释放连接后恢复正常","context_after":"本次恢复已观察确认；关联排查笔记中有已排除与已确认两种说法。"},
+       {"id":"cause","text":"资源持有者未执行结束动作，回收流程一直等待","context_after":"同次事故复盘确认的原因：持有者遗漏结束动作；释放后恢复。"},
+       {"id":"suspect","text":"长事务没有结束，持有的资源无法归还","context_after":"初步猜测，后续证据已排除，不能作为本次根因。"}],
+     "references":[{"from_id":"repair","to_id":"suspect"},{"from_id":"repair","to_id":"cause"}],
+     "relevant_ids":["repair","cause"],"negative_ids":["suspect"]},
+    {"case_id":"r03","question":"接口超时的根因以及如何修复连接池","noise_count":5,
+     "atoms":[
+       {"id":"repair","text":"连接池耗尽导致接口超时，释放连接后恢复正常","context_after":"恢复已观察确认，引用多条排查记录，不代表每条都成立。"},
+       {"id":"suspect","text":"长事务没有结束，持有的资源无法归还","context_after":"后续证据已排除该猜测。"},
+       {"id":"old","text":"旧资源机制仍持有事务，释放流程无法完成","context_after":"旧版排查笔记，当前新版已不存在这种机制，不适用。"},
+       {"id":"cause","text":"资源持有者未执行结束动作，回收流程一直等待","context_after":"同次事故复盘确认的原因：持有者遗漏结束动作；释放后恢复。"}],
+     "references":[{"from_id":"repair","to_id":"suspect"},{"from_id":"repair","to_id":"old"},{"from_id":"repair","to_id":"cause"}],
+     "relevant_ids":["repair","cause"],"negative_ids":["suspect","old"]},
+    {"case_id":"r04","question":"接口超时的根因以及如何修复连接池","noise_count":5,
+     "atoms":[
+       {"id":"repair","text":"连接池耗尽导致接口超时，释放连接后恢复正常","context_after":"已观察恢复；排查记录仍未核实，无确认根因。"},
+       {"id":"suspect","text":"长事务没有结束，持有的资源无法归还","context_after":"尚无证据，只是待核实猜测。"},
+       {"id":"old","text":"旧资源机制仍持有事务，释放流程无法完成","context_after":"旧版记录，当前机制不同，不能解释本次事故。"}],
+     "references":[{"from_id":"repair","to_id":"suspect"},{"from_id":"repair","to_id":"old"}],
+     "relevant_ids":["repair"],"negative_ids":["suspect","old"]}
+  ],
+  "limits":"同一助手编写合成开发场景和标签，非独立或盲测。r01/r02交换源记录顺序以观察端点ID排序影响；r03正确证据排第三，r04无已确认根因。引用不是事实验证。"
+}

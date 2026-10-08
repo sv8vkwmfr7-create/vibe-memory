@@ -20,7 +20,7 @@ def test_sdk_path_trace_distinguishes_storage_recall_and_prompt_residuals():
     assert batch["all_atom_sources_are_session_id"]
     assert batch["forget_returned_true"] and batch["target_row_absent"]
     assert batch["surviving_context_contains_fact"]
-    assert batch["returned_atom_context_contains_fact"]
+    assert not batch["returned_atom_context_contains_fact"]
     assert not batch["returned_content_or_summary_contains_fact"]
     assert not batch["mac_prompt_contains_fact_after_forget"]
     assert batch["episodes_after_forget"] == 0

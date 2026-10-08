@@ -1,0 +1,2 @@
+# Frozen JSON fixtures use byte hashes; keep checkout bytes stable across platforms.
+*.json text eol=lf

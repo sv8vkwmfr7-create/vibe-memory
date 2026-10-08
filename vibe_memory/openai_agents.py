@@ -7,15 +7,18 @@ does not import the Agents SDK or return FunctionTool objects.
 
 Usage:
     from agents import Agent, function_tool
+    from vibe_memory import VibeMemory
     from vibe_memory.openai_agents import create_vibe_tools
 
-    functions = create_vibe_tools(agent_id="my-agent", db_path="memory.db")
-    tools = [function_tool(fn) for fn in functions]
-    agent = Agent(
-        name="Assistant",
-        instructions="You have memory. Use vibe_store and vibe_recall.",
-        tools=tools,
-    )
+    with VibeMemory("my-agent", "memory.db", embedding_backend="tfidf") as memory:
+        functions = create_vibe_tools(memory=memory)
+        tools = [function_tool(fn) for fn in functions]
+        agent = Agent(
+            name="Assistant",
+            instructions="You have memory. Use vibe_store and vibe_recall.",
+            tools=tools,
+        )
+        # Complete the Agent/Runner workflow before leaving this context.
 """
 
 import json
@@ -23,11 +26,15 @@ import uuid
 from typing import Optional
 from datetime import datetime
 
+from vibe_memory import VibeMemory
+
 
 def create_vibe_tools(
     agent_id: str = "openai-agent",
     db_path: str = ":memory:",
     embedding_backend: str = "tfidf",
+    *,
+    memory: Optional[VibeMemory] = None,
 ):
     """
     Create VibeMemory tools for OpenAI Agents SDK.
@@ -35,6 +42,12 @@ def create_vibe_tools(
     Returns a list of plain Python functions. With openai-agents installed,
     wrap each using agents.function_tool before passing the result to Agent().
     Direct function calls remain supported without the framework dependency.
+
+    memory: Optional caller-owned SDK. Its agent/database/backend are used;
+    do not combine it with non-default construction options. The caller must
+    keep it open for the entire tool workflow and close it afterwards. The
+    factory neither closes nor flushes a borrowed SDK. Without memory, legacy
+    construction remains supported but the returned list has no close handle.
 
     Tools:
       - vibe_store(content, tags, summary, session_id)
@@ -45,10 +58,12 @@ def create_vibe_tools(
       - vibe_link(from_id, to_id, label)
       - vibe_forget(atom_id)
     """
-    from vibe_memory import VibeMemory
     from vibe_memory.models.memory_atom import EdgeLabel
 
-    mem = VibeMemory(
+    if memory is not None and (agent_id != "openai-agent" or db_path != ":memory:"
+                               or embedding_backend != "tfidf"):
+        raise ValueError("memory cannot be combined with non-default construction options")
+    mem = memory if memory is not None else VibeMemory(
         agent_id=agent_id,
         db_path=db_path,
         embedding_backend=embedding_backend,
@@ -73,6 +88,7 @@ def create_vibe_tools(
         )
         return json.dumps({
             "id": atom.id[:8],
+            "full_id": atom.id,
             "summary": atom.summary[:100],
             "tags": atom.tags,
             "status": "stored",
@@ -89,7 +105,7 @@ def create_vibe_tools(
         return json.dumps({
             "count": len(atoms),
             "memories": [
-                {"id": a.id[:8], "summary": a.summary[:120], "tags": a.tags}
+                {"id": a.id[:8], "full_id": a.id, "summary": a.summary[:120], "tags": a.tags}
                 for a in atoms
             ],
         }, ensure_ascii=False)
@@ -134,12 +150,18 @@ def create_vibe_tools(
             "causal": EdgeLabel.CAUSAL, "revision": EdgeLabel.REVISION,
             "similar": EdgeLabel.SIMILAR, "adjacent": EdgeLabel.ADJACENT,
         }
-        # Resolve short IDs
+        # Exact IDs take precedence; display prefixes must be unique in this owner scope.
         all_atoms = mem.storage.get_atoms_by_agent(mem.agent_id, tenant_id=mem.tenant_id)
-        id_map = {}
-        for a in all_atoms:
-            id_map[a.id[:8]] = a.id
-            id_map[a.id] = a.id
+        id_map = {a.id: a.id for a in all_atoms}
+        for atom_id in (from_id, to_id):
+            if atom_id in id_map or len(atom_id) != 8:
+                continue
+            # ponytail: scoped linear scan; index if link lookup becomes costly.
+            matches = [a.id for a in all_atoms if a.id.startswith(atom_id)]
+            if len(matches) > 1:
+                return json.dumps({"error": "Ambiguous atom ID prefix; use full IDs"})
+            if matches:
+                id_map[atom_id] = matches[0]
         edge = mem.link(id_map.get(from_id, from_id), id_map.get(to_id, to_id),
                         label=label_map.get(label, EdgeLabel.SIMILAR))
         if edge:

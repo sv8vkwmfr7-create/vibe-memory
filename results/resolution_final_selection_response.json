@@ -1,0 +1,10 @@
+{
+  "dataset_id": "resolution-final-selection-v5",
+  "pack_sha256": "041d93fff70d54235747cbd29da456bc605ad94510ab23bd3e885429ff270183",
+  "results": [
+    {"case_id": "r01", "selected_ids": ["c2", "c5"]},
+    {"case_id": "r02", "selected_ids": ["c1", "c5"]},
+    {"case_id": "r03", "selected_ids": ["c1", "c4"]},
+    {"case_id": "r04", "selected_ids": ["c0"]}
+  ]
+}

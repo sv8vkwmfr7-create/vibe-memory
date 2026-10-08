@@ -82,6 +82,37 @@ def test_mcp_client_closes_server_cleanly_on_eof():
     assert client.proc.returncode == 0
 
 
+@pytest.mark.parametrize('wal_maintenance', [False, True])
+def test_mcp_eof_releases_database_without_resource_warning(tmp_path, wal_maintenance):
+    command = [
+        sys.executable, '-Walways::ResourceWarning', '-c',
+        "import gc, runpy; runpy.run_module('vibe_memory.mcp_server', run_name='__main__'); gc.collect()",
+        '--db-path', str(tmp_path / 'memory.db'), '--vibe-dir', str(tmp_path / 'state'),
+    ] + (['--wal-maintenance'] if wal_maintenance else [])
+    request = json.dumps({'jsonrpc': '2.0', 'id': 1, 'method': 'tools/list'}) + '\n'
+    result = subprocess.run(command, input=request, capture_output=True, text=True,
+                            encoding='utf-8', timeout=20)
+    assert result.returncode == 0, result.stderr
+    response = json.loads(result.stdout)
+    assert len(response['result']['tools']) == (10 if wal_maintenance else 9)
+    assert 'ResourceWarning: unclosed database' not in result.stderr
+
+
+def test_recall_strict_scope_is_opt_in_over_stdio(client):
+    client.call_tool('vibe_store', {
+        'content': '支付服务测试环境重试次数为1次。',
+        'scope': {'environment': 'test'},
+    })
+    query = {'query': '支付服务生产环境重试次数是多少？',
+             'scope': {'environment': 'production'}}
+    baseline = client.get_text(client.call_tool('vibe_recall', query))
+    assert baseline['count'] == 1
+    strict = client.get_text(client.call_tool('vibe_recall', dict(query, strict_scope=True)))
+    assert strict['memories'] == []
+    assert strict['relationships'] == []
+    assert strict['count'] == 0
+
+
 def test_forget_rejects_empty_and_short_id(client):
     atom = client.get_text(client.call_tool('vibe_store', {
         'content': 'synthetic important memory',
@@ -181,7 +212,8 @@ def test_tools_list(client):
     assert "vibe_link" in tools
     assert "vibe_forget" in tools
     assert "vibe_flush" in tools
-    assert len(r["result"]["tools"]) == 8
+    assert "vibe_settings" in tools
+    assert len(r["result"]["tools"]) == 9
 
 
 def test_unknown_method(client):
@@ -268,10 +300,14 @@ def test_store_scope_metadata_is_public_and_returned(client):
 # ── vibe_recall ──
 
 def test_recall_basic(client):
-    client.call_tool("vibe_store", {"content": "Fixed API timeout", "tags": ["bug"]})
+    stored = client.get_text(client.call_tool("vibe_store", {
+        "content": "Fixed API timeout", "tags": ["bug"],
+    }))
     r = client.call_tool("vibe_recall", {"query": "API timeout"})
     data = client.get_text(r)
-    assert data["count"] >= 1
+    assert data["count"] == 1
+    assert data["memories"][0]["id"] == stored["id"][:8]
+    assert data["failures"] == []
 
 
 def test_recall_mode(client):
@@ -417,31 +453,33 @@ def test_full_lifecycle(client):
     # Start session
     r = client.call_tool("vibe_session_start", {"context": "API timeout debugging"})
     start = client.get_text(r)
-    assert start["memories_recalled"] >= 0
+    assert start["memories_recalled"] == 0
 
     # Store memories
-    client.call_tool("vibe_store", {
+    first = client.get_text(client.call_tool("vibe_store", {
         "content": "Fixed API timeout, changed from 30s to 60s",
         "tags": ["bug", "api", "fix"],
-    })
-    client.call_tool("vibe_store", {
+    }))
+    second = client.get_text(client.call_tool("vibe_store", {
         "content": "After timeout fix, connection pool exhausted",
         "tags": ["bug", "db", "fix"],
-    })
+    }))
 
     # Recall
     r = client.call_tool("vibe_recall", {"query": "API timeout"})
     data = client.get_text(r)
     assert data["count"] >= 1
 
-    # Link
+    # Link both stored IDs even if recall returns only one: never skip this step.
     results = data["memories"]
-    if len(results) >= 2:
-        r = client.call_tool("vibe_link", {
-            "from_id": results[0]["id"],
-            "to_id": results[1]["id"],
-            "label": "causal",
-        })
+    from vibe_memory.models.memory_atom import EdgeLabel
+    linked = client.get_text(client.call_tool("vibe_link", {
+        "from_id": first["id"], "to_id": second["id"], "label": "causal",
+    }))
+    assert linked["from"] == first["id"][:8]
+    assert linked["to"] == second["id"][:8]
+    assert linked["label"] == EdgeLabel.CAUSAL.value
+    assert linked["message"] == "Edge created successfully"
 
     # End session
     r = client.call_tool("vibe_session_end", {
@@ -449,7 +487,7 @@ def test_full_lifecycle(client):
         "highlights": ["timeout 30→60s", "pool size increased"],
     })
     end = client.get_text(r)
-    assert end["stored"] >= 3  # 1 summary + 2 highlights
+    assert end["stored"] == 3  # 1 summary + 2 highlights
 
     # Stats
     r = client.call_tool("vibe_stats", {})
@@ -512,7 +550,8 @@ def test_session_end_without_start(client):
 def test_missing_required_arguments(client):
     r = client.call_tool("vibe_store", {})
     # Should get an error about missing 'content'
-    assert "error" in r or "content" in json.dumps(r).lower()
+    assert "error" in r
+    assert "content" in r["error"]["message"].lower()
 
 
 def test_opt_in_maintenance_preserves_recall(tmp_path):

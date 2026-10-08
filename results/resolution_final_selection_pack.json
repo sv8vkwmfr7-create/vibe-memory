@@ -1,0 +1,249 @@
+{
+  "dataset_id": "resolution-final-selection-v5",
+  "cases": [
+    {
+      "case_id": "r01",
+      "question": "接口超时的根因以及如何修复连接池",
+      "scope": {},
+      "candidates": [
+        {
+          "id": "c6",
+          "text": "接口超时连接池维护记录编号3，连接资源配置记录",
+          "scope": {},
+          "context_before": "",
+          "context_after": "",
+          "source_session": "fixture"
+        },
+        {
+          "id": "c4",
+          "text": "接口超时连接池维护记录编号2，连接资源配置记录",
+          "scope": {},
+          "context_before": "",
+          "context_after": "",
+          "source_session": "fixture"
+        },
+        {
+          "id": "c3",
+          "text": "接口超时连接池维护记录编号1，连接资源配置记录",
+          "scope": {},
+          "context_before": "",
+          "context_after": "",
+          "source_session": "fixture"
+        },
+        {
+          "id": "c1",
+          "text": "接口超时连接池维护记录编号0，连接资源配置记录",
+          "scope": {},
+          "context_before": "",
+          "context_after": "",
+          "source_session": "fixture"
+        },
+        {
+          "id": "c0",
+          "text": "接口超时连接池维护记录编号4，连接资源配置记录",
+          "scope": {},
+          "context_before": "",
+          "context_after": "",
+          "source_session": "fixture"
+        },
+        {
+          "id": "c2",
+          "text": "连接池耗尽导致接口超时，释放连接后恢复正常",
+          "scope": {},
+          "context_before": "",
+          "context_after": "本次恢复已观察确认；关联排查笔记中有已排除与已确认两种说法。",
+          "source_session": "fixture"
+        },
+        {
+          "id": "c5",
+          "text": "资源持有者未执行结束动作，回收流程一直等待",
+          "scope": {},
+          "context_before": "",
+          "context_after": "同次事故复盘确认的原因：持有者遗漏结束动作；释放后恢复。",
+          "source_session": "fixture"
+        }
+      ]
+    },
+    {
+      "case_id": "r02",
+      "question": "接口超时的根因以及如何修复连接池",
+      "scope": {},
+      "candidates": [
+        {
+          "id": "c4",
+          "text": "接口超时连接池维护记录编号3，连接资源配置记录",
+          "scope": {},
+          "context_before": "",
+          "context_after": "",
+          "source_session": "fixture"
+        },
+        {
+          "id": "c7",
+          "text": "接口超时连接池维护记录编号2，连接资源配置记录",
+          "scope": {},
+          "context_before": "",
+          "context_after": "",
+          "source_session": "fixture"
+        },
+        {
+          "id": "c3",
+          "text": "接口超时连接池维护记录编号1，连接资源配置记录",
+          "scope": {},
+          "context_before": "",
+          "context_after": "",
+          "source_session": "fixture"
+        },
+        {
+          "id": "c2",
+          "text": "接口超时连接池维护记录编号0，连接资源配置记录",
+          "scope": {},
+          "context_before": "",
+          "context_after": "",
+          "source_session": "fixture"
+        },
+        {
+          "id": "c6",
+          "text": "接口超时连接池维护记录编号4，连接资源配置记录",
+          "scope": {},
+          "context_before": "",
+          "context_after": "",
+          "source_session": "fixture"
+        },
+        {
+          "id": "c1",
+          "text": "连接池耗尽导致接口超时，释放连接后恢复正常",
+          "scope": {},
+          "context_before": "",
+          "context_after": "本次恢复已观察确认；关联排查笔记中有已排除与已确认两种说法。",
+          "source_session": "fixture"
+        },
+        {
+          "id": "c5",
+          "text": "资源持有者未执行结束动作，回收流程一直等待",
+          "scope": {},
+          "context_before": "",
+          "context_after": "同次事故复盘确认的原因：持有者遗漏结束动作；释放后恢复。",
+          "source_session": "fixture"
+        }
+      ]
+    },
+    {
+      "case_id": "r03",
+      "question": "接口超时的根因以及如何修复连接池",
+      "scope": {},
+      "candidates": [
+        {
+          "id": "c8",
+          "text": "接口超时连接池维护记录编号3，连接资源配置记录",
+          "scope": {},
+          "context_before": "",
+          "context_after": "",
+          "source_session": "fixture"
+        },
+        {
+          "id": "c2",
+          "text": "接口超时连接池维护记录编号2，连接资源配置记录",
+          "scope": {},
+          "context_before": "",
+          "context_after": "",
+          "source_session": "fixture"
+        },
+        {
+          "id": "c0",
+          "text": "接口超时连接池维护记录编号1，连接资源配置记录",
+          "scope": {},
+          "context_before": "",
+          "context_after": "",
+          "source_session": "fixture"
+        },
+        {
+          "id": "c6",
+          "text": "接口超时连接池维护记录编号0，连接资源配置记录",
+          "scope": {},
+          "context_before": "",
+          "context_after": "",
+          "source_session": "fixture"
+        },
+        {
+          "id": "c5",
+          "text": "接口超时连接池维护记录编号4，连接资源配置记录",
+          "scope": {},
+          "context_before": "",
+          "context_after": "",
+          "source_session": "fixture"
+        },
+        {
+          "id": "c1",
+          "text": "连接池耗尽导致接口超时，释放连接后恢复正常",
+          "scope": {},
+          "context_before": "",
+          "context_after": "恢复已观察确认，引用多条排查记录，不代表每条都成立。",
+          "source_session": "fixture"
+        },
+        {
+          "id": "c4",
+          "text": "资源持有者未执行结束动作，回收流程一直等待",
+          "scope": {},
+          "context_before": "",
+          "context_after": "同次事故复盘确认的原因：持有者遗漏结束动作；释放后恢复。",
+          "source_session": "fixture"
+        }
+      ]
+    },
+    {
+      "case_id": "r04",
+      "question": "接口超时的根因以及如何修复连接池",
+      "scope": {},
+      "candidates": [
+        {
+          "id": "c7",
+          "text": "接口超时连接池维护记录编号3，连接资源配置记录",
+          "scope": {},
+          "context_before": "",
+          "context_after": "",
+          "source_session": "fixture"
+        },
+        {
+          "id": "c3",
+          "text": "接口超时连接池维护记录编号2，连接资源配置记录",
+          "scope": {},
+          "context_before": "",
+          "context_after": "",
+          "source_session": "fixture"
+        },
+        {
+          "id": "c6",
+          "text": "接口超时连接池维护记录编号1，连接资源配置记录",
+          "scope": {},
+          "context_before": "",
+          "context_after": "",
+          "source_session": "fixture"
+        },
+        {
+          "id": "c2",
+          "text": "接口超时连接池维护记录编号0，连接资源配置记录",
+          "scope": {},
+          "context_before": "",
+          "context_after": "",
+          "source_session": "fixture"
+        },
+        {
+          "id": "c5",
+          "text": "接口超时连接池维护记录编号4，连接资源配置记录",
+          "scope": {},
+          "context_before": "",
+          "context_after": "",
+          "source_session": "fixture"
+        },
+        {
+          "id": "c0",
+          "text": "连接池耗尽导致接口超时，释放连接后恢复正常",
+          "scope": {},
+          "context_before": "",
+          "context_after": "已观察恢复；排查记录仍未核实，无确认根因。",
+          "source_session": "fixture"
+        }
+      ]
+    }
+  ]
+}

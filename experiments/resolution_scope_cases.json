@@ -1,0 +1,23 @@
+{
+  "cases": [
+    {
+      "case_id": "s01", "question": "接口超时的根因以及如何修复连接池",
+      "scope": {"service": "orders"}, "noise_count": 5,
+      "atoms": [{"id": "wrong", "text": "连接池耗尽导致接口超时，释放连接后恢复正常", "scope": {"service": "billing"}, "context_after": "计费服务记录，不属于订单服务。"}],
+      "relevant_ids": [], "negative_ids": ["wrong"]
+    },
+    {
+      "case_id": "s02", "question": "接口超时连接池",
+      "scope": {"service": "orders"}, "noise_count": 0,
+      "atoms": [{"id": "wrong", "text": "接口超时连接池恢复记录", "scope": {"service": "billing"}}],
+      "relevant_ids": [], "negative_ids": ["wrong"]
+    },
+    {
+      "case_id": "s03", "question": "接口超时连接池",
+      "scope": {"service": "orders"}, "noise_count": 0,
+      "atoms": [{"id": "good", "text": "接口超时连接池恢复记录", "scope": {"service": "orders", "environment": "production"}}],
+      "relevant_ids": ["good"], "negative_ids": []
+    }
+  ],
+  "scope_policy": "Experiment-only exact matching for all requested keys; synthetic boundary fixtures, not model quality labels."
+}

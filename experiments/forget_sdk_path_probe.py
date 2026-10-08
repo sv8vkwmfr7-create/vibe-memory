@@ -107,14 +107,14 @@ def merge_trace(db):
             return insert(atom)
         memory.storage.insert_atom = observe_insert
         try:
-            second = memory.store("Configuration calendar reminders remain enabled.", session_id="second-source",
+            second = memory.store(FACT, session_id="second-source",
                                   tags=["config"], auto_episode=False)
         finally:
             memory.storage.insert_atom = insert
         second_parent_id = inserted_ids[0]
         live = memory.storage.get_atoms_by_agent(memory.agent_id)
         if len(live) != 1 or "violet" not in live[0].content:
-            raise RuntimeError("identical fixture tags must trigger the current cold-phase merge path")
+            raise RuntimeError("identical fixture text must trigger the automatic merge path")
         merged = live[0]
         report = {
             "active_atom_count_after_two_stores": len(live),
@@ -151,14 +151,14 @@ def run():
             "seed": seed, "batch_episode": batch_episode, "merge": merge,
             "production_changed": False, "evaluation_is_independent": False, "paid_api_calls": 0,
             "limits": "Three temporary synthetic TF-IDF databases; one explicitly configured seed template, six dialogue messages, "
-                      "two single SDK stores with deliberately identical config tags. Actual SDK calls with a pass-through "
+                      "two single SDK stores with identical fact text and config tags. Actual SDK calls with a pass-through "
                       "insertion observer recording the incoming parent ID, no forced candidate classification or direct atom inserts. "
                       "Random UUIDs/timestamps omitted from the report; relationships tested using actual IDs. "
                       "Seed path is opt-in, not configured by default. Completed seed initialization suppresses template augmentation; "
                       "with zero stored rows recall/MAC no longer return this seed fact, and same-version rebootstrap adds zero clones. Surviving batch context retains old content; "
                       "affected Episode rows are invalidated on deletion, and the batch MAC prompt does not include the old fact. "
-                      "This is not proof of complete derived-memory erasure. Tag-driven merge does not prove semantic "
-                      "duplication; store now returns the live merged ID and deleting that ID works. No general provenance guarantee, dense-model "
+                      "This is not proof of complete derived-memory erasure. Automatic merging requires identical text; "
+                      "store returns the live merged ID and deleting that ID works. No general provenance guarantee, dense-model "
                       "evaluation, SDK/MCP/HTTP release interface tests, final model answers, concurrency or physical/backups "
                       "erasure. Independent judgments and user time/price costs unmeasured; no real user data deleted."}
 

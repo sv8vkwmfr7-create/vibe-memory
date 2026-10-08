@@ -34,7 +34,7 @@ def test_public_diagnostic_report_is_repeatable():
     assert run(CASES_PATH) == run(CASES_PATH)
 
 
-def test_zero_overlap_answer_is_still_unsafe_even_when_already_a_candidate():
+def test_unlinked_zero_overlap_answer_is_not_recalled_by_arbitrary_padding():
     case = {'atoms': [
         {'id': 'n0', 'session_id': 'other', 'content': 'request hangs request hangs unrelated application'},
         {'id': 'n1', 'session_id': 'other', 'content': 'request hangs request hangs restart unrelated application'},
@@ -43,5 +43,5 @@ def test_zero_overlap_answer_is_still_unsafe_even_when_already_a_candidate():
         {'text': 'request hangs', 'relevant_ids': ['a0'], 'negative_ids': ['n0', 'n1']},
     ]}
     result = evaluate(case)['aggregates']
-    assert result['baseline']['macro_recall'] == 1
+    assert result['baseline']['macro_recall'] == 0
     assert result['evidence_preserving_causal_2hop']['macro_recall'] == 0

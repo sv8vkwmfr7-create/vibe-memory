@@ -30,6 +30,7 @@ def _run_offline() -> dict:
     from agents.usage import Usage
     from openai.types.responses import ResponseFunctionToolCall, ResponseOutputMessage, ResponseOutputText
     from langchain_core.runnables import RunnableLambda
+    from vibe_memory import VibeMemory
     from vibe_memory.langchain import VibeMemoryLC
     from vibe_memory.openai_agents import create_vibe_tools
 
@@ -62,13 +63,14 @@ def _run_offline() -> dict:
         def stream_response(self, **kwargs):
             raise NotImplementedError("Only non-streaming smoke")
 
-    tools = [function_tool(fn) for fn in create_vibe_tools()]
-    assert len(tools) == 7
-    assert all(tool.params_json_schema["type"] == "object" for tool in tools)
-    agent = Agent(name="offline-memory-smoke", model=ScriptedModel(), tools=tools)
-    result = asyncio.run(Runner.run(agent, "synthetic memory workflow",
-                                   run_config=RunConfig(tracing_disabled=True)))
-    assert result.final_output == "offline-tools-ok"
+    with VibeMemory("openai-agent", embedding_backend="tfidf") as sdk:
+        tools = [function_tool(fn) for fn in create_vibe_tools(memory=sdk)]
+        assert len(tools) == 7
+        assert all(tool.params_json_schema["type"] == "object" for tool in tools)
+        agent = Agent(name="offline-memory-smoke", model=ScriptedModel(), tools=tools)
+        result = asyncio.run(Runner.run(agent, "synthetic memory workflow",
+                                       run_config=RunConfig(tracing_disabled=True)))
+        assert result.final_output == "offline-tools-ok"
 
     memory = VibeMemoryLC()
     try:
@@ -88,7 +90,7 @@ def _run_offline() -> dict:
         assert "60 seconds" in second["history"]
         assert memory.mem.stats()["total_atoms"] == 4
     finally:
-        memory.mem.storage.conn.close()
+        memory.close()
     return {"openai_agents": version("openai-agents"), "langchain_core": version("langchain-core"),
             "tool_count": len(tools), "agent_store_recall": True, "runnable_read_save": True,
             "model": "scripted", "cloud_model_calls": 0, "external_connect_forbidden": True}

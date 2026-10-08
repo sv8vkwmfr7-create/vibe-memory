@@ -10,18 +10,18 @@ not provided by this adapter.
 Usage:
     from vibe_memory.langchain import VibeMemoryLC
 
-    memory = VibeMemoryLC(agent_id="my-agent", db_path="memory.db")
-    memory.save_context(
-        {"input": "API timeout bug"},
-        {"output": "Fixed by changing timeout from 30s to 60s"},
-    )
-    variables = memory.load_memory_variables({"query": "API timeout"})
-    # variables contains the retrieved history, not an exact guaranteed answer.
-
     # Optional langchain-core integration; saving remains an explicit step.
     from langchain_core.runnables import RunnableLambda
-    chain = RunnableLambda(memory.load_memory_variables)
-    variables = chain.invoke({"input": "API timeout"})
+
+    with VibeMemoryLC(agent_id="my-agent", db_path="memory.db") as memory:
+        memory.save_context(
+            {"input": "API timeout bug"},
+            {"output": "Fixed by changing timeout from 30s to 60s"},
+        )
+        variables = memory.load_memory_variables({"query": "API timeout"})
+        # Retrieved history, not an exact guaranteed answer.
+        chain = RunnableLambda(memory.load_memory_variables)
+        variables = chain.invoke({"input": "API timeout"})
 """
 
 import json
@@ -67,6 +67,17 @@ class VibeMemoryLC:
         self._input_key = "input"
         self._output_key = "output"
         self._memory_key = "history"
+
+    def __enter__(self) -> "VibeMemoryLC":
+        self.mem.__enter__()
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback) -> None:
+        self.close()
+
+    def close(self) -> None:
+        """Release the owned SDK without deleting memories or flushing indexes."""
+        self.mem.close()
 
     # ── LangChain BaseMemory interface ──
 

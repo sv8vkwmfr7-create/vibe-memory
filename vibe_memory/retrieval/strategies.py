@@ -152,6 +152,8 @@ class GraphStrategy:
         self,
         seed_atoms: list,
         top_k: int = 20,
+        *,
+        allowed_ids: Optional[set[str]] = None,
     ) -> list[tuple[str, float]]:
         """
         PPR graph walk from seed atoms.
@@ -171,7 +173,7 @@ class GraphStrategy:
             config = PPRConfig()
 
         config.top_n = top_k
-        scores = personalized_pagerank(seed_atoms, self.storage, config)
+        scores = personalized_pagerank(seed_atoms, self.storage, config, allowed_ids=allowed_ids)
         ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)
         return ranked[:top_k]
 

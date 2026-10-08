@@ -24,7 +24,7 @@ from typing import Optional
 from datetime import datetime
 from enum import Enum
 
-from vibe_memory.models.memory_atom import MemoryAtom, GraphPartition, Lifecycle, DEFAULT_TENANT
+from vibe_memory.models.memory_atom import MemoryAtom, GraphPartition, Lifecycle, DEFAULT_TENANT, scope_matches
 from vibe_memory.defense import MemoryDefense, scan_text
 
 
@@ -256,7 +256,7 @@ class ColdStartManager:
 
     # ── 召回增强 ──
 
-    def augment_recall(self, query: str, ppr_result: dict) -> dict:
+    def augment_recall(self, query: str, ppr_result: dict, *, required_scope: Optional[dict[str, str]] = None) -> dict:
         """
         冷启动期间用种子记忆增强召回结果。
 
@@ -281,6 +281,8 @@ class ColdStartManager:
             return ppr_result
 
         seed_atoms = self.get_seed_atoms()
+        if required_scope:
+            seed_atoms = [atom for atom in seed_atoms if scope_matches(atom.scope, required_scope)]
         if not seed_atoms:
             return ppr_result
         # Completed initialization uses persisted atoms only, never fallback templates.

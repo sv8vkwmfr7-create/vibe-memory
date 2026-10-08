@@ -102,5 +102,7 @@ def coordinated(method):
         maintenance = self.wal_maintenance
         with maintenance.operation() if maintenance is not None else nullcontext():
             with self._operation_lock:
+                if self._closed:
+                    raise RuntimeError("VibeMemory is closed")
                 return method(self, *args, **kwargs)
     return wrapped

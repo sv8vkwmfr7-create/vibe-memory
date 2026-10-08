@@ -1,0 +1,13 @@
+{
+  "dataset_id":"resolution-reference-review-v4",
+  "pack_sha256":"c91aa765cff01fcfbb6d05ca32608869d0c81d3b94f69f727eed9a76f60a93d6",
+  "selector_kind":"current_assistant_manual_reading",
+  "evaluation_is_independent":false,
+  "limits":"同助手编写并已知标签，先阅读引用及锚点上下文再保存选择；非独立/盲测/自动模型调用。仅引用复核，不是最终记忆选择或回答。",
+  "results":[
+    {"case_id":"r01","selected_ids":["c5"],"notes":"内容支持同次事故原因，另一条已排除。"},
+    {"case_id":"r02","selected_ids":["c5"],"notes":"内容与r01一致，顺序不作为可信依据。"},
+    {"case_id":"r03","selected_ids":["c4"],"notes":"第三条展示同次事故确认原因；前两条分别被否定和不适用。"},
+    {"case_id":"r04","selected_ids":[],"notes":"猜测未核实、旧版不适用，暂无可确认根因。"}
+  ]
+}

@@ -19,9 +19,10 @@ PPR (Personalized PageRank) 检索算法
 from typing import Optional
 from datetime import datetime
 from collections import defaultdict
+import hashlib
 import numpy as np
 
-from vibe_memory.models.memory_atom import MemoryAtom, Edge, EdgeLabel, EdgeStatus, GraphPartition
+from vibe_memory.models.memory_atom import MemoryAtom, Edge, EdgeLabel, EdgeStatus, GraphPartition, scope_matches
 from vibe_memory.storage.sqlite_store import VibeStorage
 from vibe_memory.embedding import index_flat, EmbeddingProvider, TfidfProvider
 from vibe_memory.retrieval.seed_filter import SeedFilter
@@ -87,6 +88,8 @@ def personalized_pagerank(
     seed_atoms: list[MemoryAtom],
     storage: VibeStorage,
     config: Optional[PPRConfig] = None,
+    *,
+    allowed_ids: Optional[set[str]] = None,
 ) -> dict[str, float]:
     """
     Personalized PageRank 图游走。
@@ -120,6 +123,7 @@ def personalized_pagerank(
     seed_atoms = [
         atom for atom in seed_atoms
         if atom.lifecycle.value in ("active", "warm")
+        and (allowed_ids is None or atom.id in allowed_ids)
     ]
     if not seed_atoms:
         return {}
@@ -136,6 +140,10 @@ def personalized_pagerank(
     outgoing: dict[str, list[Edge]] = defaultdict(list)
     incoming: dict[str, list[Edge]] = defaultdict(list)
     for edge in all_edges:
+        if allowed_ids is not None and (
+            edge.from_atom_id not in allowed_ids or edge.to_atom_id not in allowed_ids
+        ):
+            continue
         if edge.status != EdgeStatus.ACTIVE:
             continue
         if edge.label not in cfg.allowed_edge_labels:
@@ -147,6 +155,8 @@ def personalized_pagerank(
     epsilon = cfg.convergence_threshold
     # Preserve ranked query-seed order without depending on set/hash or UUID order.
     personalization = {atom.id: 1.0 / len(seed_ids) for atom in seed_atoms}
+    # Edge snapshots and configuration stay fixed for this walk, not across calls.
+    transition_cache: dict[str, tuple[list[tuple[str, float]], float]] = {}
 
     for _ in range(cfg.max_iterations):
         new_scores: dict[str, float] = defaultdict(float)
@@ -160,26 +170,30 @@ def personalized_pagerank(
             if score <= 0:
                 continue
 
-            transitions: list[tuple[str, float]] = []
+            if atom_id not in transition_cache:
+                transitions: list[tuple[str, float]] = []
 
-            # 正向游走：沿 outgoing edges
-            for edge in outgoing.get(atom_id, []):
-                edge_strength = edge.weight * edge.confidence
-                if edge_strength <= 0 or edge_strength < cfg.min_edge_weight:
-                    continue
-                transitions.append((edge.to_atom_id, edge_strength))
+                # 正向游走：沿 outgoing edges
+                for edge in outgoing.get(atom_id, []):
+                    edge_strength = edge.weight * edge.confidence
+                    if edge_strength <= 0 or edge_strength < cfg.min_edge_weight:
+                        continue
+                    transitions.append((edge.to_atom_id, edge_strength))
 
-            # 反向游走：沿 incoming edges（Bug 2 双向遍历，逆方向降权）
-            for edge in incoming.get(atom_id, []):
-                edge_strength = (
-                    edge.weight * edge.confidence * cfg.reverse_weight_penalty
+                # 反向游走：沿 incoming edges（Bug 2 双向遍历，逆方向降权）
+                for edge in incoming.get(atom_id, []):
+                    edge_strength = (
+                        edge.weight * edge.confidence * cfg.reverse_weight_penalty
+                    )
+                    if edge_strength <= 0 or edge_strength < cfg.min_edge_weight:
+                        continue
+                    transitions.append((edge.from_atom_id, edge_strength))
+                transition_cache[atom_id] = (
+                    transitions, sum(strength for _, strength in transitions),
                 )
-                if edge_strength <= 0 or edge_strength < cfg.min_edge_weight:
-                    continue
-                transitions.append((edge.from_atom_id, edge_strength))
+            transitions, total_strength = transition_cache[atom_id]
 
             walk_mass = score * (1 - alpha)
-            total_strength = sum(strength for _, strength in transitions)
             if total_strength > 0:
                 for neighbor_id, strength in transitions:
                     new_scores[neighbor_id] += walk_mass * strength / total_strength
@@ -233,7 +247,9 @@ def build_trace(
     # 简单路径：对每个召回分片，检查是否有直连边到任何种子
     if not seed_atoms:
         return traces
-    all_edges = storage.get_retrieval_edges(seed_atoms[0].agent_id, seed_atoms[0].tenant_id)
+    all_edges = storage.get_retrieval_edges(
+        seed_atoms[0].agent_id, seed_atoms[0].tenant_id, atom_ids=seed_ids,
+    )
     edge_map: dict[tuple[str, str], Edge] = {}
     for e in all_edges:
         edge_map[(e.from_atom_id, e.to_atom_id)] = e
@@ -283,6 +299,7 @@ def recall(
     budget_graph_hops: int = 1,
     budget_graph_ratio: float = 0.2,
     causal_bridge: bool = False,
+    required_scope: Optional[dict[str, str]] = None,
 ) -> dict:
     """
     统一检索入口（v3：多策略检索 + RRF 融合 + 可选重排）。
@@ -307,11 +324,12 @@ def recall(
         seed_filter: 种子后过滤器（None → 默认配置）
         tenant_id: 租户隔离（None → 使用 storage 默认 tenant）
         strategies: 启用的检索策略，默认 ["semantic", "bm25", "graph", "temporal"]
-        semantic_cache: 可选的 SDK 级语义索引缓存；按 atom ID/version 自动失效
-        bm25_cache: 可选的 SDK 级 BM25 索引缓存；按 atom ID/version 自动失效
+        semantic_cache: 可选 SDK 缓存；TF-IDF 按有序 ID/分帧正文摘要失效，稠密路径按 ID/version
+        bm25_cache: 可选 SDK 缓存；TF-IDF 后端按有序 ID/分帧正文摘要失效，其他后端按 ID/version
         budget_graph_hops: budget 候选池的因果邻居扩展跳数（最多两跳）
         budget_graph_ratio: budget 候选池中图邻居的最大占比
         causal_bridge: 可选保留主语义锚点的双锚点因果桥，仅 precision
+        required_scope: 可选严格作用域，在各路检索截断前筛选
 
     Returns:
         {atoms, trace, mode, total_walked, seed_count, filtered_count, strategies_used,
@@ -328,7 +346,13 @@ def recall(
     failures = []
 
     # 阶段 0：budget 模式先在存储层收窄候选，其他模式保持完整语义。
-    if mode == "budget":
+    lightweight = not required_scope and mode != "budget" and isinstance(provider, TfidfProvider)
+    if required_scope:
+        # ponytail: strict mode scans the owner pool; push scope into SQL if cost matters.
+        active_atoms = [a for a in storage.get_atoms_by_agent(agent_id, tenant_id=tid)
+                        if a.lifecycle.value in ("active", "warm")
+                        and scope_matches(a.scope, required_scope)]
+    elif mode == "budget":
         candidate_limit = max(100, top_k * 20)
         graph_neighbor_limit = int(
             candidate_limit * max(0.0, min(1.0, budget_graph_ratio))
@@ -342,9 +366,12 @@ def recall(
             graph_neighbor_limit=graph_neighbor_limit,
             graph_hops=budget_graph_hops,
         )
+        active_atoms = [a for a in all_atoms if a.lifecycle.value in ("active", "warm")]
+    elif lightweight:
+        active_atoms = storage.get_recall_documents(agent_id, tenant_id=tid)
     else:
         all_atoms = storage.get_atoms_by_agent(agent_id, tenant_id=tid)
-    active_atoms = [a for a in all_atoms if a.lifecycle.value in ("active", "warm")]
+        active_atoms = [a for a in all_atoms if a.lifecycle.value in ("active", "warm")]
 
     if not active_atoms:
         return {
@@ -356,7 +383,32 @@ def recall(
 
     documents = [a.content for a in active_atoms]
     atom_map = {a.id: a for a in active_atoms}
-    cache_key = tuple((a.id, a.version) for a in active_atoms)
+    # Text indexes depend on corpus content/order, not metadata versions.
+    # One framed digest avoids per-record hashes and retaining another complete corpus.
+    if isinstance(provider, TfidfProvider):
+        corpus_digest = hashlib.sha256()
+        for document in documents:
+            encoded = document.encode('utf-8')
+            corpus_digest.update(len(encoded).to_bytes(8, 'big'))
+            corpus_digest.update(encoded)
+        cache_key = (tuple(a.id for a in active_atoms), corpus_digest.digest())
+    else:
+        cache_key = tuple((a.id, a.version) for a in active_atoms)
+
+    def load_atom(atom_id):
+        atom = atom_map.get(atom_id)
+        if lightweight and atom is not None and not isinstance(atom, MemoryAtom):
+            atom = storage.get_atom(atom_id)
+            if atom is not None and (
+                (atom.agent_id, atom.tenant_id) != (agent_id, tid)
+                or atom.lifecycle.value not in ("active", "warm")
+            ):
+                atom = None
+            atom_map[atom_id] = atom
+        return atom
+
+    def load_atoms(records):
+        return [atom for record in records if (atom := load_atom(record.id)) is not None]
 
     # 阶段 1：多策略并行检索
     all_ranked_lists = []
@@ -387,9 +439,8 @@ def recall(
                         semantic_cache.clear()
                         semantic_cache.update({"key": cache_key, "tfidf_fitted": True})
                 indices, similarities = provider.search(query, top_k=top_k)
-                if mode == "budget":
-                    # Zero-score padding is not evidence for graph seeds.
-                    indices = [i for i, score in zip(indices, similarities) if score > 0]
+                # Zero-score padding is not evidence in any retrieval mode.
+                indices = [i for i, score in zip(indices, similarities) if score > 0]
                 query_vec = provider.encode_query(query)
             else:
                 cached_vectors = None
@@ -421,7 +472,7 @@ def recall(
                         semantic_cache.clear()
                 query_vec = provider.encode_query(query)
                 indices, _ = index_flat(doc_vectors, query_vec, top_k=top_k)
-            semantic_seeds = [active_atoms[i] for i in indices if i < len(active_atoms)]
+            semantic_seeds = load_atoms([active_atoms[i] for i in indices if i < len(active_atoms)])
             semantic_ranked = [(a.id, 1.0 - i/len(semantic_seeds)) for i, a in enumerate(semantic_seeds)]
             all_ranked_lists.append(semantic_ranked)
             fusion_weights.append(1.0)
@@ -460,11 +511,18 @@ def recall(
         try:
             if semantic_seeds:
                 filtered_seeds = seed_filter.filter(semantic_seeds, storage)
+            elif isinstance(provider, TfidfProvider):
+                # Lexical fallback, not arbitrary records when no query evidence exists.
+                filtered_seeds = [atom for aid, score in bm25_ranked
+                                  if score > 0 and (atom := load_atom(aid)) is not None]
             else:
-                filtered_seeds = active_atoms[:top_k]
+                filtered_seeds = load_atoms(active_atoms[:top_k])
 
             graph = GraphStrategy(storage, mode)
-            graph_results = graph.search(filtered_seeds, top_k=top_k)
+            if required_scope:
+                graph_results = graph.search(filtered_seeds, top_k=top_k, allowed_ids=set(atom_map))
+            else:
+                graph_results = graph.search(filtered_seeds, top_k=top_k)
             if mode == "budget" and semantic_seeds:
                 # Do not let correlated lexical votes reintroduce seeds that
                 # the connectivity filter explicitly rejected. Non-seed
@@ -486,6 +544,13 @@ def recall(
         try:
             temporal = TemporalStrategy()
             temp_results = temporal.search(active_atoms, top_k=top_k)
+            if isinstance(provider, TfidfProvider) and (
+                "semantic" in enabled_strategies or "bm25" in enabled_strategies
+            ):
+                # Recency boosts evidence-backed candidates; it is not query evidence.
+                supported_ids = {aid for ranked in all_ranked_lists for aid, _ in ranked}
+                temp_results = [(i, score) for i, score in temp_results
+                                if active_atoms[i].id in supported_ids]
             all_ranked_lists.append([
                 (active_atoms[i].id, s) for i, s in temp_results
             ])
@@ -508,7 +573,7 @@ def recall(
     should_rerank = mode != "budget" or not isinstance(provider, TfidfProvider)
     if should_rerank and "semantic" in enabled_strategies and query_vec is not None:
         if isinstance(provider, TfidfProvider):
-            candidate_atoms = [atom_map[atom_id] for atom_id, _ in fused if atom_id in atom_map]
+            candidate_atoms = [atom for atom_id, _ in fused if (atom := load_atom(atom_id)) is not None]
             doc_vectors = provider.encode([atom.content for atom in candidate_atoms])
             idx_map = {atom.id: i for i, atom in enumerate(candidate_atoms)}
         else:
@@ -519,6 +584,10 @@ def recall(
             primary = semantic_ranked[0][0]
             neighbors = {}
             for edge in storage.get_retrieval_edges(agent_id, tid, atom_ids=list(anchors)):
+                if required_scope and (
+                    edge.from_atom_id not in atom_map or edge.to_atom_id not in atom_map
+                ):
+                    continue
                 if edge.label != EdgeLabel.CAUSAL or edge.weight * edge.confidence < 0.05:
                     continue
                 for node, anchor in ((edge.from_atom_id, edge.to_atom_id),
@@ -536,14 +605,14 @@ def recall(
     # 阶段 4：构建结果
     ranked_atoms = []
     for aid, score in fused:
-        atom = atom_map.get(aid)
+        atom = load_atom(aid)
         if atom and atom not in ranked_atoms:
             ranked_atoms.append(atom)
         if len(ranked_atoms) >= top_k:
             break
 
     seed_count = len(semantic_seeds)
-    trace = build_trace(semantic_seeds if semantic_seeds else active_atoms[:top_k], ranked_atoms, storage)
+    trace = build_trace(semantic_seeds if semantic_seeds else load_atoms(active_atoms[:top_k]), ranked_atoms, storage)
 
     return {
         "atoms": ranked_atoms,

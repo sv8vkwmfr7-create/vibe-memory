@@ -109,6 +109,7 @@ class VibeMemory:
         self.wal_maintenance = wal_maintenance
         # ponytail: serialize whole calls per instance; use separate instances for throughput.
         self._operation_lock = RLock()
+        self._closed = False
         if wal_maintenance is not None:
             wal_maintenance.validate_path(db_path)
         with wal_maintenance.operation() if wal_maintenance is not None else nullcontext():
@@ -170,6 +171,27 @@ class VibeMemory:
             self._edge_count: int = 0
             self._semantic_cache: dict = {}
             self._bm25_cache: dict = {}
+
+    @coordinated
+    def __enter__(self) -> "VibeMemory":
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback) -> None:
+        self.close()
+
+    def close(self) -> None:
+        """Release the owned connection, without flushing pending index work.
+
+        Repeat calls are harmless. Committed records persist; unprocessed edge
+        candidates are in-memory only. Call flush_index explicitly before close
+        if needed. SDK operations cannot be used again after close.
+        """
+        maintenance = self.wal_maintenance
+        with maintenance.operation() if maintenance is not None else nullcontext():
+            with self._operation_lock:
+                if not self._closed:
+                    self.storage.conn.close()
+                    self._closed = True
 
     # ── 1. store ──
 
@@ -322,6 +344,7 @@ class VibeMemory:
         *,
         causal_bridge: bool = False,
         scope: Optional[dict[str, str]] = None,
+        strict_scope: bool = False,
     ) -> dict:
         """
         检索记忆。
@@ -331,7 +354,8 @@ class VibeMemory:
             mode: "precision" | "recall" | "budget"
             top_k: 向量预筛 Top-K
             causal_bridge: 可选主锚点因果桥保留，仅 precision，默认关闭
-            scope: 可选显式作用域匹配提升，不过滤候选
+            scope: 可选显式作用域，默认只提升排序；strict_scope=True 时过滤
+            strict_scope: 显式 scope 在候选截断前严格匹配，缺失或冲突均排除；默认关闭
 
         Returns:
             {atoms: [MemoryAtom], trace: [...], mode: str, total_walked: int,
@@ -340,6 +364,9 @@ class VibeMemory:
             reinforcement_skipped表示是否跳过部分/全部非关键强化。
         """
         validated_scope = _validated_scope(scope)
+        if not isinstance(strict_scope, bool):
+            raise ValueError("strict_scope must be a boolean")
+        required_scope = validated_scope if strict_scope else {}
         result = _recall(
             query=query,
             agent_id=self.agent_id,
@@ -352,6 +379,7 @@ class VibeMemory:
             semantic_cache=self._semantic_cache,
             bm25_cache=self._bm25_cache,
             causal_bridge=causal_bridge,
+            required_scope=required_scope,
         )
         self._recall_count += 1
         self.metrics.record_recall(result_count=len(result.get("atoms", [])))
@@ -359,7 +387,10 @@ class VibeMemory:
             self.metrics.record_degradation(f"retrieval_{failure['stage']}:{failure['reason']}")
 
         # 冷启动增强：结果不足时用种子记忆补充
-        result = self.cold_start.augment_recall(query, result)
+        if required_scope:
+            result = self.cold_start.augment_recall(query, result, required_scope=required_scope)
+        else:
+            result = self.cold_start.augment_recall(query, result)
         result["scope_boosted"] = False
         if validated_scope:
             atoms = result.get("atoms", [])
@@ -803,6 +834,9 @@ class VibeMemory:
             medium_similarity=edge_sim,
         )
         for dup in candidates["duplicate"]:
+            # Category overlap proposes candidates; only identical text proves duplication.
+            if dup.content != new_atom.content:
+                continue
             try:
                 merged = merge_atoms(dup, new_atom)
                 self.storage.merge_atoms(merged, dup.id, new_atom.id)

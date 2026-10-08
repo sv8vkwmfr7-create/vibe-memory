@@ -13,7 +13,7 @@ L1 原型：SQLite 存储 MemoryAtom + Edge。
 import sqlite3
 import json
 import re
-from typing import Optional
+from typing import NamedTuple, Optional
 from datetime import datetime
 from dataclasses import replace
 
@@ -22,6 +22,13 @@ from vibe_memory.models.memory_atom import (
     EdgeLabel, EdgeSource, EdgeStatus,
     GraphPartition, Lifecycle, DEFAULT_TENANT,
 )
+
+
+class _RecallDocument(NamedTuple):
+    id: str
+    version: int
+    content: str
+    created_at: datetime
 
 
 SCHEMA = """
@@ -257,6 +264,17 @@ class VibeStorage:
             (agent_id, tid),
         ).fetchall()
         return [self._row_to_atom(r) for r in rows]
+
+    def get_recall_documents(self, agent_id: str, tenant_id: Optional[str] = None) -> list[_RecallDocument]:
+        """Fresh, complete active/warm sparse corpus without full atom hydration."""
+        tid = tenant_id or self.tenant_id
+        rows = self.conn.execute(
+            """SELECT id, version, content, created_at FROM atoms
+            WHERE agent_id = ? AND tenant_id = ? AND lifecycle IN ('active', 'warm')
+            ORDER BY created_at""", (agent_id, tid),
+        )
+        return [_RecallDocument(row['id'], row['version'], row['content'],
+                                datetime.fromisoformat(row['created_at'])) for row in rows]
 
     def get_recall_candidates(
         self,

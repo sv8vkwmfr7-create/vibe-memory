@@ -12,9 +12,10 @@ import sys
 import os
 import threading
 import urllib.request
+import urllib.error
 import time
 import uuid
-import random
+from contextlib import ExitStack
 
 import pytest
 
@@ -25,24 +26,31 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # HTTP API Server Tests
 # ═══════════════════════════════════════════════════════════════════
 
-_pool = set()
-
 @pytest.fixture(scope="module")
 def http_base():
     """Start a shared HTTP server for all HTTP tests."""
-    port = random.randint(19000, 19999)
-    while port in _pool:
-        port = random.randint(19000, 19999)
-    _pool.add(port)
-
     from vibe_memory.http_server import VibeHTTPServer
-    server = VibeHTTPServer(port=port, db_path=":memory:", agent_id="test-http", token="synthetic-http-test-token")
+    server = VibeHTTPServer(port=0, db_path=":memory:", agent_id="test-http", token="synthetic-http-test-token")
     t = threading.Thread(target=server.start, daemon=True)
     t.start()
-    time.sleep(0.5)
-    yield f"http://127.0.0.1:{port}"
-    server.httpd.shutdown()
-    _pool.discard(port)
+    base = f"http://127.0.0.1:{server.port}"
+    try:
+        deadline = time.monotonic() + 10
+        while True:
+            try:
+                assert _get(f"{base}/health")["status"] == "ok"
+                break
+            except urllib.error.HTTPError:
+                raise
+            except (urllib.error.URLError, TimeoutError):
+                if time.monotonic() >= deadline:
+                    raise
+                time.sleep(0.01)
+        yield base
+    finally:
+        server.httpd.shutdown()
+        t.join(timeout=10)
+        assert not t.is_alive()
 
 
 def _post(url, data):
@@ -76,11 +84,15 @@ def test_http_store_and_recall(http_base):
         "content": "Fixed API timeout from 30s to 60s",
         "tags": ["bug", "api"],
     })
-    assert len(r["id"]) > 0
+    stored_id = r["id"]
+    assert len(stored_id) > 0
 
     r = _post(f"{http_base}/recall", {"query": "API timeout"})
-    assert r["count"] >= 1
-    assert "API" in json.dumps(r["memories"])
+    assert r["count"] == len(r["memories"])
+    memory = next(item for item in r["memories"] if item["id"] == stored_id[:8])
+    assert memory["summary"] == "Fixed API timeout from 30s to 60s"
+    assert memory["tags"] == ["bug", "api"]
+    assert r["failures"] == []
 
 
 def test_http_session_lifecycle(http_base):
@@ -105,10 +117,12 @@ def test_http_stats(http_base):
 
 
 def test_http_link(http_base):
+    from vibe_memory.models.memory_atom import EdgeLabel
     r1 = _post(f"{http_base}/store", {"content": "Memory A"})
     r2 = _post(f"{http_base}/store", {"content": "Memory B"})
     r = _post(f"{http_base}/link", {"from_id": r1["id"], "to_id": r2["id"], "label": "causal"})
-    assert "label" in r
+    assert r["label"] == EdgeLabel.CAUSAL.value
+    assert len(r["id"]) == 8
 
 
 def test_http_forget(http_base):
@@ -132,40 +146,42 @@ def test_http_cors(http_base):
 # LangChain Adapter Tests
 # ═══════════════════════════════════════════════════════════════════
 
-def test_lc_init():
+@pytest.fixture
+def lc_memory():
     from vibe_memory.langchain import VibeMemoryLC
-    mem = VibeMemoryLC(agent_id="test", db_path=":memory:")
+    with VibeMemoryLC(agent_id="test", db_path=":memory:") as mem:
+        yield mem
+
+
+def test_lc_init(lc_memory):
+    mem = lc_memory
     assert mem.memory_variables == ["history"]
 
 
-def test_lc_save_and_load():
-    from vibe_memory.langchain import VibeMemoryLC
-    mem = VibeMemoryLC(agent_id="test", db_path=":memory:")
+def test_lc_save_and_load(lc_memory):
+    mem = lc_memory
     mem.save_context({"input": "API timeout bug"}, {"output": "Fixed by changing from 30s to 60s"})
     mem.save_context({"input": "Connection pool issue"}, {"output": "Increased pool size to 20"})
     result = mem.load_memory_variables({"input": "API timeout"})
     assert "timeout" in result["history"].lower()
 
 
-def test_lc_empty_load():
-    from vibe_memory.langchain import VibeMemoryLC
-    mem = VibeMemoryLC(agent_id="test", db_path=":memory:")
+def test_lc_empty_load(lc_memory):
+    mem = lc_memory
     result = mem.load_memory_variables({"input": "nothing"})
     assert result["history"] == ""
 
 
-def test_lc_clear():
-    from vibe_memory.langchain import VibeMemoryLC
-    mem = VibeMemoryLC(agent_id="test", db_path=":memory:")
+def test_lc_clear(lc_memory):
+    mem = lc_memory
     mem.save_context({"input": "test"}, {"output": "response"})
     mem.clear()
     result = mem.load_memory_variables({"input": "test"})
     assert result["history"] == ""
 
 
-def test_lc_session_lifecycle():
-    from vibe_memory.langchain import VibeMemoryLC
-    mem = VibeMemoryLC(agent_id="test", db_path=":memory:")
+def test_lc_session_lifecycle(lc_memory):
+    mem = lc_memory
     mem.save_context({"input": "old bug"}, {"output": "old fix"})
     r = mem.start_session("bug")
     assert r["memories_recalled"] >= 1
@@ -175,23 +191,34 @@ def test_lc_session_lifecycle():
 
 def test_lc_token_budget():
     from vibe_memory.langchain import VibeMemoryLC
-    mem = VibeMemoryLC(agent_id="test", db_path=":memory:", max_tokens=30)
-    mem.save_context({"input": "bug"}, {"output": "long " * 100 + "fix"})
-    result = mem.load_memory_variables({"input": "bug"})
-    assert len(result["history"]) < 1000
+    with VibeMemoryLC(agent_id="test", db_path=":memory:", max_tokens=30) as mem:
+        mem.save_context({"input": "bug"}, {"output": "long " * 100 + "fix"})
+        result = mem.load_memory_variables({"input": "bug"})
+        assert len(result["history"]) < 1000
 
 
 def test_lc_alias():
     from vibe_memory.langchain import VibeMemoryMemory
-    mem = VibeMemoryMemory(agent_id="test", db_path=":memory:")
-    mem.save_context({"input": "test"}, {"output": "ok"})
-    result = mem.load_memory_variables({"input": "test"})
-    assert result["history"] != ""
+    with VibeMemoryMemory(agent_id="test", db_path=":memory:") as mem:
+        mem.save_context({"input": "test"}, {"output": "ok"})
+        result = mem.load_memory_variables({"input": "test"})
+        assert result["history"] != ""
 
 
 # ═══════════════════════════════════════════════════════════════════
 # OpenAI Agents SDK Adapter Tests
 # ═══════════════════════════════════════════════════════════════════
+
+@pytest.fixture
+def oa_tools_factory():
+    from vibe_memory import VibeMemory
+    from vibe_memory.openai_agents import create_vibe_tools
+    with ExitStack() as stack:
+        def create(agent_id="test"):
+            memory = stack.enter_context(VibeMemory(agent_id, ":memory:", embedding_backend="tfidf"))
+            return create_vibe_tools(memory=memory)
+        yield create
+
 
 def test_oa_tools_created():
     from vibe_memory.openai_agents import create_vibe_tools
@@ -207,9 +234,8 @@ def test_oa_tools_created():
     assert "vibe_forget" in names
 
 
-def test_oa_store_and_recall():
-    from vibe_memory.openai_agents import create_vibe_tools
-    tools = create_vibe_tools(agent_id="test", db_path=":memory:")
+def test_oa_store_and_recall(oa_tools_factory):
+    tools = oa_tools_factory()
     name_map = {t.__name__: t for t in tools}
     result = name_map["vibe_store"](content="Fixed API timeout", tags=["bug", "api"])
     data = json.loads(result)
@@ -219,9 +245,8 @@ def test_oa_store_and_recall():
     assert data["count"] >= 1
 
 
-def test_oa_session_lifecycle():
-    from vibe_memory.openai_agents import create_vibe_tools
-    tools = create_vibe_tools(agent_id="test", db_path=":memory:")
+def test_oa_session_lifecycle(oa_tools_factory):
+    tools = oa_tools_factory()
     name_map = {t.__name__: t for t in tools}
     name_map["vibe_store"](content="Previous memory", tags=["test"])
     result = name_map["vibe_session_start"](context="memory")
@@ -232,9 +257,8 @@ def test_oa_session_lifecycle():
     assert data["stored"] >= 2
 
 
-def test_oa_stats():
-    from vibe_memory.openai_agents import create_vibe_tools
-    tools = create_vibe_tools(agent_id="test", db_path=":memory:")
+def test_oa_stats(oa_tools_factory):
+    tools = oa_tools_factory()
     name_map = {t.__name__: t for t in tools}
     name_map["vibe_store"](content="Test 1")
     name_map["vibe_store"](content="Test 2")
@@ -243,25 +267,22 @@ def test_oa_stats():
     assert data["total_atoms"] >= 2
 
 
-def test_oa_link_and_forget():
-    from vibe_memory.openai_agents import create_vibe_tools
-    tools = create_vibe_tools(agent_id="test", db_path=":memory:")
+def test_oa_link_and_forget(oa_tools_factory):
+    tools = oa_tools_factory()
     name_map = {t.__name__: t for t in tools}
     r1 = json.loads(name_map["vibe_store"](content="Memory A"))
     r2 = json.loads(name_map["vibe_store"](content="Memory B"))
     result = name_map["vibe_link"](from_id=r1["id"], to_id=r2["id"], label="causal")
     data = json.loads(result)
-    # May return "created" or have error — both are OK for short IDs
-    assert "error" in data or "status" in data
+    assert data["status"] == "created"
     result = name_map["vibe_forget"](atom_id=r1["id"])
     data = json.loads(result)
     assert data["deleted"] is True
 
 
-def test_oa_independent_instances():
-    from vibe_memory.openai_agents import create_vibe_tools
-    tools1 = create_vibe_tools(agent_id="agent-1", db_path=":memory:")
-    tools2 = create_vibe_tools(agent_id="agent-2", db_path=":memory:")
+def test_oa_independent_instances(oa_tools_factory):
+    tools1 = oa_tools_factory("agent-1")
+    tools2 = oa_tools_factory("agent-2")
     m1 = {t.__name__: t for t in tools1}
     m2 = {t.__name__: t for t in tools2}
     m1["vibe_store"](content="Agent 1 memory")

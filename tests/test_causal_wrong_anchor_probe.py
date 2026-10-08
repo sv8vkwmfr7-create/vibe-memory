@@ -18,7 +18,7 @@ def test_false_cross_case_edges_can_harm_bridge_without_changing_defaults():
     assert all(row["added_false_edges"] == 2 for row in report["variants"])
     assert report["variants"][0]["poisoned"]["causal_bridge"]["negative_top1"] is True
     assert report["variants"][2]["clean"]["causal_bridge"]["recall"] == 1.0
-    assert report["variants"][2]["poisoned"]["causal_bridge"]["recall"] == 0.0
+    assert report["variants"][2]["poisoned"]["causal_bridge"]["recall"] == 1.0
     assert all(
         row["poisoned"]["directional_chain"]["negative_top1"] is False
         for row in report["variants"]

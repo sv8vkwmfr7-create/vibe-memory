@@ -1,5 +1,928 @@
 # Review repair progress — 2026-10-01
 
+## GitHub development checkpoint prepared — 2026-10-08
+
+User authorized a checkpoint commit/push, not a formal release. Selected core
+reliability, SDK/adapter lifetime, onboarding/settings, corresponding tests and
+documentation; included six synthetic frozen JSON inputs required by CLI tests.
+Local model experiments, temporary DBs/caches and unrelated result artifacts stay
+outside this checkpoint. Existing public author attribution is preserved.
+
+Exporting the Git index exposed Windows CRLF conversion of byte-hashed JSON:
+initial complete snapshot had 1101 pass, 5 fail, 10 skip /159.41s. A native
+.gitattributes rule pins JSON checkout to LF; neither fixture content nor hash
+assertions were changed. The new actual staged-tree snapshot passes the related
+101 cases /20.04s and full Python 3.14.7 suite: 1106 pass, 10 skip /157.14s,
+exit0. No coverage refresh or hosted CI result is claimed. Static Gitleaks8.30.1
+snapshot scans report zero findings, not a guarantee all sensitive data is absent.
+
+Known SDK constructor-failure cleanup, remaining unmanaged owners, full installed
+acceptance, dependency/platform matrix and independent memory quality stay open.
+No paid model call, real data/client/provider config change or release tag.
+Private verification artifacts:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/github-checkpoint-20261008-b/`.
+
+## Full installed attempt isolated fixture dependencies — 2026-10-08
+
+Installed current wheel in fresh Python 3.14.7 venv, borrowing existing test
+dependencies via a local .pth (not clean/minimum-dependency installation).
+Six generated CLI --help entrypoints exit0. Installed vibe-doctor synthetic
+MCP/store/restart/cross-session recall/scope/cleanup check also exits0.
+Actual MCP subprocess resolves to new installed package; original full MCP44,
+enhancement13, link14 and doctor2 cases pass. All 47 parent-loaded package modules
+verify under new venv. No production/test assertion changes or paid calls.
+
+Full attempt: 1096 pass, 10 fail, 10 skip, 170 warnings /693.79s, exit1.
+Failures: five missing cwd seed JSON fixtures, four missing prior synthetic CLI
+result fixtures, one experiment's source-hash report input paths. In a separate
+control, restoring explicit inputs makes all same ten failed nodes pass /4.78s;
+all 33 loaded package modules still from new venv. Original failed run preserved.
+This is NOT full installed acceptance or ten established production defects.
+Package JSON distribution contract remains separate; SDK default does not
+request the seed fixture. Known constructor failure remains unfixed.
+
+Coverage includes whole installed package/MCP subprocesses: 4230/4865 lines,
+1312/1682 branches, combined85%, but initial harness pre-import emits a
+module-not-measured warning. Next gate should freeze complete fixture inputs,
+avoid pre-import before coverage, and rerun the full suite. Other Python full
+installed gates, clean dependency build and independent quality remain open.
+No real data/client config edit, commit or push. Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/installed-full-20261008-a/README.md`.
+
+## Current wheel lifecycle subset verified — 2026-10-08
+
+Rebuilt current dirty source into a fresh local wheel without changing production
+code, existing dependencies or test assertions. All 48 package Python files match
+checkout/archive/installed target byte-for-byte. Wheel SHA256:
+`71355c78f93703ce12fc3ff3d6527b4f990650acfe66db025aa8594acfe98919`.
+Five unchanged lifecycle/full-ID/contract test modules run outside source cwd,
+with -I and installed target prioritized: 31 pass each on actual Python 3.10.11,
+3.12.14 and 3.14.7. All 35 loaded package modules originate in the installed
+target. No ResourceWarning emitted in observed final runs with visible warnings
+and final collection. No paid inference, commit/push or real data/config edit.
+
+Existing interpreter dependencies were reused; this is not clean/minimum-deps,
+full installed-suite/console-script/MCP-subprocess or non-Windows acceptance.
+Startup-failure repair awaits constructor seam confirmation; known bug remains
+in this local wheel. No production release claim. Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/lifetime-wheel-20261008-a/README.md`.
+
+## SDK startup failure reproduced, repair pending — 2026-10-08
+
+Actual-source Python 3.14.7 public-constructor diagnostic, temporary synthetic
+libraries only: valid tfidf with/context emits zero unclosed-database warnings;
+invalid backend raises original ValueError and emits one warning on collection,
+reproduced twice. SDK creates storage before embedding provider, but constructor
+has no exception cleanup; caller context entry is never reached on failure.
+Minimal control discards traceback/warning references between observations.
+No production/test code changed. Proposed repair releases storage when later
+SDK initialization fails, without changing backend error/fallback behavior or
+successful SDK ownership. Constructor regression seam awaits confirmation;
+storage-constructor-internal failure is a separate unverified path. Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/sdk-startup-diagnostic-20261008-a/README.md`.
+
+## Existing adapter owners migrated — 2026-10-08
+
+Migrated existing adapter tests and offline framework smoke to SDK/helper
+close/with and the borrowed factory seam; no production behavior change this
+turn. All existing assert ASTs and test names preserved against pre-turn dirty
+backups. Short-ID tests retain two independent connections. One legacy factory
+creation case remains for compatibility, with its known unmanaged SDK lifetime.
+Same 44 cases with visible ResourceWarning: 24 unclosed-database warning text
+emissions before, one after; both pass. This is not a whole-suite leak count.
+Seven-module source subsets: 66 pass each on Python 3.10.11 and 3.12.14.
+
+Real offline framework smoke refreshed on Python 3.12.14: seven tool schemas,
+scripted Model through actual openai-agents 0.22.3 Runner store/recall, and
+langchain-core 1.6.6 RunnableLambda two-turn read/save all pass. Zero cloud model
+calls; external socket guard retained; visible ResourceWarning none emitted.
+Fresh temporary pip target installed because the old temporary target was
+missing package entrypoints despite retained metadata. Project dependency
+declarations and existing environment distributions unchanged. This does not
+prove cloud authentication, autonomous selection or answer quality. Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/adapter-owner-migration-20261008-a/README.md`.
+Remaining: other owners/legacy factory cleanup, constructor failures, refreshed
+wheel/full matrix and independent quality. No paid inference or real data/config
+edit, commit or push.
+
+Full source Python 3.14.7: 1106 passed, 10 skipped, 179 warnings /326.71s,
+exit0. Whole-package coverage including MCP subprocesses: 4229/4865 lines,
+1313/1682 branches, combined85%. Production SDK/adapter and migrated test/script
+hashes unchanged through validation. Prior full run had 202 warnings; remaining
+warnings are not suppressed and the suite is not warning-free. Duration is an
+observed run time, not a performance gate or a claimed speed improvement.
+
+## OpenAI factory can borrow caller-owned SDK — 2026-10-08
+
+User-confirmed keyword-only memory= accepts an existing SDK. Caller config and
+close/with control lifetime; factory neither creates nor closes a borrowed SDK.
+Non-default agent_id/db_path/embedding_backend with memory raise ValueError.
+Legacy constructor and exact seven-plain-function list stay compatible; no new
+model-facing close tool, destructor, auto flush or warning suppression.
+
+TDD borrow: one missing-keyword failure -> pass; conflicting options: three
+missing ValueErrors -> all four pass. Seven final cases cover shared reads/
+writes, normal/exceptional caller closure, persistence, discard without closing
+caller SDK, and conflicts. Six-module related suites each pass 52 on actual
+Python 3.10.11/3.12.14; these are not full matrix or installed-package proof.
+All seven tool function ASTs/list match retained pre-edit source, preserving
+earlier dirty full-ID/prefix fixes. Recommended examples now show SDK with.
+
+Full actual-source Python 3.14.7: 1106 passed, 10 skipped, 202 warnings /222.78s,
+exit0; JUnit 1116 total/zero failures/errors. Whole-package/MCP-subprocess
+coverage: 4229/4865 lines, 1313/1682 branches, combined85%. Changed source/test
+hashes stable across run. No warning-free, rebuilt-wheel or quality claim.
+
+Legacy unmanaged callers still need migration; plain-function tests do not
+refresh historical real Agents/Runner smoke. Missing optional framework deps
+were checked, not installed. Constructor failures, package/matrix refresh and
+independent quality remain open. No paid call, real data/config edit or push.
+Contract: [ADAPTER_CONTRACTS.md](ADAPTER_CONTRACTS.md). Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/openai-lifetime-20261008-a/README.md`.
+
+## LangChain helper explicit lifetime added — 2026-10-08
+
+User-confirmed helper close/context/save/load/clear seams; synthetic temporary
+databases only. VibeMemoryLC now delegates close/context lifetime to its SDK,
+returns the helper on entry, and preserves caller exceptions on exit. Repeat
+close is harmless. Clear remains deletion and permits subsequent save/load.
+Usage examples now use with; framework and tool-list contracts unchanged.
+
+TDD: one missing-close failure -> pass; two missing-context failures -> pass
+after correcting an unrelated-query fixture expectation (no retrieval edit).
+Combination run exposes old adapters' GC warnings contaminating an SDK-instance
+warning test: one failure -> same 36 cases pass after pre-collection before that
+instance's warning recording. No warning assertion removed/filter added; this is
+test isolation, not proof old owners are repaired. See retained intermediate XML.
+
+Eight related modules each pass 73 on actual-source Python 3.10.11 and 3.12.14.
+Actual-source Python 3.14.7 full: 1099 passed, 10 skipped, 202 warnings /209.21s,
+exit0; JUnit 1109 total/zero failures/errors. Whole-package/subprocess coverage
+4227/4863 lines, 1311/1680 branches, combined85%. Changed helper/test hashes
+stable through run; OpenAI factory hash unchanged. No warning-free or new wheel
+claim. Latest package artifact still predates SDK and helper lifetime additions.
+Existing helper behavior AST unchanged except lifetime methods and usage docs.
+No OpenAI factory edit, model tool, paid call, new dependency, real data/config
+edit, commit or push. OpenAI caller ownership, adopting close in existing
+owners/tests, startup failures, package/matrix refresh and independent quality
+remain open. Contracts: [ADAPTER_CONTRACTS.md](ADAPTER_CONTRACTS.md).
+Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/langchain-lifetime-20261008-a/README.md`.
+
+## SDK explicit lifetime added — 2026-10-08
+
+Confirmed public seam: SDK close/context/store/history only, temporary synthetic
+databases, no private tests, direct SQL assertions or paid calls. Added repeatable
+close and context management; all SDK operations reject closed instances with a
+clear RuntimeError. Maintenance admission and instance-lock ordering retained.
+No auto index flush, destructor, new dependency or adapter/tool-list change.
+
+Red/green: close cases 2 fail -> 2 pass; context cases 4 fail -> all 6 pass
+on Python 3.14. Default/WAL, normal/exceptional exits and persisted records on
+reopen covered. Existing related six-module suites each pass 64 on Python
+3.10.11 and 3.12.14. These are not new full older-version matrix runs.
+
+Actual-source Python 3.14.7 full suite: 1095 passed, 10 skipped, 202 warnings
+/191.54s, exit0. Parsed JUnit: 1105 total, zero failures/errors. Whole-package
+coverage including MCP subprocesses: 4220/4856 lines, 1311/1680 branches,
+combined85%. SDK/maintenance/new-test hashes unchanged through full run.
+Unmodified owners still generate warnings; no warning-free claim. Current wheel
+predates this SDK change. Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/sdk-lifetime-20261008-a/README.md`.
+
+Contract: [SDK_LIFETIME.md](SDK_LIFETIME.md). Adapter-owned APIs and examples,
+constructor failure cleanup, abandoned instances and real-client quality remain
+open. Existing adapters still need explicit ownership wiring; merely adding SDK
+close does not fix unmodified callers. No real data/config edit, commit or push.
+
+## MCP owned connection closes on EOF — 2026-10-08
+
+Default/WAL real stdin-EOF regression first fails twice at unclosed ResourceWarning
+while exit0/tool discovery pass; both pass after input-loop finally closes the
+owned connection. AST comparison confirms no protocol/handler change beyond
+that wrapper. No model-facing close tool, auto index flush or policy change.
+
+Related suite passes 73 on 3.10/3.12/3.14. Actual-source 3.14 full regression:
+1089 passed/10 skipped/202 warnings /199.76s, exit0, JUnit zero failures/errors.
+Source inputs unchanged through run. This closes observed MCP EOF cleanup only;
+remaining SDK/adapter warnings are not hidden or claimed fixed. Full old-version
+matrix and rebuilt package were not refreshed for this new MCP edit.
+
+Next define SDK/adapter explicit lifetime ownership/seams before new interface
+tests. Startup failure cleanup, exceptional-I/O injection, forced termination,
+old test cleanup, independent quality and overall review ledger remain open.
+No real configuration/database/provider edits, paid calls, commit or push.
+Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/mcp-owner-cleanup-20261008-a/README.md`.
+
+## SQLite lifecycle warning diagnosed; implementation pending — 2026-10-08
+
+Current 3.14 allocation traces attribute adapter warnings to unclosed connections
+created by earlier helper/factory instances. SDK/LangChain disposal controls
+reproduce warning 5/5; explicit existing connection cleanup gives 0/5. Factory
+tools disposal reproduces 5/5, but public factory hides SDK ownership behind
+seven functions and has no documented close handle. Not just test cleanup.
+
+Three real MCP processes at stdin EOF exit0 yet each emits one unclosed database
+warning after GC. Source has no guaranteed explicit close around input loop.
+Keep prior normal-exit acceptance distinct from deterministic resource cleanup.
+No demonstrated corruption/data loss or complete attribution of all suite warnings.
+
+Proposed order: repair MCP owner cleanup on existing stdio/EOF seam first;
+then define SDK/adapter close/context ownership, preserve factory tool-list
+compatibility and improve old test/example cleanup. No added model-facing tool,
+automatic LLM flush, destructor suppression or blanket warning ignore.
+Diagnosis only: 21 adapter tests pass, full regression not rerun, source/test
+fingerprint unchanged, no real data/config or paid calls. Retained reproductions:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/sqlite-lifecycle-diagnosis-20261008-a/README.md`.
+
+## Compact repair current-version and package gates refreshed — 2026-10-08
+
+Actual source full 3.10.11: 1087 passed/10 skipped /192.13s; 3.12.14: 1097
+passed /260.15s, both exit0. Zero JUnit failures/errors. 3.10 skips only missing
+Transformers; 3.12 uses existing optional dependencies. Source fingerprint
+unchanged across runs and equal to prior green 3.14 full gate. Current local
+3.10/3.12 refresh is done; no hosted/full supported-version matrix closure.
+
+Current wheel/sdist rebuilt, 52 snapshot inputs match actual source; 50 code/
+metadata members equal across sdist roundtrip. Offline new-target installation
+passes actual parent/child imports, six CLI helps, SDK lifecycle, real MCP
+nine tools/store/recall/EOF exit0. Installed original 16 MiB regression passes
+at 12,103,155 bytes. Existing installation untouched; no production edits in
+this turn, paid calls, model downloads, commit or push.
+
+Still open: full installed-wheel suite/fresh dependency and minimum build gates,
+3.11/3.13/current hosted/other platforms, optional model breadth, license metadata
+warnings/example distribution, 3.14 SQLite connection lifecycle attribution,
+real AI-client acceptance and independent applicability/answer-quality evidence.
+Do not infer memory quality from passing compatibility tests.
+Evidence and artifact hashes:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/compact-matrix-20261008-a/README.md`,
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/compact-wheel-20261008-a/README.md`.
+
+## Python 3.14 allocation regression repaired in current source — 2026-10-08
+
+Completed candidate full gate with all fixtures: 1087 passed/10 skipped
+/205.83s; related 3.10 and 3.12 suites each pass 97. Reconfirmed original red
+regression before application, then changed only TF-IDF posting representation
+to stdlib arrays, retaining double weights/order and existing test threshold.
+
+Actual checkout: retained allocation 17,473,163 -> 12,103,155 bytes (~30.73%
+reduction), full Python 3.14.7 regression **1087 passed, 10 skipped /188.19s**,
+exit0. JUnit confirms zero failures/errors, 235 source-input hashes unchanged
+through the full run. Ten skips lack Transformers; 202 warnings include
+unclosed SQLite connections. This closes the observed allocation failure only.
+
+No extra dependency, retrieval scoring/ranking/default/API change, private-test
+coupling, raised threshold, real data/config/provider edit, paid call or push.
+Current full 3.10/3.12 refresh and rebuilt-install validation remain next;
+earlier wheel artifacts do not contain this repair. Optional models, lifecycle
+warning diagnosis, independent quality and overall review ledger remain open.
+Exact red/green evidence, frozen baseline, comparisons and coverage hashes:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/compact-tfidf-py314-20261008-a/README.md`.
+
+## Python 3.14 resource fix candidate isolated, not applied — 2026-10-08
+
+Matching NumPy 2.5.3/pytest 9.1.1 does not remove original 3.14 failure;
+3.12 stays at 16,140,051 retained bytes vs 3.14's 17,473,163. Runtime posting
+tuple overhead remains the supported contributor. No existing environment edit.
+
+Only the isolated source copy replaces TF-IDF posting tuples with paired
+stdlib arrays, preserving double weights/order. Existing 16 MiB test passes
+at 12,103,155 bytes (~30.73% lower); 97 targeted tests and 9,600 search/300
+transform exact comparisons pass. Original source/test/defaults unchanged.
+
+Candidate full run: 1083 passed/10 skipped/4 failed /185.44s. All four failures
+are resolution CLI reads of six omitted frozen JSON fixtures. Copying their
+unchanged originals makes the whole module pass 100 /17.03s; do not call this
+a corrected green full run. Next: full candidate rerun with complete fixtures,
+3.10/3.12 regressions, then minimal patch and actual checkout full validation.
+No production compatibility closure, real data/provider edits, paid calls,
+model download, commit or push. Retained evidence and runnable controls:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/compact-tfidf-py314-20261008-a/README.md`.
+
+## Python 3.14 full regression exposes allocation-budget failure — 2026-10-08
+
+Clean installed core wheel smoke passes on a new Python 3.14.7 venv, with
+NumPy 2.5.3; six console help entries, SDK lifecycle and real MCP nine tools/
+store/recall/EOF exit0 verified. Host model selection remains unverified.
+After adding dev dependencies, current-source full suite is **1086 passed,
+10 skipped, 1 failed /192.04s**, exit 1. All skips lack Transformers.
+
+Open compatibility item: existing 16 MiB retained-allocation test reports
+17,473,499 bytes; isolated no-coverage repeat reports 17,473,163 (1 failed,
+4 passed /2.24s). Evidence retrieval assertions pass. Snapshot comparison
+supports larger Python 3.14 posting-tuple overhead as a contributor, but NumPy
+differs between environments; causal isolation remains pending. Preserve red
+test, then compare same dependencies before choosing compact posting storage
+or revising the cross-runtime resource contract. Do not hide with a raised cap.
+202 warnings include unclosed SQLite connections and require separate attribution.
+
+No production/test edits or default changes, real data/provider/config changes,
+model downloads, paid requests, publishing, commit or push. Coverage/JUnit,
+unchanged source fingerprint, import proof and repeatable diagnosis retained:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/clean-wheel-py314-20261008-a/README.md`.
+
+## Installed first-use settings journey verified — 2026-10-08
+
+Clean installed package, nine scripted terminal-panel/MCP stages passed:
+initial defaults/cancel/confirm, live off/on in one server, cancellation,
+invalid input, EOF and persisted restart. First eight use the same live PID;
+delivered matching records change 5/2/5 without restart. Cancel/invalid-input/
+EOF preserve settings bytes/mtime; both temporary MCP processes exit 0 on EOF.
+
+Important existing policy made explicit in the guide: cancel is not off;
+first-use cancel retains enhanced=true, and privacy_acknowledged is not an
+enforced delivery gate. This is not automatic first-run popup/host consent,
+real model selection, human visual usability or completion of all switches.
+Only synthetic local state; no production behavior, existing client/runtime
+settings, real database, model/API call, publishing, commit or push changed.
+
+Retained states, import proof, harness and limits:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/installed-onboarding-20261008-a/README.md`.
+
+## Clean core dependency installation verified — 2026-10-08
+
+New venv, system site-packages false, Windows/Python 3.12.14. Installed the
+frozen wheel with declared core dependencies only: numpy 2.5.3 and vibe-memory
+0.3.0, plus bootstrap pip 25.0.1; no model/dev extras. Actual parent/isolated
+child imports point at the new environment, not source or the previous target.
+Six CLI help entrypoints, public SDK synthetic lifecycle, real installed MCP
+nine tools/store/recall/EOF exit0 and pip check pass. No host semantic selection.
+
+This closes bounded clean-core-install/basic-smoke evidence, not a full clean
+machine/build, installed-wheel regression or broad compatibility/quality gate.
+No existing environment, production source/config/defaults, user database,
+provider settings, model download, paid calls, publishing, commit or push.
+Minimum/other-version/semantic-extra/client acceptance and prior release
+warnings remain open. Resolver hashes, inventory, paths and command:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/clean-wheel-20261008-a/README.md`.
+
+## Built wheel installed and smoke-checked outside checkout — 2026-10-08
+
+Curated current-source snapshot builds wheel/sdist; 52 copied inputs match the
+live checkout. Sdist-to-wheel rebuild matches 48 Python files plus metadata
+and entrypoints. Offline target installation uses existing Python/dependencies;
+actual parent/child imports point at the wheel installation rather than source.
+Six generated --help entrypoints, public SDK synthetic lifecycle and real MCP
+store/recall/nine tools/stdin-close-exit0 pass. Host selection remains pending
+and unverified, not a model-quality success. No publishing or production changes.
+
+Release caveats recorded: seed example JSON not bundled (not loaded by default
+SDK), license metadata backend warnings, missing executable build frontend
+worked around with installed public backend hooks. No automatic package-data
+policy/minimum-backend changes. Clean dependency installation, minimum backend,
+full installed-artifact suite, other runtimes, hosted CI/release and real AI
+client acceptance remain open. No real data/provider edits, paid calls or push.
+
+Artifact hashes, exact commands, import proof, smoke observations and limits:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/wheel-acceptance-20261008-a/README.md`.
+
+## Current full Python 3.10 core regression refreshed — 2026-10-08
+
+Current source including framed text-index identity: 1087 passed, 10 skipped
+/177.76s, original process exit 0. JUnit independently confirms 1097 tests,
+zero failures/errors. All skips are due to missing Transformers: eight
+optional answer-model cases and two real-tokenizer checks. The current local
+3.10 core full-suite evidence gap is closed; optional model compatibility is
+not. Older full/targeted results are retained, not relabelled as current.
+
+Coverage lines 4218/4852 (86.93%), branches 1305/1674 (77.96%); subprocess MCP
+source included. Before/after fingerprints of 235 Python/source-config inputs
+match. Reused isolated existing runtime, offline model-hub flags and a new
+test artifact directory; no production/test/dependency/provider changes,
+real data, paid calls, commit/push or hosted CI run. Current 3.11/3.13/3.14,
+optional model, publishing/client and memory-quality gates remain open.
+
+Parsed reports, hashes, exact command, runtime and verification limits:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/framed-full-py310-20261008-b/README.md`.
+
+## Applicability inputs frozen; structural acceptance is not semantic proof — 2026-10-08
+
+Prepared fourteen label-free selection inputs from the unchanged frozen SDK
+soft-scope top20 pools: four questions in three contexts plus delivered-empty
+and question-title-only abstention controls. Independent per-case files carry
+question/as_of/scope and full candidate text/scope; review criteria and source
+labels remain separate. This is not production MCP delivery or independent
+evaluation. No model/paid call, new production API/default or provider change.
+
+Existing process_selection protocol replay preserves original text and empty
+selections; an unknown ID falls back observably. A deliberately wrong-scope ID
+is structurally accepted: no scope/time/semantic verification is claimed.
+Its output omits case applicability context, so any future answer stage must
+rejoin selected IDs with immutable original evidence/question/date/scope.
+The resolution probe's session/exact-scope pool and root-cause answer prompt
+are domain-specific, not an unchanged generic config-answer pipeline.
+
+Related current-source experiment regressions: 141 passed /14.55s, JUnit
+failures/errors/skips zero. Fourteen model files plus combined input, review
+and protocol-check artifact have seventeen verified hashes. No semantic model
+result or quality gain is inferred from these checks. Fresh bounded paid
+authorization is required before submitting any case; old authorization is
+exhausted. Overall compatibility/host/onboarding/performance work remains open.
+
+Input manifest, isolated files, contract audit and reproduction:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/applicability_selection_v1_isolated/REPORT.md`.
+
+## Local relevance reranker is not an applicability fix — 2026-10-08
+
+Replayed the frozen SDK soft-scope pools with already-local bge-reranker-base,
+CPU/local-only loading, no paid/answer-model calls or download. Model input is
+only question/text pairs; expected answers and developer labels are excluded.
+Three fixtures x four questions x three pool depths, repeated in reverse job
+order: 72 observations, all 36 repeat pairs retain selected-ID order.
+
+At depth20/final5, all-required-evidence coverage stays 4/4 on original7,
+improves 1/4 to 2/4 on same_scope19, and improves 2/4 to 4/4 on missing_scope7.
+T01/T03 still miss current_prod under same-scope question-title distractors.
+Explicit test-environment records enter 3/4 same_scope19 outputs and 4/4 of
+each seven-record fixture. This is candidate contamination, not a measured
+wrong final answer. The frozen pool cannot be repaired when required evidence
+was excluded before scoring. No general accuracy/model-default conclusion.
+
+Do not promote the reranker as the fix. Next quality work must separate text
+relevance from scope/time/fact applicability using existing selection
+experiment seams, preserve frozen misses, and validate the full candidate to
+selection to answer chain before production changes. Fresh paid authorization
+is still required; the paused independent review is unchanged. No production
+code/default change, commit or push. Exact model/source fingerprints, scores,
+selected IDs, limitations and reproduction:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/selection_local_reranker_v1/REPORT.md`.
+
+## Candidate omission diagnosed; simple remedies fail stronger controls — 2026-10-08
+
+The original T01/T03 top-five miss reproduced twice per question through the
+public SDK. All seven source texts survived in active history. Public component
+replay ranks current_prod sixth/seventh in TF-IDF and seventh in BM25: lexical
+ranking and candidate truncation, not lost storage. Soft scope promotion occurs
+after truncation and cannot recover the omitted record. Disabling automatic
+edges or Episodes does not recover it. No production-code/default change.
+
+Expanded developer-authored controls preserve the original questions/texts,
+add twelve same-scope question-title notes, or remove only current_prod's
+environment metadata. In the nineteen-record fixture, top20 covers all four
+questions' required sources, but retaining the first five covers only one;
+strict scope also covers only one. For missing metadata, top20 covers four but
+final-five/strict-top5 cover two. These are evidence-coverage counts, not answer
+accuracy or independent evaluation. Forty-eight SDK observations and a fresh
+repeat preserve all coverage verdicts; twelve distractor-order comparisons
+differ, so exact rank determinism is not claimed. No degradation events.
+
+Already-local BGE-small-zh-v1.5 was compared through public SDK readers on
+fresh identically TF-IDF-written temporary stores, with offline flags and no
+fallback. Across twelve contexts per backend, top-five full-evidence coverage
+is 2/4 versus 2/4 on original7, 1/4 versus 2/4 on same_scope19, and 2/4 versus
+2/4 on missing_scope7 (TF-IDF versus BGE). The motivating current_prod miss
+persists for T01/T03. Timings include loading, not a warm latency benchmark.
+
+Next: test the existing local reranker against frozen pools before proposing
+any production or model-default change. No paid/answer-model calls, downloads,
+real database/provider changes, commit/push or independent-review completion.
+Detailed inputs, observations, limitations and reproduction scripts:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/selection_controls_v2/diagnosis_v1.md`
+and `C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/selection_pool_challenge_v1/REPORT.md`.
+
+## Four controls frozen offline: required current fact omitted — 2026-10-08
+
+Before any fresh paid authorization, reused the existing public SDK input
+preparer and static production instruction to freeze four new developer-
+authored synthetic current/history/future-plan/insufficient-evidence controls.
+Model calls zero; no production/test code change. Source and first candidates
+are preserved, not tuned after observing the outcome. Not independent review.
+
+Status blocked_missing_evidence: T01 current configuration and T03 future-plan
+comparison both omit required current_prod from top-five delivered candidates.
+That source describes online failed requests being attempted again four times,
+effective September 20; other records use literal production/retry terminology.
+T02's historical source and T04's unknown-policy source are delivered. No SDK
+degradation failures. This does not yet prove whether storage/merge, candidate
+generation, ranking or scope handling causes the omission, and is not a model
+selection/answer failure or an overall accuracy estimate.
+
+Next priority: diagnose storage survival and recall-stage loss via the existing
+public SDK/history/storage seam. Do not spend proposed paid calls on unseen
+required evidence or rewrite the fixture to improve rank. Do not infer a
+production model/default change from this small synthetic control. Previous
+four-call authorization remains exhausted; automatic continuations are not
+new authority. 96-row human review remains paused, no real-data/provider/config
+operation, commit or push. Pack, mapping, source hashes and exact limits:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/selection_controls_v2/README.md`.
+
+## Next priority returns to memory-task quality — 2026-10-08
+
+The framed-index repair is locally implemented and gated; more identical
+regression/performance runs are not a substitute for answering memory tasks.
+Current evidence still separates three earlier native host cases from four
+provided-context generateText cases. The latter meet original synthetic
+criteria but do not cover all current/historical/future/insufficient-evidence
+controls, independent benefit or strict answer-only-from-selected-ID grounding.
+
+Proposed next bounded execution: four one-shot synthetic questions covering
+current confirmed configuration, historical configuration, future plan versus
+effective fact, and insufficient applicable evidence. Freeze evaluation dates,
+inputs/instructions and developer criteria before calls; send no reviewer labels,
+keep first responses/errors/usage, no retries or default/ranking changes. Reuse
+the existing isolated DeepSeek route after live availability verification.
+This proposal is not a frozen input pack or an executed experiment; fresh
+human call authorization is required. Do not silently implement a two-stage
+pipeline or resolve the separate attribution/visibility product decision.
+
+Read-only shared-ledger check: all existing request entries settled, unchanged
+11-CNY cumulative limit, conservative settled estimates total 1.327322 CNY;
+provider billing was not inspected. Remaining budget is not call authorization.
+Prior four-question authorization is exhausted. Start Plan and the 96-row
+human review remain deferred; do not fill the latter. No new paid call, model
+run, production/test edit, real database operation, commit or push this turn.
+
+## Framed text-index identity installed locally — 2026-10-08
+
+Within the human-confirmed public SDK/storage boundary, a new 10k fixed-text
+rebuild resource regression first failed on live per-record hashes: 17,238,042
+new retained traced Python bytes exceeded its 16 MiB fixture budget. The
+measured framed-corpus candidate makes it pass. Live TF-IDF/BM25 cache identity
+now retains ordered IDs plus one SHA256 of byte-length-prefixed UTF-8 documents;
+no full plaintext corpus or per-document digest objects. Dense ID/version keys,
+metadata version increments and fresh owned/lifecycle/scoped reads remain.
+
+Four additional public cases move beta evidence between two records while
+preserving concatenated bytes, with Unicode/quotes/newline content, precision/
+recall and same-/second-connection writes. All pass live code. The copied
+unframed mutation fails all four, returning stale atom a instead of expected b.
+This is a mutation safety check, not four new production bug discoveries.
+New module: tests/test_text_index_identity.py, five cases, no private cache
+assertions, direct SQL, collaborator mocks or elapsed-time hard gate.
+
+The live implementation differs from the measured isolated candidate only in
+comments/docstrings (verified no-index diff); timing evidence remains the
+previous bounded synthetic comparison, not a new independent benchmark or
+production SLA. Encoding still scans the corpus and allocates by largest
+record; no fixed single-record memory cap or zero-cost invalidation is claimed.
+No new interface/schema/dependency, real database, model/provider changes,
+paid calls, commit or push. Current 3.12 full gate: **1097 passed / 249.06s**,
+JUnit 0 failures/errors/skips; package line coverage 86.91%, branch 78.08%.
+Current 3.10 related gate: **60 passed / 80.50s**, no failures/errors/skips,
+not a new full compatibility run. Commands, XML counts, hashes and limits are
+in TESTING.md. Broad six-package scope remains open; original broad audit
+44 closed / 9 excluded / 12 unclosed is not recalculated from this subtask.
+
+## Compact corpus digest candidates screened — 2026-10-08
+
+Two isolated public SDK/storage experiments preserve live source. JSON-stream
+digest is rejected: short warm improves 23.96→20.25ms but long notes worsen
+38.71→66.50ms. The next length-framed UTF-8 streaming SHA256 candidate improves
+short warm 24.59→18.84ms and long warm 39.68→33.19ms on separate controlled
+10k fixtures; one traced allocation run/profile/version retains 1,209,879 fewer
+new Python bytes (~1.154MiB), without retaining full plaintext. Encoding still
+allocates by largest record, so no fixed single-record memory cap is claimed.
+
+Each experiment: 136 timed recalls, 68 paired returned ID/order/content/
+confidence sequences equal, no degradation failures; eight additional traced
+calls excluded from timing. Two reversed-order repetitions, synthetic repeated
+long notes and uncontrolled host load limit generalization. Not independent
+quality, dense/disk/graph or 100k evidence. Live digest source remains unchanged.
+
+Framed candidate isolated import verified; existing public projection/strict-
+scope/evidence regressions: **55 passed / 64.04s**, JUnit no errors/failures/
+skips. A public boundary-moving check passes candidate precision/recall and
+fails a copy with framing removed. Initial reversed fixture dates had not
+activated the mutation and were corrected; do not count that initial pass as
+effective safety evidence. No production/test code edits, new full/compatibility
+gate, model cost, real-data operation, commit or push this turn. Next retain
+this boundary regression and gate the candidate before replacing live code.
+
+Detailed raw reports, source hashes, sample counts and limits:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/metadata-framed-comparison-20261008-a/REPORT.md`.
+
+## Direct-content cache key measured, not adopted — 2026-10-08
+
+Reused the isolated public SDK/storage comparison runner for current digest
+versus exact-content keys, differing only in the executable cache-key expression.
+10k fixed-ID/time synthetic precision fixtures with short or 20x repeated
+background text, two reversed-order repetitions: 136 timed calls, all 68 paired
+returned ID/order/content/confidence sequences equal, no degradation failures.
+Eight separate allocation-only recalls are excluded from timings (144 total).
+
+Short unchanged warm medians: digest 23.26ms, content 17.56ms. Long: 38.04ms
+versus 30.14ms. But new retained traced Python allocations after first recall/GC
+increase by 398,855 bytes for short notes and 12,536,606 bytes (~11.96MiB) for
+long notes in one measurement/version/profile. This is not process RSS.
+Unconditional plaintext retention is not adopted. Current live digest source
+hash is unchanged; no production/test code, real data, provider config, paid
+call, commit or push. The next candidate is a compact unambiguously framed
+whole-corpus digest with bounded working allocation, not yet implemented or
+proven faster. Do not substitute the short-record win for long-record evidence.
+
+Full protocol, samples, counts, source hashes and limitations:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/metadata-content-comparison-20261008-a/REPORT.md`.
+
+## Metadata repair latency/retention tradeoff measured — 2026-10-08
+
+Controlled isolated package copies differ only in the executable cache-key
+expression; baseline restores ID/version and current matches live source.
+Fixed-ID/time 1k/10k public SDK/storage synthetic fixtures, precision/recall,
+two repetitions reversing version order: 272 timed calls, all 136 paired
+returned ID/order/content/confidence sequences equal, no degradation failures.
+No tracing in latency runs. Four separate traced calls measure Python allocation.
+
+At 10k, confidence-update recall median changes from 183.15/186.00ms to
+24.50/24.95ms (precision/recall, about 86.6% shorter). Unchanged warm recall
+changes from 17.72/17.19ms to 23.47/23.98ms: about 32.5–39.5% longer, or
+5.7–6.8ms extra. This confirms the digest tradeoff; not universal acceleration.
+One traced 10k precision run/version shows 650,048 additional retained Python
+bytes after first recall/GC, while metadata-call incremental traced peak falls
+from 16,127,951 to 6,286,818 bytes. These are not RSS/production SLA results.
+
+Next prioritize reducing unchanged-query digest overhead while preserving
+content/order/membership invalidation, fresh metadata and dense behavior,
+within the confirmed public SDK/storage test seam. Do not hide this regression
+behind a faster metadata-only fixture. No production-code change this turn,
+paid calls, real data, new defaults, commit or push. Broad performance gates
+remain open. Full protocol, raw cells, ranges and hashes:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/metadata-comparison-20261008-a/REPORT.md`.
+
+## Text-index metadata invalidation repaired locally — 2026-10-08
+
+Human confirmed public SDK/storage tests on temporary synthetic databases.
+The new public-call allocation regression first failed: a confidence-only
+update caused 5,450,253 bytes of traced peak allocation for a 3,000-record
+warm precision recall, exceeding the fixture's existing 3 MiB budget.
+After the narrow repair it passes. Four variants now cover precision/recall
+and same-/second-connection metadata updates, checking fresh summary/tags/scope,
+confidence/decay/weight, version increment and reinforcement as well as the
+allocation bound. Three additional public checks cover strict-scope membership
+changes and deletion across connections in precision/recall/budget modes.
+
+Only TF-IDF-backed retrieval changes cache identity to ordered atom IDs and
+SHA256 content digests for its TF-IDF/BM25 indexes. Dense-provider retrieval
+keeps ID/version identity. No metadata/version suppression, mutable-atom cache,
+candidate truncation, retrieval threshold/default or new dependency is added.
+Digest computation still scans/encodes the corpus on every call and retains
+per-document digest objects; this is not constant-time invalidation or an
+established overall latency/RSS improvement. Existing cache retention limits
+are unchanged, and neither a real semantic-model benchmark nor universal dense
+compatibility is claimed from source preservation.
+
+The original 100-record public-SDK profile was replayed separately: unchanged
+and confidence-only queries now make no fit calls, while content change still
+fits TF-IDF/BM25 and returns the new text. Original failing and new passing
+JSON reports are preserved as metadata_index_repro_v1.json and
+metadata_index_repro_green_v1.json in the isolated workspace's results directory.
+These instrumentation observations are distinct from the repository public-API
+test assertions. No real database, provider configuration, paid call, commit
+or push. Broad performance and six-package completion remain unproven.
+
+Verification: current 3.12 full suite **1092 passed / 241.69s**, JUnit confirms
+0 failures/errors/skips, line coverage 86.89%, branch coverage 78.02%. Related
+3.10 suite **55 passed / 63.09s**, no failures/errors/skips; no new 3.10 full
+run is claimed. Commands, artifacts and hashes are in TESTING.md. The original
+44 closed / 9 excluded / 12 unclosed broad audit count is not recalculated
+from this implemented subtask alone.
+
+## Metadata-only index rebuild reproduced — 2026-10-08
+
+New offline diagnostic uses only public SDK store/update/recall with 100
+synthetic in-memory records, TF-IDF, no automatic edges/Episodes or model calls.
+An unchanged warm precision query makes zero VibeMemory fit calls. Changing
+only anchor confidence to 0.6 makes TF-IDF and BM25 fit once each (plus the
+provider wrapper); changing content also fits. All phases return the anchor,
+updated confidence/content and no degradation failures. The explicit proposed
+no-refit performance assertion fails for the confidence-only phase; this is
+not evidence of an incorrect answer or a measured latency SLA violation.
+
+Reproduction command: project Python interpreter followed by
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/metadata_index_repro_v1.py`.
+Its first report is `results/metadata_index_repro_v1.json` in that isolated
+workspace. Existing files are protected against overwrite. The script exits 1
+on the observed no-refit assertion, intentionally; it is not a passing test.
+Current source still keys indexes by atom ID/version and increments version
+for metadata updates. No cache-key repair, production/test edit, default change,
+real database operation or paid call was made. Before implementation, confirm
+the public SDK/storage test boundary and preserve content/membership/order,
+owner/lifecycle/scope and cross-connection invalidation. Do not suppress version
+increments merely to hide this rebuilding cost.
+
+## Current Python 3.12 post-repair gate refreshed — 2026-10-08
+
+Full current suite including the final exact-ID creation-order parameter:
+**1085 passed / 208.98s**, exit 0, Python 3.12.14. Parsed JUnit confirms
+0 failures/errors/skips. Coverage XML: 4209/4844 lines (86.89%) and
+1303/1670 branches (78.02%), including MCP subprocess measurement.
+Commands, isolated artifacts and hashes are recorded in TESTING.md.
+
+This closes the stale 1084-test Python 3.12 gate gap; it does not close
+independent answer-quality, real host acceptance or other-version gaps.
+No production/test edits, paid calls, real data operations, commit or push.
+The six-package objective remains incomplete.
+
+## Four-case evidence-selection acceptance executed — 2026-10-08
+
+Human separately authorized four one-shot paid questions. Frozen L02/L03/L06/D01
+inputs were unchanged and submitted independently through the existing native
+ZCode generateText route, tools disabled and retries zero; no reviewer labels
+were sent. Returned selection: deepseek-vibe-test/deepseek-flash, low reasoning.
+All four completed with stop and settled usage. Developer review found original
+criteria met: environment-specific 4/1 retries, unconfirmed 7 not promoted,
+12 elapsed calligraphy days and preserved date-list weather evidence.
+
+Important new gap: L02 selected only production/test records but the answer
+also mentioned the unselected rumor. That satisfies the original no-promotion
+criterion, not a stronger answer-only-from-selected-evidence contract. Do not
+equate selected IDs with mechanically isolated answer evidence. Decide whether
+selection is an attribution declaration or a strict visibility boundary before
+claiming or implementing a stronger product guarantee.
+
+Four calls: input 2,273, output 1,218, reported total 3,491 tokens; separately
+reported reasoning 978. Sum of per-call elapsed times 22.484s. Existing ledger
+conservative estimate 0.022114 CNY double-counts separately reported reasoning
+and ignores cache discounts; not a provider bill. Existing cumulative 11-CNY
+limit unchanged. Detailed raw outputs, usage and review:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/selection_acceptance_v1/execution_review.md`.
+
+These are provided-context generations, not native Agent/MCP host calls or
+independent accuracy, stability, causal improvement or cost-saving evidence.
+Each question had fresh messages, not a persistent Agent session. Production
+defaults, actual SDK candidate noise, host configuration and real data remain
+unchanged. No commit/push. Four-question authorization is exhausted; no retries
+or additional model calls are implied. Overall six-package objective remains
+incomplete, including the newly observed selection/answer consistency gap.
+
+## Post-repair Python 3.10 gate refreshed — 2026-10-08
+
+Reused the existing isolated Python 3.10.11 runtime and verified current-checkout
+imports, including its default child-process path. Full current suite:
+1075 passed, 10 skipped / 118.55s, exit 0; JUnit 1085 total, 0 failures/errors.
+Eight optional answer-model and two tokenizer checks skipped for missing
+Transformers. Post-repair package line coverage 86.91%, branch coverage 77.90%;
+OpenAI Agents and MCP subprocess measurements included. Exact counts, commands,
+hashes and limitations are in TESTING.md.
+
+This advances package 5's local supported-version/coverage evidence, not the
+whole six-package objective. No new production/test changes, runtime install,
+paid request, real-data operation, commit/push or hosted CI. Current 3.11/3.13,
+independent semantic benefit and the separately authorized model acceptance
+remain open. Python 3.14 lacks test dependencies and was not tested.
+
+## Exact-ID order gate strengthened — 2026-10-08
+
+Follow-up within the confirmed public adapter/storage seam checks exact
+eight-character ID priority for both earlier and later creation times relative
+to long IDs sharing the prefix. Both pass without further production edits.
+Relevant adapter/MCP-ID subset: 44 passed / 5.10s. Nine adapter ID cases now
+exist; the prior 1084-pass full run predates this extra parameter. No new
+full/coverage/host/model claim, real-data operation, commit or push. Four-case
+paid selection validation still awaits separate authorization.
+
+## OpenAI Agents link follow-up completed locally — 2026-10-08
+
+Human confirmed the public adapter/SDK/storage test boundary. Two deterministic
+ambiguous source/target cases reproduced successful linking instead of rejection.
+Minimal adapter-only repair now prioritizes exact IDs and rejects ambiguous
+eight-character prefixes, retaining the existing JSON error convention. Store
+and recall expose additive full_id fields for disambiguation. The ordinary
+link success test now requires created; eight new public-interface checks verify
+no-write rejection, endpoint identity and ID delivery.
+
+43 relevant checks passed / 5.76s; full local Windows/Python 3.12.14 suite:
+1084 passed / 124.61s, JUnit 0 failures/errors/skips. TESTING.md records artifacts,
+hash and scope. No post-repair coverage, other-version/hosted acceptance, commit
+or push. No HTTP/SDK contract changes, model calls or real-user data changes.
+Historical row counts are not recomputed from this subtask. Six-package goal,
+paid four-case selection acceptance and remaining release/quality gates remain
+incomplete; this repair is not evidence of improved semantic memory accuracy.
+
+## Local coverage refresh, open gates retained — 2026-10-08
+
+Full current Windows/Python 3.12.14 coverage run: **1076 passed / 185.06s**,
+exit 0; JUnit 0 failures/errors/skips. Package line coverage 4,204/4,839
+(86.88%), branch coverage 1,298/1,664 (78.00%); MCP subprocess measurement
+included. Artifact paths, hashes and exact command are in TESTING.md. No
+production/test changes, paid requests, real database operation, commit or push.
+
+Package 5's current local 3.12 coverage evidence is refreshed; remaining weak
+assertions, other-version/full hosted compatibility and publication remain
+open. In particular, the OpenAI Agents adapter link test still accepts an
+error result; source inspection also finds overwrite-based short-ID resolution
+in that adapter. No new collision reproduction or fix is claimed. MCP's earlier
+prefix repair does not prove all adapters safe. Do not change the historical
+closed/excluded/unclosed row counts on the basis of this run alone.
+
+The separately frozen four-case selection pack remains prepared, not run:
+new paid model authorization is pending. Neither local coverage nor the earlier
+synthetic date-topic ranking experiments establish answer-quality improvement.
+All six work packages retain their original completion conditions.
+
+## Current host/onboarding/regression evidence — 2026-10-07
+
+The package table below is a dated 2026-10-04 audit, not the latest host status.
+Subsequent isolated native ZCode acceptance used the explicitly authorized paid
+`deepseek-vibe-test/deepseek-flash` route, not the deferred free Start Plan route.
+Three new-session, one-recall cases passed external manual answer review:
+explicit elapsed duration, ambiguous duration clarification, and empty evidence
+without claiming whole-library absence. Each question had separate human
+authorization and no retry. These are three selected cases, not independent
+accuracy, general applicability coverage or proof of all package-1 conditions.
+
+The external acceptance runner's terminal-event recognition and multi-request
+usage aggregation were repaired, tested offline and exercised in subsequent
+live acceptance. Original observations and read-only verification are retained
+separately in the isolated acceptance workspace; estimates are not provider
+bills. Neither a soft timeout nor an Agent-turn reservation is a hard cost cap.
+The user-visible TUI session, free-plan route and broader client compatibility
+are not established by these separate native sessions.
+
+`GETTING_STARTED.zh-CN.md` now documents the existing MCP enhancement default,
+terminal preference/first-use notice, shared-directory scope, current-host model
+versus local retrieval, privacy and cost boundaries, and optional strict scope.
+No automatic first-use popup or all-feature control panel is claimed.
+
+Fresh full local regression: **1076 passed / 139.46s**, Python 3.12.14, offline
+model-hub flags, no coverage measurement. See `TESTING.md` for command scope,
+JUnit counts/hash and targeted runs. This is a dirty local checkout, not a
+published commit or hosted CI. No commit/push or production data migration was
+performed. The six work packages remain open where their original completion
+conditions lack evidence, particularly representative applicability controls,
+retention/time policy, dense/cold performance, compatibility/coverage gates and
+independent algorithm benefit. The 96-row human review remains paused/unfilled.
+
+## Six-work-package completion audit — 2026-10-04
+
+Newest package-1 experiment: human approved a separate CUDA environment;
+GPU tensor check and cached SmolLM2-1.7B FP16 load succeeded. Same frozen prompt,
+12 original cases, all 12 parse-error fallback (C06 reached token cap); raw choices
+also point to old/inapplicable facts. Environment works, semantic/protocol quality
+does not. First outputs and resource evidence: results/smol_gpu_selection_12_first.md.
+No production change, final-answer quality proof or default enablement. Original
+CPU .venv retained; runtime dependencies downloaded, no new model weights.
+
+Latest package-1 diagnostic: the now date-bound 12 original cases were actually
+run through cached local Qwen2.5-0.5B with one frozen prompt and independent chat
+calls. Eight structurally accepted (six empty, two nonempty), four fallbacks;
+C01 still loses new-value evidence and C12 accepts inapplicable test-environment
+evidence. No final answers or independent accuracy score. Prompt/model pair is
+not eligible for production defaults. Source, first raw responses, cost and
+limits: results/dated_local_selection_12_first.md. No parser relaxation/retry,
+paid API, production change or new full-suite/coverage run in this experiment.
+
+Scope remains the six user-prioritized packages, not a goal limited to passing
+tests or improving graph latency. None is proven completely closed:
+
+| Package | Current evidence | Remaining completion condition |
+|---|---|---|
+| 1: failed memory tasks | Current C01 omission reproduced; existing five-candidate boundary includes m2; two actual offline 0.5B attempts failed structural selection, second raw choice was old m1 | Verified applicability selection/final answers across current, historical, planned, scope/conflict and paraphrase controls; no oracle labels or prompt-tuned single-case claim |
+| 2: onboarding/host/cost | Terminal settings exist; no completed current real-host inference/authorization/usage acceptance | User must resume deferred ZCode/Start Plan acceptance; keep Codex config protected and no paid fallback |
+| 3: history/time/forgetting | Human-approved read-only whole-file admin audit implemented; seven temporary-DB checks pass, including committed WAL history; legacy STALE transition/time provenance remains absent | Agree retention/time policy and backup/apply acceptance; real database migration requires separate authority |
+| 4: performance | Trace incident-edge read and per-call PPR transition reuse implemented; chain/star result comparisons, Python allocation diagnostics and latest 989-test regression | Dense/cold/resident memory, arbitrary graph behavior and measured incremental memory tradeoff remain; do not close original two rows from a star fixture |
+| 5: test/release gate | Human-approved public MCP/HTTP test remediation: health readiness, ephemeral port, target-ID recall assertions, unconditional directed link and strict missing-content error; 69 targeted checks pass on 3.10 | Remaining weak assertions, current full compatibility/coverage gates and authorized publication remain |
+| 6: algorithms/models | Default MCP auto-graph off; Louvain/Learner primary-path and independent-benefit gaps recorded | Reference/feedback test boundary and independent relation/task-benefit evidence needed before default integration or model upgrade |
+
+Human explicitly approved the admin and public-adapter test seams, then resumed
+implementation. Automatic goal continuations alone are not approval. Start Plan and 96-row human review remain
+explicitly deferred; repeated local tests cannot substitute for them. Original
+44 closed / 9 excluded / 12 unclosed retained, not a new row-by-row count.
+No commit/push, host/provider configuration change or real-data migration.
+
+Newest production addition is the read-only administrator audit: current full
+3.12 regression **996 passed / 151.20s**, exit 0; 3.10 targeted audit/adapter/MCP
+**69 passed / 10.96s**, exit 0. No fresh coverage. Prior PPR per-call transition reuse:
+106 targeted tests then 989 full tests / 121.73s, exit 0. Coverage XML predates both changes.
+Detailed evidence: TESTING.md, RETRIEVAL_COST_DIAGNOSTIC.md,
+results/fact_selection_current_input_check.md and both c01_local_selection
+attempt records. Further single-case prompt iteration or repeated identical
+regression is not a memory-effect improvement. Admin/weak-test implementation now
+proceeds while host/independent review stay deferred.
+
+## Latest sparse-hydration subtask — 2026-10-03
+
+Human approved existing SDK/storage public-interface tests using synthetic temporary databases. Replaced full-corpus atom hydration only for TF-IDF non-budget retrieval with a fresh complete id/version/content/created_at projection and on-demand owned active/warm full records. No persistent mutable-atom cache, corpus/candidate truncation, ranking-formula/SDK-signature change, new dependency, MCP tool/default, cloud call or real-data migration. Budget, dense and fallback paths stay unchanged. Production diff: two files, 44 additions / 7 deletions.
+
+Resource-contract red: two warm 3,000-atom calls allocate approximately 5.17MB, exceeding the 3MiB fixture budget; green after change. Eight new public-SDK checks cover allocation, same/second-connection mutation and reinforcement, caller-owned result isolation, store/delete/history, owner/lifecycle/full evidence/graph trace. Relevant 3.12 subset **102 passed / 11.57s**; full **891 passed / 122.54s**; existing isolated 3.10 subset **102 passed / 5.38s**, current checkout import verified. Initial default-temp run's 18 WinError5 fixture errors are not product regressions or a successful run; new unique roots fix the test environment without deleting old evidence. No new coverage or hosted CI result.
+
+Fixed-ID/time 10k old/new diagnostics: four pairs × 11 calls each side, 88 calls, identical IDs/order and no failures, warm p95 about 118–121ms to 32–34ms (~72% lower). Uncontrolled initial equality trial rejected. Original nine-cell harness repeated after change: 99/99 anchor hits, 100k precision/recall warm p95 **440.173/421.262ms**, sampled peaks **736.03/737.75MiB**. These are bounded synthetic observations; 100k is not a controlled old/new speedup estimate. No independent relevance, SLA or universal memory reduction claim. Non-sampling 10k profile: full conversions 10,005→10 and JSON loads 20,010→20 on this fixture; temporary Python allocation probe approximately 1.51MB after change, not RSS. Full method, historical observations and limits: RETRIEVAL_COST_DIAGNOSTIC.md.
+
+Keep **44 closed / 9 excluded / 12 unclosed**: sparse hydration is one implemented subtask, while dense, disk, graph/high-match and cold/index memory costs remain open. Start Plan and real ZCode model/authorization/usage acceptance remain deferred. Existing uncommitted work and prior evidence preserved, no commit/push.
+
+## Repository privacy audit and accepted public attribution
+
+Verified official Gitleaks 8.30.1 Windows archive checksum, temporary tool only. Current exported snapshot: 337 files, ~6.35MB, zero findings. Git patch scanner: 110 reported commits, zero findings; Git actually lists 111 non-merge commits with file changes, so supplemented with all 715 reachable file blobs and 111 commit objects via stdin (~11.88MB), also exit 0 / zero findings. This closes the static audit procedure, not an absolute secret-absence guarantee. Detailed scope, hashes and safe rerun instructions are in REPOSITORY_PRIVACY_AUDIT.md.
+
+PII heuristics find current/historical synthetic regression literals, example emails and loopback/unspecified bind addresses. Commit metadata contains one non-example-domain mailbox; the human explicitly replied **保留现有署名**. Preserve it, no history rewrite or author-config change. Withdraw the blanket no-personal-information claim rather than pretending a successful secret scan proves it. No raw match, credential, mailbox or signed URL published. No live credential/phone validation, real-data operation, new CI hook/test seam, production mutation, commit/push or full regression claimed. Documentation changes only, diff check passes.
+
+Original audit-procedure/unsupported-absence row now closes: **44 closed / 9 excluded / 12 unclosed**. Admin and weak-assertion test seams still await their distinct human approvals; the attribution answer does not authorize them. Performance measurements remain diagnostic, not fixes. Overall review goal is incomplete.
+
+## Precision/recall cost investigation: full hydration remains expensive
+
+Existing scale scripts measure budget only. Nine isolated-process public-SDK diagnostics now cover TF-IDF budget/precision/recall at 1k/10k/100k synthetic atoms, no graph/auto-edge/Episode, one cold plus ten warm queries. All anchor hits 11/11, failures empty; not independent quality. At 100k warm p95 budget 2.482ms, precision 8056.678ms, recall 8702.513ms; sampled process working-set peaks 142.43/840.53/839.18MiB respectively. Sampling/host-load limitations and reproduction are in RETRIEVAL_COST_DIAGNOSTIC.md.
+
+Separate 10k warm precision profile: corpus hydration 0.220/0.247s, JSON decoding 0.084s, overlapping cumulative costs. Direct TF-IDF encode of 10k×5000 float64 actually allocates 381.47MiB; this is not normal sparse search. A 100k dense batch is an unexecuted arithmetic projection, not proof. Dense semantic models/graph-bearing cost remain open. Do not substitute budget or cache mutable atoms without invalidation. No production/test mutation, new pytest seam, real-data operation, cloud request or commit/push; documentation and local Wiki updated. Both performance rows remain unclosed, counts **43 closed / 9 excluded / 13 unclosed**. Prior administrator and weak-assertion test-boundary questions still await human replies; automatic continuation is not confirmation.
+
+## Hosted CI acceptance after push 53cfcb6
+
+Commit `53cfcb649a547d9f23767c8c6eca72b7661e2af9` was pushed and remote main verified identical. [Run 36818592016](https://github.com/sv8vkwmfr7-create/vibe-memory/actions/runs/36818592016) completed successfully on all four Ubuntu matrix jobs (Python 3.10–3.13). Actual downloaded test logs show 822 passed / 11 skipped each: 50.38s, 62.95s, 75.35s, 65.14s respectively. Skips are eight optional answer-model tests, two optional real-tokenizer tests and one Windows-only working-set measurement. This is not the rich local 833-pass result or optional-model integration proof.
+
+All four coverage ZIPs were downloaded in memory and their SHA256 matched GitHub artifact digests. Each contains only coverage.xml, with nonzero executed lines, MCP measurement and knowledge_pages included. Exact metrics/digests are recorded in TESTING.md. The first anonymous API attempt was rate limited; authenticated archive download initially returned 401 because the credential header followed the signed redirect. Retrying the same artifacts with the API credential restricted to GitHub and an unauthenticated signed archive request succeeded. No credential or signed download URL is recorded. Initial failed access is not counted as verification.
+
+The CI/coverage-artifact row now closes: **43 closed, 9 excluded, 13 unclosed of 65**. Node20 action deprecation and upcoming ubuntu-latest migration are warnings, not test failures. No production change this acceptance pass. Weak assertions/conditional link execution/fixed HTTP startup sleep were confirmed in existing tests; their MCP/adapter/HTTP test boundary was requested and awaits human confirmation. Historical administrator seam also remains awaiting confirmation. Overall repair is incomplete; this acceptance documentation remains local, with no further commit/push.
+
 ## Batch 3w: pytest is the test verdict authority
 
 Removed eight obsolete run_all functions and two standalone manual runners from ten existing pytest modules, plus 183 constant per-test success prints: 546 lines removed. Manual lists missed later tests; the two standalone loops could mishandle fixtures or print failure while exiting normally. No new runner or abstraction replaces pytest. Test function signatures, assertions, fixtures and remaining diagnostic/protocol outputs are preserved. Comparison/simulation demonstrations and doctor output assertions remain intentional. TESTING.md documents the supported single-module pytest command; direct execution of the cleaned test files is no longer a supported test path.

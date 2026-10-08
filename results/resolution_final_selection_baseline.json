@@ -1,0 +1,267 @@
+{
+  "baseline": {
+    "r01": [
+      {
+        "id": "c6",
+        "text": "接口超时连接池维护记录编号3，连接资源配置记录",
+        "scope": {},
+        "context_before": "",
+        "context_after": "",
+        "source_session": "fixture"
+      },
+      {
+        "id": "c4",
+        "text": "接口超时连接池维护记录编号2，连接资源配置记录",
+        "scope": {},
+        "context_before": "",
+        "context_after": "",
+        "source_session": "fixture"
+      },
+      {
+        "id": "c3",
+        "text": "接口超时连接池维护记录编号1，连接资源配置记录",
+        "scope": {},
+        "context_before": "",
+        "context_after": "",
+        "source_session": "fixture"
+      },
+      {
+        "id": "c1",
+        "text": "接口超时连接池维护记录编号0，连接资源配置记录",
+        "scope": {},
+        "context_before": "",
+        "context_after": "",
+        "source_session": "fixture"
+      },
+      {
+        "id": "c0",
+        "text": "接口超时连接池维护记录编号4，连接资源配置记录",
+        "scope": {},
+        "context_before": "",
+        "context_after": "",
+        "source_session": "fixture"
+      }
+    ],
+    "r02": [
+      {
+        "id": "c4",
+        "text": "接口超时连接池维护记录编号3，连接资源配置记录",
+        "scope": {},
+        "context_before": "",
+        "context_after": "",
+        "source_session": "fixture"
+      },
+      {
+        "id": "c7",
+        "text": "接口超时连接池维护记录编号2，连接资源配置记录",
+        "scope": {},
+        "context_before": "",
+        "context_after": "",
+        "source_session": "fixture"
+      },
+      {
+        "id": "c3",
+        "text": "接口超时连接池维护记录编号1，连接资源配置记录",
+        "scope": {},
+        "context_before": "",
+        "context_after": "",
+        "source_session": "fixture"
+      },
+      {
+        "id": "c2",
+        "text": "接口超时连接池维护记录编号0，连接资源配置记录",
+        "scope": {},
+        "context_before": "",
+        "context_after": "",
+        "source_session": "fixture"
+      },
+      {
+        "id": "c6",
+        "text": "接口超时连接池维护记录编号4，连接资源配置记录",
+        "scope": {},
+        "context_before": "",
+        "context_after": "",
+        "source_session": "fixture"
+      }
+    ],
+    "r03": [
+      {
+        "id": "c8",
+        "text": "接口超时连接池维护记录编号3，连接资源配置记录",
+        "scope": {},
+        "context_before": "",
+        "context_after": "",
+        "source_session": "fixture"
+      },
+      {
+        "id": "c2",
+        "text": "接口超时连接池维护记录编号2，连接资源配置记录",
+        "scope": {},
+        "context_before": "",
+        "context_after": "",
+        "source_session": "fixture"
+      },
+      {
+        "id": "c0",
+        "text": "接口超时连接池维护记录编号1，连接资源配置记录",
+        "scope": {},
+        "context_before": "",
+        "context_after": "",
+        "source_session": "fixture"
+      },
+      {
+        "id": "c6",
+        "text": "接口超时连接池维护记录编号0，连接资源配置记录",
+        "scope": {},
+        "context_before": "",
+        "context_after": "",
+        "source_session": "fixture"
+      },
+      {
+        "id": "c5",
+        "text": "接口超时连接池维护记录编号4，连接资源配置记录",
+        "scope": {},
+        "context_before": "",
+        "context_after": "",
+        "source_session": "fixture"
+      }
+    ],
+    "r04": [
+      {
+        "id": "c7",
+        "text": "接口超时连接池维护记录编号3，连接资源配置记录",
+        "scope": {},
+        "context_before": "",
+        "context_after": "",
+        "source_session": "fixture"
+      },
+      {
+        "id": "c3",
+        "text": "接口超时连接池维护记录编号2，连接资源配置记录",
+        "scope": {},
+        "context_before": "",
+        "context_after": "",
+        "source_session": "fixture"
+      },
+      {
+        "id": "c6",
+        "text": "接口超时连接池维护记录编号1，连接资源配置记录",
+        "scope": {},
+        "context_before": "",
+        "context_after": "",
+        "source_session": "fixture"
+      },
+      {
+        "id": "c2",
+        "text": "接口超时连接池维护记录编号0，连接资源配置记录",
+        "scope": {},
+        "context_before": "",
+        "context_after": "",
+        "source_session": "fixture"
+      },
+      {
+        "id": "c5",
+        "text": "接口超时连接池维护记录编号4，连接资源配置记录",
+        "scope": {},
+        "context_before": "",
+        "context_after": "",
+        "source_session": "fixture"
+      }
+    ]
+  },
+  "recall_failures": {
+    "r01": [],
+    "r02": [],
+    "r03": [],
+    "r04": []
+  },
+  "label_aliases": {
+    "r01": {
+      "n4": "c0",
+      "n0": "c1",
+      "repair": "c2",
+      "n1": "c3",
+      "n2": "c4",
+      "cause": "c5",
+      "n3": "c6",
+      "suspect": "c7"
+    },
+    "r02": {
+      "suspect": "c0",
+      "repair": "c1",
+      "n0": "c2",
+      "n1": "c3",
+      "n3": "c4",
+      "cause": "c5",
+      "n4": "c6",
+      "n2": "c7"
+    },
+    "r03": {
+      "n1": "c0",
+      "repair": "c1",
+      "n2": "c2",
+      "suspect": "c3",
+      "cause": "c4",
+      "n4": "c5",
+      "n0": "c6",
+      "old": "c7",
+      "n3": "c8"
+    },
+    "r04": {
+      "repair": "c0",
+      "old": "c1",
+      "n0": "c2",
+      "n2": "c3",
+      "suspect": "c4",
+      "n4": "c5",
+      "n1": "c6",
+      "n3": "c7"
+    }
+  },
+  "pack_sha256": "041d93fff70d54235747cbd29da456bc605ad94510ab23bd3e885429ff270183",
+  "cases_sha256": "5608ad7c0fc6596ac0807323a734fa25bf06ce77f5824d0206b494a269bd8023",
+  "review_pack_sha256": "c91aa765cff01fcfbb6d05ca32608869d0c81d3b94f69f727eed9a76f60a93d6",
+  "review_baseline_sha256": "1741fbecda96c6d60de373a7e9b08720e465f385076b01ceec4eeab843c2e6ce",
+  "review_response_sha256": "4e700bbd55ebc5cbc643974129115fc19287125039ec45e02d9402444616a180",
+  "review_selections": [
+    {
+      "case_id": "r01",
+      "status": "selected",
+      "fallback_reason": null,
+      "memories": [
+        {
+          "id": "c5",
+          "text": "资源持有者未执行结束动作，回收流程一直等待"
+        }
+      ]
+    },
+    {
+      "case_id": "r02",
+      "status": "selected",
+      "fallback_reason": null,
+      "memories": [
+        {
+          "id": "c5",
+          "text": "资源持有者未执行结束动作，回收流程一直等待"
+        }
+      ]
+    },
+    {
+      "case_id": "r03",
+      "status": "selected",
+      "fallback_reason": null,
+      "memories": [
+        {
+          "id": "c4",
+          "text": "资源持有者未执行结束动作，回收流程一直等待"
+        }
+      ]
+    },
+    {
+      "case_id": "r04",
+      "status": "selected",
+      "fallback_reason": null,
+      "memories": []
+    }
+  ]
+}

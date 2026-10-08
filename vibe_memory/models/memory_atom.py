@@ -15,6 +15,12 @@ from typing import Optional
 from datetime import datetime
 
 
+def scope_matches(stored: dict[str, str], required: dict[str, str]) -> bool:
+    """Every requested key must exist; use the SDK's normalized value matching."""
+    return all(key in stored and stored[key].strip().casefold() == value.strip().casefold()
+               for key, value in required.items())
+
+
 class EdgeLabel(str, Enum):
     """边标签枚举（8 种）"""
     CAUSAL = "因果接续"       # A 导致了 B

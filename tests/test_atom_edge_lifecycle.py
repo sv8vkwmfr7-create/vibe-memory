@@ -104,7 +104,7 @@ def test_sdk_auto_merge_returns_existing_result_and_keeps_relations(monkeypatch)
         neighbor = mem.store("neighbor", auto_build_edges=False, auto_episode=False)
         mem.link(previous.id, neighbor.id)
         monkeypatch.setattr("vibe_memory.sdk.build_cross_session_candidates", lambda *args, **kwargs: {"duplicate": [previous], "similar": []})
-        result = mem.store("second", auto_episode=False)
+        result = mem.store("first", auto_episode=False)
         assert mem.storage.get_atom(result.id) is not None
         assert mem.storage.get_atom(previous.id) is None
         assert mem.storage.get_outgoing_edges(result.id)[0].to_atom_id == neighbor.id
@@ -159,7 +159,7 @@ def test_sdk_conflict_skips_merge_without_losing_relations(monkeypatch):
             mem.link(new_atom.id, neighbor.id, label=EdgeLabel.REVISION)
             return {"duplicate": [previous], "similar": []}
         monkeypatch.setattr("vibe_memory.sdk.build_cross_session_candidates", candidates)
-        result = mem.store("second", auto_episode=False)
+        result = mem.store("first", auto_episode=False)
         assert mem.storage.get_atom(result.id) and mem.storage.get_atom(previous.id)
         assert len(mem.storage.get_edges_by_agent("agent")) == 2
     finally:
