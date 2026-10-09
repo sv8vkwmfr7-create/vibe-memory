@@ -24,7 +24,7 @@ collect_garbage()                 → GC 压缩
 import uuid
 import sqlite3
 from copy import deepcopy
-from contextlib import nullcontext
+from contextlib import ExitStack, nullcontext
 from typing import Optional
 from datetime import datetime
 from enum import Enum
@@ -112,12 +112,16 @@ class VibeMemory:
         self._closed = False
         if wal_maintenance is not None:
             wal_maintenance.validate_path(db_path)
-        with wal_maintenance.operation() if wal_maintenance is not None else nullcontext():
+        with (
+            wal_maintenance.operation() if wal_maintenance is not None else nullcontext(),
+            ExitStack() as startup_cleanup,
+        ):
             self.agent_id = agent_id
             self.tenant_id = tenant_id
 
             # 存储层
             self.storage = VibeStorage(db_path=db_path, tenant_id=tenant_id, journal_mode=journal_mode)
+            startup_cleanup.callback(self.storage.conn.close)
 
             # Embedding
             self.embedding = create_provider(backend=embedding_backend, model_name=embedding_model)
@@ -171,6 +175,7 @@ class VibeMemory:
             self._edge_count: int = 0
             self._semantic_cache: dict = {}
             self._bm25_cache: dict = {}
+            startup_cleanup.pop_all()
 
     @coordinated
     def __enter__(self) -> "VibeMemory":

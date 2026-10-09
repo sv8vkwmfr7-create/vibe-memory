@@ -27,8 +27,12 @@ only in memory and are not restored on reopen. To process them, explicitly use
 `storage`, `indexer`, or other collaborators bypasses the SDK lifetime contract.
 
 This adds no destructor or automatic cleanup for abandoned instances.
+Once storage construction succeeds, later SDK initialization failures close
+that connection before propagating the initialization error. Successful
+construction transfers ownership to the SDK as before. This does not cover
+failures inside the storage constructor itself or undo schema initialization.
 LangChain helper ownership now delegates to this SDK close/context contract;
-see [adapter contracts](ADAPTER_CONTRACTS.md). Constructor failure cleanup,
+see [adapter contracts](ADAPTER_CONTRACTS.md). Storage-constructor failures,
 OpenAI legacy factory callers, remaining process owners and forced termination are
 separate work. Existing OpenAI factory return type
 and its seven functions are unchanged; no model-facing close tool is added.
@@ -42,5 +46,8 @@ of that borrowed SDK. Legacy factory calls without memory remain unmanaged.
 close/context/store/history interfaces. Default/WAL cases cover repeated close,
 rejected post-close use, persistence on reopen, normal/exceptional context exits,
 and no ResourceWarning after collection of explicitly managed instances.
+Public-constructor invalid-backend cases also cover failure cleanup in default
+and WAL databases, exact backend error preservation, existing records on reopen,
+and successful writes after the failed startup.
 No private-method calls, SQL assertions, internal mocks or paid model calls.
 ResourceWarning absence alone on older Python versions is not causal proof.

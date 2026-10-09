@@ -231,3 +231,60 @@ def test_combined_evidence_budget_preserves_whole_records(tmp_path):
         assert {data["memories"][0]["full_id"], *data["evidence_budget"]["omitted_ids"]} == {
             payload(replies[0])["id"], payload(replies[1])["id"]}
         assert data["evidence_budget"]["used_chars"] <= 20000
+
+
+def test_enhanced_recall_delivers_date_policy_without_rewriting_evidence(tmp_path):
+    unknown_day = "2026/09/29 10:00\nuser: 支付服务生产环境的发布审批策略已经更新，但这份记录没有说明更新后的策略内容。"
+    explicit_day = "2026/09/29 10:00\nuser: 支付服务测试环境的发布审批策略于2026年9月27日更新为人工审批。"
+    replies = exchange(tmp_path, [
+        ("vibe_store", {"content": unknown_day}),
+        ("vibe_store", {"content": explicit_day}),
+        ("vibe_recall", {"query": "支付服务发布审批"}),
+    ])
+    recalled = payload(replies[2])
+    assert {m["content"] for m in recalled["memories"]} == {unknown_day, explicit_day}
+    instructions = recalled["selection_instructions"]
+    assert "创建时间、记录时间与事件发生时间、配置生效时间应分别判断" in instructions
+    assert "不得仅凭日期标题或记录先后顺序" in instructions
+    assert "正文明确给出的发生日期、生效日期应按其语义和适用范围使用" in instructions
+    assert "未明确的日期保持未知" in instructions
+    assert "不要改写证据原文" in instructions
+    assert recalled["selection_status"] == "pending_host_selection"
+    assert recalled["selection_verified"] is False
+
+
+def test_session_injects_date_policy_and_preserves_explicit_event_day(tmp_path):
+    content = "2026/09/29 10:00\nuser: 支付服务生产环境的发布审批策略于2026年9月27日更新为人工审批。"
+    replies = exchange(tmp_path, [
+        ("vibe_store", {"content": content}),
+        ("vibe_session_start", {"context": "支付服务发布审批"}),
+    ])
+    session = payload(replies[1])
+    instructions = session["selection_instructions"]
+    assert "不得仅凭日期标题或记录先后顺序" in instructions
+    assert "未明确的日期保持未知" in instructions
+    assert [m["content"] for m in session["memories"]] == [content]
+    injection = Path(session["inject_file"]).read_text(encoding="utf-8")
+    assert instructions in injection
+    assert [m["content"] for m in json.loads(injection.splitlines()[-1])] == [content]
+    assert session["selection_verified"] is False
+
+
+def test_disabled_enhancement_keeps_date_evidence_without_selection_policy(tmp_path):
+    content = "2026/09/29 10:00\nuser: 支付服务生产环境的发布审批策略于2026年9月27日更新为人工审批。"
+    replies = exchange(tmp_path, [
+        ("vibe_store", {"content": content}),
+        ("vibe_settings", {"enhanced": False}),
+        ("vibe_recall", {"query": "支付服务发布审批"}),
+        ("vibe_session_start", {"context": "支付服务发布审批"}),
+    ])
+    for reply in replies[2:]:
+        data = payload(reply)
+        assert data["enhanced"] is False
+        assert data["selection_status"] == "disabled"
+        assert data["selection_instructions"] is None
+        assert data["selection_verified"] is False
+        assert [m["content"] for m in data["memories"]] == [content]
+    injection = Path(payload(replies[3])["inject_file"]).read_text(encoding="utf-8")
+    assert "创建时间、记录时间与事件发生时间" not in injection
+    assert [m["content"] for m in json.loads(injection.splitlines()[-1])] == [content]

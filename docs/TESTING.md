@@ -1,5 +1,187 @@
 # Tests and coverage
 
+## Licensed isolated-build wheel, fresh installed full gate — 2026-10-09
+
+New wheel SHAeacf05cea73ca9c92e69e915695577f22c360858e321fe4c0181f048f097f927 includes
+repository LICENSE, previously built via isolated sdist->wheel. Fresh Windows/
+Python3.14.7 wheel[dev] install, normal resolution, pip check; unique venv site,
+user-site disabled, coverage-owned .pth only. Unchanged runner/complete fixtures,
+Python -I and installed absolute --cov root: **1111 passed,10 skipped,170 warnings
+/202.08s**, exit0; JUnit1121 zero failures/errors. Optional transformers skips
+and database ResourceWarnings retained, not accepted as covered/fixed paths.
+
+All47 loaded project modules installed;222 code/data/config inputs unchanged;
+all48 checkout/wheel/installed Python hashes match before/after. Coverage48 files,
+lines4232/4867, branches1314/1682, display85%; installed MCP EOF-close573 hit1.
+Six CLI help/eight synthetic MCP doctor checks pass on this same new artifact.
+No paid/model/real data/config/source edit or release. Full logs, environment,
+resolver/JUnit/coverage/origins:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/clean_build_full_gate_20261009_v1/REPORT.md`.
+
+## Isolated source-distribution build, new artifact base smoke — 2026-10-09
+
+Fresh Python3.14.7 builder/build1.6.1, isolated setuptools84.0.0 sdist then
+wheel-from-sdist from current package+pyproject/README/LICENSE snapshot. New
+wheel SHAeacf05cea73ca9c92e69e915695577f22c360858e321fe4c0181f048f097f927 includes
+repository LICENSE; all48 checkout/sdist/wheel/new installed code hashes match.
+Key dependency/entrypoint metadata matches prior wheel, not whole binary bytes.
+Fresh base-only runtime pip check, SDK lifecycle/persistence smoke, six installed
+CLI help entries and eight existing synthetic stdio doctor checks pass.
+
+No full pytest on this new artifact; prior installed-full report is separate.
+License-table/classifier deprecation warnings retained; current setuptools>=64
+lower-bound compatibility needs a separate migration decision. No model/paid
+call, real DB/config/production edit or release. This is not full Git-sdist test
+fixture completeness, offline/bit reproducibility, minimum versions or host/
+semantic acceptance. Build logs, resolver records and archive verification:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/clean_build_gate_20261009_v1/REPORT.md`.
+
+## Base-only installed wheel smoke — 2026-10-09
+
+Fresh Windows/Python3.14.7 no-pip venv, normal current-wheel installation without
+dev/semantic extras: only vibe-memory0.3.0 and NumPy2.5.3. No system/user site
+borrowing, .pth hooks, pytest/sklearn/torch/transformers/coverage. pip check and
+48-file checkout/archive/installed equality pass; loaded SDK modules installed.
+
+Public SDK lifecycle and persistence smoke passes. Reused unchanged existing
+smoke_cli.py passes six installed CLI help entries and eight synthetic stdio MCP
+doctor checks with explicit new interpreter/DB. This is not a full suite in a
+base environment, lowest dependency-version, clean-build, final-answer or host
+acceptance. Installation7.797s uses local cache conditions, not cold-onboarding
+latency. No paid call, product code/real-data/config edit or release. Artifacts:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/base_wheel_gate_20261009_v1/REPORT.md`.
+
+## Current MCP policy wheel, fresh installed full gate — 2026-10-09
+
+Wheel SHA327f99d3f9e649c973bd96cf75f436ad2e859ad9c97aa9b2bc8f31ccaa617b17 includes
+current MCP policy plus SDK startup cleanup. All48 Python files match checkout/
+copied source/archive/new installed package. Fresh Windows/Python3.14.7 venv,
+normal wheel[dev] resolution, no old dependency-path borrowing; pip check passes.
+Existing build tools reused without isolation: not clean-build acceptance.
+
+Installed full suite **1111 passed,10 skipped,170 warnings /203.64s**, exit0;
+JUnit1121 zero failures/errors. Optional local-answer runtimes unavailable;
+database ResourceWarnings remain unsuppressed, not an all-owner leak repair.
+47 loaded modules all installed;222 .py/.json/.toml inputs unchanged, seven
+non-package mirrors, explicit installed coverage root. Coverage48 package files,
+lines4232/4867, branches1314/1682, combined85%; installed MCP EOF-close573 hit.
+
+Six installed CLI help checks and eight synthetic MCP doctor checks pass.
+No paid/native generation or real DB/config change. This does not prove answer
+quality, real-host behavior, clean/minimum build or all Python/OS combinations.
+Resolver/isolation/provenance/JUnit/coverage/CLI smoke evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/mcp_policy_wheel_gate_20261009_v1/REPORT.md`.
+
+## Current-source full regression after date-policy delivery — 2026-10-09
+
+Windows/Python3.12.14 existing editable environment: **1121 passed /258.99s**,
+exit0; persisted JUnit1121 tests with zero failures/errors/skips. Existing local
+answer-model checks run here; they are not the pending new-policy quality A/B.
+No paid/native-generation call, extra test filter or warning suppression added.
+
+Coverage48 package files with subprocess patch: combined84.77% (display85%),
+lines4251/4885 and branches1316/1682; MCP combined95.17%. Isolated temp/coverage/
+report paths; 151 package/test Python hashes unchanged. This snapshot does not
+cover every experiment/data/report fixture or fresh dependency provenance.
+
+Current-source engineering gate only, not a current installed wheel, other
+Python/platform, real host model or semantic-quality acceptance. Previous wheel
+gate below predates this MCP change. Exact command/exit/Python, JUnit, coverage
+and source snapshots:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/mcp_policy_source_full_20261009_v1/REPORT.md`.
+
+## MCP temporal policy delivery — 2026-10-09
+
+Approved public MCP tools/call and returned injection-file seams only; temporary
+synthetic DB/settings, no model calls. Enhanced recall's new date-policy delivery
+regression first fails, then passes after a single shared instruction suffix.
+Separate session response/injection and disabled recall/session/injection tests
+verify exact original content/explicit event dates and disabled=None behavior.
+No internal helper calls, SQL assertions or final-answer model claims.
+
+Python3.12.14 related MCP suites **74 passed /44.93s**, exit0:
+
+```powershell
+python -m pytest tests/test_mcp.py tests/test_mcp_enhancement.py tests/test_mcp_link_ids.py -q --basetemp <new-unique-temporary-directory>
+```
+
+These test instruction delivery, not generated-answer accuracy or compliance.
+Current-source policy equals the pre-change frozen candidate. Previous full
+source/wheel gates below predate this change; no new full/cross-runtime/package
+gate is claimed. Red/green and related JUnit with bounded report:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/mcp_temporal_policy_delivery_v1/REPORT.md`.
+
+## Repaired wheel, fresh installed full gate — 2026-10-08
+
+New wheel SHA256
+`afa14cc49dcd3cc25a85c3214a1370da42cb7931de277292fc7083013f3462f8` includes
+SDK startup-failure cleanup. All 48 package Python files match checkout/archive/
+installed bytes. Fresh Windows/Python3.14.7 venv normally resolves wheel[dev]
+dependencies, not borrowed site-packages; pip check passes. coverage's own .pth
+startup hook is present, but no external dependency path is added.
+
+Full copied current suite with complete explicit fixtures: **1108 passed,
+10 skipped, 170 warnings /230.12s**, exit0. All 47 loaded package modules from
+new venv; 222 code/data/config fixture hashes unchanged. Coverage absolute source
+root is installed package; all 48 Python files measured, MCP subprocess EOF-close
+line572 hit: 4232/4867 lines, 1314/1682 branches, combined85%. Six CLI help commands
+and eight existing doctor persistence checks pass. Warnings remain unsuppressed.
+
+Build used existing tools with --no-build-isolation. This local artifact gate is
+not a clean build, minimum dependency, other Python/platform, real-host or memory
+quality gate. No paid call, real data/config edit or push. Reproduction harness,
+resolver report, frozen manifests, JUnit and coverage:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/startup-fixed-wheel-20261008-a/`.
+
+## SDK startup failure regression — 2026-10-08
+
+Human-approved public constructor and close/context/store/history seams only,
+temporary default/WAL databases. Initial invalid-backend case fails at unclosed
+database ResourceWarning, then passes after constructor cleanup. The exact
+ValueError remains unchanged; failed startup preserves prior records and permits
+successful reopening/writing. No internal mocks, private calls or SQL assertions.
+An initial basetemp parent error is setup failure, not the bug's red signal.
+
+Python3.14 related suite101 pass; Python3.10/3.12 lifetime/WAL subsets28 each pass.
+Full actual-source Python3.14.7: **1108 passed, 10 skipped, 170 warnings /219.21s**,
+exit0, whole-package/MCP-subprocess combined coverage85%. Warnings are not
+suppressed; this is not a warning-free suite or all-owner leak fix. Storage
+constructor-internal failures are outside the reproduced path. Previous wheel
+reports are for the pre-repair artifact; rebuild and installed acceptance remain
+next. No paid model or real data/config changes. Reports:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/sdk-startup-fix-20261008-a/`.
+
+## Complete-input installed regression and clean runtime — 2026-10-08
+
+The current wheel's Windows/Python3.14.7 full installed regression now passes:
+**1106 passed, 10 skipped, 179 warnings /222.39s**, exit0. Existing assertions
+are unchanged; 222 explicit fixture/report-input hashes are frozen and checked
+before/after. All 47 loaded project modules resolve inside installed venv.
+
+Use an absolute installed package directory for `--cov`, not just the package
+name when cwd contains same-name report-input mirrors. The name-only control
+passed tests but emitted no-data-collected and measured three wrong files.
+Explicit directory selection measures all 48 installed package Python files:
+4229/4865 lines (86.93%), 1313/1682 branches (78.06%), combined85%; installed
+MCP subprocess EOF-close line572 hit. Runner starts pytest-cov before package
+imports and retains visible ResourceWarnings. No fail-under threshold is set.
+Runnable harness, input/origin manifests, JUnit and coverage reports:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/installed-coverage-20261008-a/`.
+
+Separate clean-runtime venv, same wheel, normal declared dependency resolution:
+only vibe-memory0.3.0 and NumPy2.5.3, no .pth or system/user-site dependency
+reuse. pip check, 48-file wheel equality, six CLI help commands and installed
+doctor's eight synthetic MCP persistence checks pass. This is runtime-only smoke,
+not a second full suite or minimum-version dependency proof. Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/clean-runtime-20261008-a/`.
+
+Both use wheel SHA256
+`71355c78f93703ce12fc3ff3d6527b4f990650acfe66db025aa8594acfe98919`.
+The full-suite environment reuses test dependencies; the clean-runtime environment
+does not. Neither gate repairs the known constructor-failure cleanup bug or
+verifies independent final-answer quality. After that repair a new wheel needs
+acceptance. Historical pending statements below apply to the earlier runs.
+
 ## Staged checkpoint reproducibility — 2026-10-08
 
 Tests run against a git checkout-index export, not the dirty development cwd.

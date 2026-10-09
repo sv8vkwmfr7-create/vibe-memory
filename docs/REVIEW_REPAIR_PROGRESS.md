@@ -1,5 +1,766 @@
 # Review repair progress — 2026-10-01
 
+## Temporal role/bounds candidate frozen, not model-tested — 2026-10-09
+
+After completed wrapper-hint pack showed no incremental benefit and N03 wording
+concerns, freeze experiment-only candidate appending111chars to current global
+selection instructions: unknown header role cannot become a specific role or
+event/config temporal bound; preserve explicitly supported body roles/times.
+Baseline is current policy without wrapper hints. This is a new intervention,
+not a direct single-factor old-wrapper-vs-new-rule comparison or proven fix.
+
+Four paired cases/eight inputs: N03 seen regression reuses old raw capture;
+R01 new unknown-role case; R02 explicit writing-time control; R03 explicit
+event/effective-time control. Three new temporary public MCP store/recall pairs
+(six tools), raw requests/responses/stdout/stderr preserved, no real data.
+Freeze/check and separate pair-difference checks pass: only instruction append,
+system/evidence/body/IDs/order/scope/question/as_of unchanged. Candidate policy
+replacement in replay is explicit, not unchanged complete raw MCP result.
+Criteria isolated, assistant-authored development material, no independent or
+training-unseen claim. Added111chars outside memories budget, token cost unmeasured.
+
+Zero models/paid calls; ledger160 byte-identical before/after. No production
+policy/default/config, paused review, Git push or release changes. Two proposed
+max-four batches each need fresh authority; no new permission now. First batch
+N03 baseline/candidate and R01 candidate/baseline; no mid-pack retuning.
+Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/temporal_role_bounds_v1/REPORT.md`.
+
+## Six-case temporal-hint development comparison complete; no promotion — 2026-10-09
+
+Third fresh authorization consumed N05 baseline/hint, N06 hint/baseline, four
+serial first responses. N05 both current25seconds, future50fromSeptember1;
+N06 both body-supportedAugust29 and unknown mode. Both meet frozen criteria,
+no observed extra hint benefit/regression. All stop/JSON/citation-ID checks
+valid, client_requests empty. Batch5288 tokens, upperCNY0.026054, native14.671s.
+
+All six frozen development cases now have12 first responses, no retuning/deletion.
+Five cases both meet criteria, N03 both retain different header-role/temporal-bound
+wording concerns. Same-assistant nonblind, one call/arm; not independent accuracy
+or stability. This pack has no observed incremental hint benefit. Do not promote
+wrapper hint to production default; do not erase prior known T04 contrast or
+reinterpret N03 as clean pass. No live host E2E/real-user quality proof.
+
+New offline aggregate audit directly checks all12 artifacts against current
+ledger slices/source/helper/input/response/citation/authorization bindings and
+recomputes charges; old per-batch reports remain point-in-time snapshots.
+Input10782/output4380/total15162, reasoning3203 separately, cacheRead4224.
+Hint inputs5674 vs baseline5108 (+566, about11.1% here only); output/reasoning
+variation is not causal savings. Three-batch upperCNY0.082228, not actual bill;
+native duration sum42.246s, not user/host latency or onboarding time.
+
+Ledger148->160, all settled, old rows unchanged; cumulative upper1.571402,
+guard remaining9.428598 under11. All three max-four authorizations exhausted.
+Next: unpaid new-candidate design for unknown role/temporal bounds, treating
+N03/T04 as seen regression, new version/new evaluation before promotion.
+No production prompt/default/code, real DB/config, paused review, Git push or
+release changes. Summary:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/temporal_hint_holdout_summary_v1.md`.
+
+## N03 source-role audit: unsupported role appears in answer — 2026-10-09
+
+Read-only comparison of actual capture, both frozen inputs, first responses
+and current MCP format_memories confirms identical raw result in both arms.
+No created_at/recorded_at/event timestamp field is delivered; body header is
+unchanged, repeated summary is not independent provenance. Hint explicitly
+marks its time role unverified, not record time. Thus answer's already-changed
+bound / qualified record-time reading is an extra model interpretation, not
+evidence of MCP converting this header into verified source metadata. This
+visible-input audit does not establish which prompt clause caused the behavior.
+
+Candidate follow-up should preserve unknown role and temporal bounds as well
+as unknown exact date; do not alias ingestion time to source recorded_at. Keep
+current hint/criteria unchanged until remaining frozen cases complete, then any
+changed candidate uses new version and N03 as seen regression. Zero model/paid
+calls; ledger156 unchanged, production source unchanged. Evidence: source-role
+audit appended to the batch2 REPORT.md at the existing evidence path below.
+
+## Fresh holdout N03/N04: date-role wording concern remains — 2026-10-09
+
+New human authorization consumed exactly N03 hint/baseline, N04 baseline/hint;
+four serial first responses, no retries/tools/fallback/paid judge. N04 both
+correct35seconds/August22, not headerAugust25 or older20seconds. N03 both
+explicitly preserve unknown change day/mode, but baseline says August19at14:20
+already changed (unverified temporal bound), hint calls header an unverified
+record time (qualified but role not established). Retain nuance: not an exact
+event-day assertion or clean pass; no binary scoring to favor either arm.
+Same-assistant nonblind review, two cases/one response per arm, no stable or
+independent quality claim. Production temporal-role concern remains unresolved.
+
+All stop outputs, JSON/citation-ID checks valid; client_requests empty; returned
+identifiers deepseek-vibe-test/deepseek-flash. Actual frozen MCP result/body/IDs/
+order/scope/system preserved, wrapper-only hint; not live host E2E. Criteria/hint
+unchanged, N05/N06 untouched. Offline verifier passes all input/source/response/
+ledger bindings and recomputes conservative charges; not semantic proof.
+
+Input3508/output1865/total5373 tokens, reasoning1464 separately, cacheRead1408;
+native sum15.045s, not host latency. Batch upper CNY0.033648, not actual bill.
+Ledger152->156 all settled, old rows unchanged, no lock; cumulative upper1.545348,
+remaining guard9.454652 under11. Four-call authority exhausted. Next frozen
+N05/N06 batch requires fresh max-four authority; do not retune mid-pack or promote
+production defaults. No real DB/config changes, paused review filling or Git
+commit/push/release. Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/temporal_hint_holdout_batch2_run_v1/REPORT.md`.
+
+## Fresh holdout N01/N02 four-call comparison completed — 2026-10-09
+
+New human authorization consumed exactly N01 baseline/hint, N02 hint/baseline,
+serial first responses, no retries/tools/fallback/paid judge. Both arms satisfy
+frozen criteria: N01 date/mode unknown without invented facts; N02 45seconds,
+August12 from body, not August18 header or blanket abstention. No observed
+incremental hint benefit or regression on these two cases. N01 hint array empty;
+one response/arm, same-assistant nonblind review, not independent/stable/general
+quality proof or evidence that harder N03 is resolved. N03-N06 remain untouched.
+
+All stop outputs, JSON/citation-ID checks valid, native returned identifiers
+deepseek-vibe-test/deepseek-flash, client_requests empty. Frozen MCP result/body/
+IDs/order/scope/system and hint/criteria unchanged; wrapper replay, not live
+host MCP E2E or production integration. Offline verifier passes source/input/
+first-response/ledger bindings and recalculates conservative charges.
+
+Input3347/output1154/total4501 tokens, reasoning825 separately (not added to
+total), cacheRead1280. Native duration sum12.530s, not host latency. Batch guard
+CNY0.022526, not actual bill. Ledger148->152 all settled, old rows unchanged;
+cumulative upper1.511700, guard remainder9.488300 under11. Four-call authority
+exhausted; second frozen batch N03/N04 needs fresh max-four authority. No source
+default/real DB/config changes, paused review filling, commit/push/release.
+Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/temporal_hint_holdout_batch1_run_v1/REPORT.md`.
+
+## First holdout batch bound offline; paid execution unavailable — 2026-10-09
+
+Prepared exactly N01 baseline/hint and N02 hint/baseline from frozen v2, with
+input/helper hashes and current settled148-row ledger binding. Offline prepare
+and independent check pass. Existing reserve exercised only on memory copies:
+first reservation accepted; uncertain/duplicate/over-limit rejected. --run is
+explicitly unavailable and its rejection verified (exit1); no native request,
+model/paid call or real ledger reservation. Ledger bytes unchanged. No new
+quality evidence or production default/config change. Fresh max-four paid
+authorization remains necessary; do not count preparation as semantic success.
+Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/temporal_hint_holdout_batch1_prepared_v1/REPORT.md`.
+
+## Fresh temporal-hint development holdout frozen, not model-tested — 2026-10-09
+
+Six new assistant-authored boundary cases, seven synthetic memories, twelve
+proposed inputs frozen in v2. Public MCP captures: seven store/six recall calls,
+temporary databases only; original requests/responses/stdout/stderr retained.
+Freeze and independent byte-rebuild check pass. Cases cover absent/ISO/Chinese
+headers, multiple explicit changes, future-effective configuration and a body
+event date matching its header. Same prior frozen hint meaning/role; actual MCP
+result/body/IDs/order/scope/system preserved. Review criteria isolated from model
+messages; wrapper overhead outside original memories evidence budget.
+
+Pre-model material review caught v1 N03 explicitly warning its date was absent.
+Retain v1; v2 removes only this date clue from N03, other five case specifications
+unchanged, then recaptures fresh IDs. Not twelve independent cases. Both versions
+remain unrun; twenty-six MCP tool calls total, zero model/paid calls. Ledger148
+rows unchanged byte-for-byte, cumulative conservative upper CNY1.489174 under11.
+
+Prepared-only, not semantic success, independent blind review, training-unseen,
+repeatability or live-host E2E proof. No production hint field/default change,
+real DB/config edits, paused review filling, commit/push/release. Previous four
+paid calls exhausted; each proposed max-four batch requires fresh authorization.
+First proposed batch N01 baseline/hint and N02 hint/baseline, not authority for12.
+Evidence and frozen hashes:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/temporal_hint_holdout_v2/REPORT.md`.
+
+## Per-record temporal hint: narrow positive four-call result — 2026-10-09
+
+Fresh human authorization consumed four serial first responses exactly as frozen:
+T04 baseline/hint, D01 hint/baseline. Baseline uses current date-policy clause;
+hint only adds experiment-wrapper evidence_time_hints, preserving actual MCP
+result/body/IDs/scope/system. No tools/retry/fallback/paid judge; all stop outputs,
+JSON/citation-ID checks valid. Returned identifiers deepseek-vibe-test/deepseek-flash,
+not independently verified backend weights. No production hint field/integration.
+
+T04 baseline repeats unsupported "已于2026/09/29更新". Hint answer keeps unknown
+approval mode and omits unsupported event day. D01 both arms correctly use explicit
+September27/manual approval, not blanket abstention. Narrow positive first-response
+contrast on two known development cases, one call/arm, same-assistant nonblind
+review; no stability/general-accuracy/causal-effect or live-host E2E claim. T03
+and unseen examples remain open. Do not promote production default from this.
+
+Input3459/output1307/total4766 tokens, reasoning938 separately reported and not
+added to total; cacheRead2688. Native request sum14.204s, not host/user E2E.
+Conservative guard CNY0.024878, not actual bill; ledger144->148 all settled,
+old rows unchanged; cumulative upper1.489174, remaining guard9.510826 underCNY11.
+Four-call authority exhausted. Offline verifier confirms exact frozen/source
+bindings, first-response/citation hashes, route/status and ledger. No source,
+real DB/provider/host config change, paused review filling, commit/push/release.
+Next: freeze fresh development holdout/boundary cases before further paid tests
+or production integration; fresh paid authority required. Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/mcp_temporal_presentation_run_v1/REPORT.md`.
+
+## Clean-build licensed wheel installed full regression passed — 2026-10-09
+
+New wheel SHAeacf05cea73ca9c92e69e915695577f22c360858e321fe4c0181f048f097f927,
+151246 bytes, includes repository LICENSE. Fresh Python3.14.7 dev venv, normal
+wheel[dev] dependency resolution and pip check, no old site borrowing. Existing
+full runner and complete refreshed fixture layout reused unchanged; Python -I,
+absolute installed coverage root and subprocess patch. **1111 passed,10 skipped,
+170 warnings /202.08s**, exit0; JUnit1121 zero failures/errors. All ten skips
+missing optional transformers: eight local-answer experiments and two tokenizer
+trust-boundary checks. ResourceWarnings retained, not all-owner cleanup proof.
+
+47 loaded project modules all installed;222 .py/.json/.toml inputs unchanged;
+48 checkout/wheel/installed code hashes equal before/after. Seven non-package
+mirrors only; not all Markdown/dependency-content immutability. Coverage48 files,
+lines4232/4867, branches1314/1682, display85%; installed MCP EOF-close573 hit1.
+Six CLI helps/eight synthetic stdio doctor checks also pass. Previous isolated
+sdist/base smoke and this new full result now refer to the same licensed artifact;
+older wheel's full result is not substituted. Ledger bytes unchanged; no model/
+paid calls, real DB/config or source edits, Git commit/push/release.
+
+Engineering gate only: no lowest-version/all-Python/OS/optional-runtime/host/user
+or independent quality acceptance. License-metadata deprecation warning remains;
+T04/T03 remain unresolved. Current per-record hint candidate is prepared, not
+executed; new four-call authority still absent. Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/clean_build_full_gate_20261009_v1/REPORT.md`.
+
+## Isolated sdist-to-wheel build and base smoke passed — 2026-10-09
+
+Current package plus pyproject/README/LICENSE snapshot, fresh Python3.14.7
+builder, build1.6.1 and two fresh isolated setuptools84.0.0 backends. Default
+build logs verify sdist then wheel-from-sdist, not --no-build-isolation. Fresh
+runtime normally installs new wheel base-only; pip check, public SDK lifecycle/
+persistence, six CLI helps and eight synthetic MCP doctor checks pass. All48
+Python files equal checkout/sdist/wheel/installed before and after checks; key
+dependencies/name/version/entrypoints match prior artifact.
+
+sdist145272 bytes SHA0416b9760cefee590ce57a823628f6bf04f89089a6f2622d8bf83952609e8e3c;
+wheel151246 bytes SHAeacf05cea73ca9c92e69e915695577f22c360858e321fe4c0181f048f097f927.
+New wheel includes repository LICENSE. Prior private copied-source build omitted
+LICENSE from its snapshot/wheel; repository itself had it. Old artifacts kept;
+do not claim old private wheel was license-complete or new wheel bit-identical.
+
+Actual backend emits license-table/classifier deprecation warnings; retained,
+not repaired. Follow-up metadata migration must consider current setuptools>=64
+lower bound before adopting newer SPDX/license-files capabilities. No production
+metadata edit this turn. New artifact has smoke, not a new full pytest result;
+older dev-full suite remains an older artifact gate. No full-Git-sdist, lowest
+versions, offline/bit-reproducible, other Python/OS or semantic/E2E claim.
+Budget bytes unchanged, zero models/paid calls, real DB/config edits or Git
+commit/push/release. T04/T03/host/user quality and fresh paid authority remain.
+Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/clean_build_gate_20261009_v1/REPORT.md`.
+
+## Base-only wheel installation smoke passed — 2026-10-09
+
+Fresh Windows/Python3.14.7 venv without pip/system/user site borrowing installs
+the existing current wheel normally, no dev/semantic extras. Exactly two
+distributions: vibe-memory0.3.0 and NumPy2.5.3; no pytest/sklearn/torch/
+transformers/sentence_transformers/coverage or .pth hooks. pip check passes;
+all48 checkout/wheel/installed Python hashes equal before and after smoke.
+
+Public SDK store/history/with/repeated close/closed-operation rejection/reopen
+persistence passes. Unchanged existing smoke runner passes six installed CLI
+help entries and eight synthetic MCP doctor checks, including process restart,
+cross-session recall, scope and deletion of its own two diagnostic rows. All
+loaded SDK modules resolve to the new installed package. No full pytest run in
+this intentionally no-dev environment; prior dev-full gate remains separate.
+
+Installation7.797s with local cached-artifact conditions, not cold-network/user
+onboarding promise. Base dependencies means normal no-extras resolution, not
+lowest-supported NumPy version. Same wheel SHA327f99d3f9e649c973bd96cf75f436ad2e859ad9c97aa9b2bc8f31ccaa617b17;
+no rebuild or clean-build claim. Budget bytes unchanged, zero model/paid calls,
+real DB/config/production edits or commit/push. Semantic comparison remains
+pending fresh paid authority; T04/T03, real host/user, clean build and broader
+version/OS gates remain open. Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/base_wheel_gate_20261009_v1/REPORT.md`.
+
+## Per-record temporal hint candidate frozen offline — 2026-10-09
+
+Source inspection confirms MCP format_memories has no reliable source-record
+timestamp; SDK store creates local datetime.now(), while update does not reset
+created_at. Do not alias it to recorded_at or assume every content date heading
+is a record/event/effective date. Previous known-fixture record-label evidence
+does not authorize a generic production rewrite.
+
+Frozen four input artifacts use current temporal-policy B as the new baseline;
+hint arm adds only wrapper-level evidence_time_hints identifying the existing
+date heading as unverified role. Exact actual mcp_result, raw content, IDs,
+scope, ordering, system message and citation companion pack are preserved.
+Reversible removal restores baseline; no created_at/source/event-time inference,
+answer-key or verdict in hints. Added210 message characters/296 UTF8 bytes per
+case; original memories evidence_budget does not cover this wrapper overhead.
+This is a per-record semantic cue, not a formatting-only or production-MCP field.
+
+Freeze and independent byte-rebuild --check pass, zero model/MCP calls; budget
+bytes unchanged. Manifest SHAe827eee1f741ff6fea824d71502dc36880304eddc81070dfe6381b50c3297c04.
+No production code/config/DB change, no commit/push. Proposed T04 baseline/hint
+then D01 hint/baseline calls require fresh explicit paid authority; prior four
+exhausted. Preparation does not solve T04, demonstrate model benefit or establish
+host E2E; explicit-date control must still answer September27/manual, not abstain.
+Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/mcp_temporal_presentation_v1/REPORT.md`.
+
+## MCP temporal policy quality comparison: failure retained — 2026-10-09
+
+Fresh human authorization consumed exactly four serial first responses in the
+frozen order T04_A, T04_B, D01_B, D01_A. No retries, fallback, tools or paid judge.
+Returned route identifiers: deepseek-vibe-test/deepseek-flash; not independently
+verified backend weights. Four stop completions, JSON contracts and citation IDs
+valid; citation validity does not establish semantic support.
+
+**T04 new rule still fails**: "已于2026/09/29更新" promotes the record header to
+an unsupported exact update day. Both arms correctly leave approval mode unknown.
+Old-arm wording "仅表明2026-09-29...已更新" is ambiguous, not forced into a clear
+date pass/failure. Both D01 arms correctly answer the explicit September27 update
+and manual approval. No improvement claim or causal regression estimate; this
+two-question, one-response-per-arm, same-assistant nonblind review is not an
+independent accuracy score. Actual captured MCP evidence replay via fresh native
+messages is not live host MCP-tool-call E2E. Prior label A/B is a different
+intervention and cannot substitute; T03 remains open.
+
+Reported input3130/output1018/total4148 tokens; reasoning667 separately reported,
+not added to total. Native request duration sum12.392s, not user E2E latency.
+Conservative guard cost CNY0.019740 (peak uncached rates, reasoning counted again;
+not actual bill). Ledger140 ->144, all settled, old entries unchanged; cumulative
+upper CNY1.464296, remaining guard CNY9.535704 under unchanged CNY11. Four-call
+authority exhausted, regardless of remaining guard. No lock/unresolved request.
+Offline verification confirms source/frozen inputs unchanged and all first
+artifacts retained. No production change, real DB/config/provider change,
+96-row review filling, commit/push/release. Next proposed offline work: explicit
+record-time evidence presentation candidate, preserving body and not equating
+SDK created_at to source/event time; new paid calls need fresh authority.
+Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/mcp_temporal_quality_run_v1/REPORT.md`.
+
+## Current MCP policy wheel installed gate completed — 2026-10-09
+
+New private wheel SHA327f99d3f9e649c973bd96cf75f436ad2e859ad9c97aa9b2bc8f31ccaa617b17,
+149089 bytes; includes current MCP date policy and prior SDK startup cleanup.
+All48 Python files match checkout/copy/archive/new installed package; equality
+rechecked after tests. Existing tools build with no isolation, not clean-build
+acceptance. Fresh Python3.14.7 venv resolves wheel[dev] normally from public PyPI;
+no old site borrowing, user-site disabled, one venv site-packages path, only
+coverage-owned .pth hook. pip check passes; resolver artifacts retained.
+
+Unchanged reused runner, refreshed explicit fixture layout, seven non-package
+code mirrors, Python -I, explicit installed --cov root. Full: **1111 passed,
+10 skipped,170 warnings /203.64s**, exit0; JUnit1121 zero failures/errors. All47
+loaded modules from new installed package;222 .py/.json/.toml input hashes
+unchanged. Markdown/dependency immutability not implied. Coverage48 files,
+lines4232/4867, branches1314/1682, combined display85%; MCP EOF-close573 hit.
+Optional local-answer runtime skips and remaining database ResourceWarnings are
+retained, not proof of warning-free/all-owner resource cleanup.
+
+Six installed CLI help checks and eight installed MCP doctor checks pass with
+explicit new interpreter and new synthetic DB; cleanup only deletes diagnostic
+records. No product edits this turn, paid/native-generation, real DB/provider/
+host config change, version bump, commit/push/release. Ledger140 settled/CNY11
+unchanged. Current local artifact gate now includes MCP policy, but quality A/B
+still awaits new paid authorization; T03, real-host/user and minimum-dependency/
+clean-build/other-platform/all-runtime gates remain. Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/mcp_policy_wheel_gate_20261009_v1/REPORT.md`.
+
+## Current-source full regression after MCP temporal policy — 2026-10-09
+
+Windows/Python3.12.14 current editable checkout: **1121 passed /258.99s**, exit0;
+JUnit1121 tests, zero failures/errors/skips. Includes the three new MCP delivery
+tests and existing local-answer-model tests available in this environment.
+No new paid/native-generation call. This is not the pending policy-quality A/B.
+
+Coverage48 package files, subprocess patch enabled: combined84.77% (display85%),
+lines4251/4885, branches1316/1682; MCP combined95.17%. 151 package/test Python
+hashes unchanged before/after; not all experiment/data/report fixture hashes or
+fresh dependency provenance. Isolated report/temp/coverage paths, no added test
+filter or warning suppression. Paid ledger remains140 settled rows under CNY11;
+no real data/config/provider edit, code edit this run, commit/push/release.
+
+Source full gate now follows the MCP policy change, but current wheel rebuild/
+install acceptance and cross-runtime gates remain. Full regression does not
+prove host compliance, original T04 repair, T03 resolution or semantic accuracy.
+Four-call frozen policy-quality experiment still needs fresh paid authorization.
+UTF-8 post-run report reading verified JUnit/coverage/ledger; initial GBK decoding
+failure was inspection-only, not a pytest failure. Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/mcp_policy_source_full_20261009_v1/REPORT.md`.
+
+## MCP temporal-rule answer-quality comparison prepared, not run — 2026-10-09
+
+Frozen exact original T04 question/as_of/scope/body plus one explicit-event-date
+counter-control. Four current-source public MCP store/recall calls on separate
+temporary synthetic DBs supply actual evidence JSON. Within each pair, only
+selection_instructions differs: earlier policy vs appended temporal clause;
+body/IDs/scope/budget/remaining fields unchanged. No date-header labels. Review
+criteria separate from model messages. Proposed four fresh calls in T04_A/T04_B/
+D01_B/D01_A order; one per question/arm, no tools/retries/paid judge, CNY11 guard.
+
+Captured evidence would be replayed via native independent messages, not live
+host-model MCP initiation/full E2E. T04 wrapper/prompt/IDs differ from earlier
+native experiment; keep its original question/body rather than substitute easier
+cases, but do not call this byte-identical original-request replay. Explicit-date
+control prevents unjustified abstention from being counted as safety success.
+Two questions/one call per arm are not independent accuracy or a broad effect.
+
+First offline preparation failed exact-byte check from Windows CRLF conversion,
+despite decoded JSON equality. Failed files and exact generator retained under
+mcp_temporal_quality_v1_failed_newlines; never dispatched. Corrected byte writer
+and fresh temporary captures pass --check. Eight local MCP calls across both
+attempts, zero model calls/fees. No production change this turn; ledger140 settled
+entries/CNY11 unchanged. New paid authorization required before up to four calls;
+no commit/push/release. T03 and real-host/package/full-suite gates remain open.
+Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/mcp_temporal_quality_v1/REPORT.md`.
+
+## MCP temporal instruction delivery implemented after confirmation — 2026-10-09
+
+Human confirmed public MCP store/recall/session_start/settings plus returned
+injection-file testing, temporary synthetic state and no paid model. First new
+enhanced-recall test fails at missing date policy (1 failed/0.66s), then passes
+(1/0.34s) after appending exactly the frozen129-character clause to shared
+enhanced selection_instructions. No content rewrite, metadata/schema/tool,
+retrieval/budget or default-setting change. Existing instructions retained.
+
+Then separately added session response/injection (1/0.35s) and disabled recall/
+session/injection (1/0.37s) checks; both already pass through the shared seam.
+Explicit body dates and original unknown-day content remain unchanged; disabled
+instruction remains None and selection_verified remains false. Related suites
+test_mcp.py, test_mcp_enhancement.py and test_mcp_link_ids.py: **74 passed/44.93s**,
+Python3.12.14, exit0, model-hub offline. No private helper/SQL assertions.
+
+This is verified delivery, not final-answer model red→green, independent semantic
+accuracy or a general repair; T03 and original T04 host-quality gate remain open.
+Earlier prefix-label A/B does not establish this different intervention's effect.
+No new paid call, real DB/provider/host config edit, full/cross-runtime rerun,
+wheel rebuild/install acceptance, commit/push/release. Ledger140 settled rows,
+CNY11 cap unchanged. Prior source/wheel gates predate this MCP change. Historical
+source-bound preparation artifacts are preserved, not regenerated against the
+changed source. Paid quality validation needs fresh bounded authority. Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/mcp_temporal_policy_delivery_v1/REPORT.md`.
+
+## MCP temporal instruction candidate frozen offline — 2026-10-09
+
+Current shared enhanced-host policy bound to source hash and the actual previous
+MCP response; candidate only appends the recording/creation versus occurrence/
+effective-date distinction. Removing that suffix restores the current policy.
+Duration/untrusted/empty-evidence constraints remain unchanged; disabled policy
+remains None. No content rewrite/date parsing, metadata alias, SDK/tool/schema
+addition or production implementation. This is policy text preparation, not a
+complete frozen host request or a production/public-interface test.
+
+Offline --check reproduces source/capture/text invariants only. Earlier date-label
+prefix A/B does not prove this different instruction-only intervention works.
+Zero new model/paid calls; ledger remains140 settled rows under CNY11 cap.
+Public MCP store/recall/session_start/settings and injection-file TDD boundary
+still awaits human confirmation; no new pytest cases yet. Paid authority remains
+exhausted; no provider/real DB/default change, commit/push/release. Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/mcp_temporal_instruction_candidate_v1/REPORT.md`.
+
+## Actual MCP temporal handoff audited; instruction seam proposed — 2026-10-09
+
+Seven real public MCP calls on an ephemeral synthetic DB: two stores, enhanced
+recall/session_start, disable temporary settings, recall/session_start again.
+All four evidence deliveries retain exact content and explicit event dates;
+created_at/recorded_at absent; selection_verified false. SDK history confirms
+October9 local creation differs from supplied September record headers. Final
+disabled injection bytes verified; earlier enabled response verified, but its
+overwritten injection bytes were not captured. No paid model/host answer run.
+
+Source trace: SDK creation uses local now; content updates retain created_at;
+merge inherits minimum parent created_at. Therefore it is not a general original
+source-record timestamp or current-content-version time, and should not be
+renamed recorded_at or emitted as UTC without evidence. Update/merge facts are
+static source observations, not separate runtime reproductions here.
+
+Narrow next proposal is shared enhanced-host instruction distinguishing recording,
+creation, occurrence and effective time, preserving explicit dates and unknowns.
+No rewriting arbitrary headers or adding metadata/schema/tool fields. Previous
+prefix-label A/B does not prove this different instruction intervention works.
+Public MCP store/recall/session_start/settings plus returned injection-file TDD
+boundary awaits confirmation before new regression tests/implementation; only
+temporary synthetic state, no private helpers/SQL/paid model/real DB. Delivery
+tests cannot prove host final-answer correctness. Original model red/green
+completion remains open per diagnosing-bugs. No production/default change,
+commit/push/release or additional spend. Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/mcp_temporal_handoff_audit_v1/REPORT.md`.
+
+## Original T04 date-label A/B completed: narrow positive signal — 2026-10-09
+
+Human authorized four fresh calls A1/B1/B2/A2, zero retries/tools, unchanged
+CNY11 cumulative cap. Both original A repeats again assert the unsupported exact
+policy-update day September29. Both B repeats, differing only by 记录时间：,
+avoid that assertion: B1 says already updated as of that record date; B2 says an
+update record exists on that date. All four correctly leave policy contents and
+manual/automatic choice unknown. Legal citations alone are not semantic proof.
+
+Same-assistant non-blind development review supports the narrow label hypothesis
+on one known synthetic question, not independent accuracy, broad effectiveness,
+model-internal cause or production repair. Full first outputs/hashes preserved;
+old observed failure is not a fresh baseline. T03 ambiguity remains separate.
+Actual calls use native generateText rather than production MCP host integration.
+
+Runtime input1366/output1020/total2386 tokens; separate reasoning683 not added
+to total. Conservative upper CNY0.016356, cumulative CNY1.444556, remainder
+CNY9.555444 under CNY11. Request sum12.172s is not host E2E. Ledger136→140,
+all settled, old136 rows unchanged. Offline collector verifies immutable output
+hashes, source/message bindings, settled usage, prior ledger and authored review
+excerpts; not a new model run or automatic semantic evaluation.
+
+No fifth call/paid judge, production/default/real-data/provider edit, independent
+human review, commit/push or release. This four-call authority is exhausted.
+Next trace actual host evidence handoff before choosing any production labeling
+seam; preserve explicit event dates and avoid rewriting arbitrary user-content
+dates. More paid validation needs new bounded authority. Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/original_T04_date_label_ab_run_v1/REPORT.md`.
+
+## Original T04 one-variable date-label comparison frozen offline — 2026-10-09
+
+Preserved exact original T04 A input bytes and created B by only prefixing the
+existing evidence header with 记录时间：, mirrored in the same user payload.
+Removing that label exactly restores A; question/instruction/as_of/scope/IDs,
+body and order remain unchanged. No arm, repeat or review labels in messages.
+Not a generic timestamp parser or production input rewrite.
+
+Frozen prospective A1/B1/B2/A2 order, two fresh calls per arm, one known question;
+zero new calls so far. Future outputs/request IDs must use task IDs, not overwrite
+the repeated original case ID or merge duplicate case rows into a model batch.
+Old observed failure is not a new A repeat. Criteria preserve unknown policy and
+detect record-day-to-event-day promotion, not merely valid citations. Small
+same-case repeats cannot establish broad effectiveness; A/B both succeeding is
+inconclusive for label effect. T03 ambiguity remains separate.
+
+Offline --check verifies exact source/old-response binding and reversible change.
+No model or repair result, paid authorization, production/default/real-data/
+provider edit, independent review, commit or push. Existing136 ledger rows remain
+settled under CNY11 cap. The last four-call authority is exhausted. Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/original_T04_date_label_ab_v1/REPORT.md`.
+
+## Four authorized temporal controls completed, not a repair — 2026-10-09
+
+Human approved R01/R02/R05/R06 only, unchanged cumulative CNY11 cap, zero
+retries/tools. All four independent first responses satisfy JSON/ID structure;
+same-author development review finds no obvious issue: unknown event day stays
+unknown, explicit August19 event date is answered, and plan before/after its
+deadline remains unconfirmed without delivered implementation evidence. R05's
+future plan date alone would not rule out early execution. No blind accuracy
+or automatic semantic verification follows from the valid citations.
+
+Executed two contrast pairs, not all eight frozen cases. Date headers explicitly
+label record time and domains/questions differ from original failures; no causal
+label-effect claim and no original T03/T04 regression/repair. Prompt unchanged.
+Next prioritize same-original-case, one-variable date-label comparison offline
+instead of treating easier new cases as the motivating defect fixed.
+
+Runtime input1348/output1486/total2834 tokens; separately reported reasoning1154
+not added to total. Existing conservative cost upper CNY0.023816, cumulative
+CNY1.428200, ledger remainderCNY9.571800, unchanged CNY11 limit. All136 entries
+settled; original132 rows unchanged. Request-time sum17.516s is not host E2E
+latency; estimates are not account billing. No fifth call/other four cases,
+production/default/real-data/provider change, independent human review,
+commit/push or release. Four-call authorization exhausted. Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/temporal_answer_boundaries_run_v1/REPORT.md`.
+
+## Temporal provenance audit and contrast materials, offline — 2026-10-09
+
+Verified T04's date header already exists in synthetic policy_unknown.text and
+is byte-identical through original fixture, selector candidate, answer evidence
+and actual prepared user message. Preserved first response hash. Current MCP
+format_memories retains atom.content without constructing that header; the
+observed call bypassed MCP. Thus this evidence does not reproduce a production
+SDK clock/MCP date-formatting defect. It establishes an unsupported generated
+event-date detail, not a verified model-internal cause.
+
+Frozen four new contrast pairs/eight assistant-authored cases with unchanged
+answer prompt: unknown/explicit event date, plan/confirmed implementation,
+assessment date before/after plan, effective-date versus recording-order.
+Each contrast has a concrete variable assertion; new headers explicitly label
+record time and are therefore clearer than the original motivating failure.
+They must not substitute for original failure regression. Model fields contain
+no review criteria; labels remain separate and non-independent.
+
+Offline --check reconstructs all bytes and source bindings. Zero model/paid
+calls; no semantic model pass rate or verified repair. A saved-artifact replay
+is not a real model-generation feedback loop. Further model diagnosis needs new
+bounded authority; four prior answer calls are exhausted. No production/default/
+real-data/provider edits, human-review completion, commit or push. Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/temporal_answer_boundaries_v1/REPORT.md`.
+
+## Four authorized selected-evidence answers: temporal defects observed — 2026-10-09
+
+Human explicitly authorized at most four paid answer calls. Executed the exact
+frozen per-case messages, once each, serial, no retries/tools. Original answers
+preserved. All four JSON/citation checks pass, but same-author semantic review
+finds **two no-obvious-issue cases, one ambiguous temporal reference, one
+unsupported event date**; not four verified correct answers.
+
+T03 distinguishes current four retries from the October15 six-retry plan, but
+"截至该日期尚未实施" ambiguously refers to that future day rather than October1.
+T04 correctly declines to infer manual/automatic policy, but converts the
+September29 record header into the exact policy-update day, absent from body.
+This is observed model output: valid [m1] citation does not verify that detail.
+Keep both failures/ambiguity visible; no answer rewrite or paid judge call.
+
+Answer batch: 1,452 input +966 output =2,418 total tokens, separate reasoning659
+not added to token total. Existing conservative guard repeats reasoning only
+for cost upper estimate: CNY0.015904; cumulativeCNY1.404384; unchangedCNY11 cap,
+ledger remainderCNY9.595616. All132 entries settled, previous128 rows unchanged.
+Answer request time sum12.250s, not full host/user latency. Selector+answer
+batches total13,203tokens/CNY0.077062 estimate, not a production pipeline run or
+account bill. Whole goal remains open.
+
+No production/default/real-data/provider-config change, independent review,
+commit/push or fifth call. Four-call answer authorization exhausted. Next:
+unseen temporal distinction materials and bounded claim criteria before choosing
+an input/prompt repair; upstream production candidate coverage remains separate.
+First responses, hash-bound public CLI citation report and semantic review:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/applicability_answers_selected_run_v1/REPORT.md`.
+
+## Selected-evidence-only answer inputs frozen offline — 2026-10-09
+
+Bound the four observed first selector responses back to immutable original
+question/as_of/scope and only their five selected original records. Per-case
+messages are isolated; no reviewer criteria, omitted candidates or expected
+answers enter model payloads. A new generic configuration-answer experiment
+prompt is frozen, not a production instruction change or incident-domain
+exporter reused under a forged dataset ID.
+
+Offline --check exactly reproduces every frozen output byte. Existing public
+selection processing rejects fallback as answer-export evidence, and public
+citation checking classifies delivered/omitted ID protocol controls while
+leaving semantic_support=not_checked. These controls are not model answers;
+no new production/full-suite or semantic quality claim. Source input/first
+response hashes are bound to the immutable execution audit.
+
+No new model/paid calls or budget change. Actual final answers, semantic
+grounding, production candidate coverage and real-host total cost remain open.
+Four prior selector calls do not authorize an answer stage. Preparation and
+development review criteria:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/applicability_answers_selected_v1/REPORT.md`.
+
+## Four authorized applicability selector calls completed — 2026-10-09
+
+Fresh human authorization allowed at most four paid selection experiments.
+Executed the frozen same_scope19-T01/T02/T03/T04 cases serially, once each,
+with unchanged instructions, zero retries/tools and no final-answer stage.
+First selections: T01 m17 (current production), T02 m13 (historical interval),
+T03 m17/m14 (current fact plus future plan), T04 m1 (updated policy contents
+unknown). All satisfy the selector-only JSON contract and cover developer-required
+evidence: **4/4 development coverage**, not independent accuracy or final-answer
+success. No title noise/test-environment/unverified-claim record was selected.
+
+Runtime reports 7,875 input + 2,910 output = 10,785 total tokens; separately
+reported reasoning is not added to token totals. Existing conservative cost
+guard counts it again for estimation: batch upper CNY0.061158, cumulative
+CNY1.388480, unchanged limit CNY11, ledger remainder CNY9.611520. All 128 ledger
+entries settled. This is a runner estimate, not account billing verification.
+Four request durations total25.499s, not production end-to-end latency.
+
+All 17 frozen source hashes and processor hash reverified unchanged, and exact
+prepared messages preserved. Expanded SDK candidate pools are not production
+MCP top5 delivery; selection cannot recover evidence omitted upstream. No
+production/default/real-data/provider-config change, human-review completion,
+commit or push. Four-call authorization is exhausted. Next scope is to freeze
+selected-evidence-only answer inputs offline, then separately agree any paid
+answer stage; no automatic extra calls. Detailed first responses and audit:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/applicability_selection_same_scope19_v1/REPORT.md`.
+
+## Quality handoff after repaired artifact acceptance
+
+Offline current-source replay verifies all 17 existing applicability input hashes
+and the unchanged selection processor. Deliberately wrong-environment m6 for
+original7-T01 is structurally selected identically twice; output lacks the case's
+question/as_of/scope. Archived L02 selects m1/m2 but mentions an unselected rumor
+while rejecting it: original no-promotion criterion remains satisfied, strict
+selected-evidence-only grounding is not established. No new model/paid calls.
+
+Recommend four frozen same_scope19 selector cases first (current/history/plan/
+unknown policy), preserving stronger distractors and keeping reviewer labels out
+of model input. Fresh human call authorization/live route/budget preflight are
+required; prior authorization is exhausted. No final-answer pipeline/default or
+human-review labels changed. This is readiness/boundary evidence, not a quality
+gain. Detailed limits and exact existing input files:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/quality-readiness-after-startup-v1/REPORT.md`.
+
+## Repaired wheel full installed acceptance passed — 2026-10-08
+
+Rebuilt the startup-cleanup repair into a distinct local wheel, SHA256
+`afa14cc49dcd3cc25a85c3214a1370da42cb7931de277292fc7083013f3462f8`.
+All 48 package Python files equal checkout/source snapshot/archive/installed
+venv. New Windows/Python3.14.7 venv installs wheel[dev] and dependencies normally;
+no borrowed installed dependency path, user-site disabled, pip check passes.
+The sole .pth is coverage's own subprocess hook, not old site-packages reuse.
+
+Complete explicit-input full installed suite: **1108 passed, 10 skipped,
+170 warnings /230.12s**, exit0. All 47 loaded modules from new package;
+222 code/data/config fixture hashes unchanged. Whole installed package/MCP
+coverage: 4232/4867 lines, 1314/1682 branches, combined85%; EOF-close line572 hit.
+Six CLI help commands and eight existing doctor synthetic persistence checks
+pass. No product/test edits, paid models, real data/config changes or push.
+
+This closes the repaired artifact's local installed full-suite gate. Build tools
+were reused, not build-isolated; minimum-dependency/other-runtime/platform gates
+remain open. Remaining unmanaged-owner warnings are visible. Next main priority
+is memory applicability/final-answer quality, then real user onboarding/cost;
+no independent memory-quality or production-release claim follows from these
+regressions. Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/startup-fixed-wheel-20261008-a/README.md`.
+
+## SDK post-storage startup failure cleanup repaired — 2026-10-08
+
+Human confirmed constructor/close-with/store-history seams and temporary default/
+WAL libraries. Public invalid-backend regression first fails with an unclosed
+SQLite ResourceWarning while preserving the original ValueError; unchanged case
+passes after standard-library ExitStack cleanup. An initial missing basetemp
+parent setup error is not counted as defect red. Expanded default/WAL regressions
+also preserve records on reopen and allow subsequent writes. No internal mocks,
+SQL assertions, destructor, backend fallback or auto-flush added.
+
+Production change is confined to SDK initialization: register connection cleanup
+after storage succeeds and cancel it only when SDK construction completes.
+Successful lifetime and maintenance admission order are unchanged. Storage's own
+constructor failures remain a separate unverified path, not claimed fixed.
+
+Related Python3.14 suite: 101 pass /23.26s. Four lifetime/WAL modules: 28 pass
+each on Python3.10.11 /1.99s and 3.12.14 /2.00s. Full actual-source Python3.14.7:
+**1108 passed, 10 skipped, 170 warnings /219.21s**, exit0. Whole-package coverage
+including MCP subprocesses reports combined85%; visible unmanaged-owner warnings
+remain. Older-runtime warning absence alone is not causal closure proof.
+
+No paid calls, real data/config edits, commit or push. Existing old-wheel gates
+below do not verify this new repair: next build and accept the repaired artifact,
+then return to applicability/final-answer quality and real onboarding/cost.
+Private evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/sdk-startup-fix-20261008-a/`.
+
+## Current installed artifact acceptance status — 2026-10-08
+
+Follow-up to the historical failed installed attempt below: restoring and
+freezing complete explicit fixtures permits the unchanged full suite to pass.
+An initial complete-input run passed 1106/skip10 but selected cwd report mirrors
+for coverage (zero data); that coverage report is invalid. Changing only the
+coverage target to the absolute installed package directory restores measurement:
+8 existing SDK/MCP cases pass, followed by full Python3.14.7/Windows:
+**1106 passed, 10 skipped, 179 warnings /222.39s**, exit0.
+All 47 loaded project modules originate in the installed venv; all 48 package
+Python files are measured. Lines4229/4865, branches1313/1682, combined85%; MCP
+subprocess EOF-close line572 hit. The 222 fixture input hashes remain unchanged.
+Test dependencies are reused; this is not a clean-dependency full-suite gate.
+
+A separate runtime-only clean venv installs the same wheel normally with its
+declared dependencies, not --no-deps or a borrowed site-packages path. Exactly
+vibe-memory0.3.0 and NumPy2.5.3 are installed; no .pth files, user-site disabled,
+both imports inside the new venv, pip check passes. All 48 installed project
+Python files equal the wheel. Six CLI help commands and existing doctor's eight
+synthetic MCP/persistence/recall/scope/cleanup checks pass. This clean environment
+did not run the full test suite. A help-inspection GBK decode error was corrected
+by raw-byte capture; no product code changed.
+
+Wheel SHA256: `71355c78f93703ce12fc3ff3d6527b4f990650acfe66db025aa8594acfe98919`.
+Private evidence directories under
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/`:
+`installed-coverage-20261008-a/` and `clean-runtime-20261008-a/`.
+
+Next priority remains constructor-failure connection cleanup, reproduced but
+unfixed pending new-test seam confirmation. Then rebuild and verify the repaired
+artifact, return to memory applicability/final-answer quality, and validate real
+user onboarding/cost before release. Clean builds, minimum-dependency and other
+Python/platform gates remain open. Passing regression is not independent memory
+quality or permission to resume the paused human review. No paid calls, real
+data/client/provider edits, commit/push or release occurred in these follow-ups.
+Historical entries below describe their original run state, not current totals.
+
 ## GitHub development checkpoint prepared — 2026-10-08
 
 User authorized a checkpoint commit/push, not a formal release. Selected core
