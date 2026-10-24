@@ -171,15 +171,15 @@ class LLMEdgeClassifier:
 
     Features:
     - Structured prompt (with context)
-    - Timeout/rate-limit auto-retry + fallback to rules
+    - Timeout/rate-limit auto-retry; exhausted classification abstains
     - Robust parsing: pure JSON, ```json code block, direct extraction
     - Merge decision: whether highly similar atoms should be merged
 
     Args:
         provider: LLMProvider instance
         max_retries: max retry attempts
-        default_label: fallback label when LLM unavailable
-        default_confidence: fallback confidence when LLM unavailable
+        default_label: legacy compatibility field; failed classification abstains
+        default_confidence: legacy compatibility field; failed classification abstains
     """
 
     def __init__(
@@ -264,7 +264,7 @@ class LLMEdgeClassifier:
                 # All retries exhausted — fallback
                 break
 
-        # Fallback: rule-based
+        # A failed model judgment supplies no evidence for an automatic edge.
         self._classify_fallback += 1
         self._total_latency_ms += (datetime.now() - t0).total_seconds() * 1000
         label, confidence = self._fallback_classify(atom_a, atom_b)
@@ -319,16 +319,12 @@ class LLMEdgeClassifier:
         atom_a: MemoryAtom,
         atom_b: MemoryAtom,
     ) -> tuple[EdgeLabel, float]:
-        """Rule-based fallback classification (same logic as classify_cross_session_edge)."""
-        from vibe_memory.edges.edge_builder import _tag_overlap_ratio, _has_causal_signal
-
-        overlap = _tag_overlap_ratio(atom_a, atom_b)
+        """Preserve legacy label shape without claiming evidence for an edge."""
+        from vibe_memory.edges.edge_builder import _has_causal_signal
 
         if _has_causal_signal(atom_a.content) and _has_causal_signal(atom_b.content):
-            return EdgeLabel.CAUSAL, 0.4
-        if overlap >= 0.5:
-            return EdgeLabel.SIMILAR, 0.3
-        return EdgeLabel.SIMILAR, 0.2
+            return EdgeLabel.CAUSAL, 0.0
+        return EdgeLabel.SIMILAR, 0.0
 
     def _fallback_merge(
         self,

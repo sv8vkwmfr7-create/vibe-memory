@@ -16,6 +16,8 @@ Verifies:
 12. SDK stats: gc section in stats()
 """
 
+from contextlib import ExitStack
+import pytest
 import uuid
 from datetime import datetime, timedelta
 
@@ -58,9 +60,27 @@ def _make_edge(id: str, from_id: str, to_id: str, weight: float = 1.0,
 
 # ── Tests ──
 
-def test_sparsify_low_weight_edges():
+@pytest.fixture
+def memory_factory():
+    with ExitStack() as stack:
+        def create(*args, **options):
+            return stack.enter_context(VibeMemory(*args, **options))
+        yield create
+
+
+@pytest.fixture
+def storage_factory():
+    with ExitStack() as stack:
+        def create(*args, **options):
+            store = VibeStorage(*args, **options)
+            stack.callback(store.conn.close)
+            return store
+        yield create
+
+
+def test_sparsify_low_weight_edges(storage_factory):
     """Test: edges with weight below threshold are deleted"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     gc = GarbageCollector(storage=storage, agent_id="agent-1", min_edge_weight=0.1)
 
     a1 = _make_atom("a1", "agent-1", "s1")
@@ -82,9 +102,9 @@ def test_sparsify_low_weight_edges():
 
 
 
-def test_sparsify_stale_edges():
+def test_sparsify_stale_edges(storage_factory):
     """Test: edges with status=stale are also counted"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     gc = GarbageCollector(storage=storage, agent_id="agent-1")
 
     a1 = _make_atom("a1", "agent-1", "s1")
@@ -102,9 +122,9 @@ def test_sparsify_stale_edges():
 
 
 
-def test_sparsify_dry_run():
+def test_sparsify_dry_run(storage_factory):
     """Test: sparsify dry_run doesn't actually delete"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     gc = GarbageCollector(storage=storage, agent_id="agent-1", min_edge_weight=0.1)
 
     a1 = _make_atom("a1", "agent-1", "s1")
@@ -123,9 +143,9 @@ def test_sparsify_dry_run():
 
 
 
-def test_enforce_pool():
+def test_enforce_pool(storage_factory):
     """Test: overflow atoms evicted by lowest weight"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     gc = GarbageCollector(
         storage=storage, agent_id="agent-1",
         partition_capacity={GraphPartition.SESSION: 3, GraphPartition.DOCUMENT: 10000, GraphPartition.PARAMETRIC: 100},
@@ -145,9 +165,9 @@ def test_enforce_pool():
 
 
 
-def test_enforce_pool_parametric_protected():
+def test_enforce_pool_parametric_protected(storage_factory):
     """Test: Parametric partition is never evicted by pool"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     gc = GarbageCollector(
         storage=storage, agent_id="agent-1",
         partition_capacity={GraphPartition.SESSION: 3, GraphPartition.DOCUMENT: 10000, GraphPartition.PARAMETRIC: 2},
@@ -165,9 +185,9 @@ def test_enforce_pool_parametric_protected():
 
 
 
-def test_migrate_cold():
+def test_migrate_cold(storage_factory):
     """Test: atoms migrate to correct lifecycle based on last_accessed"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     gc = GarbageCollector(storage=storage, agent_id="agent-1", active_days=7, warm_days=30)
 
     # Active: accessed 1 day ago
@@ -197,9 +217,9 @@ def test_migrate_cold():
 
 
 
-def test_migrate_cold_dry_run():
+def test_migrate_cold_dry_run(storage_factory):
     """Test: migrate_cold dry_run doesn't actually change"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     gc = GarbageCollector(storage=storage, agent_id="agent-1", active_days=7, warm_days=30)
 
     storage.insert_atom(_make_atom("a1", "agent-1", "s1", last_accessed_days_ago=10, lifecycle=Lifecycle.ACTIVE))
@@ -212,9 +232,9 @@ def test_migrate_cold_dry_run():
 
 
 
-def test_evict_dead_atoms():
+def test_evict_dead_atoms(storage_factory):
     """Test: atoms with weight < min_atom_weight are evicted"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     gc = GarbageCollector(storage=storage, agent_id="agent-1", min_atom_weight=0.1)
 
     storage.insert_atom(_make_atom("a1", "agent-1", "s1", weight=1.0))
@@ -230,9 +250,9 @@ def test_evict_dead_atoms():
 
 
 
-def test_evict_archived_low_weight():
+def test_evict_archived_low_weight(storage_factory):
     """Test: archived atoms with low weight are evicted"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     gc = GarbageCollector(storage=storage, agent_id="agent-1", min_atom_weight=0.05)
 
     storage.insert_atom(_make_atom("a1", "agent-1", "s1", weight=0.05, lifecycle=Lifecycle.ARCHIVED))
@@ -245,9 +265,9 @@ def test_evict_archived_low_weight():
 
 
 
-def test_evict_parametric_protected():
+def test_evict_parametric_protected(storage_factory):
     """Test: Parametric atoms are never evicted"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     gc = GarbageCollector(storage=storage, agent_id="agent-1", min_atom_weight=0.1)
 
     storage.insert_atom(_make_atom("p1", "agent-1", "s1", weight=0.01, partition=GraphPartition.PARAMETRIC))
@@ -261,9 +281,9 @@ def test_evict_parametric_protected():
 
 
 
-def test_full_pipeline():
+def test_full_pipeline(storage_factory):
     """Test: collect() runs all 4 stages"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     gc = GarbageCollector(
         storage=storage, agent_id="agent-1",
         partition_capacity={GraphPartition.SESSION: 3, GraphPartition.DOCUMENT: 10000, GraphPartition.PARAMETRIC: 100},
@@ -297,9 +317,9 @@ def test_full_pipeline():
 
 
 
-def test_dry_run_collect():
+def test_dry_run_collect(storage_factory):
     """Test: collect(dry_run=True) doesn't delete anything"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     gc = GarbageCollector(storage=storage, agent_id="agent-1", min_atom_weight=0.1)
 
     storage.insert_atom(_make_atom("a1", "agent-1", "s1", weight=0.01))
@@ -314,9 +334,9 @@ def test_dry_run_collect():
 
 
 
-def test_partition_usage():
+def test_partition_usage(storage_factory):
     """Test: get_partition_usage reports correct counts"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     gc = GarbageCollector(
         storage=storage, agent_id="agent-1",
         partition_capacity={GraphPartition.SESSION: 100, GraphPartition.DOCUMENT: 1000, GraphPartition.PARAMETRIC: 10},
@@ -336,9 +356,9 @@ def test_partition_usage():
 
 
 
-def test_set_partition_capacity():
+def test_set_partition_capacity(storage_factory):
     """Test: set_partition_capacity dynamically changes capacity"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     gc = GarbageCollector(storage=storage, agent_id="agent-1")
 
     gc.set_partition_capacity(GraphPartition.SESSION, 500)
@@ -349,9 +369,9 @@ def test_set_partition_capacity():
 
 
 
-def test_gc_stats():
+def test_gc_stats(storage_factory):
     """Test: stats() returns correct GC info"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     gc = GarbageCollector(storage=storage, agent_id="agent-1")
 
     stats = gc.stats()
@@ -372,9 +392,9 @@ def test_gc_stats():
 
 
 
-def test_sdk_collect_garbage():
+def test_sdk_collect_garbage(memory_factory):
     """Test: SDK collect_garbage() method"""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
 
     # Store some atoms
     mem.store("Test content 1", session_id="s1", auto_build_edges=False)
@@ -387,9 +407,9 @@ def test_sdk_collect_garbage():
 
 
 
-def test_sdk_gc_stats():
+def test_sdk_gc_stats(memory_factory):
     """Test: SDK stats() includes gc section"""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
 
     mem.store("Test content", session_id="s1", auto_build_edges=False)
     mem.collect_garbage()
@@ -404,9 +424,9 @@ def test_sdk_gc_stats():
 
 
 
-def test_sdk_gc_dry_run():
+def test_sdk_gc_dry_run(memory_factory):
     """Test: SDK collect_garbage(dry_run=True) doesn't delete"""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
 
     mem.store("Important content", session_id="s1", auto_build_edges=False)
 
@@ -419,13 +439,13 @@ def test_sdk_gc_dry_run():
 
 
 
-def test_gc_errors_handled():
+def test_gc_errors_handled(storage_factory):
     """Test: GC errors are captured, not thrown"""
     import tempfile, os
 
     # Create a temp file to simulate a weird storage scenario
     # Actually, let's test that errors don't propagate
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     gc = GarbageCollector(storage=storage, agent_id="agent-1")
 
     result = gc.collect()

@@ -8,6 +8,8 @@ Verifies:
 4. Multiple tenants in same DB: all CRUD operations correctly scoped
 """
 
+from contextlib import ExitStack
+import pytest
 import uuid
 from datetime import datetime
 
@@ -32,6 +34,16 @@ def _make_atom(id: str, tenant: str, agent: str, session: str,
 
 # ── Tests ──
 
+@pytest.fixture
+def storage_factory():
+    with ExitStack() as stack:
+        def create(*args, **options):
+            store = VibeStorage(*args, **options)
+            stack.callback(store.conn.close)
+            return store
+        yield create
+
+
 def test_tenant_field_default():
     """Test tenant_id defaults to 'default'"""
     atom = MemoryAtom(
@@ -54,9 +66,9 @@ def test_tenant_field_default():
 
 
 
-def test_storage_tenant_scope():
+def test_storage_tenant_scope(storage_factory):
     """Test that storage queries are tenant-scoped"""
-    store = VibeStorage(":memory:", tenant_id="tenant-a")
+    store = storage_factory(":memory:", tenant_id="tenant-a")
 
     # Insert atoms for two tenants
     a1 = _make_atom("a1", "tenant-a", "agent-1", "s1", "content A")
@@ -77,8 +89,8 @@ def test_storage_tenant_scope():
 
 
 
-def test_scope_metadata_remains_tenant_isolated():
-    store = VibeStorage(":memory:", tenant_id="tenant-a")
+def test_scope_metadata_remains_tenant_isolated(storage_factory):
+    store = storage_factory(":memory:", tenant_id="tenant-a")
     first = _make_atom("a1", "tenant-a", "agent-1", "s1")
     second = _make_atom("a2", "tenant-b", "agent-1", "s1")
     first.scope = {"service": "orders"}
@@ -93,9 +105,9 @@ def test_scope_metadata_remains_tenant_isolated():
         "agent-1", tenant_id="tenant-b")] == [{"service": "billing"}]
 
 
-def test_recall_candidates_are_scoped_active_and_bounded():
+def test_recall_candidates_are_scoped_active_and_bounded(storage_factory):
     """Recall candidates rank term matches without crossing tenant/lifecycle bounds."""
-    store = VibeStorage(":memory:", tenant_id="tenant-a")
+    store = storage_factory(":memory:", tenant_id="tenant-a")
     exact = _make_atom(
         "exact", "tenant-a", "agent-1", "s1", "API timeout investigation"
     )
@@ -122,9 +134,9 @@ def test_recall_candidates_are_scoped_active_and_bounded():
     assert [atom.id for atom in candidates] == ["exact", "partial"]
 
 
-def test_recall_candidates_match_whole_terms():
+def test_recall_candidates_match_whole_terms(storage_factory):
     """Candidate ranking treats query terms as tokens, not substrings."""
-    store = VibeStorage(":memory:", tenant_id="tenant-a")
+    store = storage_factory(":memory:", tenant_id="tenant-a")
     exact = _make_atom(
         "exact", "tenant-a", "agent-1", "s1", "API timeout investigation"
     )
@@ -143,9 +155,9 @@ def test_recall_candidates_match_whole_terms():
     assert [atom.id for atom in candidates] == ["exact"]
 
 
-def test_recall_candidates_expand_two_causal_hops_within_budget():
+def test_recall_candidates_expand_two_causal_hops_within_budget(storage_factory):
     """Two-hop expansion stays bounded and does not cross tenant or agent scope."""
-    store = VibeStorage(":memory:", tenant_id="tenant-a")
+    store = storage_factory(":memory:", tenant_id="tenant-a")
     hop_one = _make_atom("hop-one", "tenant-a", "agent-1", "s1", "First resolution step")
     hop_two = _make_atom("hop-two", "tenant-a", "agent-1", "s1", "Final rollback procedure")
     foreign = _make_atom("foreign", "tenant-b", "agent-1", "s1", "Foreign tenant answer")
@@ -196,8 +208,8 @@ def test_recall_candidates_expand_two_causal_hops_within_budget():
     assert "foreign" not in candidate_ids
 
 
-def test_causal_neighbor_in_lexical_tail_survives_two_hop_replacement():
-    store = VibeStorage(":memory:", tenant_id="tenant-a")
+def test_causal_neighbor_in_lexical_tail_survives_two_hop_replacement(storage_factory):
+    store = storage_factory(":memory:", tenant_id="tenant-a")
     for atom_id, content, date in [
         ("hop-one", "First resolution", datetime(2026, 1, 1)),
         ("hop-two", "Final rollback", datetime(2025, 12, 1)),
@@ -249,9 +261,9 @@ def test_cross_tenant_edge_prevention():
 
 
 
-def test_multi_tenant_atoms():
+def test_multi_tenant_atoms(storage_factory):
     """Test insert and query multiple tenants"""
-    store = VibeStorage(":memory:")
+    store = storage_factory(":memory:")
 
     a1 = _make_atom("a1", "t1", "agent-1", "s1", "content 1")
     a2 = _make_atom("a2", "t2", "agent-1", "s1", "content 2")
@@ -271,9 +283,9 @@ def test_multi_tenant_atoms():
 
 
 
-def test_multi_tenant_edges():
+def test_multi_tenant_edges(storage_factory):
     """Test edge insert and query with tenant isolation"""
-    store = VibeStorage(":memory:")
+    store = storage_factory(":memory:")
 
     a1 = _make_atom("a1", "t1", "agent-1", "s1")
     a2 = _make_atom("a2", "t1", "agent-1", "s1")
@@ -303,9 +315,9 @@ def test_multi_tenant_edges():
 
 
 
-def test_multi_tenant_episodes():
+def test_multi_tenant_episodes(storage_factory):
     """Test episode insert with tenant isolation"""
-    store = VibeStorage(":memory:")
+    store = storage_factory(":memory:")
 
     ep1 = Episode(
         id="ep1", agent_id="agent-1", session_id="s1",
@@ -326,9 +338,9 @@ def test_multi_tenant_episodes():
 
 
 
-def test_recall_tenant_isolation():
+def test_recall_tenant_isolation(storage_factory):
     """Test recall() respects tenant_id"""
-    store = VibeStorage(":memory:", tenant_id="t1")
+    store = storage_factory(":memory:", tenant_id="t1")
 
     # T1: API timeout fix
     a1 = MemoryAtom(
@@ -363,9 +375,9 @@ def test_recall_tenant_isolation():
 
 
 
-def test_recall_explicit_tenant():
+def test_recall_explicit_tenant(storage_factory):
     """Test recall() with explicit tenant_id override"""
-    store = VibeStorage(":memory:")
+    store = storage_factory(":memory:")
 
     a1 = MemoryAtom(
         id="a1", agent_id="agent-1", session_id="s1",
@@ -396,9 +408,9 @@ def test_recall_explicit_tenant():
 
 
 
-def test_tenant_sqlite_persistence():
+def test_tenant_sqlite_persistence(storage_factory):
     """Test tenant_id is persisted and correctly loaded from SQLite"""
-    store = VibeStorage(":memory:")
+    store = storage_factory(":memory:")
 
     atom = MemoryAtom(
         id="p1", agent_id="agent-1", session_id="s1",
@@ -415,9 +427,9 @@ def test_tenant_sqlite_persistence():
 
 
 
-def test_budget_recall_keeps_causal_outcomes_over_isolated_cross_reference():
+def test_budget_recall_keeps_causal_outcomes_over_isolated_cross_reference(storage_factory):
     """A lexical cross-reference must not undo seed filtering during fusion."""
-    store = VibeStorage(":memory:")
+    store = storage_factory(":memory:")
     contents = ["Checkout stalled incident investigation"] * 3 + [
         "Applied connection setting", "Confirmed service recovery",
     ]
@@ -448,9 +460,9 @@ def test_budget_recall_keeps_causal_outcomes_over_isolated_cross_reference():
     }
 
 
-def test_seed_filter_keeps_two_seeds_connected_through_nonlexical_cause():
+def test_seed_filter_keeps_two_seeds_connected_through_nonlexical_cause(storage_factory):
     from vibe_memory.retrieval.seed_filter import SeedFilter
-    store = VibeStorage(":memory:")
+    store = storage_factory(":memory:")
     for atom_id in ("incident", "cause", "outcome", "weak-a", "weak-b"):
         store.insert_atom(MemoryAtom(id=atom_id, agent_id="agent-1", session_id="s",
                                      content=atom_id, summary=atom_id))
@@ -462,8 +474,8 @@ def test_seed_filter_keeps_two_seeds_connected_through_nonlexical_cause():
     assert {atom.id for atom in kept} == {"incident", "outcome", "weak-a", "weak-b"}
 
 
-def test_retrieval_edges_can_select_only_edges_incident_to_seeds():
-    store = VibeStorage(":memory:")
+def test_retrieval_edges_can_select_only_edges_incident_to_seeds(storage_factory):
+    store = storage_factory(":memory:")
     for name in ("a", "bridge", "b", "noise-a", "noise-b"):
         store.insert_atom(MemoryAtom(id=name, agent_id="test", session_id="s", content=name, summary=name))
     for source, target in (("a", "bridge"), ("bridge", "b"), ("noise-a", "noise-b")):
@@ -473,9 +485,9 @@ def test_retrieval_edges_can_select_only_edges_incident_to_seeds():
     assert len(store.get_retrieval_edges("test")) == 3
 
 
-def test_recall_candidate_graph_depth_is_capped_at_two_hops():
+def test_recall_candidate_graph_depth_is_capped_at_two_hops(storage_factory):
     """A caller cannot turn budget candidate expansion into a full graph walk."""
-    store = VibeStorage(":memory:")
+    store = storage_factory(":memory:")
     for i in range(4):
         atom = _make_atom(
             f"depth-{i}", DEFAULT_TENANT, "agent-1", "s1",
@@ -500,9 +512,9 @@ def test_recall_candidate_graph_depth_is_capped_at_two_hops():
     assert "depth-1" in ids and "depth-2" in ids and "depth-3" not in ids
 
 
-def test_high_fanout_candidates_keep_strong_causal_neighbor():
+def test_high_fanout_candidates_keep_strong_causal_neighbor(storage_factory):
     """Hundreds of weak neighbors cannot crowd out a later strong answer."""
-    store = VibeStorage(":memory:")
+    store = storage_factory(":memory:")
     store.insert_atom(_make_atom("fan-seed", DEFAULT_TENANT, "agent-1", "s1", "Payment outage"))
     for i in range(500):
         atom = _make_atom(f"fan-{i:03}", DEFAULT_TENANT, "agent-1", "s2", "Follow-up")
@@ -521,10 +533,10 @@ def test_high_fanout_candidates_keep_strong_causal_neighbor():
     assert len(candidates) == 10 and "fan-499" in {a.id for a in candidates}
 
 
-def test_ppr_cannot_walk_through_foreign_or_archived_nodes():
+def test_ppr_cannot_walk_through_foreign_or_archived_nodes(storage_factory):
     """Out-of-scope nodes cannot act as bridges back into valid memory."""
     from vibe_memory.retrieval.ppr import personalized_pagerank
-    store = VibeStorage(":memory:", tenant_id="tenant-a")
+    store = storage_factory(":memory:", tenant_id="tenant-a")
     seed = _make_atom("scope-seed", "tenant-a", "agent-1", "s1")
     valid = _make_atom("scope-valid", "tenant-a", "agent-1", "s1")
     foreign = _make_atom("scope-foreign", "tenant-b", "agent-1", "s1")
@@ -542,9 +554,9 @@ def test_ppr_cannot_walk_through_foreign_or_archived_nodes():
     assert personalized_pagerank([seed], store) == {seed.id: 1.0}
 
 
-def test_ppr_respects_explicit_seed_tenant_and_warm_memory():
+def test_ppr_respects_explicit_seed_tenant_and_warm_memory(storage_factory):
     from vibe_memory.retrieval.ppr import personalized_pagerank
-    store = VibeStorage(":memory:", tenant_id="other-default")
+    store = storage_factory(":memory:", tenant_id="other-default")
     seed = _make_atom("warm-seed", "tenant-a", "agent-1", "s1")
     answer = _make_atom("warm-answer", "tenant-a", "agent-1", "s1")
     answer.lifecycle = Lifecycle.WARM
@@ -558,10 +570,10 @@ def test_ppr_respects_explicit_seed_tenant_and_warm_memory():
     assert set(scores) == {seed.id, answer.id} and scores[answer.id] > 0
 
 
-def test_ppr_rejects_mixed_scopes_and_ignores_archived_seeds():
+def test_ppr_rejects_mixed_scopes_and_ignores_archived_seeds(storage_factory):
     import pytest
     from vibe_memory.retrieval.ppr import personalized_pagerank
-    store = VibeStorage(":memory:")
+    store = storage_factory(":memory:")
     seed = _make_atom("mixed-seed", DEFAULT_TENANT, "agent-1", "s1")
     foreign = _make_atom("mixed-foreign", "tenant-b", "agent-1", "s1")
     with pytest.raises(ValueError, match="one agent and tenant"):
@@ -571,9 +583,9 @@ def test_ppr_rejects_mixed_scopes_and_ignores_archived_seeds():
     assert personalized_pagerank([], store) == {}
 
 
-def test_chinese_recall_finds_old_answer_beyond_candidate_cutoff():
+def test_chinese_recall_finds_old_answer_beyond_candidate_cutoff(storage_factory):
     """Chinese paraphrases retrieve old relevant memories, not recent filler."""
-    store = VibeStorage(":memory:")
+    store = storage_factory(":memory:")
     answer = _make_atom("zh-answer", DEFAULT_TENANT, "agent-1", "s1",
                         "连接池耗尽导致接口超时，释放连接后服务恢复正常")
     answer.created_at = datetime(2026, 1, 1)
@@ -588,8 +600,8 @@ def test_chinese_recall_finds_old_answer_beyond_candidate_cutoff():
         assert [a.id for a in result["atoms"]] == [answer.id]
 
 
-def test_budget_zero_match_padding_cannot_displace_chinese_seed():
-    store = VibeStorage(":memory:")
+def test_budget_zero_match_padding_cannot_displace_chinese_seed(storage_factory):
+    store = storage_factory(":memory:")
     for atom_id, content in (
         ("pad-seed", "连接池接口超时"), ("pad-answer", "释放资源后恢复正常"),
         ("pad-noise-1", "桌面主题颜色"), ("pad-noise-2", "背景图片设置"),
@@ -602,9 +614,9 @@ def test_budget_zero_match_padding_cannot_displace_chinese_seed():
     assert {a.id for a in result["atoms"]} == {"pad-seed", "pad-answer"}
 
 
-def test_chinese_candidates_follow_edits_deletes_and_short_queries(tmp_path):
+def test_chinese_candidates_follow_edits_deletes_and_short_queries(tmp_path, storage_factory):
     path = str(tmp_path / "chinese.db")
-    store = VibeStorage(path)
+    store = storage_factory(path)
     answer = _make_atom("zh-edit", DEFAULT_TENANT, "agent-1", "s1", "连接池耗尽导致接口超时")
     answer.created_at = datetime(2026, 1, 1)
     store.insert_atom(answer)
@@ -617,15 +629,15 @@ def test_chinese_candidates_follow_edits_deletes_and_short_queries(tmp_path):
     assert store.get_recall_candidates("agent-1", "连接池", 1)[0].id != answer.id
     assert store.get_recall_candidates("agent-1", "验证码", 1)[0].id == answer.id
     store.conn.close()
-    store = VibeStorage(path)
+    store = storage_factory(path)
     assert store.get_recall_candidates("agent-1", "验证码", 1)[0].id == answer.id
     store.delete_atom(answer.id)
     assert store.get_recall_candidates("agent-1", "验证码", 1)[0].id != answer.id
     store.conn.close()
 
 
-def test_high_match_chinese_recall_prefers_relevant_old_answer():
-    store = VibeStorage(":memory:", tenant_id="tenant-a")
+def test_high_match_chinese_recall_prefers_relevant_old_answer(storage_factory):
+    store = storage_factory(":memory:", tenant_id="tenant-a")
     answer = _make_atom("dense-answer", "tenant-a", "agent-1", "s1", "连接池超时修复")
     answer.summary = answer.content
     answer.created_at = datetime(2026, 1, 1)

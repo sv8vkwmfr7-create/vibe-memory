@@ -24,8 +24,11 @@ Verifies:
 
 import json
 import uuid
+from contextlib import ExitStack
 from datetime import datetime
 from unittest.mock import MagicMock, patch
+
+import pytest
 
 from vibe_memory.llm.provider import (
     LLMProvider, OpenAIProvider, LLMError, create_provider,
@@ -305,7 +308,7 @@ def test_classifier_confidence_clamping():
 # ── 6. LLMEdgeClassifier: fallback ──
 
 def test_classifier_fallback_on_error():
-    """Test: classifier falls back to rules when LLM fails"""
+    """Failed classification returns no evidence through the public interface."""
     provider = MockProvider(raise_on=1)  # always fails
     classifier = LLMEdgeClassifier(provider, max_retries=0)
 
@@ -313,8 +316,8 @@ def test_classifier_fallback_on_error():
     b = _make_atom("b1", "API timeout investigation", session="s2", tags=["error", "api"])
 
     label, conf = classifier.classify(a, b)
-    assert classifier._classify_fallback == 1
-    assert conf <= 0.4  # fallback confidence is low
+    assert classifier.stats()["classify_fallback"] == 1
+    assert conf == 0.0
 
 
 def test_classifier_retry_then_fallback():
@@ -463,11 +466,19 @@ def test_merge_prompt_structure():
 
 # ── 12. SDK Integration ──
 
-def test_sdk_llm_classifier_constructor():
+@pytest.fixture
+def memory_factory():
+    with ExitStack() as stack:
+        def create(**options):
+            return stack.enter_context(VibeMemory(**options))
+        yield create
+
+
+def test_sdk_llm_classifier_constructor(memory_factory):
     """Test: SDK accepts llm_classifier"""
     provider = MockProvider()
     classifier = LLMEdgeClassifier(provider)
-    mem = VibeMemory(
+    mem = memory_factory(
         agent_id="test-agent",
         db_path=":memory:",
         llm_classifier=classifier,
@@ -476,11 +487,11 @@ def test_sdk_llm_classifier_constructor():
     assert mem.indexer.llm_classify is not None
 
 
-def test_sdk_stats_includes_llm_classifier():
+def test_sdk_stats_includes_llm_classifier(memory_factory):
     """Test: stats() includes llm_classifier when present"""
     provider = MockProvider()
     classifier = LLMEdgeClassifier(provider)
-    mem = VibeMemory(
+    mem = memory_factory(
         agent_id="test-agent",
         db_path=":memory:",
         llm_classifier=classifier,
@@ -490,20 +501,20 @@ def test_sdk_stats_includes_llm_classifier():
     assert stats["llm_classifier"]["provider"] == "mock"
 
 
-def test_sdk_stats_no_llm_classifier():
+def test_sdk_stats_no_llm_classifier(memory_factory):
     """Test: stats() works without llm_classifier"""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:")
     stats = mem.stats()
     assert "llm_classifier" not in stats
 
 
-def test_sdk_flush_index_with_llm():
+def test_sdk_flush_index_with_llm(memory_factory):
     """Test: flush_index uses LLM classifier when available"""
     provider = MockProvider([
         {"content": '{"label": "causal", "confidence": 0.85}', "model": "mock", "usage": {}},
     ])
     classifier = LLMEdgeClassifier(provider)
-    mem = VibeMemory(
+    mem = memory_factory(
         agent_id="test-agent",
         db_path=":memory:",
         llm_classifier=classifier,
@@ -527,11 +538,11 @@ def test_sdk_flush_index_with_llm():
     assert idx_stats["edges_created"] == 1
 
 
-def test_sdk_flush_index_llm_error_graceful():
+def test_sdk_flush_index_llm_error_graceful(memory_factory):
     """Test: flush_index handles LLM errors gracefully"""
     provider = MockProvider(raise_on=1)
     classifier = LLMEdgeClassifier(provider, max_retries=0)
-    mem = VibeMemory(
+    mem = memory_factory(
         agent_id="test-agent",
         db_path=":memory:",
         llm_classifier=classifier,
@@ -553,13 +564,13 @@ def test_sdk_flush_index_llm_error_graceful():
 
 # ── 13. Edge source tracking ──
 
-def test_llm_classifier_edge_source():
+def test_llm_classifier_edge_source(memory_factory):
     """Test: edges created by LLM classifier use EdgeSource.LLM"""
     provider = MockProvider([
         {"content": '{"label": "causal", "confidence": 0.9}', "model": "mock", "usage": {}},
     ])
     classifier = LLMEdgeClassifier(provider)
-    mem = VibeMemory(
+    mem = memory_factory(
         agent_id="test-agent",
         db_path=":memory:",
         llm_classifier=classifier,
@@ -577,24 +588,36 @@ def test_llm_classifier_edge_source():
     assert all_edges[0].source == EdgeSource.LLM
 
 
-def test_llm_fallback_edge_records_rule_source():
-    """A failed model call must not be credited for a rule-generated edge."""
-    classifier = LLMEdgeClassifier(MockProvider(raise_on=1), max_retries=0)
-    mem = VibeMemory(
+@pytest.mark.parametrize("old_text,new_text", [
+    ("fix old issue", "fix new issue"),
+    ("because the old issue occurred", "therefore the new issue occurred"),
+])
+@pytest.mark.parametrize("failure", ["provider-error", "invalid-json", "invalid-confidence"])
+def test_llm_failure_preserves_memories_without_building_edges(
+    memory_factory, old_text, new_text, failure,
+):
+    """A failed model judgment is not evidence for a relationship."""
+    if failure == "provider-error":
+        provider = MockProvider(raise_on=1)
+    else:
+        content = "not json" if failure == "invalid-json" else '{"label":"causal","confidence":"unknown"}'
+        provider = MockProvider([{"content": content}])
+    classifier = LLMEdgeClassifier(provider, max_retries=0)
+    mem = memory_factory(
         agent_id="test-agent",
         db_path=":memory:",
         llm_classifier=classifier,
         embedding_backend="tfidf",
     )
-    old = mem.store("fix old issue", session_id="s1", auto_build_edges=False, auto_episode=False)
-    new = mem.store("fix new issue", session_id="s2", auto_build_edges=False, auto_episode=False)
+    old = mem.store(old_text, session_id="s1", auto_build_edges=False, auto_episode=False)
+    new = mem.store(new_text, session_id="s2", auto_build_edges=False, auto_episode=False)
 
     mem.indexer.enqueue(new, old, 0.8)
-    assert mem.flush_index() == 1
+    assert mem.flush_index() == 0
 
-    edges = mem.storage.get_all_edges()
-    assert len(edges) == 1
-    assert edges[0].source == EdgeSource.RULE
+    assert mem.storage.get_all_edges_raw() == []
+    assert mem.storage.get_atom(old.id).content == old_text
+    assert mem.storage.get_atom(new.id).content == new_text
     assert classifier.stats()["classify_fallback"] == 1
 
 

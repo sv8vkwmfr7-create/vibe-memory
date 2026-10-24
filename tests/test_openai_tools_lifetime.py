@@ -71,3 +71,44 @@ def test_discarding_borrowed_tools_does_not_close_caller_sdk(tmp_path):
         atom = memory.store("caller still owns memory", session_id="s",
                             auto_build_edges=False, auto_episode=False)
         assert [row.id for row in memory.history(session_id="s")] == [atom.id]
+
+
+def test_owned_tools_close_and_preserve_records(tmp_path):
+    path = str(tmp_path / "owned.db")
+    tools = create_vibe_tools(agent_id="owned", db_path=path)
+    functions = {tool.__name__: tool for tool in tools}
+    stored = json.loads(functions["vibe_store"]("timeout reviewed", session_id="s"))
+    tools.close()
+    tools.close()
+    with pytest.raises(RuntimeError, match="VibeMemory is closed"):
+        functions["vibe_stats"]()
+    with VibeMemory("owned", path, embedding_backend="tfidf") as reopened:
+        assert [row.id for row in reopened.history(session_id="s")] == [stored["full_id"]]
+
+
+@pytest.mark.parametrize("exceptional", [False, True])
+def test_owned_tools_context_closes_without_losing_records(tmp_path, exceptional):
+    path = str(tmp_path / "owned-context.db")
+    with pytest.raises(ValueError, match="workflow failure") if exceptional else nullcontext():
+        with create_vibe_tools(agent_id="owned", db_path=path) as tools:
+            assert isinstance(tools, list)
+            assert len(tools) == 7
+            assert all(inspect.isfunction(tool) for tool in tools)
+            assert tools[0].__name__ == "vibe_store"
+            functions = {tool.__name__: tool for tool in tools}
+            stored = json.loads(functions["vibe_store"]("context reviewed", session_id="s"))
+            if exceptional:
+                raise ValueError("workflow failure")
+    tools.close()
+    for name, arguments in [
+        ("vibe_store", {"content": "must not persist"}),
+        ("vibe_recall", {"query": "context reviewed"}),
+        ("vibe_stats", {}),
+    ]:
+        with pytest.raises(RuntimeError, match="VibeMemory is closed"):
+            functions[name](**arguments)
+    with pytest.raises(RuntimeError, match="VibeMemory is closed"):
+        with tools:
+            pytest.fail("closed tools must not reenter")
+    with VibeMemory("owned", path, embedding_backend="tfidf") as reopened:
+        assert [row.id for row in reopened.history(session_id="s")] == [stored["full_id"]]

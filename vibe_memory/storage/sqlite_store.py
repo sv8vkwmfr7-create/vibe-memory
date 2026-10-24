@@ -32,6 +32,15 @@ class _RecallDocument(NamedTuple):
 
 
 SCHEMA = """
+CREATE TABLE IF NOT EXISTS confirmed_use_events (
+    tenant_id TEXT NOT NULL,
+    agent_id TEXT NOT NULL,
+    event_id TEXT NOT NULL,
+    atom_id TEXT NOT NULL,
+    atom_version INTEGER NOT NULL,
+    PRIMARY KEY (tenant_id, agent_id, event_id)
+);
+
 CREATE TABLE IF NOT EXISTS seed_bootstrap (
     tenant_id TEXT NOT NULL,
     agent_id TEXT NOT NULL,
@@ -64,7 +73,8 @@ CREATE TABLE IF NOT EXISTS atoms (
     episode_id TEXT,
     episode_position INTEGER DEFAULT 0,
     version INTEGER DEFAULT 1,
-    previous_version_id TEXT
+    previous_version_id TEXT,
+    last_decayed_at TEXT
 );
 
 CREATE INDEX IF NOT EXISTS idx_atoms_agent ON atoms(agent_id);
@@ -90,6 +100,7 @@ CREATE TABLE IF NOT EXISTS edges (
     status TEXT DEFAULT 'active',
     cross_partition INTEGER DEFAULT 0,
     version INTEGER DEFAULT 1,
+    last_decayed_at TEXT,
     FOREIGN KEY (from_atom_id) REFERENCES atoms(id),
     FOREIGN KEY (to_atom_id) REFERENCES atoms(id)
 );
@@ -171,6 +182,10 @@ class VibeStorage:
         columns = {row[1] for row in self.conn.execute("PRAGMA table_info(atoms)")}
         if "scope" not in columns:
             self.conn.execute("ALTER TABLE atoms ADD COLUMN scope TEXT DEFAULT '{}'")
+        for table in ("atoms", "edges"):
+            columns = {row[1] for row in self.conn.execute(f"PRAGMA table_info({table})")}
+            if "last_decayed_at" not in columns:
+                self.conn.execute(f"ALTER TABLE {table} ADD COLUMN last_decayed_at TEXT")
         self.conn.commit()
         self._fts_enabled = self._initialize_fts()
         self._trigram_enabled = self._initialize_trigram()
@@ -220,8 +235,8 @@ class VibeStorage:
                 lifecycle, weight, decay_rate, access_count, last_accessed,
                 adopted_count, ignored_count, created_at, source, confidence,
                 context_before, context_after, episode_id, episode_position,
-                version, previous_version_id
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                version, previous_version_id, last_decayed_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 atom.id, atom.agent_id, atom.session_id, atom.tenant_id,
                 atom.content, atom.summary,
@@ -233,6 +248,7 @@ class VibeStorage:
                 atom.context_before, atom.context_after,
                 atom.episode_id, atom.episode_position,
                 atom.version, atom.previous_version_id,
+                atom.last_decayed_at.isoformat() if atom.last_decayed_at else None,
             ),
         )
 
@@ -524,13 +540,90 @@ class VibeStorage:
         self.conn.commit()
         return [self._row_to_atom(row) for row in updated]
 
+    def confirm_used(self, atom_id: str, agent_id: str, *, event_id: str,
+                     expected_version: int, tenant_id: Optional[str] = None) -> bool:
+        """Atomically reward one confirmed use, once per scoped logical event.
+
+        Event receipts outlive atoms so delayed retries cannot reward replacements.
+        No caller transaction is committed or rolled back by this method.
+        """
+        if (not isinstance(atom_id, str) or not atom_id.strip()
+                or not isinstance(event_id, str) or not event_id.strip()
+                or type(expected_version) is not int or expected_version < 1):
+            raise ValueError("atom_id/event_id must be nonempty strings and expected_version a positive integer")
+        if self.conn.in_transaction:
+            raise RuntimeError("confirm_used requires an idle connection")
+        owner = (self.tenant_id if tenant_id is None else tenant_id, agent_id)
+        self.conn.execute("BEGIN IMMEDIATE")
+        with self.conn:
+            receipt = self.conn.execute(
+                """SELECT atom_id, atom_version FROM confirmed_use_events
+                WHERE tenant_id=? AND agent_id=? AND event_id=?""",
+                (*owner, event_id)).fetchone()
+            if receipt is not None:
+                if (receipt['atom_id'], receipt['atom_version']) != (atom_id, expected_version):
+                    raise ValueError("event_id conflicts with an existing confirmation")
+                return False
+            atom = self.conn.execute(
+                """SELECT version, lifecycle FROM atoms
+                WHERE tenant_id=? AND agent_id=? AND id=?""", (*owner, atom_id)).fetchone()
+            if (atom is None or atom['version'] != expected_version
+                    or atom['lifecycle'] not in ('active', 'warm')):
+                raise ValueError("Memory unavailable or version is stale")
+            self.conn.execute(
+                "INSERT INTO confirmed_use_events VALUES (?, ?, ?, ?, ?)",
+                (*owner, event_id, atom_id, expected_version))
+            self.conn.execute(
+                """UPDATE atoms SET weight=MIN(1.0, weight + 0.1),
+                    access_count=access_count + 1, last_accessed=?,
+                    adopted_count=adopted_count + 1, decay_rate=MIN(0.99, decay_rate + 0.01)
+                WHERE tenant_id=? AND agent_id=? AND id=?""",
+                (datetime.now().isoformat(), *owner, atom_id))
+        return True
+
+    def persist_decay(self, item: MemoryAtom | Edge, previous_weight: float,
+                      previous_accessed: Optional[datetime],
+                      previous_decayed_at: Optional[datetime]) -> bool:
+        """Save only decay metadata if its read snapshot is still current.
+
+        A concurrent access/decay/rate change wins; a later GC can reconsider it.
+        This does not make the whole GC pipeline a single transaction.
+        """
+        table = 'atoms' if isinstance(item, MemoryAtom) else 'edges'
+        cursor = self.conn.execute(
+            f"""UPDATE {table} SET weight=?, last_decayed_at=?
+            WHERE id=? AND tenant_id=? AND weight=? AND last_accessed IS ?
+                AND last_decayed_at IS ? AND decay_rate=?""",
+            (item.weight, item.last_decayed_at.isoformat() if item.last_decayed_at else None,
+             item.id, item.tenant_id, previous_weight,
+             previous_accessed.isoformat() if previous_accessed else None,
+             previous_decayed_at.isoformat() if previous_decayed_at else None,
+             item.decay_rate),
+        )
+        self.conn.commit()
+        return cursor.rowcount == 1
+
+    def persist_lifecycle(self, atom: MemoryAtom, lifecycle: Lifecycle) -> bool:
+        """Apply a GC transition only while its time/lifecycle baseline matches."""
+        cursor = self.conn.execute(
+            """UPDATE atoms SET lifecycle=?
+            WHERE id=? AND tenant_id=? AND agent_id=? AND lifecycle=?
+                AND last_accessed IS ? AND created_at=?""",
+            (lifecycle.value, atom.id, atom.tenant_id, atom.agent_id,
+             atom.lifecycle.value,
+             atom.last_accessed.isoformat() if atom.last_accessed else None,
+             atom.created_at.isoformat()),
+        )
+        self.conn.commit()
+        return cursor.rowcount == 1
+
     def update_atom(self, atom: MemoryAtom) -> None:
         self.conn.execute(
             """UPDATE atoms SET
                 content=?, summary=?, type=?, tags=?, scope=?, weight=?, decay_rate=?,
                 lifecycle=?, access_count=?, last_accessed=?, adopted_count=?,
                 ignored_count=?, confidence=?, episode_id=?, episode_position=?,
-                version=?
+                version=?, last_decayed_at=?
             WHERE id=?""",
             (
                 atom.content, atom.summary, atom.type.value,
@@ -539,21 +632,42 @@ class VibeStorage:
                 atom.last_accessed.isoformat() if atom.last_accessed else None,
                 atom.adopted_count, atom.ignored_count,
                 atom.confidence, atom.episode_id, atom.episode_position,
-                atom.version, atom.id,
+                atom.version, atom.last_decayed_at.isoformat() if atom.last_decayed_at else None,
+                atom.id,
             ),
         )
         self.conn.commit()
 
     def delete_atom(self, atom_id: str) -> None:
+        self._delete_atom(atom_id)
+
+    def delete_atom_if_unchanged(self, expected: MemoryAtom, *, capacity: Optional[int] = None) -> bool:
+        """Delete a matching GC snapshot, optionally only above pool capacity."""
+        return self._delete_atom(expected.id, expected, capacity)
+
+    def _delete_atom(self, atom_id: str, expected: Optional[MemoryAtom] = None,
+                     capacity: Optional[int] = None) -> bool:
         if self.conn.in_transaction:
             raise ValueError("delete_atom requires a connection without an open transaction")
         with self.conn:
             self.conn.execute("BEGIN IMMEDIATE")
             atom = self.get_atom(atom_id)
+            # Embeddings are not persisted in the atoms table.
+            if expected is not None and atom != replace(expected, embedding=None):
+                return False
+            if expected is not None and capacity is not None:
+                count = self.conn.execute(
+                    """SELECT COUNT(*) FROM atoms WHERE tenant_id=? AND agent_id=?
+                    AND type=? AND lifecycle!='archived'""",
+                    (expected.tenant_id, expected.agent_id, expected.type.value),
+                ).fetchone()[0]
+                if count <= capacity:
+                    return False
             if atom:
                 self._invalidate_episodes([atom])
             self.conn.execute("DELETE FROM edges WHERE from_atom_id = ? OR to_atom_id = ?", (atom_id, atom_id))
             self.conn.execute("DELETE FROM atoms WHERE id = ?", (atom_id,))
+        return atom is not None
 
     def _invalidate_episodes(self, atoms: list[MemoryAtom]) -> None:
         """Discard affected derived summaries inside the caller's transaction."""
@@ -621,7 +735,8 @@ class VibeStorage:
         self.conn.commit()
         return inserted
 
-    def insert_edge_if_current(self, edge: Edge, first: MemoryAtom, second: MemoryAtom) -> bool:
+    def insert_edge_if_current(self, edge: Edge, first: MemoryAtom, second: MemoryAtom,
+                               *, preserve_existing: bool = False) -> bool:
         """Indexer compare-and-insert: no model/network work inside this transaction."""
         if self.conn.in_transaction:
             raise ValueError("Indexed edge insertion requires no open caller transaction")
@@ -632,10 +747,11 @@ class VibeStorage:
             self.conn.execute("BEGIN IMMEDIATE")
             for expected in (first, second):
                 current = self.get_atom(expected.id)
-                if not current or current.to_dict() != expected.to_dict():
+                if (not current or current.to_dict() != expected.to_dict()
+                        or current.context_before != expected.context_before
+                        or current.context_after != expected.context_after):
                     return False
-            self._insert_edge(edge)
-        return True
+            return self._insert_edge(edge, preserve_existing=preserve_existing)
 
     def _insert_edge(self, edge: Edge, *, preserve_existing: bool = False) -> bool:
         command = "INSERT" if preserve_existing else "INSERT OR REPLACE"
@@ -644,8 +760,8 @@ class VibeStorage:
             f"""{command} INTO edges (
                 id, from_atom_id, to_atom_id, tenant_id, label, weight, decay_rate,
                 confidence, source, created_at, last_accessed, status,
-                cross_partition, version
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""" + conflict,
+                cross_partition, version, last_decayed_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""" + conflict,
             (
                 edge.id, edge.from_atom_id, edge.to_atom_id, edge.tenant_id,
                 edge.label.value, edge.weight, edge.decay_rate,
@@ -653,6 +769,7 @@ class VibeStorage:
                 edge.created_at.isoformat(),
                 edge.last_accessed.isoformat() if edge.last_accessed else None,
                 edge.status.value, int(edge.cross_partition), edge.version,
+                edge.last_decayed_at.isoformat() if edge.last_decayed_at else None,
             ),
         )
         return cursor.rowcount == 1
@@ -740,17 +857,37 @@ class VibeStorage:
         rows = self.conn.execute("SELECT * FROM edges").fetchall()
         return [self._row_to_edge(r) for r in rows]
 
+    def mark_edge_stale(self, edge: Edge, previous_weight: float,
+                        previous_accessed: Optional[datetime],
+                        previous_decayed_at: Optional[datetime]) -> bool:
+        """Invalidate a GC candidate only while its decision snapshot is current."""
+        cursor = self.conn.execute(
+            """UPDATE edges SET status='stale', weight=?, last_decayed_at=?
+            WHERE id=? AND tenant_id=? AND weight=? AND last_accessed IS ?
+                AND last_decayed_at IS ? AND decay_rate=? AND confidence=?
+                AND status=? AND cross_partition=? AND version=?""",
+            (edge.weight, edge.last_decayed_at.isoformat() if edge.last_decayed_at else None,
+             edge.id, edge.tenant_id, previous_weight,
+             previous_accessed.isoformat() if previous_accessed else None,
+             previous_decayed_at.isoformat() if previous_decayed_at else None,
+             edge.decay_rate, edge.confidence, edge.status.value,
+             edge.cross_partition, edge.version),
+        )
+        self.conn.commit()
+        return cursor.rowcount == 1
+
     def update_edge(self, edge: Edge) -> None:
         self.conn.execute(
             """UPDATE edges SET
                 weight=?, decay_rate=?, confidence=?, status=?,
-                last_accessed=?, version=?
+                last_accessed=?, version=?, last_decayed_at=?
             WHERE id=?""",
             (
                 edge.weight, edge.decay_rate, edge.confidence,
                 edge.status.value,
                 edge.last_accessed.isoformat() if edge.last_accessed else None,
-                edge.version, edge.id,
+                edge.version, edge.last_decayed_at.isoformat() if edge.last_decayed_at else None,
+                edge.id,
             ),
         )
         self.conn.commit()
@@ -888,6 +1025,7 @@ class VibeStorage:
             episode_position=row["episode_position"],
             version=row["version"],
             previous_version_id=row["previous_version_id"],
+            last_decayed_at=datetime.fromisoformat(row["last_decayed_at"]) if row["last_decayed_at"] else None,
         )
 
     def _row_to_edge(self, row: sqlite3.Row) -> Edge:
@@ -906,6 +1044,7 @@ class VibeStorage:
             status=EdgeStatus(row["status"]),
             cross_partition=bool(row["cross_partition"]),
             version=row["version"],
+            last_decayed_at=datetime.fromisoformat(row["last_decayed_at"]) if row["last_decayed_at"] else None,
         )
 
     def _row_to_episode(self, row: sqlite3.Row) -> Episode:

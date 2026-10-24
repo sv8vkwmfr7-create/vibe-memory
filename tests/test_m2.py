@@ -4,6 +4,8 @@ Tests: graph partition manager + Louvain community detection
 M2 收尾 — 图分区 + 社区检测。
 """
 
+from contextlib import ExitStack
+import pytest
 import uuid
 from datetime import datetime
 
@@ -41,9 +43,19 @@ def _make_edge(id: str, from_id: str, to_id: str, label: EdgeLabel, confidence: 
 
 # ── Tests ──
 
-def test_partition_manager_init():
+@pytest.fixture
+def storage_factory():
+    with ExitStack() as stack:
+        def create(*args, **options):
+            store = VibeStorage(*args, **options)
+            stack.callback(store.conn.close)
+            return store
+        yield create
+
+
+def test_partition_manager_init(storage_factory):
     """Test GraphPartitionManager initialization"""
-    store = VibeStorage(":memory:")
+    store = storage_factory(":memory:")
 
     # Insert atoms in different partitions
     s1 = _make_atom("s1", GraphPartition.SESSION, ["error", "config"])
@@ -83,9 +95,9 @@ def test_partition_manager_init():
 
 
 
-def test_partition_route():
+def test_partition_route(storage_factory):
     """Test atom and edge routing"""
-    store = VibeStorage(":memory:")
+    store = storage_factory(":memory:")
     mgr = GraphPartitionManager(store)
 
     s1 = _make_atom("s1", GraphPartition.SESSION, ["error"])
@@ -116,9 +128,9 @@ def test_partition_route():
 
 
 
-def test_cross_partition_edge_building():
+def test_cross_partition_edge_building(storage_factory):
     """Test automatic cross-partition edge building"""
-    store = VibeStorage(":memory:")
+    store = storage_factory(":memory:")
 
     s1 = _make_atom("s1", GraphPartition.SESSION, ["error", "config"])
     d1 = _make_atom("d1", GraphPartition.DOCUMENT, ["error", "api"])
@@ -149,9 +161,9 @@ def test_cross_partition_edge_building():
 
 
 
-def test_partition_get_neighbors():
+def test_partition_get_neighbors(storage_factory):
     """Test get_neighbors with and without cross-partition"""
-    store = VibeStorage(":memory:")
+    store = storage_factory(":memory:")
 
     s1 = _make_atom("s1", GraphPartition.SESSION, ["error"])
     s2 = _make_atom("s2", GraphPartition.SESSION, ["config"])
@@ -189,9 +201,9 @@ def test_partition_get_neighbors():
 
 
 
-def test_partition_stats():
+def test_partition_stats(storage_factory):
     """Test partition statistics"""
-    store = VibeStorage(":memory:")
+    store = storage_factory(":memory:")
 
     s1 = MemoryAtom(
         id="s1", agent_id="agent-1", session_id="s1",
@@ -243,9 +255,9 @@ def test_partition_stats():
 
 
 
-def test_evict_atoms():
+def test_evict_atoms(storage_factory):
     """Test atom eviction from partition manager"""
-    store = VibeStorage(":memory:")
+    store = storage_factory(":memory:")
 
     s1 = _make_atom("s1", GraphPartition.SESSION, ["error"])
     s2 = _make_atom("s2", GraphPartition.SESSION, ["routine"])

@@ -94,7 +94,7 @@ def test_mcp_eof_releases_database_without_resource_warning(tmp_path, wal_mainte
                             encoding='utf-8', timeout=20)
     assert result.returncode == 0, result.stderr
     response = json.loads(result.stdout)
-    assert len(response['result']['tools']) == (10 if wal_maintenance else 9)
+    assert len(response['result']['tools']) == (12 if wal_maintenance else 11)
     assert 'ResourceWarning: unclosed database' not in result.stderr
 
 
@@ -213,7 +213,9 @@ def test_tools_list(client):
     assert "vibe_forget" in tools
     assert "vibe_flush" in tools
     assert "vibe_settings" in tools
-    assert len(r["result"]["tools"]) == 9
+    assert "vibe_prepare_relation_review" in tools
+    assert "vibe_apply_relation_review" in tools
+    assert len(r["result"]["tools"]) == 11
 
 
 def test_unknown_method(client):

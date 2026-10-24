@@ -252,12 +252,7 @@ class DecayManager:
 
     def decay_edge(self, edge: Edge) -> None:
         """衰减一条边"""
-        if edge.last_accessed is None:
-            return
-        days = (datetime.now() - edge.last_accessed).days
-        if days > 0:
-            edge.weight *= edge.decay_rate ** days
-            edge.weight = max(0.0, min(1.0, edge.weight))
+        edge.decay()
 
     def decay_all(
         self,

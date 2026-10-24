@@ -22,6 +22,7 @@ collect_garbage()                 → GC 压缩
 """
 
 import uuid
+import json
 import sqlite3
 from copy import deepcopy
 from contextlib import ExitStack, nullcontext
@@ -91,6 +92,8 @@ class VibeMemory:
         embedding_model: 语义模型名（仅 st/auto 时生效）
         journal_mode: None 保持数据库现有日志模式；"wal" / "delete" 显式设置
         wal_maintenance: None 默认关闭；同库 SDK 显式共享 WALMaintenance，维护由应用主动触发
+        retention_policy: "wall_clock" 保持旧GC行为；"inactivity_safe" 禁止GC自然年龄衰减/迁移，容量限制仍执行
+        reinforcement_policy: "legacy" 保持召回强化；"confirmed_use" 仅确认使用时强化
     """
 
     def __init__(
@@ -105,7 +108,13 @@ class VibeMemory:
         reflector: Optional[Reflector] = None,
         journal_mode: Optional[str] = None,
         wal_maintenance: Optional[WALMaintenance] = None,
+        *,
+        retention_policy: str = "wall_clock",
+        reinforcement_policy: str = "legacy",
     ):
+        if reinforcement_policy not in ("legacy", "confirmed_use"):
+            raise ValueError("reinforcement_policy must be 'legacy' or 'confirmed_use'")
+        self.reinforcement_policy = reinforcement_policy
         self.wal_maintenance = wal_maintenance
         # ponytail: serialize whole calls per instance; use separate instances for throughput.
         self._operation_lock = RLock()
@@ -155,6 +164,7 @@ class VibeMemory:
                 storage=self.storage,
                 agent_id=agent_id,
                 tenant_id=tenant_id,
+                retention_policy=retention_policy,
             )
 
             # LLM 分类器
@@ -175,6 +185,7 @@ class VibeMemory:
             self._edge_count: int = 0
             self._semantic_cache: dict = {}
             self._bm25_cache: dict = {}
+            self._relation_reviews: dict = {}
             startup_cleanup.pop_all()
 
     @coordinated
@@ -196,7 +207,84 @@ class VibeMemory:
             with self._operation_lock:
                 if not self._closed:
                     self.storage.conn.close()
+                    self._relation_reviews.clear()
                     self._closed = True
+
+    @coordinated
+    def prepare_relation_review(self, from_id: str, to_id: str) -> dict:
+        """Export a full cross-session pair; retain an instance-local trusted copy.
+
+        At most 32 pending pairs and 20,000 JSON characters per delivered payload.
+        Nothing is truncated or evicted. Reviews expire on close/restart.
+        """
+        if not isinstance(from_id, str) or not isinstance(to_id, str) or from_id == to_id:
+            raise ValueError("Review requires two different full atom IDs")
+        atoms = [self.storage.get_atom(atom_id) for atom_id in (from_id, to_id)]
+        if any(atom is None or (atom.tenant_id, atom.agent_id) !=
+               (self.tenant_id, self.agent_id) for atom in atoms):
+            raise ValueError("Review endpoints must exist and belong to this SDK owner")
+        if atoms[0].session_id == atoms[1].session_id:
+            raise ValueError("Review endpoints must belong to different sessions")
+        if len(self._relation_reviews) >= 32:
+            raise ValueError("At most 32 pending relation reviews are allowed")
+        records = [dict(atom.to_dict(), context_before=atom.context_before,
+                        context_after=atom.context_after) for atom in atoms]
+        review_id = str(uuid.uuid4())
+        payload = {"review_id": review_id, "from": records[0], "to": records[1],
+                   "semantic_verified": False, "decision_origin": "caller_assertion"}
+        if len(json.dumps(payload, ensure_ascii=False)) > 20000:
+            raise ValueError("Relation review payload exceeds 20000 JSON characters")
+        self._relation_reviews[review_id] = deepcopy(records)
+        return payload
+
+    @coordinated
+    def apply_relation_review(self, review_id: str, *, decision: str,
+                              from_quote: Optional[str] = None,
+                              to_quote: Optional[str] = None) -> dict:
+        """Consume a review without invoking a model. Replays never write again.
+
+        Literal quotes are not semantic verification. Receipts are instance-local,
+        not a durable evidence ledger; RULE remains the compatible stored source.
+        Invalid decisions/quotes leave the review pending; valid decisions consume
+        it even when stale or already linked. Unknown IDs return not_applied.
+        """
+        if decision not in ("accept", "reject", "uncertain"):
+            raise ValueError("decision must be accept, reject, or uncertain")
+        result = {"review_id": review_id, "applied": False,
+                  "semantic_verified": False, "decision_origin": "caller_assertion",
+                  "status": "not_applied"}
+        records = self._relation_reviews.get(review_id)
+        if records is None:
+            return result
+        if decision == "accept":
+            for quote, record in zip((from_quote, to_quote), records):
+                if not isinstance(quote, str) or not quote.strip() or quote not in record["content"]:
+                    raise ValueError("Each quote must be nonempty and appear in its original body")
+        del self._relation_reviews[review_id]
+        if decision == "accept":
+            atoms = [self.storage.get_atom(record["id"]) for record in records]
+            # Access/feedback counters and decay are not semantic evidence changes.
+            volatile = {"weight", "decay_rate", "access_count", "adopted_count", "ignored_count"}
+            for atom, expected in zip(atoms, records):
+                if atom is None:
+                    return result
+                current = dict(atom.to_dict(), context_before=atom.context_before,
+                               context_after=atom.context_after)
+                if any(current[key] != value for key, value in expected.items() if key not in volatile):
+                    return result
+            edge = Edge(id=str(uuid.uuid4()), from_atom_id=atoms[0].id,
+                        to_atom_id=atoms[1].id, tenant_id=self.tenant_id,
+                        label=EdgeLabel.SIMILAR, confidence=0.7, source=EdgeSource.RULE,
+                        created_at=datetime.now(), status=EdgeStatus.ACTIVE,
+                        cross_partition=(atoms[0].type != atoms[1].type))
+            if not self.storage.insert_edge_if_current(edge, *atoms, preserve_existing=True):
+                return result
+            self._edge_count += 1
+            self.metrics.record_edge_built(source=edge.source.value, label=edge.label.value)
+            result.update(applied=True, status="applied", edge_id=edge.id)
+            return result
+        result["status"] = decision
+        return result
 
     # ── 1. store ──
 
@@ -414,6 +502,9 @@ class VibeMemory:
         # 非关键强化不等待写锁，也不提交/回滚调用方已有事务。
         conn = self.storage.conn
         result["reinforcement_skipped"] = False
+        if self.reinforcement_policy == "confirmed_use":
+            result["reinforcement_skipped"] = True
+            return result
         if conn.in_transaction:
             result["reinforcement_skipped"] = True
             return result
@@ -444,6 +535,22 @@ class VibeMemory:
         return result
 
     # ── 2b. inject ──
+
+    @coordinated
+    def confirm_used(self, atom_id: str, *, event_id: str, expected_version: int) -> dict:
+        """Confirm host-observed use, not retrieval exposure.
+
+        Only available under reinforcement_policy='confirmed_use'. Reuse the
+        event ID and original version on retries; a new use needs a new ID.
+        Returns {'applied': False} for an identical durable receipt. Conflicting
+        event payloads, stale/foreign/unavailable atoms raise ValueError.
+        No model judgment or related-edge reward is performed.
+        """
+        if self.reinforcement_policy != "confirmed_use":
+            raise ValueError("confirm_used requires reinforcement_policy='confirmed_use'")
+        return {'applied': self.storage.confirm_used(
+            atom_id, self.agent_id, event_id=event_id,
+            expected_version=expected_version, tenant_id=self.tenant_id)}
 
     @coordinated
     def inject(
@@ -855,7 +962,7 @@ class VibeMemory:
         for sim in candidates["similar"]:
             from vibe_memory.edges.edge_builder import _tag_overlap_ratio
             sim_score = _tag_overlap_ratio(new_atom, sim)
-            self.indexer.enqueue(new_atom, sim, sim_score)
+            self.indexer.enqueue(new_atom, sim, sim_score, similarity_threshold=edge_sim)
 
     def _scan_text(self, text: str) -> str:
         """Apply the configured defense without exposing raw findings in errors."""

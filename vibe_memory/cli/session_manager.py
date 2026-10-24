@@ -275,4 +275,7 @@ def quick_end(
 ) -> dict:
     """Quick end: end session and store summary."""
     mgr = SessionManager(agent_id=agent_id, vibe_dir=vibe_dir)
-    return mgr.end_session(summary=summary)
+    try:
+        return mgr.end_session(summary=summary)
+    finally:
+        mgr.mem.close()

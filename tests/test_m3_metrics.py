@@ -16,6 +16,8 @@ Verifies:
 12. Multiple operations: cumulative counts
 """
 
+from contextlib import ExitStack
+import pytest
 import time
 
 from vibe_memory.metrics import MetricsCollector
@@ -23,6 +25,14 @@ from vibe_memory.sdk import VibeMemory
 
 
 # ── Tests ──
+
+@pytest.fixture
+def memory_factory():
+    with ExitStack() as stack:
+        def create(*args, **options):
+            return stack.enter_context(VibeMemory(*args, **options))
+        yield create
+
 
 def test_measure_latency():
     """Test: measure() context manager records latency"""
@@ -256,9 +266,9 @@ def test_multiple_operations_latency():
 
 
 
-def test_sdk_metrics_integration():
+def test_sdk_metrics_integration(memory_factory):
     """Test: SDK stats() includes metrics section"""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
 
     # Do some operations
     with mem.metrics.measure("store"):
@@ -288,9 +298,9 @@ def test_sdk_metrics_integration():
 
 
 
-def test_sdk_edge_metrics():
+def test_sdk_edge_metrics(memory_factory):
     """Test: edge building is tracked in metrics"""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
 
     mem.store("API timeout error", session_id="s1", tags=["error", "config"])
     mem.store("Changed timeout to 60s", session_id="s1", tags=["config"])
@@ -304,9 +314,9 @@ def test_sdk_edge_metrics():
 
 
 
-def test_sdk_degradation_tracking():
+def test_sdk_degradation_tracking(memory_factory):
     """Test: SDK can track degradation events"""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
 
     mem.metrics.record_degradation("ppr_to_topk")
     mem.metrics.record_degradation("seed_filter_skipped")
@@ -318,9 +328,9 @@ def test_sdk_degradation_tracking():
 
 
 
-def test_sdk_recall_hit_rate():
+def test_sdk_recall_hit_rate(memory_factory):
     """Test: recall hit rate tracked across multiple recalls"""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
 
     # Store some content
     mem.store("API timeout error", session_id="s1", tags=["error"])

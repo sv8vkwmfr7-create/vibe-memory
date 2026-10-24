@@ -12,7 +12,7 @@ TenantIsolation: 多租户隔离（M3）
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def scope_matches(stored: dict[str, str], required: dict[str, str]) -> bool:
@@ -120,15 +120,18 @@ class MemoryAtom:
     # 版本（Bug 16）
     version: int = 1
     previous_version_id: Optional[str] = None
+    last_decayed_at: Optional[datetime] = None
 
     def decay(self) -> None:
-        """自然衰减：weight *= decay_rate ^ days_since_access"""
+        """Consume only complete days not yet applied to this weight."""
         if self.last_accessed is None:
             return
-        days = (datetime.now() - self.last_accessed).days
+        reference = max(self.last_accessed, self.last_decayed_at or self.last_accessed)
+        days = (datetime.now() - reference).days
         if days > 0:
             self.weight *= self.decay_rate ** days
             self.weight = max(0.0, min(1.0, self.weight))
+            self.last_decayed_at = reference + timedelta(days=days)
 
     def reinforce(self) -> None:
         """Hebbian 强化：被检索命中"""
@@ -204,15 +207,18 @@ class Edge:
     status: EdgeStatus = EdgeStatus.ACTIVE
     cross_partition: bool = False
     version: int = 1
+    last_decayed_at: Optional[datetime] = None
 
     def decay(self) -> None:
-        """自然衰减"""
+        """Consume only complete days not yet applied to this weight."""
         if self.last_accessed is None:
             return
-        days = (datetime.now() - self.last_accessed).days
+        reference = max(self.last_accessed, self.last_decayed_at or self.last_accessed)
+        days = (datetime.now() - reference).days
         if days > 0:
             self.weight *= self.decay_rate ** days
             self.weight = max(0.0, min(1.0, self.weight))
+            self.last_decayed_at = reference + timedelta(days=days)
 
     def reinforce(self) -> None:
         """访问强化"""

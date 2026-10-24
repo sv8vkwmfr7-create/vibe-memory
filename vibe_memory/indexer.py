@@ -22,6 +22,7 @@ import time
 from typing import Optional, Callable
 from datetime import datetime
 from collections import OrderedDict
+from numbers import Real
 
 from vibe_memory.models.memory_atom import (
     MemoryAtom, Edge, EdgeLabel, EdgeSource, EdgeStatus,
@@ -122,7 +123,10 @@ class IncrementalIndexer:
 
     # ── 入队 ──
 
-    def enqueue(self, new_atom: MemoryAtom, existing_atom: MemoryAtom, similarity: float) -> bool:
+    def enqueue(
+        self, new_atom: MemoryAtom, existing_atom: MemoryAtom, similarity: float,
+        *, similarity_threshold: Optional[float] = None,
+    ) -> bool:
         """
         将跨会话边候选加入队列。
 
@@ -130,14 +134,16 @@ class IncrementalIndexer:
             new_atom: 新分片
             existing_atom: 已有分片
             similarity: 相似度分数
+            similarity_threshold: 本次覆盖的有限数值 [0, 1]；None 使用实例配置，不修改配置
 
         Returns:
             True 如果入队成功，False 如果被丢弃
         """
+        threshold = self._resolve_similarity_threshold(similarity_threshold)
         candidate = IndexCandidate(new_atom, existing_atom, similarity)
         pair_key = candidate.pair_key
         # Reject low-quality input before it can evict an accepted candidate.
-        if similarity < self.edge_similarity_threshold:
+        if similarity < threshold:
             return False
 
         # 去重：已存在则更新相似度（取最大值）
@@ -154,6 +160,13 @@ class IncrementalIndexer:
         self._enqueued_count += 1
         return True
 
+    def _resolve_similarity_threshold(self, threshold: Optional[float]) -> float:
+        if threshold is None:
+            return self.edge_similarity_threshold
+        if isinstance(threshold, bool) or not isinstance(threshold, Real) or not 0 <= threshold <= 1:
+            raise ValueError("similarity_threshold must be a finite number between 0 and 1")
+        return threshold
+
     def enqueue_batch(
         self,
         new_atom: MemoryAtom,
@@ -166,12 +179,12 @@ class IncrementalIndexer:
         Args:
             new_atom: 新分片
             existing_atoms: 已有分片列表
-            similarity_threshold: 相似度阈值（None 则用默认）
+            similarity_threshold: 本次覆盖的有限数值 [0, 1]（None 则用实例配置，0 为有效覆盖）
 
         Returns:
             入队数量
         """
-        threshold = similarity_threshold or self.edge_similarity_threshold
+        threshold = self._resolve_similarity_threshold(similarity_threshold)
         candidates = build_cross_session_candidates(
             new_atom, existing_atoms,
             high_similarity=0.9,
@@ -183,7 +196,7 @@ class IncrementalIndexer:
             # 计算精确相似度
             from vibe_memory.edges.edge_builder import _tag_overlap_ratio
             sim_score = _tag_overlap_ratio(new_atom, sim)
-            if self.enqueue(new_atom, sim, sim_score):
+            if self.enqueue(new_atom, sim, sim_score, similarity_threshold=similarity_threshold):
                 count += 1
 
         return count

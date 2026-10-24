@@ -25,10 +25,16 @@ SDK-backed store/recall/stats calls reject closed use. Empty session-end calls
 and direct-storage link failures retain existing behavior, not a new uniform
 closed-error contract. No model-facing close tool is introduced.
 
-Calls without `memory=` retain the legacy constructor and seven-function list.
-That list has no close handle; legacy unmanaged callers must migrate to the
-caller-owned pattern for deterministic cleanup. No destructor-based cleanup or
-warning suppression is added. Tests use real temporary SDKs without Agents SDK
+Calls without `memory=` retain the legacy constructor and seven functions, but
+return a list subclass owning the SDK, with repeatable close() and context
+management. Indexing and iteration still work; isinstance(tools, list) is true,
+but exact type(tools) is list is no longer true for this owning path.
+Use with or close in finally, keeping the original returned owner until the
+entire workflow finishes, even if functions are copied or wrapped. Copies and
+slices do not transfer ownership. Context exits close without suppressing caller
+exceptions; closed owners cannot be entered again. Borrowing memory= still
+returns an ordinary list. No destructor-based cleanup or warning suppression is
+added. Tests use real temporary SDKs without Agents SDK
 or cloud calls. On 2026-10-08 the real offline framework smoke was refreshed
 using caller-owned SDK with; it is distinct from these plain-function tests.
 

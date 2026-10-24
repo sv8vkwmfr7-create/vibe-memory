@@ -1,5 +1,216 @@
 # Review repair progress — 2026-10-01
 
+## Current confirmed-use artifact accepted; M0 quality open — 2026-10-11
+
+New isolated build/base smoke and Python3.14.7 installed full accepted:
+1159pass/10optional-transformers-skip/179warnings,214.32s,exit0; all39 focused
+cases pass.48 package hashes/226 inputs/47 installed origins independently match,
+6CLI/8MCP pass. Resource warnings not repaired; no models/real DB/config/Git action.
+V1 official-index TLS failure retained; V2 temporary TLS-verified mirror used,
+no persistent configuration or test change. Evidence:external
+results/confirmed_use_wheel_full_20261011_v2/REPORT.md.
+M0 date-role10 frozen files/8 captures intact, MCP source matches but SDK binding
+historical; next refresh separate current materials then quality comparison with
+fresh paid scope approval. Not M0 completion;65 counts/96 paused review unchanged.
+
+## Confirmed-use SDK first slice — 2026-10-11
+
+Approved optional confirmed_use mode stops recall/inject exposure reinforcement;
+explicit confirm_used provides durable per-owner/event deduplication and version
+validation. Receipt and reward commit together; duplicate retry never rewards a
+replacement even after update/deletion. Legacy default and retention independence
+preserved.18 new/56 related tests pass; source full1169pass/264.94s,exit0,JUnit
+0failure/error/skip; hashes unchanged. SQLite boundary-denial rollback covered,
+not crash recovery. Fresh installed artifact still pending for this increment.
+Evidence:external results/confirmed_use_20261011_v1/REPORT.md.
+No host/MCP wiring, real migration/database/config, model call, push or deployment.
+Mixed legacy clients, receipt growth, related activity clock/consolidation and
+final answer/cost acceptance remain; resource-warning findings not closed.
+65-entry audit accounting and paused96-row human review unchanged.
+
+## Inactivity-safe installed increment accepted — 2026-10-11
+
+Fresh isolated build/base smoke and installed full gate1141pass/10skip/179warnings,
+261.13s,exit0. JUnit1151/0failure/0error;8 retention+13 concurrent GC cases allpass.
+48 package hashes,225 scoped inputs and47 installed-module origins independently
+verified; same-artifact6CLI/8MCP checks pass. Optional transformers skips and resource
+warnings still open. Evidence:external results/inactivity_wheel_full_20261011_v1/REPORT.md.
+Explicit SDK policy only; no production default/real DB/host deployment/Git/model
+action. Next related/unrelated activity/retry and policy-boundary controls before
+feedback/interface work; not a completed logical activity mechanism or answer-quality
+claim.65-entry counts and96-row review unchanged. Prior pending gate notes historical.
+
+## Opt-in inactivity-safe GC first slice — 2026-10-11
+
+Implemented after human approval: keyword-only SDK retention_policy selects
+wall_clock (unchanged default) or inactivity_safe. The latter bypasses all three
+GC decay sites and age-based lifecycle migration, without changing capacity,
+explicit low-weight/STALE eviction, schema, direct decay APIs or production MCP.
+Eight new public SDK/storage temporary cases and prior decay/concurrent tests:
+30pass/12.26s. Corrected old-date seeds show migration red2fail when that protection
+alone is removed. Complete source regression1151pass/347.52s,exit0; JUnit1151 with
+zero failures/errors/skips, code/test hashes unchanged. Fresh artifact not yet
+built. Evidence directory: C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/inactivity_retention_20261011_v1.
+
+Not a complete logical activity policy. No migration/backfill/archive restoration,
+feedback deduplication, recall reinforcement change or expiry judgement claim.
+Instance-local opt-in must be supplied again at reopen; mixed legacy clients are
+not protected. Default factory resource-release gap remains independently open.
+No model calls, real DB/config modification, commit/push/release.65-entry audit
+counts unchanged;96-row human review still paused.
+
+## GC repair batch new installed artifact accepted — 2026-10-11
+
+Current GC repairs isolated sdist->wheel/base smoke and independent Python3.14.7
+installed full gate passed:1133pass/10skip/179warnings,236.71s, JUnit1143 zero
+failures/errors; all13 concurrent regressions pass.47 modules from new package,
+48 package hashes match,224 scoped inputs unchanged, combined coverage85.04998485%.
+Same-artifact6 CLI/8 MCP checks pass, budget bytes unchanged, zero model calls.
+Optional transformers skips and existing resource warnings retained, not fixed.
+New package gate completed; no user-host deployment/real DB/config/Git mutation.
+Next: logical-activity/inactivity-safe retention contract, then implementation
+and relation consolidation/real-user answer-cost validation. Whole-pipeline
+atomicity/all schedules/platforms not proven; original65-entry counts unchanged.
+Evidence: `C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/gc_complete_wheel_full_20261011_v1/REPORT.md`.
+
+## GC concurrent insertion under-cleanup repaired — 2026-10-11
+
+Initially full/overflowing pools each left1001 after a concurrent insertion:
+two behavioral red failures. Removing stale-count early stops lets finite old
+candidates use the existing atomic capacity guard; new records retained, actual
+deletes1/2, prior over-eviction controls still green. Related57pass; all13 concurrent
+cases pass three repeats. Complete source1143pass/222.52s, JUnit0 failures/errors/
+skips. No interface/schema/lock, paid route, real DB/config or Git change.
+New artifact wrapper prepared and syntax checked; actual isolated build/full
+gate is next, not complete. Unlimited writers/global ranking/whole-pipeline
+atomicity and logical activity remain unproven/unimplemented.65-row counts unchanged.
+Evidence: `C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/gc_insert_pool_20261011_v1/REPORT.md`.
+
+## Dual-GC pool over-eviction repaired — 2026-10-11 (source increment)
+
+Two old1001-record snapshots at capacity1000 reproducibly produced999 after two
+GCs. Red1failed/9passed; current scoped count and conditional deletion now share
+the existing immediate transaction, rejecting pool deletes at capacity. GC stops
+when a rejected candidate's refreshed pool is no longer over limit. Related54
+pass, external-delete/other-agent control and11 cases across three repeats pass.
+Complete source1141pass/230.74s, JUnit0 failures/errors/skips. Existing normal
+delete/low-weight rules/dry-run retained; no paid route/real DB/config/Git change.
+Next: concurrent insertion/convergence, then batch new artifact acceptance.
+No whole-pipeline/optimal concurrent ranking claim or logical-activity repair.
+Original65-entry counts unchanged. Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/gc_dual_pool_20261011_v1/REPORT.md`.
+
+## GC lifecycle stale overwrite repaired — 2026-10-11 (source increment)
+
+Warm/cold/archived stale transitions each overwrote another instance's corrected
+text/reinforcement;3 behavioral red failures retained. Conditional lifecycle-only
+write preserves unrelated metadata and rejects changed time/state baseline;
+transition counts now reflect actual writes. Existing policy/dry_run unchanged.
+Related51pass; new dual-GC atom/edge decay check passes existing guard, nine
+concurrency cases pass three repeats. Complete source1139pass/215.71s, JUnit0
+failures/errors/skips. Same approved temporary public SDK/storage scope, no paid
+route/real DB/config/Git change. New installed artifact still pending.
+Next: concurrent pool inserts/deletes and dual-GC capacity, then new artifact
+acceptance. Whole pipeline not atomic; logical activity/per-row commit work open.
+Original65-entry counts unchanged. Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/gc_lifecycle_20261011_v1/REPORT.md`.
+
+## GC stale atom deletion repaired — 2026-10-11 (source increment)
+
+Capacity and low-weight eviction each reproduced deletion of another instance's
+newly corrected/reinforced atom. Conditional storage deletion checks persisted
+snapshot inside the same immediate transaction as existing episode/edge cleanup.
+Changed candidates skip; pool uses unchanged alternatives, counts actual deletes.
+Public SDK/storage temporary-WAL tests only, clock coordination; no private
+tests/internal mocks/SQL assertions. Related33pass, deletion compatibility31pass,
+five concurrent cases repeated three times; complete source1135pass/218.24s,
+JUnit0 failures/errors/skips. No paid route/real DB/config/Git mutation.
+New package not yet accepted. Next: lifecycle migration and dual-GC/progress/
+pool interleavings, then batch new artifact acceptance. No strict simultaneous
+capacity guarantee, logical activity policy or per-row commit optimization.
+Original65-entry counts unchanged. Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/gc_capacity_20261011_v1/REPORT.md`.
+
+## GC STALE edge concurrent overwrite repaired — 2026-10-11
+
+Low-weight edge branch reproduced wrong STALE status and restored confidence0.9
+over another connection's0.4/weight0.6/current access. Conditional storage mark
+guards original decision snapshot; obsolete decisions skip and GC counts actual
+applied marks. Same approved public SDK/storage temporary data scope. Related45
+pass; complete source1133pass/231.06s, JUnit0 failures/errors/skips. No SDK/MCP
+parameter/default policy changes, paid route, real DB/config or commit/push.
+Prior wheel gate does not cover this increment. Continue atom capacity/deletion/
+migration and dual-GC progress validation, then batch new artifact acceptance.
+Logical activity/inactivity-safe retention remains pending;65-entry counts unchanged.
+Evidence: `C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/gc_stale_edge_20261011_v1/REPORT.md`.
+
+## GC repair new installed artifact accepted — 2026-10-11
+
+Current repair isolated sdist->wheel, fresh base SDK/CLI/MCP smoke and separate
+Python3.14.7 wheel[dev] full gate passed:1122passed/10skipped/179warnings,250.71s,
+JUnit1132 zero failures/errors. Both new concurrent atom/edge cases pass.
+47 module origins installed,48 package hashes equal,224 inputs unchanged;
+coverage84.9688% (display85%). Same artifact6 CLI/8 MCP checks pass. Missing
+optional transformers and existing database ResourceWarnings retained.
+Zero model calls/ledger change, no real DB/config/Git mutation or deployment.
+Next: GC migration/STALE/deletion/capacity races; whole pipeline is not atomic.
+Per-row commit cost/logical activity/inactivity-safe retention remain open.
+Original65-entry counts unchanged; evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/gc_wheel_full_20261011_v1/REPORT.md`.
+
+## GC survivor concurrent overwrite repaired — 2026-10-11 (source only)
+
+User approved public SDK/storage temporary-DB scope. Two-instance atom correction
+and reinforcement overwrite reproduced twice; old installed wheel also fails
+atom/edge metadata cases. Survivor decay writes now conditionally persist only
+weight/progress against unchanged access/weight/rate/progress snapshot. Latest
+targeted44passed/1.80s; no new SDK/MCP arguments, paid model or real DB/config edit.
+Early full1131passed/245.34s collected before edge case was added; subsequent
+current full1132passed/420.14s, JUnit zero failures/errors/skips, both cases
+included, offline model downloads. No new source coverage measurement. New wheel
+subsequently accepted above; previous day's gate is not substituted for it.
+Whole GC is not transactional: migration, STALE marking, deletion/capacity
+eviction need further validation. Bulk per-row commits remain. Local timing
+samples are not isolated SLA/performance evidence. Original65-entry counts
+unchanged; logical activity/inactivity-safe retention remains a separate goal.
+Report: `C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/gc_scope_20261011_v1/REPORT.md`.
+
+## Decay repair fresh installed-wheel gate passed — 2026-10-10
+
+New isolated sdist->wheel/base smoke passes, then fresh Python3.14.7 wheel[dev]
+full suite1120passed/10skipped/179warnings in204.56s; JUnit1130 zero failures/
+errors, all9 decay regressions passed. Optional transformers skips and existing
+database ResourceWarnings retained.47 loaded modules installed,48 package hashes
+match before/after;223 fixture inputs unchanged. Coverage84.9505% (display85%).
+Same artifact6 CLI/8 MCP doctor smoke passes; zero model calls, ledger unchanged.
+No real DB/config changes, commit/push/host deployment. New artifact validation
+is complete for this gate, not all runtime compatibility or migration safety.
+Next: bounded GC concurrency/write-cost validation, then separately implement
+logical activity/inactivity-safe retention; paid date-role control still needs
+new authorization. Historical65-entry counts unchanged.
+Evidence: `C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/decay_wheel_full_20261010_v1/REPORT.md`.
+
+## Decay consistency repaired in current source — 2026-10-10
+
+After explicit public-seam approval, repair MemoryAtom/Edge repeated elapsed
+intervals with independent persisted last_decayed_at, preserving real access
+and fractional-day remainder. DecayManager edge delegates to model; GC survivor
+weights and progress now persist, dry_run remains non-mutating. No SDK/MCP
+parameter, default rate, lifecycle threshold or inactivity policy change.
+
+Sequential red/green product regressions9 pass; both original diagnostic files
+unchanged and now exit0,0. Old installed-wheel synthetic DB/current-source
+reopen/GC compatibility smoke passes. Full source1130 pass/320.01s, coverage
+85.0372%, JUnit zero failures/errors/skips;257 scoped code/data inputs unchanged.
+No paid request, real DB/config edit, commit or push. Historical65-entry counts
+are not recalculated or incremented by these overlapping mechanism findings.
+
+Updated installed artifact validated above. Next: GC concurrency/write-cost limits;
+then implement logical activity/inactivity-safe retention separately. New source
+gate does not prove independent final-answer quality or full migration safety.
+Evidence:
+`C:/Users/ASYS/.zcode/vibe-memory-deepseek-test-20261006/results/decay_consistency_fix_20261010_v1/REPORT.md`.
+
 ## Temporal role/bounds candidate frozen, not model-tested — 2026-10-09
 
 After completed wrapper-hint pack showed no incremental benefit and N03 wording

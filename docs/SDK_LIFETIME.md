@@ -33,12 +33,16 @@ construction transfers ownership to the SDK as before. This does not cover
 failures inside the storage constructor itself or undo schema initialization.
 LangChain helper ownership now delegates to this SDK close/context contract;
 see [adapter contracts](ADAPTER_CONTRACTS.md). Storage-constructor failures,
-OpenAI legacy factory callers, remaining process owners and forced termination are
-separate work. Existing OpenAI factory return type
-and its seven functions are unchanged; no model-facing close tool is added.
+remaining process owners and forced termination are separate work.
+The OpenAI factory keeps its seven functions; no model-facing close tool is added.
 The OpenAI factory can now borrow this SDK using `create_vibe_tools(memory=memory)`;
 keep the whole tool workflow inside the SDK lifetime. It never takes ownership
-of that borrowed SDK. Legacy factory calls without memory remain unmanaged.
+of that borrowed SDK and returns an ordinary list.
+Factory calls without memory return a list subclass owning the SDK, supporting
+repeatable close() and with. Exact type==list changes only for this owning path.
+Keep that original owner through the entire tool workflow, including when
+copying or wrapping functions; copies do not transfer ownership. Close and
+context exit reuse the SDK contract above without automatically flushing.
 
 ## Regression seam
 

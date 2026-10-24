@@ -18,6 +18,8 @@ Verifies:
 14. SDK auto flush: triggered after N stores
 """
 
+from contextlib import ExitStack
+import pytest
 import uuid
 from datetime import datetime
 
@@ -42,9 +44,27 @@ def _make_atom(id: str, agent: str, session: str, tags: list[str] = None) -> Mem
 
 # ── Tests ──
 
-def test_enqueue():
+@pytest.fixture
+def memory_factory():
+    with ExitStack() as stack:
+        def create(*args, **options):
+            return stack.enter_context(VibeMemory(*args, **options))
+        yield create
+
+
+@pytest.fixture
+def storage_factory():
+    with ExitStack() as stack:
+        def create(*args, **options):
+            store = VibeStorage(*args, **options)
+            stack.callback(store.conn.close)
+            return store
+        yield create
+
+
+def test_enqueue(storage_factory):
     """Test: enqueue adds candidate to queue"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     idx = IncrementalIndexer(storage=storage, agent_id="agent-1", edge_similarity_threshold=0.0)
 
     a1 = _make_atom("a1", "agent-1", "s1", tags=["error", "api"])
@@ -57,9 +77,104 @@ def test_enqueue():
 
 
 
-def test_enqueue_dedup():
+def test_enqueue_threshold_override_is_local(storage_factory):
+    storage = storage_factory(":memory:")
+    idx = IncrementalIndexer(storage=storage, agent_id="agent-1")
+    first = _make_atom("first", "agent-1", "s1", tags=["a", "b", "c", "left"])
+    second = _make_atom("second", "agent-1", "s2", tags=["a", "b", "c", "right"])
+    storage.insert_atom(first)
+    storage.insert_atom(second)
+
+    assert idx.enqueue(first, second, 0.6) is False
+    assert idx.enqueue(first, second, 0.6, similarity_threshold=0.5) is True
+    assert idx.stats()["edge_similarity_threshold"] == 0.7
+    assert idx.flush() == 1
+    assert {(edge.from_atom_id, edge.to_atom_id) for edge in storage.get_all_edges()} == {
+        (first.id, second.id),
+    }
+    assert idx.enqueue(first, second, 0.6, similarity_threshold=None) is False
+    assert idx.enqueue(first, second, 0.6, similarity_threshold=0.8) is False
+    assert idx.enqueue(first, second, 0.6, similarity_threshold=1.0) is False
+    assert idx.stats()["queue_size"] == 0
+
+
+@pytest.mark.parametrize("threshold", [0.5, 0.0])
+def test_enqueue_batch_honors_explicit_threshold(storage_factory, threshold):
+    storage = storage_factory(":memory:")
+    idx = IncrementalIndexer(storage=storage, agent_id="agent-1")
+    first = _make_atom("first", "agent-1", "s1", tags=["a", "b", "c", "left"])
+    second = _make_atom("second", "agent-1", "s2", tags=["a", "b", "c", "right"])
+    storage.insert_atom(first)
+    storage.insert_atom(second)
+
+    assert idx.enqueue_batch(first, [second], similarity_threshold=threshold) == 1
+    assert idx.stats()["edge_similarity_threshold"] == 0.7
+    assert idx.stats()["queue_size"] == 1
+    assert idx.flush() == 1
+    assert {(edge.from_atom_id, edge.to_atom_id) for edge in storage.get_all_edges()} == {
+        (first.id, second.id),
+    }
+    assert idx.enqueue_batch(first, [second]) == 0
+    assert idx.enqueue_batch(first, [second], similarity_threshold=None) == 0
+
+
+@pytest.mark.parametrize("method", ["enqueue", "enqueue_batch"])
+@pytest.mark.parametrize("threshold", [True, False, float("nan"), float("inf"),
+                                       float("-inf"), -0.1, 1.1, "0.5", [], 0.5j])
+def test_invalid_threshold_does_not_change_full_queue(storage_factory, method, threshold):
+    storage = storage_factory(":memory:")
+    idx = IncrementalIndexer(storage=storage, agent_id="agent-1", max_queue_size=1)
+    first = _make_atom("first", "agent-1", "s1", tags=["error"])
+    second = _make_atom("second", "agent-1", "s2", tags=["error"])
+    third = _make_atom("third", "agent-1", "s3", tags=["config"])
+    for atom in (first, second, third):
+        storage.insert_atom(atom)
+    assert idx.enqueue(first, second, 0.9) is True
+    before = idx.stats()
+
+    with pytest.raises(ValueError, match="similarity_threshold"):
+        if method == "enqueue":
+            idx.enqueue(first, third, 0.8, similarity_threshold=threshold)
+        else:
+            idx.enqueue_batch(first, [third], similarity_threshold=threshold)
+
+    if method == "enqueue_batch":
+        with pytest.raises(ValueError, match="similarity_threshold"):
+            idx.enqueue_batch(first, [], similarity_threshold=threshold)
+    assert idx.stats() == before
+    assert idx.flush() == 1
+    assert {(edge.from_atom_id, edge.to_atom_id) for edge in storage.get_all_edges()} == {
+        (first.id, second.id),
+    }
+
+
+def test_threshold_override_preserves_real_scores_and_backpressure(storage_factory):
+    storage = storage_factory(":memory:")
+    idx = IncrementalIndexer(storage=storage, agent_id="agent-1", max_queue_size=1,
+                             backpressure=BackpressureStrategy.DROP_LOWEST)
+    first = _make_atom("first", "agent-1", "s1", tags=["error"])
+    second = _make_atom("second", "agent-1", "s2", tags=["error"])
+    third = _make_atom("third", "agent-1", "s3", tags=["error"])
+    for atom in (first, second, third):
+        storage.insert_atom(atom)
+
+    assert idx.enqueue(first, second, 0.6, similarity_threshold=0.5) is True
+    before = idx.stats()
+    assert idx.enqueue(first, third, 0.4, similarity_threshold=0.5) is False
+    assert idx.stats() == before
+    assert idx.enqueue(first, third, 0.65, similarity_threshold=0.5) is True
+    assert idx.stats()["queue_size"] == 1
+    assert idx.stats()["dropped_count"] == 1
+    assert idx.stats()["edge_similarity_threshold"] == 0.7
+    assert idx.flush() == 1
+    assert {(edge.from_atom_id, edge.to_atom_id) for edge in storage.get_all_edges()} == {
+        (first.id, third.id),
+    }
+
+
+def test_enqueue_dedup(storage_factory):
     """Test: same pair only queued once"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     idx = IncrementalIndexer(storage=storage, agent_id="agent-1", edge_similarity_threshold=0.0)
 
     a1 = _make_atom("a1", "agent-1", "s1", tags=["error"])
@@ -76,9 +191,9 @@ def test_enqueue_dedup():
 
 
 
-def test_enqueue_below_threshold():
+def test_enqueue_below_threshold(storage_factory):
     """Test: similarity below threshold is rejected"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     idx = IncrementalIndexer(storage=storage, agent_id="agent-1", edge_similarity_threshold=0.5)
 
     a1 = _make_atom("a1", "agent-1", "s1", tags=["error"])
@@ -90,9 +205,9 @@ def test_enqueue_below_threshold():
 
 
 
-def test_backpressure_drop_oldest():
+def test_backpressure_drop_oldest(storage_factory):
     """Test: queue full → drop_oldest removes oldest entry"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     idx = IncrementalIndexer(
         storage=storage, agent_id="agent-1",
         max_queue_size=3, backpressure=BackpressureStrategy.DROP_OLDEST,
@@ -116,9 +231,9 @@ def test_backpressure_drop_oldest():
 
 
 
-def test_backpressure_drop_lowest():
+def test_backpressure_drop_lowest(storage_factory):
     """Test: queue full → drop_lowest removes lowest similarity"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     idx = IncrementalIndexer(
         storage=storage, agent_id="agent-1",
         max_queue_size=3, backpressure=BackpressureStrategy.DROP_LOWEST,
@@ -143,9 +258,9 @@ def test_backpressure_drop_lowest():
 
 
 
-def test_flush_creates_edges():
+def test_flush_creates_edges(storage_factory):
     """Test: flush processes queue and creates edges"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     idx = IncrementalIndexer(storage=storage, agent_id="agent-1", edge_similarity_threshold=0.0)
 
     a1 = _make_atom("a1", "agent-1", "s1", tags=["error", "api", "timeout"])
@@ -169,9 +284,9 @@ def test_flush_creates_edges():
 
 
 
-def test_flush_all():
+def test_flush_all(storage_factory):
     """Test: flush_all processes entire queue"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     idx = IncrementalIndexer(
         storage=storage, agent_id="agent-1",
         batch_size=2, edge_similarity_threshold=0.0,
@@ -194,9 +309,9 @@ def test_flush_all():
 
 
 
-def test_flush_empty_queue():
+def test_flush_empty_queue(storage_factory):
     """Test: flush on empty queue is no-op"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     idx = IncrementalIndexer(storage=storage, agent_id="agent-1")
 
     edges = idx.flush()
@@ -204,9 +319,9 @@ def test_flush_empty_queue():
 
 
 
-def test_auto_flush_on_store():
+def test_auto_flush_on_store(storage_factory):
     """Test: on_store triggers flush after threshold"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     idx = IncrementalIndexer(
         storage=storage, agent_id="agent-1",
         edge_similarity_threshold=0.0,
@@ -233,9 +348,9 @@ def test_auto_flush_on_store():
 
 
 
-def test_should_flush():
+def test_should_flush(storage_factory):
     """Test: should_flush when queue >= batch_size"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     idx = IncrementalIndexer(storage=storage, agent_id="agent-1", batch_size=3, edge_similarity_threshold=0.0)
 
     a1 = _make_atom("a1", "agent-1", "s1", tags=["error"])
@@ -257,9 +372,9 @@ def test_should_flush():
 
 
 
-def test_compact_queue():
+def test_compact_queue(storage_factory):
     """Test: compact merges candidates pointing to same atom"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     idx = IncrementalIndexer(storage=storage, agent_id="agent-1", edge_similarity_threshold=0.0)
 
     a1 = _make_atom("a1", "agent-1", "s1", tags=["error"])
@@ -286,9 +401,9 @@ def test_compact_queue():
 
 
 
-def test_clear_queue():
+def test_clear_queue(storage_factory):
     """Test: clear drops everything"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     idx = IncrementalIndexer(storage=storage, agent_id="agent-1", edge_similarity_threshold=0.0)
 
     a1 = _make_atom("a1", "agent-1", "s1", tags=["error"])
@@ -305,9 +420,9 @@ def test_clear_queue():
 
 
 
-def test_stats():
+def test_stats(storage_factory):
     """Test: stats returns correct counters"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     idx = IncrementalIndexer(
         storage=storage, agent_id="agent-1",
         batch_size=5, max_queue_size=100, edge_similarity_threshold=0.3,
@@ -324,9 +439,9 @@ def test_stats():
 
 
 
-def test_reset():
+def test_reset(storage_factory):
     """Test: reset clears all counters"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     idx = IncrementalIndexer(storage=storage, agent_id="agent-1", edge_similarity_threshold=0.0)
 
     a1 = _make_atom("a1", "agent-1", "s1", tags=["error"])
@@ -341,9 +456,9 @@ def test_reset():
 
 
 
-def test_sdk_indexer_in_stats():
+def test_sdk_indexer_in_stats(memory_factory):
     """Test: SDK stats() includes indexer section"""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
 
     stats = mem.stats()
     assert "indexer" in stats
@@ -355,66 +470,99 @@ def test_sdk_indexer_in_stats():
 
 
 
-def test_sdk_store_enqueues_candidates():
+def test_sdk_store_enqueues_candidates(memory_factory):
     """Test: SDK store() enqueues cross-session candidates"""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
 
     # Store in session 1
-    mem.store("API timeout error occurred", session_id="s1", tags=["error", "api", "timeout"])
+    mem.store("API timeout error occurred", session_id="s1",
+              tags=["error", "api", "timeout", "config", "runtime", "observation"])
 
     # Store in session 2 — should create cross-session candidate
-    mem.store("Changed timeout from 30s to 60s", session_id="s2", tags=["error", "config", "timeout"])
+    mem.store("Changed timeout from 30s to 60s", session_id="s2",
+              tags=["error", "api", "timeout", "config", "runtime", "change"])
 
     stats = mem.stats()
     idx = stats["indexer"]
-    # Cross-session candidates should be enqueued
-    # (may or may not be auto-flushed depending on threshold)
-    total_processed = idx["enqueued_count"] + idx["edges_created"]
-    assert total_processed >= 0  # depends on similarity
+    assert idx["enqueued_count"] == 1
+    assert idx["queue_size"] == 1
+    assert idx["processed_count"] == 0
+    assert idx["edges_created"] == 0
+    assert mem.storage.get_all_edges() == []
 
 
 
-def test_sdk_flush_index():
+def test_sdk_flush_index(memory_factory):
     """Test: SDK flush_index() processes queue"""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
 
-    # Use high-overlap tags to ensure enqueue succeeds
-    mem.store("API timeout error occurred", session_id="s1", tags=["error", "api", "timeout", "config"])
-    mem.store("DB connection pool config", session_id="s2", tags=["error", "config", "db", "api"])
+    # Five shared tags out of seven propose one non-duplicate candidate.
+    first = mem.store("API timeout error occurred", session_id="s1",
+                      tags=["error", "api", "timeout", "config", "runtime", "observation"])
+    second = mem.store("DB connection pool config", session_id="s2",
+                       tags=["error", "api", "timeout", "config", "runtime", "change"])
     mem.store("Timeout fix applied to API", session_id="s3", tags=["error", "fix", "timeout", "api"])
     mem.store("Config validation for API", session_id="s4", tags=["config", "validation", "api", "error"])
 
+    assert mem.stats()["indexer"]["queue_size"] == 1
+    assert mem.storage.get_all_edges() == []
+
     # Flush the indexer
     created = mem.flush_index()
-    assert created >= 0
+    assert created == 1
 
-    # Check stats — auto-flush may have already drained queue
+    # The queued relation is persisted, not merely removed from the queue.
     stats = mem.stats()
     idx = stats["indexer"]
-    assert idx["enqueued_count"] >= 0
-    assert idx["edges_created"] >= 0
+    assert idx["enqueued_count"] == 1
+    assert idx["queue_size"] == 0
+    assert idx["processed_count"] == 1
+    assert idx["edges_created"] == 1
+    edges = mem.storage.get_all_edges()
+    assert [(edge.from_atom_id, edge.to_atom_id) for edge in edges] == [(second.id, first.id)]
+    assert edges[0].label == EdgeLabel.SIMILAR
 
 
 
-def test_sdk_auto_flush():
+def test_sdk_auto_flush(memory_factory):
     """Test: SDK auto-flushes after enough stores"""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
-    # Lower threshold for test
-    mem.indexer._auto_flush_threshold = 5
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    threshold = mem.stats()["indexer"]["auto_flush_threshold"]
+    first = mem.store("API timeout error occurred", session_id="s0",
+                      tags=["error", "api", "timeout", "config", "runtime", "observation"])
+    second = mem.store("Changed timeout from 30s to 60s", session_id="s1",
+                       tags=["error", "api", "timeout", "config", "runtime", "change"])
 
-    for i in range(6):
-        mem.store(f"Test content {i}", session_id=f"s{i}",
-                  tags=["error", "config"] if i % 2 == 0 else ["query", "api"])
+    # Unrelated stores advance the public threshold without adding candidates.
+    for i in range(2, threshold - 1):
+        mem.store(f"Unrelated note {i}", session_id=f"s{i}", tags=[f"unrelated-{i}"])
 
-    stats = mem.stats()
-    # May or may not have flushed depending on queue size
-    assert stats["indexer"]["store_since_last_flush"] >= 0
+    before = mem.stats()["indexer"]
+    assert before["store_since_last_flush"] == threshold - 1
+    assert before["queue_size"] == 1
+    assert before["processed_count"] == 0
+    assert before["flush_count"] == 0
+    assert mem.storage.get_all_edges() == []
+
+    mem.store("Unrelated threshold boundary note", session_id=f"s{threshold - 1}",
+              tags=["threshold-boundary"])
+
+    after = mem.stats()["indexer"]
+    assert after["enqueued_count"] == 1
+    assert after["processed_count"] == 1
+    assert after["edges_created"] == 1
+    assert after["queue_size"] == 0
+    assert after["flush_count"] == 1
+    assert after["store_since_last_flush"] == 0
+    edges = mem.storage.get_all_edges()
+    assert [(edge.from_atom_id, edge.to_atom_id) for edge in edges] == [(second.id, first.id)]
+    assert edges[0].label == EdgeLabel.SIMILAR
 
 
 
-def test_enqueue_batch():
+def test_enqueue_batch(storage_factory):
     """Test: enqueue_batch processes multiple candidates"""
-    storage = VibeStorage(":memory:")
+    storage = storage_factory(":memory:")
     idx = IncrementalIndexer(storage=storage, agent_id="agent-1", edge_similarity_threshold=0.0)
 
     a1 = _make_atom("a1", "agent-1", "s1", tags=["error", "api", "timeout"])

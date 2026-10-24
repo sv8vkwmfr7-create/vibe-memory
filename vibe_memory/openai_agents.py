@@ -29,6 +29,24 @@ from datetime import datetime
 from vibe_memory import VibeMemory
 
 
+class _OwnedTools(list):
+    """Keep the factory-owned SDK alive until the tool workflow ends."""
+
+    def __init__(self, functions, memory):
+        super().__init__(functions)
+        self._memory = memory
+
+    def close(self):
+        self._memory.close()
+
+    def __enter__(self):
+        self._memory.__enter__()
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.close()
+
+
 def create_vibe_tools(
     agent_id: str = "openai-agent",
     db_path: str = ":memory:",
@@ -46,8 +64,10 @@ def create_vibe_tools(
     memory: Optional caller-owned SDK. Its agent/database/backend are used;
     do not combine it with non-default construction options. The caller must
     keep it open for the entire tool workflow and close it afterwards. The
-    factory neither closes nor flushes a borrowed SDK. Without memory, legacy
-    construction remains supported but the returned list has no close handle.
+    factory neither closes nor flushes a borrowed SDK; that path returns an
+    ordinary list. Without memory, the returned list subclass owns the SDK:
+    use close() or with, and keep the original list alive for the entire tool
+    workflow, including when wrapping or copying its functions.
 
     Tools:
       - vibe_store(content, tags, summary, session_id)
@@ -173,7 +193,8 @@ def create_vibe_tools(
         ok = mem.forget(atom_id)
         return json.dumps({"deleted": ok}, ensure_ascii=False)
 
-    return [
+    functions = [
         vibe_store, vibe_recall, vibe_session_start, vibe_session_end,
         vibe_stats, vibe_link, vibe_forget,
     ]
+    return functions if memory is not None else _OwnedTools(functions, mem)

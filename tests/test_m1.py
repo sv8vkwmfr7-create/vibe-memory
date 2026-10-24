@@ -4,6 +4,7 @@ Tests: data structures + semantic chunking + same-session edges + storage layer
 L1 prototype integration test suite.
 """
 
+from contextlib import ExitStack
 import uuid
 from datetime import datetime
 import pytest
@@ -26,6 +27,16 @@ from vibe_memory.retrieval.ppr import (
 )
 from vibe_memory.retrieval.strategies import BM25Strategy
 from vibe_memory.learner.learner import VibeLearner, DecayManager, LearnerConfig
+
+
+@pytest.fixture
+def storage_factory():
+    with ExitStack() as stack:
+        def create(*args, **options):
+            store = VibeStorage(*args, **options)
+            stack.callback(store.conn.close)
+            return store
+        yield create
 
 
 def test_memory_atom():
@@ -203,9 +214,9 @@ def test_merge_atoms():
 
 
 
-def test_storage():
+def test_storage(storage_factory):
     """Test SQLite storage layer"""
-    store = VibeStorage(":memory:")
+    store = storage_factory(":memory:")
 
     # Insert atom
     atom = MemoryAtom(
@@ -261,9 +272,9 @@ def test_ppr_config():
 
 
 
-def test_ppr_walk():
+def test_ppr_walk(storage_factory):
     """Test PPR graph walk with a simple chain"""
-    store = VibeStorage(":memory:")
+    store = storage_factory(":memory:")
 
     # Create 3 atoms in a chain: a1 -> a2 -> a3
     a1 = MemoryAtom(
@@ -313,9 +324,9 @@ def test_ppr_walk():
 
 
 
-def test_ppr_strong_edge_survives_more_seed_candidates():
+def test_ppr_strong_edge_survives_more_seed_candidates(storage_factory):
     """A strong causal edge remains traversable when unrelated seeds are added."""
-    store = VibeStorage(":memory:")
+    store = storage_factory(":memory:")
     source = MemoryAtom(
         id="source", agent_id="agent-1", session_id="s1",
         content="API timeout root cause", summary="Timeout root cause",
@@ -345,9 +356,9 @@ def test_ppr_strong_edge_survives_more_seed_candidates():
     assert scores.get(target.id, 0.0) > 0.0
 
 
-def test_ppr_matches_two_node_worked_example():
+def test_ppr_matches_two_node_worked_example(storage_factory):
     """PPR matches the closed-form result for a directed two-node graph."""
-    store = VibeStorage(":memory:")
+    store = storage_factory(":memory:")
     source = MemoryAtom(
         id="source", agent_id="agent-1", session_id="s1",
         content="Root cause", summary="Root cause",
@@ -378,9 +389,9 @@ def test_ppr_matches_two_node_worked_example():
     assert scores[target.id] == pytest.approx((1 - alpha) / (2 - alpha), abs=1e-9)
 
 
-def test_recall_api():
+def test_recall_api(storage_factory):
     """Test unified recall API"""
-    store = VibeStorage(":memory:")
+    store = storage_factory(":memory:")
 
     a1 = MemoryAtom(
         id="r1", agent_id="agent-1", session_id="s1",
@@ -404,15 +415,16 @@ def test_recall_api():
     # Recall with precision mode
     result = recall("timeout error", "agent-1", store, mode="precision")
     assert "atoms" in result
+    assert "r1" in {atom.id for atom in result["atoms"]}
     assert "trace" in result
     assert result["mode"] == "precision"
     assert result["total_walked"] >= 0
 
 
 
-def test_fallback_vector_topk():
+def test_fallback_vector_topk(storage_factory):
     """Test fallback vector top-k (degradation strategy)"""
-    store = VibeStorage(":memory:")
+    store = storage_factory(":memory:")
 
     a1 = MemoryAtom(
         id="f1", agent_id="agent-1", session_id="s1",

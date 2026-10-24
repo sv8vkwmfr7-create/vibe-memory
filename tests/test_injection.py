@@ -14,6 +14,7 @@ Covers:
 import pytest
 import sys
 import os
+from contextlib import ExitStack
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -292,9 +293,15 @@ def test_edge_priority_values():
 
 # ── SDK inject() integration ──
 
-def test_sdk_inject_mac():
+@pytest.fixture
+def sdk_memory():
     from vibe_memory import VibeMemory
-    mem = VibeMemory(agent_id="test", db_path=":memory:", embedding_backend="tfidf")
+    with VibeMemory(agent_id="test", db_path=":memory:", embedding_backend="tfidf") as mem:
+        yield mem
+
+
+def test_sdk_inject_mac(sdk_memory):
+    mem = sdk_memory
     mem.store("Fixed API timeout", session_id="s1", tags=["error", "fix"])
     mem.store("DB pool config", session_id="s2", tags=["config"])
 
@@ -303,9 +310,8 @@ def test_sdk_inject_mac():
     assert "Fixed API timeout" in injection
 
 
-def test_sdk_inject_mag():
-    from vibe_memory import VibeMemory
-    mem = VibeMemory(agent_id="test", db_path=":memory:", embedding_backend="tfidf")
+def test_sdk_inject_mag(sdk_memory):
+    mem = sdk_memory
     mem.store("Fixed API timeout", session_id="s1", tags=["error", "fix"])
     mem.store("DB pool config", session_id="s2", tags=["config"])
 
@@ -314,18 +320,27 @@ def test_sdk_inject_mag():
     assert "Fixed API timeout" in injection
 
 
-def test_sdk_inject_empty():
-    from vibe_memory import VibeMemory
-    mem = VibeMemory(agent_id="test", db_path=":memory:", embedding_backend="tfidf")
+def test_sdk_inject_empty(sdk_memory):
+    mem = sdk_memory
     injection = mem.inject("API timeout", injection_mode="mac")
     assert "no relevant memories" in injection
 
 
 # ── SessionManager integration ──
 
-def test_session_manager_injection_mode(tmp_path):
+@pytest.fixture
+def session_manager_factory():
     from vibe_memory.cli.session_manager import SessionManager
-    mgr = SessionManager(
+    with ExitStack() as stack:
+        def create(**options):
+            mgr = SessionManager(**options)
+            stack.callback(mgr.mem.close)
+            return mgr
+        yield create
+
+
+def test_session_manager_injection_mode(tmp_path, session_manager_factory):
+    mgr = session_manager_factory(
         agent_id="test",
         vibe_dir=str(tmp_path / ".vibe"),
         injection_mode="mag",
@@ -333,9 +348,8 @@ def test_session_manager_injection_mode(tmp_path):
     assert mgr.injection_mode == "mag"
 
 
-def test_session_manager_default_mag(tmp_path):
-    from vibe_memory.cli.session_manager import SessionManager
-    mgr = SessionManager(
+def test_session_manager_default_mag(tmp_path, session_manager_factory):
+    mgr = session_manager_factory(
         agent_id="test",
         vibe_dir=str(tmp_path / ".vibe"),
     )
@@ -343,9 +357,8 @@ def test_session_manager_default_mag(tmp_path):
     assert mgr.injection_mode == "mag"
 
 
-def test_session_manager_mac_injection(tmp_path):
-    from vibe_memory.cli.session_manager import SessionManager
-    mgr = SessionManager(
+def test_session_manager_mac_injection(tmp_path, session_manager_factory):
+    mgr = session_manager_factory(
         agent_id="test",
         vibe_dir=str(tmp_path / ".vibe"),
         injection_mode="mac",
@@ -364,9 +377,8 @@ def test_session_manager_mac_injection(tmp_path):
     assert "Memory-Augmented Context" in content
 
 
-def test_session_manager_mag_injection(tmp_path):
-    from vibe_memory.cli.session_manager import SessionManager
-    mgr = SessionManager(
+def test_session_manager_mag_injection(tmp_path, session_manager_factory):
+    mgr = session_manager_factory(
         agent_id="test",
         vibe_dir=str(tmp_path / ".vibe"),
         injection_mode="mag",

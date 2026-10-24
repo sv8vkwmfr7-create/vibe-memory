@@ -107,7 +107,8 @@ class MCPProcess:
 
     def _process_error(self, prefix: str) -> str:
         detail = ""
-        if self.proc.poll() is not None and self.proc.stderr is not None:
+        if (self.proc.poll() is not None and self.proc.stderr is not None
+                and not self.proc.stderr.closed):
             detail = self.proc.stderr.read().strip()
         return f"{prefix}: {detail}" if detail else prefix
 
@@ -119,6 +120,9 @@ class MCPProcess:
             except subprocess.TimeoutExpired:
                 self.proc.kill()
                 self.proc.wait()
+        for stream in (self.proc.stdin, self.proc.stdout, self.proc.stderr):
+            if stream is not None:
+                stream.close()
 
 
 def _check_environment(db_path: Path) -> None:

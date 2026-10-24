@@ -1,0 +1,310 @@
+{
+  "description": "Assistant-authored development variants, not independent blind evaluation. Expected labels are never model input.",
+  "cases": [
+    {
+      "event": "input",
+      "case_id": "V01",
+      "group": "new_synthetic6",
+      "pack": {
+        "dataset_id": "resolution-selection-probe",
+        "cases": [
+          {
+            "case_id": "q",
+            "question": "Kestrel接口的超时时间是多少？",
+            "scope": {},
+            "candidates": [
+              {
+                "id": "c1",
+                "text": "Kestrel测试环境接口超时为18秒。",
+                "scope": {},
+                "context_before": "",
+                "context_after": "",
+                "source_session": "synthetic"
+              },
+              {
+                "id": "c2",
+                "text": "Kestrel生产环境接口超时为42秒。",
+                "scope": {},
+                "context_before": "",
+                "context_after": "",
+                "source_session": "synthetic"
+              },
+              {
+                "id": "c3",
+                "text": "Kestrel生产环境每天备份配置，此记录未说明接口超时。",
+                "scope": {},
+                "context_before": "",
+                "context_after": "",
+                "source_session": "synthetic"
+              }
+            ],
+            "as_of": "2026-10-03"
+          }
+        ]
+      },
+      "labels": {
+        "c1": "test_policy",
+        "c2": "prod_policy",
+        "c3": "backup"
+      },
+      "expected_evidence_labels": [
+        "test_policy",
+        "prod_policy"
+      ]
+    },
+    {
+      "event": "input",
+      "case_id": "V02",
+      "group": "new_synthetic6",
+      "pack": {
+        "dataset_id": "resolution-selection-probe",
+        "cases": [
+          {
+            "case_id": "q",
+            "question": "Nereid日志保留多少天？",
+            "scope": {},
+            "candidates": [
+              {
+                "id": "c1",
+                "text": "Nereid生产环境日志保留14天。",
+                "scope": {},
+                "context_before": "",
+                "context_after": "",
+                "source_session": "synthetic"
+              },
+              {
+                "id": "c2",
+                "text": "Nereid生产环境日志使用JSON格式，未说明保留期。",
+                "scope": {},
+                "context_before": "",
+                "context_after": "",
+                "source_session": "synthetic"
+              },
+              {
+                "id": "c3",
+                "text": "Nereid测试环境日志保留2天。",
+                "scope": {},
+                "context_before": "",
+                "context_after": "",
+                "source_session": "synthetic"
+              }
+            ],
+            "as_of": "2026-10-03"
+          }
+        ]
+      },
+      "labels": {
+        "c1": "prod_policy",
+        "c2": "format",
+        "c3": "test_policy"
+      },
+      "expected_evidence_labels": [
+        "prod_policy",
+        "test_policy"
+      ]
+    },
+    {
+      "event": "input",
+      "case_id": "V03",
+      "group": "new_synthetic6",
+      "pack": {
+        "dataset_id": "resolution-selection-probe",
+        "cases": [
+          {
+            "case_id": "q",
+            "question": "现在Kestrel生产正常发布需要人工审批吗？",
+            "scope": {},
+            "candidates": [
+              {
+                "id": "c1",
+                "text": "2026-09-29，Kestrel测试发布为自动审批。",
+                "scope": {},
+                "context_before": "",
+                "context_after": "",
+                "source_session": "synthetic"
+              },
+              {
+                "id": "c2",
+                "text": "2026-09-28，Kestrel生产正常发布审批策略已更新，但新策略内容尚未记录。",
+                "scope": {},
+                "context_before": "",
+                "context_after": "",
+                "source_session": "synthetic"
+              },
+              {
+                "id": "c3",
+                "text": "Kestrel生产每次发布记录操作人，此记录未说明审批方式。",
+                "scope": {},
+                "context_before": "",
+                "context_after": "",
+                "source_session": "synthetic"
+              }
+            ],
+            "as_of": "2026-10-03"
+          }
+        ]
+      },
+      "labels": {
+        "c1": "test_policy",
+        "c2": "unknown_prod",
+        "c3": "audit"
+      },
+      "expected_evidence_labels": [
+        "unknown_prod"
+      ]
+    },
+    {
+      "event": "input",
+      "case_id": "V04",
+      "group": "new_synthetic6",
+      "pack": {
+        "dataset_id": "resolution-selection-probe",
+        "cases": [
+          {
+            "case_id": "q",
+            "question": "Boreal租户C当前请求重试次数是多少？",
+            "scope": {},
+            "candidates": [
+              {
+                "id": "c1",
+                "text": "2026-10-02，Boreal租户C的重试策略已更新，具体次数未记录。",
+                "scope": {},
+                "context_before": "",
+                "context_after": "",
+                "source_session": "synthetic"
+              },
+              {
+                "id": "c2",
+                "text": "Boreal租户C的日志采用结构化格式，未说明重试次数。",
+                "scope": {},
+                "context_before": "",
+                "context_after": "",
+                "source_session": "synthetic"
+              },
+              {
+                "id": "c3",
+                "text": "Boreal租户D请求重试4次。",
+                "scope": {},
+                "context_before": "",
+                "context_after": "",
+                "source_session": "synthetic"
+              }
+            ],
+            "as_of": "2026-10-03"
+          }
+        ]
+      },
+      "labels": {
+        "c1": "unknown_tenant_c",
+        "c2": "format",
+        "c3": "tenant_d"
+      },
+      "expected_evidence_labels": [
+        "unknown_tenant_c"
+      ]
+    },
+    {
+      "event": "input",
+      "case_id": "V05",
+      "group": "new_synthetic6",
+      "pack": {
+        "dataset_id": "resolution-selection-probe",
+        "cases": [
+          {
+            "case_id": "q",
+            "question": "现在能确认Lumen生产超时已经改成75秒了吗？",
+            "scope": {},
+            "candidates": [
+              {
+                "id": "c1",
+                "text": "Lumen生产记录每次接口调用的操作人，未说明超时值。",
+                "scope": {},
+                "context_before": "",
+                "context_after": "",
+                "source_session": "synthetic"
+              },
+              {
+                "id": "c2",
+                "text": "2026-10-02，有人猜测Lumen生产超时可能改为75秒，尚未核实。",
+                "scope": {},
+                "context_before": "",
+                "context_after": "",
+                "source_session": "synthetic"
+              },
+              {
+                "id": "c3",
+                "text": "2026-09-30，已确认Lumen生产超时为45秒。",
+                "scope": {},
+                "context_before": "",
+                "context_after": "",
+                "source_session": "synthetic"
+              }
+            ],
+            "as_of": "2026-10-03"
+          }
+        ]
+      },
+      "labels": {
+        "c1": "audit",
+        "c2": "unverified",
+        "c3": "confirmed"
+      },
+      "expected_evidence_labels": [
+        "unverified",
+        "confirmed"
+      ]
+    },
+    {
+      "event": "input",
+      "case_id": "V06",
+      "group": "new_synthetic6",
+      "pack": {
+        "dataset_id": "resolution-selection-probe",
+        "cases": [
+          {
+            "case_id": "q",
+            "question": "North生产日志保留21天的说法已经确认了吗？",
+            "scope": {},
+            "candidates": [
+              {
+                "id": "c1",
+                "text": "2026-10-02，传闻North生产日志保留期可能是21天，此说法未核实。",
+                "scope": {},
+                "context_before": "",
+                "context_after": "",
+                "source_session": "synthetic"
+              },
+              {
+                "id": "c2",
+                "text": "2026-09-30，已确认North生产日志保留14天。",
+                "scope": {},
+                "context_before": "",
+                "context_after": "",
+                "source_session": "synthetic"
+              },
+              {
+                "id": "c3",
+                "text": "North测试日志存入独立目录，未说明保留期。",
+                "scope": {},
+                "context_before": "",
+                "context_after": "",
+                "source_session": "synthetic"
+              }
+            ],
+            "as_of": "2026-10-03"
+          }
+        ]
+      },
+      "labels": {
+        "c1": "unverified",
+        "c2": "confirmed",
+        "c3": "directory"
+      },
+      "expected_evidence_labels": [
+        "unverified",
+        "confirmed"
+      ]
+    }
+  ]
+}
+

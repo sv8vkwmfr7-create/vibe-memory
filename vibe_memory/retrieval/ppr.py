@@ -29,6 +29,33 @@ from vibe_memory.retrieval.seed_filter import SeedFilter
 from vibe_memory.metrics import failure_event
 
 
+class _RecallEdgeReads:
+    """Reuse a full scoped graph for later incident reads during one recall."""
+
+    def __init__(self, storage):
+        self._storage = storage
+        self._full = {}
+
+    def __getattr__(self, name):
+        return getattr(self._storage, name)
+
+    def get_retrieval_edges(self, agent_id, tenant_id=None, atom_ids=None):
+        key = (agent_id, tenant_id)
+        if key in self._full:
+            edges = self._full[key]
+            if atom_ids is None:
+                return edges
+            ids = set(atom_ids)
+            return [edge for edge in edges
+                    if edge.from_atom_id in ids or edge.to_atom_id in ids]
+        edges = self._storage.get_retrieval_edges(
+            agent_id, tenant_id, atom_ids=atom_ids,
+        )
+        if atom_ids is None:
+            self._full[key] = edges
+        return edges
+
+
 class PPRConfig:
     """PPR 三档可配置操作点"""
 
@@ -381,6 +408,8 @@ def recall(
             "failures": failures,
         }
 
+    # ponytail: per-call reads only; a persistent graph cache would need invalidation.
+    storage = _RecallEdgeReads(storage)
     documents = [a.content for a in active_atoms]
     atom_map = {a.id: a for a in active_atoms}
     # Text indexes depend on corpus content/order, not metadata versions.

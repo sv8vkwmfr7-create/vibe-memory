@@ -52,13 +52,16 @@ def cmd_start(args):
         agent_id=get_agent_id(),
         vibe_dir=get_vibe_dir(),
     )
-    result = mgr.start_session(context=args.context)
+    try:
+        result = mgr.start_session(context=args.context)
 
-    print(f"Session started: {result['session_id'][:8]}...")
-    print(f"Previous: {result['previous_session_id'] or 'none'}")
-    print(f"Memories recalled: {result['memories_count']}")
-    print(f"Injection file: {result['inject_file']} ({result['injection_length']} chars)")
-    print(f"\nTip: cat {result['inject_file']} to see context")
+        print(f"Session started: {result['session_id'][:8]}...")
+        print(f"Previous: {result['previous_session_id'] or 'none'}")
+        print(f"Memories recalled: {result['memories_count']}")
+        print(f"Injection file: {result['inject_file']} ({result['injection_length']} chars)")
+        print(f"\nTip: cat {result['inject_file']} to see context")
+    finally:
+        mgr.mem.close()
 
 
 def cmd_end(args):
@@ -69,18 +72,21 @@ def cmd_end(args):
         agent_id=get_agent_id(),
         vibe_dir=get_vibe_dir(),
     )
-    result = mgr.end_session(
-        summary=args.summary,
-        highlights=args.highlight,
-        tags=args.tag,
-    )
+    try:
+        result = mgr.end_session(
+            summary=args.summary,
+            highlights=args.highlight,
+            tags=args.tag,
+        )
 
-    if "error" in result:
-        print(f"Error: {result['error']}")
-        sys.exit(1)
+        if "error" in result:
+            print(f"Error: {result['error']}")
+            sys.exit(1)
 
-    print(f"Session ended: {result['session_id'][:8]}...")
-    print(f"Memories stored: {result['stored_count']}")
+        print(f"Session ended: {result['session_id'][:8]}...")
+        print(f"Memories stored: {result['stored_count']}")
+    finally:
+        mgr.mem.close()
 
 
 def cmd_recall(args):
@@ -91,20 +97,23 @@ def cmd_recall(args):
         agent_id=get_agent_id(),
         vibe_dir=get_vibe_dir(),
     )
-    result = mgr.recall(args.query, mode=args.mode)
+    try:
+        result = mgr.recall(args.query, mode=args.mode)
 
-    atoms = result.get("atoms", [])
-    if not atoms:
-        print("No memories found.")
-        return
+        atoms = result.get("atoms", [])
+        if not atoms:
+            print("No memories found.")
+            return
 
-    print(f"Found {len(atoms)} memories (mode: {result['mode']}):\n")
-    for i, atom in enumerate(atoms, 1):
-        tags = " ".join(f"#{t}" for t in atom.tags[:3]) if atom.tags else ""
-        print(f"  {i}. [{atom.session_id[:8]}] {atom.summary[:120]}")
-        if tags:
-            print(f"     {tags}")
-        print()
+        print(f"Found {len(atoms)} memories (mode: {result['mode']}):\n")
+        for i, atom in enumerate(atoms, 1):
+            tags = " ".join(f"#{t}" for t in atom.tags[:3]) if atom.tags else ""
+            print(f"  {i}. [{atom.session_id[:8]}] {atom.summary[:120]}")
+            if tags:
+                print(f"     {tags}")
+            print()
+    finally:
+        mgr.mem.close()
 
 
 def cmd_stats(args):
@@ -115,37 +124,40 @@ def cmd_stats(args):
         agent_id=get_agent_id(),
         vibe_dir=get_vibe_dir(),
     )
-    stats = mgr.stats()
+    try:
+        stats = mgr.stats()
 
-    session = stats.get("session", {})
-    memory = stats.get("memory", {})
+        session = stats.get("session", {})
+        memory = stats.get("memory", {})
 
-    print("Session:")
-    print(f"  ID:        {session.get('session_id', 'none')[:16] if session.get('session_id') else 'none'}")
-    print(f"  Previous:  {session.get('previous_session_id', 'none')}")
-    print(f"  Started:   {session.get('started_at', 'none')}")
-    print(f"  Ended:     {session.get('ended_at', 'none')}")
+        print("Session:")
+        print(f"  ID:        {session.get('session_id', 'none')[:16] if session.get('session_id') else 'none'}")
+        print(f"  Previous:  {session.get('previous_session_id', 'none')}")
+        print(f"  Started:   {session.get('started_at', 'none')}")
+        print(f"  Ended:     {session.get('ended_at', 'none')}")
 
-    print("\nMemory:")
-    print(f"  Atoms:     {memory.get('total_atoms', 0)} "
-          f"(active: {memory.get('active_atoms', 0)}, "
-          f"warm: {memory.get('warm_atoms', 0)}, "
-          f"cold: {memory.get('cold_atoms', 0)})")
-    print(f"  Edges:     {memory.get('total_edges', 0)}")
-    print(f"  Stores:    {memory.get('store_count', 0)}")
-    print(f"  Recalls:   {memory.get('recall_count', 0)}")
-    print(f"  Embedding: {memory.get('embedding_backend', 'unknown')}")
+        print("\nMemory:")
+        print(f"  Atoms:     {memory.get('total_atoms', 0)} "
+              f"(active: {memory.get('active_atoms', 0)}, "
+              f"warm: {memory.get('warm_atoms', 0)}, "
+              f"cold: {memory.get('cold_atoms', 0)})")
+        print(f"  Edges:     {memory.get('total_edges', 0)}")
+        print(f"  Stores:    {memory.get('store_count', 0)}")
+        print(f"  Recalls:   {memory.get('recall_count', 0)}")
+        print(f"  Embedding: {memory.get('embedding_backend', 'unknown')}")
 
-    if memory.get("partitions"):
-        print(f"  Partitions: {memory['partitions']}")
+        if memory.get("partitions"):
+            print(f"  Partitions: {memory['partitions']}")
 
-    if memory.get("indexer"):
-        idx = memory["indexer"]
-        print(f"\n  Indexer:")
-        print(f"    Queue:    {idx['queue_size']}/{idx['max_queue_size']}")
-        print(f"    Enqueued: {idx['enqueued_count']}")
-        print(f"    Processed:{idx['processed_count']}")
-        print(f"    Edges:    {idx['edges_created']}")
+        if memory.get("indexer"):
+            idx = memory["indexer"]
+            print(f"\n  Indexer:")
+            print(f"    Queue:    {idx['queue_size']}/{idx['max_queue_size']}")
+            print(f"    Enqueued: {idx['enqueued_count']}")
+            print(f"    Processed:{idx['processed_count']}")
+            print(f"    Edges:    {idx['edges_created']}")
+    finally:
+        mgr.mem.close()
 
 
 def cmd_inject(args):

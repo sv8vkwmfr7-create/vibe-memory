@@ -33,8 +33,11 @@ import sys
 import json
 import tempfile
 import shutil
+import gc
+import warnings
 from pathlib import Path
 from datetime import datetime
+from contextlib import ExitStack
 
 import pytest
 
@@ -53,20 +56,29 @@ def temp_vibe_dir():
 
 
 @pytest.fixture
-def session_manager(temp_vibe_dir):
+def manage_manager():
+    with ExitStack() as stack:
+        def manage(manager):
+            stack.callback(manager.mem.close)
+            return manager
+        yield manage
+
+
+@pytest.fixture
+def session_manager(temp_vibe_dir, manage_manager):
     """Create a SessionManager with temp directory."""
-    return SessionManager(
+    return manage_manager(SessionManager(
         agent_id="test-agent",
         vibe_dir=temp_vibe_dir,
         embedding_backend="tfidf",
-    )
+    ))
 
 
 # --- 1. Init ---
 
-def test_session_manager_init(temp_vibe_dir):
+def test_session_manager_init(temp_vibe_dir, manage_manager):
     """Test: SessionManager creates .vibe directory"""
-    mgr = SessionManager(agent_id="test-agent", vibe_dir=temp_vibe_dir)
+    mgr = manage_manager(SessionManager(agent_id="test-agent", vibe_dir=temp_vibe_dir))
     assert os.path.isdir(temp_vibe_dir)
     assert mgr.agent_id == "test-agent"
     assert mgr.session_file.name == "session.json"
@@ -98,7 +110,8 @@ def test_start_session_writes_injection(session_manager, temp_vibe_dir):
     inject_path = os.path.join(temp_vibe_dir, "inject.md")
     assert os.path.exists(inject_path)
 
-    content = open(inject_path, encoding="utf-8").read()
+    with open(inject_path, encoding="utf-8") as handle:
+        content = handle.read()
     assert "VibeMemory" in content
 
 
@@ -232,29 +245,29 @@ def test_stats(session_manager, temp_vibe_dir):
 
 # --- 6. Convenience functions ---
 
-def test_quick_start(temp_vibe_dir):
+def test_quick_start(temp_vibe_dir, manage_manager):
     """Test: quick_start creates manager and starts session"""
-    mgr = quick_start(agent_id="test-agent", vibe_dir=temp_vibe_dir)
+    mgr = manage_manager(quick_start(agent_id="test-agent", vibe_dir=temp_vibe_dir))
     assert isinstance(mgr, SessionManager)
     assert os.path.exists(os.path.join(temp_vibe_dir, "session.json"))
 
 
-def test_quick_end(temp_vibe_dir):
+def test_quick_end(temp_vibe_dir, manage_manager):
     """Test: quick_end stores summary"""
-    mgr = quick_start(agent_id="test-agent", vibe_dir=temp_vibe_dir)
+    mgr = manage_manager(quick_start(agent_id="test-agent", vibe_dir=temp_vibe_dir))
     result = quick_end(agent_id="test-agent", vibe_dir=temp_vibe_dir, summary="Test done")
     assert result["stored_count"] == 1
 
 
 # --- 7. Persistence ---
 
-def test_session_state_persists(temp_vibe_dir):
+def test_session_state_persists(temp_vibe_dir, manage_manager):
     """Test: session state persists across manager instances"""
-    mgr1 = SessionManager(agent_id="test-agent", vibe_dir=temp_vibe_dir)
+    mgr1 = manage_manager(SessionManager(agent_id="test-agent", vibe_dir=temp_vibe_dir))
     result1 = mgr1.start_session()
 
     # New instance should read previous state
-    mgr2 = SessionManager(agent_id="test-agent", vibe_dir=temp_vibe_dir)
+    mgr2 = manage_manager(SessionManager(agent_id="test-agent", vibe_dir=temp_vibe_dir))
     state = mgr2._read_session_state()
     assert state["session_id"] == result1["session_id"]
 
@@ -314,7 +327,8 @@ def test_injection_format(session_manager, temp_vibe_dir):
     )
 
     session_manager.start_session(context="API timeout")
-    content = open(os.path.join(temp_vibe_dir, "inject.md"), encoding="utf-8").read()
+    with open(os.path.join(temp_vibe_dir, "inject.md"), encoding="utf-8") as handle:
+        content = handle.read()
 
     assert "VibeMemory" in content
     assert "Memory Signals" in content  # MAG default injection mode
@@ -356,25 +370,25 @@ def test_cli_end(temp_vibe_dir, monkeypatch):
     assert "ended_at" in state
 
 
-def test_cli_recall(temp_vibe_dir, monkeypatch):
+def test_cli_recall(temp_vibe_dir, monkeypatch, manage_manager):
     """Test: CLI recall command"""
     monkeypatch.setenv("VIBE_DIR", temp_vibe_dir)
     monkeypatch.setenv("VIBE_AGENT_ID", "cli-test")
 
     # Store a memory first
-    mgr = SessionManager(agent_id="cli-test", vibe_dir=temp_vibe_dir)
+    mgr = manage_manager(SessionManager(agent_id="cli-test", vibe_dir=temp_vibe_dir))
     mgr.mem.store("API timeout fix", session_id="s1", tags=["api"])
 
     monkeypatch.setattr(sys, "argv", ["vibe-session", "recall", "API timeout"])
     cli_main()
 
 
-def test_cli_stats(temp_vibe_dir, monkeypatch):
+def test_cli_stats(temp_vibe_dir, monkeypatch, manage_manager):
     """Test: CLI stats command"""
     monkeypatch.setenv("VIBE_DIR", temp_vibe_dir)
     monkeypatch.setenv("VIBE_AGENT_ID", "cli-test")
 
-    mgr = SessionManager(agent_id="cli-test", vibe_dir=temp_vibe_dir)
+    mgr = manage_manager(SessionManager(agent_id="cli-test", vibe_dir=temp_vibe_dir))
     mgr.start_session()
     mgr.mem.store("Test memory", session_id="cli-s1")
 
@@ -382,12 +396,12 @@ def test_cli_stats(temp_vibe_dir, monkeypatch):
     cli_main()
 
 
-def test_cli_inject(temp_vibe_dir, monkeypatch):
+def test_cli_inject(temp_vibe_dir, monkeypatch, manage_manager):
     """Test: CLI inject command"""
     monkeypatch.setenv("VIBE_DIR", temp_vibe_dir)
     monkeypatch.setenv("VIBE_AGENT_ID", "cli-test")
 
-    mgr = SessionManager(agent_id="cli-test", vibe_dir=temp_vibe_dir)
+    mgr = manage_manager(SessionManager(agent_id="cli-test", vibe_dir=temp_vibe_dir))
     mgr.start_session()
 
     monkeypatch.setattr(sys, "argv", ["vibe-session", "inject"])
@@ -407,3 +421,90 @@ def test_cli_env_var_override(temp_vibe_dir, monkeypatch):
     with open(os.path.join(custom_dir, "session.json"), encoding="utf-8") as f:
         state = json.load(f)
     assert state["agent_id"] == "custom-agent"
+
+
+@pytest.mark.parametrize("outcome", ["success", "no_session", "read_error"])
+def test_quick_end_releases_owned_sdk(tmp_path, outcome):
+    if outcome == "success":
+        manager = quick_start(agent_id="lifetime", vibe_dir=str(tmp_path))
+        manager.mem.close()
+    elif outcome == "read_error":
+        (tmp_path / "session.json").mkdir()
+
+    gc.collect()
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always", ResourceWarning)
+        if outcome == "read_error":
+            with pytest.raises(OSError):
+                quick_end(agent_id="lifetime", vibe_dir=str(tmp_path), summary="saved summary")
+        else:
+            result = quick_end(agent_id="lifetime", vibe_dir=str(tmp_path), summary="saved summary")
+            if outcome == "success":
+                assert result["stored_count"] == 1
+            else:
+                assert result == {"stored_count": 0, "error": "No active session"}
+        gc.collect()
+    resource_messages = [str(item.message) for item in caught
+                         if issubclass(item.category, ResourceWarning)]
+    caught.clear()
+    assert resource_messages == []
+
+    if outcome == "success":
+        manager = SessionManager(agent_id="lifetime", vibe_dir=str(tmp_path))
+        try:
+            assert [atom.content for atom in manager.mem.history(result["session_id"])] == ["saved summary"]
+        finally:
+            manager.mem.close()
+
+
+@pytest.mark.parametrize("command,outcome", [
+    ("start", "normal"), ("end", "normal"),
+    ("recall", "normal"), ("stats", "normal"),
+    ("end", "empty"), ("recall", "empty"),
+    ("start", "read_error"), ("end", "read_error"), ("stats", "read_error"),
+])
+def test_cli_releases_owned_sdk(tmp_path, monkeypatch, capsys, command, outcome):
+    monkeypatch.setenv("VIBE_DIR", str(tmp_path))
+    monkeypatch.setenv("VIBE_AGENT_ID", "lifetime")
+    if outcome == "normal":
+        manager = quick_start(agent_id="lifetime", vibe_dir=str(tmp_path))
+        try:
+            manager.mem.store("synthetic timeout 60 seconds", session_id="seed")
+        finally:
+            manager.mem.close()
+    elif outcome == "read_error":
+        (tmp_path / "session.json").mkdir()
+
+    arguments = ["vibe-session", command]
+    if command == "recall":
+        arguments.append("synthetic timeout")
+    elif command == "end":
+        arguments.extend(["--summary", "completed synthetic session"])
+    monkeypatch.setattr(sys, "argv", arguments)
+
+    gc.collect()
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always", ResourceWarning)
+        if outcome == "read_error":
+            with pytest.raises(OSError):
+                cli_main()
+        elif command == "end" and outcome == "empty":
+            with pytest.raises(SystemExit) as exited:
+                cli_main()
+            assert exited.value.code == 1
+            del exited
+        else:
+            assert cli_main() is None
+        gc.collect()
+    resource_messages = [str(item.message) for item in caught
+                         if issubclass(item.category, ResourceWarning)]
+    caught.clear()
+    assert resource_messages == []
+
+    output = capsys.readouterr().out
+    if outcome == "normal":
+        expected = {"start": "Session started:", "end": "Memories stored: 1",
+                    "recall": "synthetic timeout 60 seconds", "stats": "Atoms:     1"}
+        assert expected[command] in output
+    elif outcome == "empty":
+        assert ("Error: No active session" if command == "end" else "No memories found.") in output

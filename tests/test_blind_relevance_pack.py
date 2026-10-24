@@ -44,7 +44,8 @@ def test_cli_builds_repeatable_label_free_review_pack(tmp_path):
     assert review.read_bytes() == review_again.read_bytes()
     assert manifest.read_bytes() == manifest_again.read_bytes()
 
-    rows = list(csv.DictReader(review.open(encoding='utf-8-sig', newline='')))
+    with review.open(encoding='utf-8-sig', newline='') as handle:
+        rows = list(csv.DictReader(handle))
     assert len(rows) == 2
     assert {row['candidate_text'] for row in rows} == {
         'first candidate', 'second candidate'}

@@ -288,3 +288,38 @@ def test_disabled_enhancement_keeps_date_evidence_without_selection_policy(tmp_p
     injection = Path(payload(replies[3])["inject_file"]).read_text(encoding="utf-8")
     assert "创建时间、记录时间与事件发生时间" not in injection
     assert [m["content"] for m in json.loads(injection.splitlines()[-1])] == [content]
+
+
+def test_public_tools_deliver_unknown_date_role_policy_only_when_enhanced(tmp_path):
+    content = "2026/07/12 08:00\nuser: 指标服务生产环境的请求超时于2026年7月12日09:00调整并生效为40秒。"
+    date_policy = (
+        "\n日期标题的时间角色未明确时，只能视为角色未知的日期文本，不要称它为创建、记录、发生或生效时间，也不要仅据它声称事件截至该时已发生、配置截至该时已生效或推导其他时间上下界；正文明确给出的记录、发生或生效时间仍按其语义采用。"
+        "\n最终回答及解释中，角色未明确的日期标题不作为时间依据，不复述为“某时的记录”“某时已发生”等时间定位；只陈述正文支持的事实及未知项。若问题明确询问标题原文，可原样引用但须说明其时间角色未知。正文明确的记录、发生或生效时间仍须按其语义回答，不得因上述限制省略或拒答。"
+    )
+    replies = exchange(tmp_path, [
+        ("vibe_store", {"content": content}),
+        ("vibe_recall", {"query": "指标服务请求超时"}),
+        ("vibe_session_start", {"context": "指标服务请求超时"}),
+    ])
+    recalled, session = (payload(reply) for reply in replies[1:])
+    assert recalled["selection_instructions"].endswith(date_policy)
+    assert session["selection_instructions"] == recalled["selection_instructions"]
+    for data in (recalled, session):
+        assert data["selection_status"] == "pending_host_selection"
+        assert data["selection_verified"] is False
+        assert [m["content"] for m in data["memories"]] == [content]
+        assert data["memories"][0]["full_id"] == payload(replies[0])["id"]
+    assert date_policy in Path(session["inject_file"]).read_text(encoding="utf-8")
+
+    disabled = exchange(tmp_path, [
+        ("vibe_settings", {"enhanced": False}),
+        ("vibe_recall", {"query": "指标服务请求超时"}),
+        ("vibe_session_start", {"context": "指标服务请求超时"}),
+    ])
+    for reply in disabled[1:]:
+        data = payload(reply)
+        assert data["selection_instructions"] is None
+        assert data["selection_status"] == "disabled"
+        assert data["selection_verified"] is False
+        assert [m["content"] for m in data["memories"]] == [content]
+    assert date_policy not in Path(payload(disabled[2])["inject_file"]).read_text(encoding="utf-8")

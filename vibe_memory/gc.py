@@ -16,9 +16,10 @@ Garbage Collector (M3 — GC 压缩优先)
 
 from typing import Optional
 from datetime import datetime, timedelta
+from dataclasses import replace
 
 from vibe_memory.models.memory_atom import (
-    MemoryAtom, Edge, EdgeStatus,
+    MemoryAtom, EdgeStatus,
     GraphPartition, Lifecycle,
 )
 
@@ -91,6 +92,7 @@ class GarbageCollector:
         min_atom_weight: 原子最小权重（低于此值淘汰）
         active_days: Active 生命周期天数（默认 7）
         warm_days: Warm 生命周期天数（默认 30）
+        retention_policy: "wall_clock" 为旧默认；"inactivity_safe" 不按自然年龄衰减或迁移生命周期
     """
 
     def __init__(
@@ -103,7 +105,12 @@ class GarbageCollector:
         min_atom_weight: float = DEFAULT_MIN_ATOM_WEIGHT,
         active_days: int = ACTIVE_THRESHOLD_DAYS,
         warm_days: int = WARM_THRESHOLD_DAYS,
+        *,
+        retention_policy: str = "wall_clock",
     ):
+        if retention_policy not in ("wall_clock", "inactivity_safe"):
+            raise ValueError("retention_policy must be 'wall_clock' or 'inactivity_safe'")
+        self.retention_policy = retention_policy
         self.storage = storage
         self.agent_id = agent_id
         self.tenant_id = tenant_id
@@ -183,21 +190,22 @@ class GarbageCollector:
         """
         all_edges = self.storage.get_edges_by_agent(
             self.agent_id, tenant_id=self.tenant_id)  # 含 stale/pending
-        to_delete: list[str] = []
+        to_delete = []
 
         for edge in all_edges:
             # 更新衰减
-            edge.decay()
+            previous_weight, previous_accessed = edge.weight, edge.last_accessed
+            previous_decay = edge.last_decayed_at
+            if self.retention_policy == "wall_clock":
+                edge.decay()
             if edge.should_evict() or edge.status == EdgeStatus.STALE:
-                to_delete.append(edge.id)
+                to_delete.append((edge, previous_weight, previous_accessed, previous_decay))
+            elif not dry_run and edge.last_decayed_at != previous_decay:
+                self.storage.persist_decay(edge, previous_weight, previous_accessed, previous_decay)
 
         if not dry_run and to_delete:
-            for edge_id in to_delete:
-                # SQLite 没有直接的 delete_edge，用 UPDATE status
-                edge = self.storage.get_edge(edge_id)
-                if edge:
-                    edge.status = EdgeStatus.STALE
-                    self.storage.update_edge(edge)
+            # Only count decisions that still match; newer accesses win.
+            return sum(self.storage.mark_edge_stale(*candidate) for candidate in to_delete)
 
         return len(to_delete)
 
@@ -220,18 +228,29 @@ class GarbageCollector:
                 continue  # 保护 Parametric 分区
 
             atoms = self._get_atoms_by_partition(partition)
-            if len(atoms) <= capacity:
-                continue
-
+            snapshots = {atom.id: replace(atom) for atom in atoms}
+            for atom in atoms:
+                previous_weight, previous_accessed = atom.weight, atom.last_accessed
+                previous_decay = atom.last_decayed_at
+                if self.retention_policy == "wall_clock":
+                    atom.decay()
+                if not dry_run and atom.last_decayed_at != previous_decay:
+                    if self.storage.persist_decay(atom, previous_weight, previous_accessed, previous_decay):
+                        snapshots[atom.id].weight = atom.weight
+                        snapshots[atom.id].last_decayed_at = atom.last_decayed_at
             # 按 weight 升序，淘汰最低的
             atoms.sort(key=lambda a: a.weight)
-            overflow = atoms[:len(atoms) - capacity]
-
-            if not dry_run:
-                for atom in overflow:
-                    self.storage.delete_atom(atom.id)
-
-            evicted += len(overflow)
+            if dry_run:
+                evicted += max(0, len(atoms) - capacity)
+                continue
+            removed = 0
+            for atom in atoms:
+                if self.storage.delete_atom_if_unchanged(snapshots[atom.id], capacity=capacity):
+                    removed += 1
+                # ponytail: reload after rejection; use a scoped count if contention makes this costly.
+                elif len(self._get_atoms_by_partition(partition)) <= capacity:
+                    break
+            evicted += removed
 
         return evicted
 
@@ -250,6 +269,8 @@ class GarbageCollector:
         Returns:
             {"warm": N, "cold": N, "archived": N}
         """
+        if self.retention_policy == "inactivity_safe":
+            return {"warm": 0, "cold": 0, "archived": 0}
         now = datetime.now()
         active_boundary = now - timedelta(days=self.active_days)
         warm_boundary = now - timedelta(days=self.warm_days)
@@ -275,9 +296,8 @@ class GarbageCollector:
                 new_lifecycle = Lifecycle.ARCHIVED
 
             if new_lifecycle != atom.lifecycle:
-                if not dry_run:
-                    atom.lifecycle = new_lifecycle
-                    self.storage.update_atom(atom)
+                if not dry_run and not self.storage.persist_lifecycle(atom, new_lifecycle):
+                    continue
 
                 if new_lifecycle == Lifecycle.WARM:
                     migrated["warm"] += 1
@@ -306,23 +326,28 @@ class GarbageCollector:
             self.agent_id, tenant_id=self.tenant_id
         )
 
-        to_evict: list[str] = []
+        to_evict: list[MemoryAtom] = []
 
         for atom in all_atoms:
             if atom.type == GraphPartition.PARAMETRIC:
                 continue
 
             # 衰减后检查
-            atom.decay()
+            snapshot = replace(atom)
+            previous_weight, previous_accessed = atom.weight, atom.last_accessed
+            previous_decay = atom.last_decayed_at
+            if self.retention_policy == "wall_clock":
+                atom.decay()
 
             if atom.should_evict():
-                to_evict.append(atom.id)
+                to_evict.append(snapshot)
             elif atom.lifecycle == Lifecycle.ARCHIVED and atom.weight < 0.1:
-                to_evict.append(atom.id)
+                to_evict.append(snapshot)
+            elif not dry_run and atom.last_decayed_at != previous_decay:
+                self.storage.persist_decay(atom, previous_weight, previous_accessed, previous_decay)
 
         if not dry_run:
-            for atom_id in to_evict:
-                self.storage.delete_atom(atom_id)
+            return sum(self.storage.delete_atom_if_unchanged(atom) for atom in to_evict)
 
         return len(to_evict)
 
@@ -363,6 +388,7 @@ class GarbageCollector:
             "last_gc_result": self._last_gc_result.to_dict() if self._last_gc_result else None,
             "partition_usage": self.get_partition_usage(),
             "config": {
+                "retention_policy": self.retention_policy,
                 "min_edge_weight": self.min_edge_weight,
                 "min_atom_weight": self.min_atom_weight,
                 "active_days": self.active_days,
@@ -376,11 +402,9 @@ class GarbageCollector:
     # ── 辅助 ──
 
     def _get_atoms_by_partition(self, partition: GraphPartition) -> list[MemoryAtom]:
-        """获取某分区的所有活跃分片（已衰减）"""
+        """获取某分区的所有未归档分片。"""
         all_atoms = self.storage.get_atoms_by_agent(
             self.agent_id, tenant_id=self.tenant_id
         )
         result = [a for a in all_atoms if a.type == partition and a.lifecycle != Lifecycle.ARCHIVED]
-        for a in result:
-            a.decay()
         return result

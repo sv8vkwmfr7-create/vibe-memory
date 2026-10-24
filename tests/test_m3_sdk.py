@@ -12,6 +12,7 @@ Tests for VibeMemory unified entry class:
 8. stats() — statistics
 """
 
+from contextlib import ExitStack, closing
 import uuid
 import sqlite3
 from datetime import datetime
@@ -27,9 +28,17 @@ from vibe_memory.models.memory_atom import (
 
 # ── Tests ──
 
-def test_store_single():
+@pytest.fixture
+def memory_factory():
+    with ExitStack() as stack:
+        def create(*args, **options):
+            return stack.enter_context(VibeMemory(*args, **options))
+        yield create
+
+
+def test_store_single(memory_factory):
     """Test store() single atom"""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
 
     atom = mem.store(
         content="Fixed API timeout error, changed from 30s to 60s",
@@ -52,9 +61,9 @@ def test_store_single():
 
 
 
-def test_store_scope_metadata_survives_restart_without_changing_tags(tmp_path):
+def test_store_scope_metadata_survives_restart_without_changing_tags(tmp_path, memory_factory):
     db_path = str(tmp_path / "scope.db")
-    first = VibeMemory(agent_id="scope-agent", db_path=db_path,
+    first = memory_factory(agent_id="scope-agent", db_path=db_path,
                        embedding_backend="tfidf")
     atom = first.store(
         "Orders production export failed",
@@ -66,7 +75,7 @@ def test_store_scope_metadata_survives_restart_without_changing_tags(tmp_path):
     )
     first.storage.conn.close()
 
-    reopened = VibeMemory(agent_id="scope-agent", db_path=db_path,
+    reopened = memory_factory(agent_id="scope-agent", db_path=db_path,
                           embedding_backend="tfidf")
     restored = reopened.storage.get_atom(atom.id)
     legacy = reopened.store(
@@ -90,16 +99,16 @@ def test_store_scope_metadata_survives_restart_without_changing_tags(tmp_path):
     {"servcie": "orders"},
     {"service": 7},
 ])
-def test_store_rejects_invalid_scope_metadata(scope):
-    mem = VibeMemory(agent_id="scope-agent", db_path=":memory:",
+def test_store_rejects_invalid_scope_metadata(scope, memory_factory):
+    mem = memory_factory(agent_id="scope-agent", db_path=":memory:",
                      embedding_backend="tfidf")
 
     with pytest.raises(ValueError, match="scope"):
         mem.store("Invalid scope", scope=scope)
 
 
-def test_update_scope_uses_same_validation_contract():
-    mem = VibeMemory(agent_id="scope-agent", db_path=":memory:",
+def test_update_scope_uses_same_validation_contract(memory_factory):
+    mem = memory_factory(agent_id="scope-agent", db_path=":memory:",
                      embedding_backend="tfidf")
     atom = mem.store(
         "Scoped memory", scope={"service": "orders"},
@@ -114,15 +123,15 @@ def test_update_scope_uses_same_validation_contract():
         mem.update(atom.id, scope={"servcie": "billing"})
 
 
-def test_existing_database_adds_scope_column_on_open(tmp_path):
+def test_existing_database_adds_scope_column_on_open(tmp_path, memory_factory):
     db_path = str(tmp_path / "legacy.db")
-    current = VibeMemory(agent_id="scope-agent", db_path=db_path,
+    current = memory_factory(agent_id="scope-agent", db_path=db_path,
                          embedding_backend="tfidf")
     current.storage.conn.close()
-    with sqlite3.connect(db_path) as connection:
+    with closing(sqlite3.connect(db_path)) as connection, connection:
         connection.execute("ALTER TABLE atoms DROP COLUMN scope")
 
-    reopened = VibeMemory(agent_id="scope-agent", db_path=db_path,
+    reopened = memory_factory(agent_id="scope-agent", db_path=db_path,
                           embedding_backend="tfidf")
     atom = reopened.store(
         "Legacy database accepts scope",
@@ -134,9 +143,9 @@ def test_existing_database_adds_scope_column_on_open(tmp_path):
     assert reopened.storage.get_atom(atom.id).scope == {"service": "orders"}
 
 
-def test_store_batch():
+def test_store_batch(memory_factory):
     """Test store_batch() from messages"""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
 
     messages = [
         {"role": "user", "content": "Help me fix API timeout"},
@@ -161,9 +170,9 @@ def test_store_batch():
 
 
 
-def test_recall():
+def test_recall(memory_factory):
     """Test recall() memory retrieval"""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
 
     mem.store("Fixed API timeout error", session_id="s1", tags=["error", "config"])
     mem.store("Changed timeout to 60s", session_id="s1", tags=["config"])
@@ -186,8 +195,8 @@ def test_recall():
 
 
 
-def test_recall_scope_boost_reorders_without_filtering_or_changing_default():
-    mem = VibeMemory(agent_id="scope-agent", db_path=":memory:",
+def test_recall_scope_boost_reorders_without_filtering_or_changing_default(memory_factory):
+    mem = memory_factory(agent_id="scope-agent", db_path=":memory:",
                      embedding_backend="tfidf")
     catalog = mem.store(
         "request hangs request hangs Catalog",
@@ -216,9 +225,9 @@ def test_recall_scope_boost_reorders_without_filtering_or_changing_default():
     assert scoped["scope_boosted"] is True
 
 
-def test_budget_recall_uses_bounded_storage_candidates(monkeypatch):
+def test_budget_recall_uses_bounded_storage_candidates(monkeypatch, memory_factory):
     """Budget recall avoids the full-agent hydration path."""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
     for index in range(200):
         mem.store(
             f"Routine operational context {index}",
@@ -251,9 +260,9 @@ def test_budget_recall_uses_bounded_storage_candidates(monkeypatch):
     assert candidate_sizes == [100]
 
 
-def test_budget_recall_hydrates_causal_neighbor_within_candidate_limit(monkeypatch):
+def test_budget_recall_hydrates_causal_neighbor_within_candidate_limit(monkeypatch, memory_factory):
     """Budget recall keeps a graph-only answer inside its bounded candidate pool."""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
     answer = mem.store(
         "Rollback the deployment and restore the previous configuration",
         auto_build_edges=False,
@@ -292,9 +301,9 @@ def test_budget_recall_hydrates_causal_neighbor_within_candidate_limit(monkeypat
     assert candidate_sizes == [100]
 
 
-def test_recall_semantic_cache_invalidates_on_update():
+def test_recall_semantic_cache_invalidates_on_update(memory_factory):
     """Test: SDK semantic document cache refreshes when atom version changes."""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
     atom = mem.store("API timeout needs investigation", auto_build_edges=False, auto_episode=False)
 
     first = mem.recall("API timeout", mode="budget", top_k=5)
@@ -309,9 +318,9 @@ def test_recall_semantic_cache_invalidates_on_update():
     assert mem._semantic_cache["key"] != first_key
 
 
-def test_budget_recall_skips_duplicate_tfidf_rerank():
+def test_budget_recall_skips_duplicate_tfidf_rerank(memory_factory):
     """Budget recall relies on fused ranks without a second semantic pass."""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
     for index in range(200):
         mem.store(
             f"Routine operational context {index}",
@@ -338,11 +347,11 @@ def test_budget_recall_skips_duplicate_tfidf_rerank():
     assert encoded_batch_sizes == []
 
 
-def test_recall_reuses_bm25_index_until_content_changes(monkeypatch):
+def test_recall_reuses_bm25_index_until_content_changes(monkeypatch, memory_factory):
     """Test: repeated recalls reuse BM25, while content updates rebuild it."""
     from vibe_memory.retrieval.strategies import BM25Strategy
 
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
     target = mem.store(
         "API timeout incident resolution",
         auto_build_edges=False,
@@ -372,9 +381,9 @@ def test_recall_reuses_bm25_index_until_content_changes(monkeypatch):
     assert fit_calls == 2
 
 
-def test_link():
+def test_link(memory_factory):
     """Test link() manual edge creation"""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
 
     a1 = mem.store("API timeout error", session_id="s1", tags=["error"])
     a2 = mem.store("Changed timeout to 60s", session_id="s1", tags=["config"])
@@ -388,16 +397,16 @@ def test_link():
     assert edge.tenant_id == "default"
 
     # Cross-tenant link should be rejected
-    mem2 = VibeMemory(agent_id="test-agent", db_path=":memory:", tenant_id="other", embedding_backend="tfidf")
+    mem2 = memory_factory(agent_id="test-agent", db_path=":memory:", tenant_id="other", embedding_backend="tfidf")
     a3 = mem2.store("Other content", session_id="s3", tags=["query"])
     edge2 = mem.link(a1.id, a3.id)  # a1 in 'default', a3 in 'other'
     assert edge2 is None
 
 
 
-def test_migrate():
+def test_migrate(memory_factory):
     """Test migrate() partition migration"""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
 
     a1 = mem.store("Important API docs", session_id="s1", tags=["api", "reference"])
 
@@ -416,15 +425,15 @@ def test_migrate():
     assert retrieved.decay_rate == 0.99  # almost permanent
 
     # Cross-tenant should fail
-    mem2 = VibeMemory(agent_id="test-agent", db_path=":memory:", tenant_id="other")
+    mem2 = memory_factory(agent_id="test-agent", db_path=":memory:", tenant_id="other")
     success = mem2.migrate(a1.id, GraphPartition.SESSION)
     assert success is False
 
 
 
-def test_forget():
+def test_forget(memory_factory):
     """Test forget() memory deletion"""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
 
     a1 = mem.store("Temporary note", session_id="s1", tags=["routine"])
     a2 = mem.store("Important note", session_id="s1", tags=["decision"])
@@ -438,15 +447,15 @@ def test_forget():
     assert mem.storage.get_atom(a2.id) is not None
 
     # Cross-tenant forget should fail
-    mem2 = VibeMemory(agent_id="test-agent", db_path=":memory:", tenant_id="other")
+    mem2 = memory_factory(agent_id="test-agent", db_path=":memory:", tenant_id="other")
     success = mem2.forget(a2.id)
     assert success is False
 
 
 
-def test_update():
+def test_update(memory_factory):
     """Test update() metadata update"""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
 
     a1 = mem.store("Original content", session_id="s1", tags=["query"])
 
@@ -459,15 +468,15 @@ def test_update():
     assert updated.version == 2  # version bumped
 
     # Cross-tenant update should fail
-    mem2 = VibeMemory(agent_id="test-agent", db_path=":memory:", tenant_id="other")
+    mem2 = memory_factory(agent_id="test-agent", db_path=":memory:", tenant_id="other")
     result = mem2.update(a1.id, content="hacked")
     assert result is None
 
 
 
-def test_history():
+def test_history(memory_factory):
     """Test history() session history"""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
 
     mem.store("First message", session_id="s1", tags=["query"])
     mem.store("Second message", session_id="s1", tags=["config"])
@@ -488,9 +497,9 @@ def test_history():
 
 
 
-def test_stats():
+def test_stats(memory_factory):
     """Test stats() statistics"""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
 
     mem.store("API timeout error", session_id="s1", tags=["error", "config"], auto_build_edges=False)
     mem.store("DB pool config updated", session_id="s2", tags=["config"], auto_build_edges=False)
@@ -511,10 +520,10 @@ def test_stats():
 
 
 
-def test_sdk_tenant_isolation():
+def test_sdk_tenant_isolation(memory_factory):
     """Test full SDK tenant isolation"""
-    mem_a = VibeMemory(agent_id="agent-1", db_path=":memory:", tenant_id="tenant-a", embedding_backend="tfidf")
-    mem_b = VibeMemory(agent_id="agent-1", db_path=":memory:", tenant_id="tenant-b", embedding_backend="tfidf")
+    mem_a = memory_factory(agent_id="agent-1", db_path=":memory:", tenant_id="tenant-a", embedding_backend="tfidf")
+    mem_b = memory_factory(agent_id="agent-1", db_path=":memory:", tenant_id="tenant-b", embedding_backend="tfidf")
 
     a1 = mem_a.store("Tenant A content", session_id="s1", tags=["config"])
     b1 = mem_b.store("Tenant B content", session_id="s1", tags=["config"])
@@ -529,9 +538,9 @@ def test_sdk_tenant_isolation():
 
 
 
-def test_sdk_auto_edges():
+def test_sdk_auto_edges(memory_factory):
     """Test auto edge building in store()"""
-    mem = VibeMemory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
+    mem = memory_factory(agent_id="test-agent", db_path=":memory:", embedding_backend="tfidf")
 
     mem.store("API timeout error", session_id="s1", tags=["error", "config"])
     mem.store("Changed timeout to 60s", session_id="s1", tags=["config"])

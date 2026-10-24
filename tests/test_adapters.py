@@ -220,9 +220,8 @@ def oa_tools_factory():
         yield create
 
 
-def test_oa_tools_created():
-    from vibe_memory.openai_agents import create_vibe_tools
-    tools = create_vibe_tools(agent_id="test", db_path=":memory:")
+def test_oa_tools_created(oa_tools_factory):
+    tools = oa_tools_factory()
     assert len(tools) == 7
     names = {t.__name__ for t in tools}
     assert "vibe_store" in names
