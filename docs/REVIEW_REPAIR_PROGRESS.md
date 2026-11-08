@@ -1,5 +1,13 @@
 # Review repair progress — 2026-10-01
 
+## GC transaction guard and review evidence clarification — 2026-10-27
+
+Non-dry-run GC now refuses an open caller transaction before its first stage; decay, lifecycle and stale-edge write helpers also refuse one when called directly. Dry-run remains read-only. GC is a sequence of commits, not one atomic transaction.
+
+A source suite reported 1360 passes on 2026-10-27. A subsequent isolated sdist/wheel build and installed-package smoke passed, including 15 GC transaction regressions. A 47-test GC transaction/concurrency/core-GC run against the prepared source snapshot passed on 2026-11-08. A separate 92-test relation-review/MCP run passed on the same snapshot. These results do not establish independent memory-answer quality, arbitrary shared-connection safety or real-host acceptance.
+
+Relation review checks exported record fields and context from preparation against apply, excluding weight, decay_rate and usage counters; last_accessed and last_decayed_at are not exported or compared. Atomic insertion rechecks values read at apply. This is snapshot checking, not semantic verification of a caller assertion. The model-quality effects of enhanced MCP instructions have not been independently established.
+
 ## Current confirmed-use artifact accepted; M0 quality open — 2026-10-11
 
 New isolated build/base smoke and Python3.14.7 installed full accepted:

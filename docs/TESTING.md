@@ -1,5 +1,11 @@
 # Tests and coverage
 
+## GC caller-transaction safeguard — development preview
+
+On Windows with Python 3.12.14, the 2026-10-27 source suite reported 1360 passed; a later fresh sdist-to-wheel installation passed 15 targeted GC regressions and SDK/CLI smoke checks. On 2026-11-08, 47 GC transaction, concurrency and core-GC checks passed against the prepared source snapshot. A separate 92-test relation-review and MCP-relation-review run also passed.
+
+Reproduce the targeted checks with `python -m pytest -q tests/test_gc_transaction_guard.py tests/test_gc_concurrency.py tests/test_m3_gc.py`. These engineering checks do not establish independent answer quality, real-host behavior or safety for arbitrary shared-connection concurrency.
+
 ## Confirmed-use fresh installed gate accepted — 2026-10-11
 
 Fresh sdist->wheel/base smoke and independent Python3.14.7 installed full:

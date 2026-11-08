@@ -145,6 +145,9 @@ class GarbageCollector:
         start = time.perf_counter()
 
         try:
+            if not dry_run and self.storage.conn.in_transaction:
+                raise ValueError("GC requires a connection without an open transaction")
+
             # 阶段 1：稀疏化
             result.sparsified_edges = self.sparsify(dry_run=dry_run)
 

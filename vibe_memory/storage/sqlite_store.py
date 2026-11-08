@@ -589,6 +589,8 @@ class VibeStorage:
         A concurrent access/decay/rate change wins; a later GC can reconsider it.
         This does not make the whole GC pipeline a single transaction.
         """
+        if self.conn.in_transaction:
+            raise ValueError("persist_decay requires a connection without an open transaction")
         table = 'atoms' if isinstance(item, MemoryAtom) else 'edges'
         cursor = self.conn.execute(
             f"""UPDATE {table} SET weight=?, last_decayed_at=?
@@ -605,6 +607,8 @@ class VibeStorage:
 
     def persist_lifecycle(self, atom: MemoryAtom, lifecycle: Lifecycle) -> bool:
         """Apply a GC transition only while its time/lifecycle baseline matches."""
+        if self.conn.in_transaction:
+            raise ValueError("persist_lifecycle requires a connection without an open transaction")
         cursor = self.conn.execute(
             """UPDATE atoms SET lifecycle=?
             WHERE id=? AND tenant_id=? AND agent_id=? AND lifecycle=?
@@ -861,6 +865,8 @@ class VibeStorage:
                         previous_accessed: Optional[datetime],
                         previous_decayed_at: Optional[datetime]) -> bool:
         """Invalidate a GC candidate only while its decision snapshot is current."""
+        if self.conn.in_transaction:
+            raise ValueError("mark_edge_stale requires a connection without an open transaction")
         cursor = self.conn.execute(
             """UPDATE edges SET status='stale', weight=?, last_decayed_at=?
             WHERE id=? AND tenant_id=? AND weight=? AND last_accessed IS ?

@@ -10,6 +10,15 @@ SDK single and batch writes use `insert_edge_if_missing`: SQLite's directed-pair
 
 SDK ownership and unique-prefix checks remain required; raw storage is a trusted interface, not an authorization layer. These operations require a connection without an open caller transaction and reject it without committing/rolling it back. They do not serialize unrelated raw SDK/connection calls; the HTTP operation lock or the caller's coordination is still necessary.
 
+Non-dry-run GC checks for an open caller transaction before its first stage and
+reports the refusal in `GCResult.errors`. Its decay, lifecycle and stale-edge
+write helpers also reject an open transaction when GC stages are called directly.
+Dry-run remains read-only and may observe the caller's uncommitted data. GC stages
+are not one atomic transaction; same-connection raw access still requires caller
+coordination. Temporary SQLite/WAL source regressions verify caller-controlled
+rollback/commit after refusal, direct-stage refusal, read-only dry-run and normal,
+repeatable GC. These checks do not cover arbitrary shared-connection interleavings.
+
 This is not retrospective cleanup. Unrelated historical orphan edges are not deleted. Foreign-key enforcement is not turned on globally and no schema migration is performed. The same deletion path is tested with enforcement on and off.
 
 ## Merge

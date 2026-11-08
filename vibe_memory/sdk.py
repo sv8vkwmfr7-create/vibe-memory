@@ -247,6 +247,12 @@ class VibeMemory:
         not a durable evidence ledger; RULE remains the compatible stored source.
         Invalid decisions/quotes leave the review pending; valid decisions consume
         it even when stale or already linked. Unknown IDs return not_applied.
+
+        Between preparation and apply, changes to any exported field except
+        weight, decay_rate, access_count, adopted_count or ignored_count make the
+        evidence stale. last_accessed and last_decayed_at are not exported or
+        compared. Atomic insertion checks the fields and context read at apply
+        again before writing.
         """
         if decision not in ("accept", "reject", "uncertain"):
             raise ValueError("decision must be accept, reject, or uncertain")

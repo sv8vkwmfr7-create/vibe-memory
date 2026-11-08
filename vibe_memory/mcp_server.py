@@ -220,7 +220,7 @@ def run_server(db_path: str, agent_id: str, vibe_dir: str, wal_maintenance: bool
             },
         },
         "vibe_apply_relation_review": {
-            "description": "Submit accept/reject/uncertain for a prepared pair. Accept only creates a similar relation and requires nonblank exact quotes from both original bodies. Quotes do not establish semantic truth; semantic_verified remains false and decision_origin is caller_assertion. Stale evidence or an existing directed edge is not applied; existing relations are never overwritten. Valid decisions consume the review, replay never writes, and IDs expire on server restart. No model is called. Legacy vibe_link remains a separate manual path with its existing replacement behavior.",
+            "description": "Submit accept/reject/uncertain for a prepared pair. Accept only creates a similar relation and requires nonblank exact quotes from both original bodies. Quotes do not establish semantic truth; semantic_verified remains false and decision_origin is caller_assertion. Between preparation and apply, changes to exported fields except weight, decay_rate, access_count, adopted_count and ignored_count make evidence stale; last_accessed and last_decayed_at are not compared. Insertion rechecks the values read at apply; existing directed edges are never overwritten. Valid decisions consume the review, replay never writes, and IDs expire on server restart. No model is called. Legacy vibe_link remains a separate manual path with its existing replacement behavior.",
             "inputSchema": {
                 "type": "object",
                 "properties": {
