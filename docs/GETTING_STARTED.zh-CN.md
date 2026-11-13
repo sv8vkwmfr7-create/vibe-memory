@@ -104,6 +104,21 @@ result = mem.recall(
 
 这只限制记录元数据，不验证正文中的声明是否真实、已生效或与元数据一致，也不代替租户权限隔离。初版严格模式读取当前用户的完整记忆池，再筛选 active/warm，包含 budget 模式；大库成本可能高于原有有界 budget 路径。开关关闭时保持原行为。MCP 调用请将 `strict_scope: true` 和 `scope` 一起放入 `vibe_recall` 参数；现有配置无需修改。此参数按次调用生效，不是全局面板开关；`inject` 与 `vibe_session_start` 未新增该参数，不能视为已获得同样的严格过滤保证。
 
+### 可选：关闭图检索做对照
+
+Python SDK 默认启用图；如需在一个 SDK 实例中使用无图路径，可以显式传入：
+
+```python
+from vibe_memory import VibeMemory
+
+with VibeMemory("my-assistant", db_path="memory.db",
+                embedding_backend="tfidf", graph_enabled=False) as mem:
+    mem.store("订单服务超时为 60 秒")
+    result = mem.recall("订单服务的超时设置是什么？")
+```
+
+关闭后，单条及批量写入跳过自动建边，单条写入也跳过该路径内的重复合并；召回使用语义、BM25 和时序策略，不做图扩展、不生成图轨迹。已有边不会删除，显式 `link()` 仍可写入，但不会参与此实例召回。`causal_bridge=True` 与关图冲突时会报错。此设置仅对该 SDK 实例生效，重启后需重新传入；MCP 不提供对应开关。它提供对照能力，不代表已证明图或无图的回答效果更好。
+
 ## 5. 在自己的代码中使用
 
 创建 `my_memory.py`：

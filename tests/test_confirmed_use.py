@@ -126,7 +126,8 @@ def test_database_denial_rolls_back_receipt_and_reward_so_same_event_can_retry(t
             with pytest.raises(sqlite3.DatabaseError):
                 memory.confirm_used('one', event_id='retry', expected_version=1)
         finally:
-            memory.storage.conn.set_authorizer(None)
+            # Disabling with None is supported only on Python 3.11 and newer.
+            memory.storage.conn.set_authorizer(lambda *_: sqlite3.SQLITE_OK)
         assert memory.history() == before
         assert memory.confirm_used('one', event_id='retry', expected_version=1) == {'applied': True}
         assert memory.history()[0].access_count == 1

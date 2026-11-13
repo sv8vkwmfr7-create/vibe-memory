@@ -641,7 +641,9 @@ def recall(
             break
 
     seed_count = len(semantic_seeds)
-    trace = build_trace(semantic_seeds if semantic_seeds else load_atoms(active_atoms[:top_k]), ranked_atoms, storage)
+    trace = []
+    if "graph" in enabled_strategies:
+        trace = build_trace(semantic_seeds if semantic_seeds else load_atoms(active_atoms[:top_k]), ranked_atoms, storage)
 
     return {
         "atoms": ranked_atoms,

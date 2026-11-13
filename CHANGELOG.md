@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Development preview: opt-in graph-free SDK profile
+- Add `graph_enabled=False` to skip automatic graph construction and graph-based recall for one SDK instance. The default stays graph-enabled; existing edges are retained and explicit links remain available.
+- Make the confirmed-use regression test cleanup compatible with Python 3.10. The separate local daily-use assistant integration remains outside this snapshot.
+
 ### Development preview: GC caller-transaction safety
 - Refuse non-dry-run GC and direct GC write stages on an open caller transaction, leaving commit or rollback to the caller. Dry-run remains read-only; the complete GC pipeline is not a single transaction.
 - Add caller-transaction regressions and clarify relation-review staleness boundaries. Cross-session answer quality and the separate local daily-use candidate are not covered by this repository snapshot.

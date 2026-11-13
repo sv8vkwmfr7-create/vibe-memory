@@ -111,10 +111,14 @@ class VibeMemory:
         *,
         retention_policy: str = "wall_clock",
         reinforcement_policy: str = "legacy",
+        graph_enabled: bool = True,
     ):
+        if not isinstance(graph_enabled, bool):
+            raise ValueError("graph_enabled must be a boolean")
         if reinforcement_policy not in ("legacy", "confirmed_use"):
             raise ValueError("reinforcement_policy must be 'legacy' or 'confirmed_use'")
         self.reinforcement_policy = reinforcement_policy
+        self.graph_enabled = graph_enabled
         self.wal_maintenance = wal_maintenance
         # ponytail: serialize whole calls per instance; use separate instances for throughput.
         self._operation_lock = RLock()
@@ -322,7 +326,7 @@ class VibeMemory:
             context_after: 下文
             partition: 图分区
             confidence: 置信度
-            auto_build_edges: 是否自动建边
+            auto_build_edges: 是否自动建边；实例 graph_enabled=False 时跳过
             auto_episode: 是否自动 Episode 聚合
 
         Returns:
@@ -374,7 +378,7 @@ class VibeMemory:
             self.metrics.record_failure("embedding_cache", error)
 
         # 冷启动阶段使用激进阈值建边
-        if auto_build_edges:
+        if self.graph_enabled and auto_build_edges:
             atom = self._auto_build_edges(atom) or atom
 
         # 增量索引：自动入队 + 触发 flush
@@ -420,7 +424,7 @@ class VibeMemory:
             self.metrics.record_store()
 
         # 同会话建边
-        if len(stored) >= 2:
+        if self.graph_enabled and len(stored) >= 2:
             for edge in build_same_session_edges(stored):
                 edge.tenant_id = self.tenant_id
                 if self.storage.insert_edge_if_missing(edge):
@@ -466,6 +470,8 @@ class VibeMemory:
         if not isinstance(strict_scope, bool):
             raise ValueError("strict_scope must be a boolean")
         required_scope = validated_scope if strict_scope else {}
+        if causal_bridge and not self.graph_enabled:
+            raise ValueError("causal_bridge requires graph_enabled=True")
         result = _recall(
             query=query,
             agent_id=self.agent_id,
@@ -479,6 +485,9 @@ class VibeMemory:
             bm25_cache=self._bm25_cache,
             causal_bridge=causal_bridge,
             required_scope=required_scope,
+            strategies=None if self.graph_enabled else ["semantic", "bm25", "temporal"],
+            budget_graph_hops=1 if self.graph_enabled else 0,
+            budget_graph_ratio=0.2 if self.graph_enabled else 0.0,
         )
         self._recall_count += 1
         self.metrics.record_recall(result_count=len(result.get("atoms", [])))
