@@ -14,13 +14,13 @@ def main() -> None:
             agent_id="quickstart-agent",
             db_path=str(db_path),
             embedding_backend="tfidf",
+            graph_enabled=False,
         )
         memory.store(
             "request hangs request hangs Catalog",
             session_id="quickstart-1",
             tags=["catalog", "incident"],
             scope={"service": "catalog"},
-            auto_build_edges=False,
             auto_episode=False,
         )
         target = memory.store(
@@ -28,7 +28,6 @@ def main() -> None:
             session_id="quickstart-1",
             tags=["orders", "incident"],
             scope={"service": "orders"},
-            auto_build_edges=False,
             auto_episode=False,
         )
         memory.storage.conn.close()
@@ -37,6 +36,7 @@ def main() -> None:
             agent_id="quickstart-agent",
             db_path=str(db_path),
             embedding_backend="tfidf",
+            graph_enabled=False,
         )
         result = reopened.recall(
             "request hangs",

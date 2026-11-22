@@ -1,5 +1,7 @@
 # Vibe Memory
 
+**最小 SDK 支线**。快速示例使用 SQLite、TF-IDF 和 `graph_enabled=False`，演示写入、关闭连接、重新打开和召回。召回返回记忆记录，可由宿主用作回答依据。直接调用 SDK 时可以用同样的参数启用无图路径。
+
 > **开发预览（0.3.0 源码快照）**：本次更新包含 GC 调用方事务保护、可选关图 SDK 和相关测试。跨会话最终回答、引用准确性与日常使用稳定性仍在验证；本地独立日常问答候选不包含在本仓库。
 
 > 让 AI Agent 在不同会话之间记住事实、决策、修复方案和用户偏好。
@@ -11,7 +13,7 @@
 最短体验（无需模型或 API Key）：
 
 ```bash
-git clone https://github.com/sv8vkwmfr7-create/vibe-memory.git
+git clone --branch codex/minimal-sdk --single-branch https://github.com/sv8vkwmfr7-create/vibe-memory.git
 cd vibe-memory
 python -m venv .venv
 
